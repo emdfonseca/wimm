@@ -1,0 +1,22 @@
+# packages/<name>/justfile — TypeScript
+build:
+    pnpm build
+
+test:
+    pnpm vitest run
+
+lint:
+    pnpm eslint .
+
+fmt:
+    pnpm prettier --write .
+
+check: lint
+    pnpm tsc --noEmit
+    just test
+
+dev:
+    pnpm dev
+
+clean:
+    rm -rf dist .turbo

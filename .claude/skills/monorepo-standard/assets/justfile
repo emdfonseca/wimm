@@ -1,0 +1,41 @@
+# Root justfile — delegation only. Build logic lives in package justfiles.
+set shell := ["bash", "-uc"]
+
+pkgs := "apps/web apps/api packages/ui packages/telemetry"
+
+# List available recipes
+default:
+    @just --list
+
+# Run a verb in one directory: just run test apps/api
+run verb dir:
+    @just --justfile {{dir}}/justfile --working-directory {{dir}} {{verb}}
+
+# Run a verb in every registered package
+all verb:
+    @for d in {{pkgs}}; do echo "==> $d"; just run {{verb}} "$d" || exit 1; done
+
+build dir="": (_fanout "build" dir)
+test  dir="": (_fanout "test"  dir)
+lint  dir="": (_fanout "lint"  dir)
+fmt   dir="": (_fanout "fmt"   dir)
+check dir="": (_fanout "check" dir)
+clean dir="": (_fanout "clean" dir)
+
+_fanout verb dir:
+    @if [ -z "{{dir}}" ]; then just all {{verb}}; else just run {{verb}} {{dir}}; fi
+
+# Regenerate cross-language contract clients
+gen:
+    @just run gen packages/contracts
+
+# What CI runs
+ci: (all "check")
+
+# Directories changed versus a base ref
+_affected base="origin/main":
+    @git diff --name-only {{base}}...HEAD | grep -E '^(apps|packages)/' | cut -d/ -f1,2 | sort -u
+
+# check, but only for changed packages
+ci-affected base="origin/main":
+    @for d in $(just _affected {{base}}); do just run check "$d" || exit 1; done

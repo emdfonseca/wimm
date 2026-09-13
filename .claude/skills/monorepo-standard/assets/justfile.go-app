@@ -1,0 +1,22 @@
+# apps/<name>/justfile — Go
+name := file_name(justfile_directory())
+
+build:
+    go build -o ../../dist/{{name}} ./cmd/{{name}}
+
+test:
+    go test ./...
+
+lint:
+    golangci-lint run
+
+fmt:
+    gofmt -w .
+
+check: lint test
+
+dev:
+    go run ./cmd/{{name}}
+
+clean:
+    go clean
