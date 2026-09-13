@@ -5,6 +5,7 @@ REST exists for people who cannot consume protobuf: third-party developers, webh
 ## Shape
 
 - OpenAPI 3.1 document in `packages/contracts/openapi/<product>.yaml`, the source of truth; server routes and any generated SDKs derive from it.
+- Routes are served by `net/http` 1.22+ `ServeMux` method patterns (`"GET /v1/invoices/{id}"`); no third-party router.
 - Paths: `/v1/<plural-noun>`, `/v1/<plural-noun>/{id}`, kebab-case, no verbs. Actions that do not fit CRUD are sub-resources (`POST /v1/invoices/{id}/send`), not query parameters.
 - JSON bodies, `lowerCamelCase` keys, RFC 3339 timestamps in UTC, strings for IDs and money.
 - Every response has `Content-Type: application/json`; errors use `application/problem+json`.
