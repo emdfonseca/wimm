@@ -1,6 +1,6 @@
 ---
 name: standards-reviewer
-description: Read-only reviewer that checks a diff, package, or PR against this repo's standards - monorepo layout and cohesion, API contract shape, observability instrumentation, and migration safety. Delegate to it when the user asks to review a change against the standards, before /ship, or when a change touches contracts, migrations, telemetry, or package boundaries and a second pair of eyes with the full standards loaded would help. It reports findings; it does not edit.
+description: Read-only reviewer that checks a diff, package, or PR against this repo's standards - monorepo layout and cohesion, API contract shape, observability instrumentation, and migration safety. Delegate to it when the user asks to review a change against the standards, before /ship, or when a change touches contracts, migrations, telemetry, or package boundaries and a second pair of eyes with the full standards loaded would help. Design files and Storybook parity go to design-reviewer instead. It reports findings; it does not edit.
 tools: Read, Grep, Glob, Bash
 model: inherit
 skills:
