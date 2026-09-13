@@ -9,7 +9,7 @@
 ```toml
 # pyproject.toml at the repo root
 [tool.uv.workspace]
-members = ["apps/ingest", "packages/pipeline"]
+members = ["apps/example-worker", "packages/example-lib"]
 ```
 
 Each member has its own `pyproject.toml`. Internal dependencies use the workspace source:

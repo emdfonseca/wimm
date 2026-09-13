@@ -32,4 +32,4 @@ Deployable → `apps/<name>`. Importable → `packages/<name>`. Root holds only 
 | `references/python.md` | uv workspace, src layout |
 | `references/ci.md` | The CI job |
 | `references/new-package-checklist.md` | Adding a package |
-| `assets/` | `devbox.json` (pins checked 2026-09-13), justfiles, tsconfig, `hooks/` |
+| `assets/` | Seeds for a new repo: `devbox.json`, justfiles, tsconfig, `hooks/`. A repo's copies evolve on their own; the seeds stay minimal. |

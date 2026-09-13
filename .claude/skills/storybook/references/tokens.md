@@ -7,19 +7,19 @@
 ```css
 /* packages/ui/src/lib/styles/tokens.css */
 :root {
-  --color-bg-surface: #ffffff;
-  --color-text-primary: #16181d;
-  --color-action-primary: #2b5fd9;
-  --layout-page-gutter: 32px;
-  --radius-control: 6px;
-  --focus-ring-color: #2b5fd9;
-  --focus-ring-width: 2px;
+  --color-bg-surface: <light surface>;
+  --color-text-primary: <light text>;
+  --color-action-primary: <brand>;
+  --layout-page-gutter: <px>;
+  --radius-control: <px>;
+  --focus-ring-color: <brand>;
+  --focus-ring-width: <px>;
 }
 
 [data-theme='dark'] {
-  --color-bg-surface: #14161a;
-  --color-text-primary: #e9ecf2;
-  --color-action-primary: #7aa2f7;
+  --color-bg-surface: <dark surface>;
+  --color-text-primary: <dark text>;
+  --color-action-primary: <brand, adjusted for dark>;
 }
 ```
 

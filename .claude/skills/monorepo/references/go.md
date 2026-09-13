@@ -4,7 +4,7 @@
 
 ```text
 // go.work
-go 1.27
+go <version pinned in devbox.json>
 
 use (
     ./apps/api

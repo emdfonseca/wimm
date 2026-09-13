@@ -12,7 +12,7 @@ API current as of Storybook 10.2 docs, checked 2026-09-13. Verify against curren
 @storybook/addon-docs         autodocs / MDX pages
 ```
 
-Storybook is a dev dependency of `packages/ui`; toolchain versions come from `devbox.json`.
+Storybook is added as a dev dependency of `packages/ui`; toolchain versions come from `devbox.json`.
 
 ## main.ts
 

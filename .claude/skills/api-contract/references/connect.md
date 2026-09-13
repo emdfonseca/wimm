@@ -9,7 +9,7 @@ packages/contracts/
 ├── proto/<org>/billing/v1/
 │   ├── billing.proto        # messages + service
 │   └── errors.proto         # domain error detail messages, if any
-└── gen/                     # generated; never edited (protect-generated hook)
+└── gen/                     # generated
 ```
 
 One proto package per domain per major version. A package that is only messages shared by several domains is the `common` junk drawer wearing a `.proto` extension.
@@ -27,7 +27,7 @@ breaking:
   use: [FILE]
 ```
 
-`buf lint` and `buf breaking --against '.git#branch=main'` both run from the `packages/contracts` justfile's `lint` verb.
+`buf lint` and `buf breaking --against '.git#branch=main'` both run from the package's `lint` verb.
 
 ## Service definition
 
@@ -80,4 +80,4 @@ One chain per service, in this order: recovery, telemetry (`otelconnect`), auth,
 
 ## Clients
 
-`connect-es` generates the TypeScript client; the SvelteKit app depends on `@repo/contracts` and never hand-writes request types. Go callers use the generated `v1connect.New<Domain>ServiceClient` with an `otelhttp`-wrapped transport. Python uses the stubs from the same `buf.gen.yaml`.
+`connect-es` generates the TypeScript client; consumers import generated types from `@repo/contracts` and never hand-write request types. Go callers use the generated `v1connect.New<Domain>ServiceClient` with an `otelhttp`-wrapped transport. Python uses the stubs from the same `buf.gen.yaml`.

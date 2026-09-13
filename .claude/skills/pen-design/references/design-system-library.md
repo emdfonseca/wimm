@@ -12,7 +12,7 @@
 packages/ui/design/product-ui.lib.pen
 ```
 
-The library defines reusable mechanics (app shell, breadcrumbs, tabs, dialogs, drawers, confirmation patterns), never the product's route hierarchy or journey-specific content.
+The library is where reusable mechanics belong (app shell, breadcrumbs, tabs, dialogs, drawers, confirmation patterns), never the product's route hierarchy or journey-specific content.
 
 ```text
 00 · README
@@ -149,6 +149,6 @@ motion.duration.*
 motion.reduced.*
 ```
 
-The token set matches engineering (`storybook/references/tokens.md`); do not add tokens solely for documentation.
+The names above are direction, not a ceiling or an inventory: a project adds what it needs and omits what it doesn't. Values live in the project's `tokens.css` (`storybook/references/tokens.md`); do not add tokens solely for documentation.
 
 ---
