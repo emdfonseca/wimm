@@ -1,6 +1,6 @@
 ---
 name: storybook-svelte
-description: How the pen.dev design system becomes Storybook stories in a SvelteKit project - which layers get stories (Atoms through Templates, never Pages or journeys), how design states become the story set, how Light/Dark and Compact/Medium/Wide map to globals and viewports instead of duplicated stories, and how accessibility contracts become play functions and a11y checks. Use this whenever someone writes, reviews, organizes, or names a .stories.svelte file; sets up or changes .storybook/main.ts or preview.ts; asks where stories live or what should have one; builds a component, template, or app shell that came out of a .pen design; wires Storybook into CI or testing; or asks how to show components, variants, states, themes, or responsive behavior in Storybook. Reach for it even when the ask is a single component ("add a story for the button", "show this in dark mode") - the answer is usually a global or an arg, not another story.
+description: How the pen.dev design system becomes Storybook stories in a SvelteKit project - which layers get stories (Atoms through Pages, where a Page means the pure screen component and never the connected route or the journey), how design states become the story set, how Light/Dark and Compact/Medium/Wide map to globals and viewports instead of duplicated stories, and how accessibility contracts become play functions and a11y checks. Use this whenever someone writes, reviews, organizes, or names a .stories.svelte file; sets up or changes .storybook/main.ts or preview.ts; asks where stories live or what should have one; builds a component, template, screen, or app shell that came out of a .pen design; asks whether a page like sign-in or dashboard should have a story; wires Storybook into CI or testing; or asks how to show components, variants, states, themes, or responsive behavior in Storybook. Reach for it even when the ask is a single component ("add a story for the button", "show this in dark mode") - the answer is usually a global or an arg, not another story.
 ---
 
 # Storybook for the Svelte design system
@@ -17,13 +17,14 @@ Atom                →     Atoms/<Name>
 Molecule            →     Molecules/<Name>
 Organism            →     Organisms/<Name>
 Template            →     Templates/<Name>
-Page                →     not a story — it is a SvelteKit route
+Page                →     Pages/<Name> — the PURE screen component only
+(route module)      →     not a story — +page.svelte wires data and navigation
 Journey             →     not a story — it lives in the .pen file and in e2e tests
 ```
 
 ## Start here, every time
 
-1. **Which layer is this?** That decides the story title and whether it belongs here at all. Pages and journeys do not get stories — putting them here duplicates routing, data, and flow that Storybook cannot honestly represent.
+1. **Which layer is this?** That decides the story title. Every layer through Pages gets stories; journeys do not, and neither does a connected route module — putting those here means mocking routing and data until the story verifies the mocks.
 2. **What are its states?** The story set comes from the design: the local states beside the journey step, plus the stress fixtures. Not from imagination, and not one story per visual variant.
 3. **Is this a new story, or an arg / global / play step?** Most additions are an arg (component API), a global (theme, viewport), or an assertion inside an existing story. Add a story only for a genuinely distinct state.
 
@@ -97,4 +98,4 @@ Colour ramps, spacing scales, and type scales belong in an MDX docs page that re
 - **A component is "done"** when every design state has a story, the a11y addon is clean, and its accessibility contract has a play function. Visual completeness alone is not done — see `references/accessibility.md`.
 - **Before a library release** — the design standard's §10.3 checklist has counterparts here: every adopted theme renders, narrow and wide viewports hold, long-text and empty fixtures exist. `references/states-and-fixtures.md` lists them.
 - **When a design changes** — the story set changes with it. A removed state leaves a stale story; a new state that never reaches Storybook is invisible to review.
-- **When you see a story that is really a page** — data fetching, routing, multiple organisms wired to a flow — say so. That belongs in a route and an e2e test, and leaving it here makes Storybook slow and dishonest about what it verifies.
+- **When a story needs heavy mocking** — `$app/state`, load functions, fetch — the component is not decomposed. Split the pure screen out of the route; the story gets simpler and the component gets testable. Reaching for mocks instead is how Storybook slowly becomes a slow integration suite that verifies its own fixtures.

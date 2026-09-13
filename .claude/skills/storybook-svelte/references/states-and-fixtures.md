@@ -19,6 +19,15 @@ Keep names recognisable across both artifacts. `Validation error` on the canvas 
 
 **Template** — one story per genuinely distinct shell composition, with placeholder regions. Fluid adaptation is a viewport global, not extra stories.
 
+**Page (pure screen)** — the journey step's local states, which is usually where the story set pays for itself:
+
+```text
+Pages/SignIn      Default · InvalidCredentials · Submitting · AccountLocked · ServiceUnavailable
+Pages/Dashboard   Loading · Empty · Populated · PartialData · LoadError · PermissionDenied
+```
+
+Data arrives as props, actions leave as callbacks (`onsubmit`, `onretry`) spied with `fn()`. If a state cannot be reached by changing props, the screen is still connected to something it should not be — see `references/taxonomy.md`. The journey that strings these screens together is still e2e territory.
+
 ## Stress fixtures are not optional decoration
 
 `LongContent` and `Empty` are where layout actually breaks, and they are cheap:
