@@ -149,6 +149,6 @@ motion.duration.*
 motion.reduced.*
 ```
 
-The token set matches engineering (`storybook-svelte/references/tokens.md`); do not add tokens solely for documentation.
+The token set matches engineering (`storybook/references/tokens.md`); do not add tokens solely for documentation.
 
 ---

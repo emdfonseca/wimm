@@ -1,5 +1,5 @@
 ---
-name: storybook-svelte
+name: storybook
 paths:
   - "**/*.stories.svelte"
   - "**/.storybook/**"

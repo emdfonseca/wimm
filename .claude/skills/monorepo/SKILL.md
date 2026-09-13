@@ -1,5 +1,5 @@
 ---
-name: monorepo-standard
+name: monorepo
 paths:
   - "justfile"
   - "**/justfile"

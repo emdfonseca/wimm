@@ -1,5 +1,5 @@
 ---
-name: pen-design-standard
+name: pen-design
 description: "pen.dev design organization: journey .pen vs .lib.pen ownership, theme axes vs frames, local state vs branch, frame naming, task surfaces. Use whenever work touches a .pen or .lib.pen file or the pencil MCP tools, or the ask is to design, mock up, lay out, or restructure a screen, flow, state, modal, drawer, app shell, design system, token, or theme - even 'add dark mode' or 'make it responsive'."
 ---
 
@@ -78,7 +78,7 @@ Inline for one small value. Modal for a short blocking decision or compact task.
 
 ### A Page is one design artifact and two code artifacts
 
-Pages live in journey files, not the library. In code a Page is a presentational screen component (data in as props, intent out as callbacks) plus a thin route module; the design describes only the first, so every designed state is reachable by setting props (`storybook-svelte` covers how those states are storied).
+Pages live in journey files, not the library. In code a Page is a presentational screen component (data in as props, intent out as callbacks) plus a thin route module; the design describes only the first, so every designed state is reachable by setting props (`storybook` covers how those states are storied).
 
 ### Accessibility is not a phase or an axis
 

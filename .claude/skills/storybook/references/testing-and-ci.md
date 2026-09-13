@@ -8,7 +8,7 @@ Installing the Vitest addon into a project that already has `@storybook/addon-a1
 
 ## just recipes
 
-Recipes live in the package justfile (`monorepo-standard`): `just dev packages/ui` starts Storybook, `just check packages/ui` runs the story tests. No separate `just storybook` verb.
+Recipes live in the package justfile (`monorepo`): `just dev packages/ui` starts Storybook, `just check packages/ui` runs the story tests. No separate `just storybook` verb.
 
 ## CI
 

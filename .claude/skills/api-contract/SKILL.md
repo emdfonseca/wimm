@@ -14,7 +14,7 @@ Our callers → Connect over protobuf. Third parties and webhooks → REST + Ope
 
 ## Rules
 
-1. Contract first. The `.proto` (or OpenAPI document) is written and generated before the handler. Handlers implement the generated interface; `gen/` is never edited (protect-generated hook, `monorepo-standard`).
+1. Contract first. The `.proto` (or OpenAPI document) is written and generated before the handler. Handlers implement the generated interface; `gen/` is never edited (protect-generated hook, `monorepo`).
 2. One error vocabulary: Connect codes for both protocols, mapped from domain errors once at the handler boundary. Nothing internal crosses it.
 3. Every list pages by cursor. Every retryable mutation takes an idempotency key. Every RPC states its deadline in its contract comment.
 4. Additive only within a major. `buf breaking --against '.git#branch=main'` fails CI; breaking → new `v2` package beside `v1`.

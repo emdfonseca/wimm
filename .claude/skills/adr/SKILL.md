@@ -2,7 +2,7 @@
 name: adr
 description: Record an architecture decision as docs/decisions/NNNN-kebab-title.md. Use when the user says adr, "record this decision", or when /ship flags a missing ADR for a new dependency, service, public contract, or schema.
 argument-hint: "[title]"
-allowed-tools: Bash(git *) Bash(ls *) Read Write Glob
+allowed-tools: Read Write Glob
 ---
 
 # ADR
@@ -14,4 +14,4 @@ Title: $ARGUMENTS
 3. Status is one of `Proposed`, `Accepted`, `Superseded by NNNN`.
 4. ≤ 1 page. State present truth; no history narrative, no "previously", no dates.
 5. An accepted ADR is never edited. Changing the decision → new ADR, and set the old one's Status to `Superseded by NNNN`.
-6. Report the path and stop. Commit only if asked.
+6. Report the path and stop. `/commit` if the user asks.
