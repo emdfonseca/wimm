@@ -1,5 +1,9 @@
 ---
 name: storybook-svelte
+paths:
+  - "**/*.stories.svelte"
+  - "**/.storybook/**"
+  - "**/*.mdx"
 description: How the pen.dev design system becomes Storybook stories in a SvelteKit project - which layers get stories (Atoms through Pages, where a Page means the pure screen component and never the connected route or the journey), how design states become the story set, how Light/Dark and Compact/Medium/Wide map to globals and viewports instead of duplicated stories, and how accessibility contracts become play functions and a11y checks. Use this whenever someone writes, reviews, organizes, or names a .stories.svelte file; sets up or changes .storybook/main.ts or preview.ts; asks where stories live or what should have one; builds a component, template, screen, or app shell that came out of a .pen design; asks whether a page like sign-in or dashboard should have a story; wires Storybook into CI or testing; or asks how to show components, variants, states, themes, or responsive behavior in Storybook. Reach for it even when the ask is a single component ("add a story for the button", "show this in dark mode") - the answer is usually a global or an arg, not another story.
 ---
 
