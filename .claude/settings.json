@@ -15,6 +15,26 @@
     "svelte@svelte": true,
     "protobuf@buf-plugins": true
   },
+  "permissions": {
+    "allow": [
+      "Bash(just --list)",
+      "Bash(just check:*)",
+      "Bash(just test:*)",
+      "Bash(just lint:*)",
+      "Bash(just fmt:*)",
+      "Bash(just build:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(go test:*)",
+      "Bash(go vet:*)",
+      "Bash(go build:*)",
+      "Bash(buf lint:*)",
+      "Bash(buf breaking:*)",
+      "Bash(devbox run:*)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {
@@ -24,6 +44,17 @@
             "type": "command",
             "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-dangerous-git.py",
             "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-touched.py",
+            "timeout": 300
           }
         ]
       }
