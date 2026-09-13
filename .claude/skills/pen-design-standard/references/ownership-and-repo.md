@@ -1,3 +1,5 @@
+<!-- Generated from docs/pen-dev-product-design-organization-standard.md
+     by tools/split-standard.py. Edit the standard, not this file. -->
 ## 3. Repository and ownership model
 
 The design organization has two distinct homes:
@@ -87,4 +89,3 @@ When a Page participates in several journeys, name one owner and canonical frame
 When a library, token, or shared Page changes, review its registered consumers, update affected journey references, and reconcile the code mapping. Local overrides must document intent; overrides to accessibility-critical properties need the same review as the underlying contract.
 
 ---
-

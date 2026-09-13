@@ -1,3 +1,5 @@
+<!-- Generated from docs/pen-dev-product-design-organization-standard.md
+     by tools/split-standard.py. Edit the standard, not this file. -->
 ## 8. Design-system library
 
 **In this file:**
@@ -422,4 +424,3 @@ This is generally better than creating many almost-identical Card components for
 Document each slot's purpose, allowed product content by team convention, empty behavior, sizing/overflow, and accessibility responsibility. pen.dev suggestions are advisory (Section 2.10); enforce any runtime restrictions in the code API when needed.
 
 ---
-

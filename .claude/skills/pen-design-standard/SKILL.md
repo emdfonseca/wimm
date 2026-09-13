@@ -31,6 +31,8 @@ Three questions decide almost everything. Answer them before opening the editor:
 
 SKILL.md carries the rules you need constantly. Everything else lives in `references/` — read the file when its situation comes up, not preemptively.
 
+Those reference files are generated from `docs/pen-dev-product-design-organization-standard.md`, which is the canonical standard. Edit the standard and run `python3 tools/split-standard.py`; edits made directly to `references/` are overwritten.
+
 | Read this | When |
 |---|---|
 | `references/project-setup.md` | Starting a project or feature; filling or auditing the Project Setup Record; checking Definition of Ready. Long — it has the full category list and the copy-paste record. |
@@ -86,6 +88,17 @@ Left → right is progress through a path. Top → bottom is responsive regime. 
 ### Task surfaces
 
 Inline for one small value. Modal for a short blocking decision or compact task. Drawer when a moderate task benefits from visible page context — and always state modal or non-modal. Full page when the task is complex, deep-linkable, recoverable, or likely to grow. Destructive actions get a confirmation dialog naming what is affected, not a drawer just because editing used one. For every overlay, say whether it is **route-backed** or **ephemeral**; that decision drives Back, refresh, analytics, and focus behavior.
+
+### A Page is one design artifact and two code artifacts
+
+Pages stay out of the shared library — they are product screens, so they live in journey files. That is a statement about *design* ownership, not a claim that a Page has no implementation counterpart. In code it becomes two:
+
+```text
+presentational screen component   data in as properties, intent out as callbacks
+route / view module               fetching, session, permissions, navigation
+```
+
+The design describes the first. Keeping it free of data wiring is what lets each designed state — loading, validation error, empty, permission denied — be rendered and reviewed by setting properties. When a state can only be produced by standing up routing or a data layer, the states in the design have quietly become unverifiable. `references/design-to-code.md` §11.1.2 has the detail; if the implementation uses Storybook, the `storybook-svelte` skill covers how those states are storied.
 
 ### Accessibility is not a phase or an axis
 

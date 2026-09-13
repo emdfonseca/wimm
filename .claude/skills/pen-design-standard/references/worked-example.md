@@ -1,3 +1,5 @@
+<!-- Generated from docs/pen-dev-product-design-organization-standard.md
+     by tools/split-standard.py. Edit the standard, not this file. -->
 ## 12. Worked example: create account
 
 ### File
@@ -185,4 +187,3 @@ Error, focus, disabled, and success states remain identifiable in Light and Dark
 ```
 
 ---
-

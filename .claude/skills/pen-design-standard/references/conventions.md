@@ -1,3 +1,5 @@
+<!-- Generated from docs/pen-dev-product-design-organization-standard.md
+     by tools/split-standard.py. Edit the standard, not this file. -->
 # pen.dev Product Design Organization Standard
 
 > **Purpose:** Define how we organize product design in pen.dev so multiple user journeys, success and failure paths, responsive layouts, light/dark themes, accessibility requirements, reusable Atomic Design assets, and design-to-code work stay understandable as the product grows.
@@ -21,7 +23,6 @@ This is a reference standard for organizing design work, with setup and review p
 **Authority:** The detailed clauses define the standard; examples and checklists apply them. Record approved team-convention exceptions with scope, rationale, owner, impact, and review date. An internal exception does not waive an external requirement.
 
 ---
-
 ## 1. Scope and organizing model
 
 A product design contains several different kinds of information. The biggest source of canvas disorder is representing all of them by duplicating screens.
@@ -77,4 +78,3 @@ Accessibility = requirements applied across all layers
 ```
 
 ---
-

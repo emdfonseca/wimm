@@ -1,3 +1,5 @@
+<!-- Generated from docs/pen-dev-product-design-organization-standard.md
+     by tools/split-standard.py. Edit the standard, not this file. -->
 ## 2. pen.dev capabilities and limits
 
 **In this file:**
@@ -315,4 +317,3 @@ Do not assume every pen.dev component is a Molecule, and do not create separate 
 Canvas arrows, state frames, accessibility annotations, and the `prototypes/` folder are organizational representations. They do not establish routing, focus management, live announcements, or interactive state transitions by themselves. Record the preview/runtime used for any executable prototype and which behaviors it exercises. Verify product behavior in the target implementation.
 
 ---
-

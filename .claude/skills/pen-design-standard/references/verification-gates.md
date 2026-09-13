@@ -1,3 +1,5 @@
+<!-- Generated from docs/pen-dev-product-design-organization-standard.md
+     by tools/split-standard.py. Edit the standard, not this file. -->
 ## 10. Verification and readiness gates
 
 ### 10.1. Ready for build
@@ -138,4 +140,3 @@ High-content-density examples
 For theme testing, set the relevant frame's theme explicitly rather than recoloring instances manually.
 
 ---
-

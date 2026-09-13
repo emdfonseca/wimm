@@ -1,3 +1,5 @@
+<!-- Generated from docs/pen-dev-product-design-organization-standard.md
+     by tools/split-standard.py. Edit the standard, not this file. -->
 ## 6. Navigation and task surfaces
 
 **In this file:**
@@ -333,4 +335,3 @@ What the actual form contains
 The library defines **how the mechanism behaves**. The journey defines **when and why it is used**.
 
 ---
-

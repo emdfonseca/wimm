@@ -1,3 +1,5 @@
+<!-- Generated from docs/pen-dev-product-design-organization-standard.md
+     by tools/split-standard.py. Edit the standard, not this file. -->
 ## 7. Journeys and canvas organization
 
 **In this file:**
@@ -369,4 +371,3 @@ J05.E · Checkout · Item becomes unavailable
 Do not append `Light` or `Dark` to every frame name when the frame's `Color` theme value already expresses it.
 
 ---
-

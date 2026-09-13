@@ -2736,11 +2736,26 @@ Atom                ↔    small reusable control
 Molecule            ↔    focused composition of controls
 Organism            ↔    reusable section / complex interaction
 Template            ↔    page-level scaffold / shell
-Page                ↔    route/view state in the product app
+Page                ↔    presentational screen component + the route that wires it
 Journey             ↔    cross-view user flow and behavior
 ```
 
 The repository does not have to mirror these labels mechanically, but the same asset should not be called an `Organism` in design and a `primitive` in engineering without a deliberate reason.
+
+#### 11.1.2. A Page maps to two code artifacts
+
+A Page is one design artifact and two implementation ones, and keeping them separate is what makes a designed screen reviewable after it is built:
+
+```text
+Presentational screen component   receives data as properties, emits intent as callbacks;
+                                  owns everything the Page design specifies
+Route / view module               fetches data, holds session and permission context,
+                                  performs navigation; owns nothing visual
+```
+
+The design artifact describes the presentational half. Its states — loading, validation error, empty, permission denied — are reachable by changing properties, which is what allows each one to be rendered, reviewed, and tested in isolation against the design. When a state can only be produced by standing up routing or a data layer, the split has not been made, and the design's states become unverifiable in practice.
+
+Record which component implements a Page in the journey's implementation notes, the same way tokens and reusable assets are mapped. The route module needs no design counterpart; it implements the journey's routing, entry, and return contracts rather than any single frame.
 
 ---
 

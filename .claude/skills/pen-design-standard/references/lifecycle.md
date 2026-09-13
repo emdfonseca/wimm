@@ -1,3 +1,5 @@
+<!-- Generated from docs/pen-dev-product-design-organization-standard.md
+     by tools/split-standard.py. Edit the standard, not this file. -->
 ## 9. Lifecycle and change management
 
 ### 9.1. Artifact status
@@ -113,4 +115,3 @@ Do not leave multiple unlabeled “final” versions beside implementation-ready
 This release record is a team workflow. A library filename, file conversion, or pnpm package version does not by itself guarantee compatible design imports.
 
 ---
-
