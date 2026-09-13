@@ -1,0 +1,4 @@
+# Claude Code per-machine state (config dir selected by .envrc)
+.claude-home/
+.claude/plans/
+.claude/settings.local.json
