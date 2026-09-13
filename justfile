@@ -26,9 +26,17 @@ clean dir="": (_fanout "clean" dir)
 _fanout verb dir:
     @if [ -z "{{dir}}" ]; then just all {{verb}}; else just run {{verb}} {{dir}}; fi
 
-# Regenerate cross-language contract clients
-gen:
-    @just run gen packages/contracts
+# Regenerate cross-language contract clients and the decision index
+gen: adr-index
+    @if [ -d packages/contracts ]; then just run gen packages/contracts; fi
+
+# Rebuild .claude/rules/decisions.md from docs/decisions/
+adr-index:
+    @python3 .claude/skills/adr/assets/adr-index.py
+
+# Fail if the decision index is stale
+adr-index-check:
+    @python3 .claude/skills/adr/assets/adr-index.py --check
 
 # What CI runs
-ci: (all "check")
+ci: adr-index-check (all "check")
