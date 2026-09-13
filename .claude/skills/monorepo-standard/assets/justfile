@@ -1,7 +1,8 @@
 # Root justfile — delegation only. Build logic lives in package justfiles.
 set shell := ["bash", "-uc"]
 
-pkgs := "apps/web apps/api packages/ui packages/telemetry"
+# Every apps/* and packages/* directory that has a justfile
+pkgs := `ls -d apps/*/justfile packages/*/justfile 2>/dev/null | xargs -n1 dirname | tr '\n' ' '`
 
 # List available recipes
 default:
@@ -31,11 +32,3 @@ gen:
 
 # What CI runs
 ci: (all "check")
-
-# Directories changed versus a base ref
-_affected base="origin/main":
-    @git diff --name-only {{base}}...HEAD | grep -E '^(apps|packages)/' | cut -d/ -f1,2 | sort -u
-
-# check, but only for changed packages
-ci-affected base="origin/main":
-    @for d in $(just _affected {{base}}); do just run check "$d" || exit 1; done

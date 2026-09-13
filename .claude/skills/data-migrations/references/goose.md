@@ -18,6 +18,7 @@ Names are `<version>_<snake_case_description>.sql`; the description says what ch
 ```sql
 -- +goose Up
 SET lock_timeout = '5s';
+SET statement_timeout = '30s';
 ALTER TABLE invoices ADD COLUMN currency text;
 
 -- +goose Down
@@ -44,7 +45,8 @@ Multi-statement functions or triggers with semicolons inside need `-- +goose Sta
 var migrations embed.FS
 
 func Migrate(ctx context.Context, db *sql.DB) error {
-	provider, err := goose.NewProvider(goose.DialectPostgres, db, migrations, /* no out-of-order */)
+	// No goose.WithAllowOutofOrder: out-of-order application stays off.
+	provider, err := goose.NewProvider(goose.DialectPostgres, db, migrations)
 	if err != nil { return err }
 	_, err = provider.Up(ctx)
 	return err

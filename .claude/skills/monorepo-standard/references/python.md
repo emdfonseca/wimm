@@ -55,4 +55,4 @@ check: lint
     just test
 ```
 
-`ruff` covers formatting and linting; `mypy` (or `pyright`) runs in `check`, not `lint`, so `lint` stays fast enough to run constantly. Add `import-linter` contracts when the Python side grows past a couple of packages — see `references/cohesion.md`.
+`ruff` covers formatting and linting; `mypy` runs in `check`, not `lint`, so `lint` stays fast.

@@ -1,12 +1,23 @@
 #!/usr/bin/env bash
 # PreToolUse (Edit|Write): refuse edits to generated files.
-# Exit 2 blocks the tool call; stderr is shown to Claude as the reason.
+#
+# Install: copy assets/hooks/ to .claude/hooks/ in the monorepo, chmod +x this
+# file, merge settings.hooks.json into .claude/settings.json.
+#
+# Protocol: the tool call arrives as JSON on stdin (tool_name, tool_input.file_path).
+# Exit 2 blocks the call and shows stderr to Claude as the reason; exit 0 allows it.
+# Keep the message specific: name the source to edit and the command to run.
+#
+# The boundary linter (depguard, dependency-cruiser, import-linter) stays in
+# `just lint`, not in a hook: it is slow and fires on transiently broken trees.
+#
+# Extend the pattern list when a new generator lands (sqlc, openapi-typescript).
+# Keep it in sync with .gitattributes linguist-generated entries.
 set -euo pipefail
 
 path=$(python3 -c 'import json,sys; print(json.load(sys.stdin).get("tool_input",{}).get("file_path",""))')
 [ -n "$path" ] || exit 0
 
-# Keep in sync with .gitattributes linguist-generated entries.
 generated=(
   '*/packages/contracts/gen/*'
   '*.pb.go'

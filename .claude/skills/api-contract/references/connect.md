@@ -1,7 +1,5 @@
 # Connect
 
-Connect (connectrpc.com) speaks gRPC, gRPC-Web, and its own HTTP/JSON-friendly protocol from one handler. That is why it is the default: Go services talk to each other over gRPC, the SvelteKit app calls the same handlers from the browser with `connect-es`, and nobody maintains a gateway.
-
 ## Layout
 
 ```text
@@ -11,10 +9,10 @@ packages/contracts/
 ├── proto/<org>/billing/v1/
 │   ├── billing.proto        # messages + service
 │   └── errors.proto         # domain error detail messages, if any
-└── gen/                     # generated; never edited (hook-enforced)
+└── gen/                     # generated; never edited (protect-generated hook)
 ```
 
-One proto package per domain per major version. A domain that needs two services still lives in one package; a package that is only messages shared by several domains is a smell — it is usually the `shared` junk drawer from the cohesion rules, wearing a `.proto` extension.
+One proto package per domain per major version. A package that is only messages shared by several domains is the `common` junk drawer wearing a `.proto` extension.
 
 ## buf
 
@@ -29,7 +27,7 @@ breaking:
   use: [FILE]
 ```
 
-`buf lint` enforces naming (`<org>.<domain>.v1`, `VerbNoun` RPCs, request/response suffixes). `buf breaking --against '.git#branch=main'` in CI is what makes "additive only" a failing check rather than a review opinion. Both belong in the `packages/contracts` justfile's `lint` verb.
+`buf lint` and `buf breaking --against '.git#branch=main'` both run from the `packages/contracts` justfile's `lint` verb.
 
 ## Service definition
 
@@ -44,7 +42,7 @@ service BillingService {
 
 message CreateInvoiceRequest {
   string customer_id = 1;
-  string idempotency_key = 2;   // see pagination-idempotency-deadlines.md
+  string idempotency_key = 2;
   repeated LineItem items = 3;
 }
 
@@ -60,7 +58,7 @@ message ListInvoicesResponse {
 }
 ```
 
-Reserve removed field numbers (`reserved 4;`) so they are never reused with a different meaning by accident.
+Reserve removed field numbers (`reserved 4;`).
 
 ## Handler
 
@@ -74,12 +72,12 @@ func (s *Server) CreateInvoice(ctx context.Context, req *connect.Request[v1.Crea
 }
 ```
 
-Handlers convert, call the domain, convert back, and map errors. Business logic in a handler is business logic that cannot be tested without the transport.
+Handlers convert, call the domain, convert back, map errors. No business logic.
 
 ## Interceptors
 
-One chain, declared once per service, in this order: recovery, telemetry (`otelconnect`), auth, validation, then the handler. Auth before validation so unauthenticated callers cannot probe the schema. The observability skill owns what the telemetry interceptor records.
+One chain per service, in this order: recovery, telemetry (`otelconnect`), auth, validation, handler. Auth before validation so unauthenticated callers cannot probe the schema.
 
-## Client side
+## Clients
 
-`connect-es` generates TypeScript clients from the same protos; the SvelteKit app depends on `@repo/contracts` and never hand-writes request types. Go callers use the generated `v1connect.NewBillingServiceClient` with an `otelhttp`-wrapped transport. Python uses the generated stubs from the same `buf.gen.yaml`.
+`connect-es` generates the TypeScript client; the SvelteKit app depends on `@repo/contracts` and never hand-writes request types. Go callers use the generated `v1connect.New<Domain>ServiceClient` with an `otelhttp`-wrapped transport. Python uses the stubs from the same `buf.gen.yaml`.

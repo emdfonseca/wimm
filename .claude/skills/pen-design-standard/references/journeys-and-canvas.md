@@ -17,40 +17,18 @@
 
 ### 7.1. What counts as a journey?
 
-A journey is a **user goal**, not simply a page or route.
-
-Good journey names:
+A journey is a **user goal**, not a page or route.
 
 ```text
-Create account
-Recover password
-Complete first purchase
-Upgrade subscription
-Invite teammate
-Create project
-Export report
-Cancel subscription
-```
-
-Less useful journey names:
-
-```text
-Settings page
-Modal screens
-Desktop screens
-Forms
-New UI
+✅ Create account · Recover password · Invite teammate · Export report
+❌ Settings page · Modal screens · Wide screens · Forms
 ```
 
 ---
 
 ### 7.2. When to use a separate journey file
 
-For a small product, closely related journeys can share a `.pen` file.
-
-For a medium or large product, use one file per major journey family or product area.
-
-Examples:
+One file per journey family or product area; closely related journeys share a file.
 
 ```text
 01-onboarding.pen
@@ -59,21 +37,11 @@ Examples:
 06-account.pen
 ```
 
-Create a separate file when one or more are true:
-
-- the journey contains many screens or branches;
-- different teams own the area;
-- the file becomes difficult to scan at zoomed-out level;
-- the journey has substantial independent review/handoff work;
-- the area evolves on a different cadence from neighboring journeys.
-
-Do **not** create separate journey files for every small error state.
+Split a file when it has many screens or branches, becomes hard to scan zoomed out, or evolves on a different cadence from its neighbors. Never one file per error state.
 
 ---
 
 ### 7.3. Standard journey file structure
-
-Every journey file should follow approximately the same top-to-bottom zoning:
 
 ```text
 ┌──────────────────────────────────────────────────────────────┐
@@ -100,21 +68,16 @@ Every journey file should follow approximately the same top-to-bottom zoning:
 
 ┌──────────────────────────────────────────────────────────────┐
 │ 90 · TEMPORARY NOTES                                         │
-│ Move obsolete work to the app design/archive/ directory.     │
 └──────────────────────────────────────────────────────────────┘
 ```
 
----
-
 **Local-state placement:** Keep canonical local-state frames beside their parent step. Zone 30 indexes those frames by journey/path/step and may contain large stress cases that cannot fit beside the step. Do not maintain a second editable copy of the same state. Zone 40 contains explicitly labeled QA comparisons with a source-frame reference and reviewed revision.
 
-If setup is local to this file, place the Section 4.15 setup frame before the journey overview and group both in the `00` documentation zone. In a multi-journey file, give each journey its own overview and path groups; file-level documentation indexes them.
+If setup is local to this file, place the `00 · PROJECT SETUP` frame before the journey overview and group both in the `00` documentation zone. In a multi-journey file, give each journey its own overview and path groups; file-level documentation indexes them.
 
 ---
 
 ### 7.4. Journey overview
-
-Start the file with a compact overview.
 
 ```text
 J05 · CHECKOUT
@@ -130,47 +93,34 @@ Primary success outcome: Order confirmed
 Success destination: Order confirmation / order detail
 ```
 
-For complex journeys add only the useful context:
-
-```text
-Prerequisites
-Permissions / roles
-Business constraints
-Important analytics events
-Related feature/route
-Owner / team
-```
+Add prerequisites, permissions, business constraints, analytics events, or related routes only when they carry information.
 
 ---
 
 ### 7.5. Canvas grammar: left → right means progress
 
-Use **left → right** for progression through a path on the documentation canvas. This canvas-reading convention does not dictate text direction, navigation order, or layout in a localized product. Specify right-to-left behavior independently.
+Left → right is progression through a path on the canvas. This is a reading convention; it does not dictate text direction or layout in a localized product.
 
 ```text
 [01 Cart] → [02 Delivery] → [03 Payment] → [04 Review] → [05 Confirmation]
 ```
 
-Do not place steps wherever empty canvas exists.
-
 #### Top → bottom means responsive composition
-
-Within a path, organize meaningful layout regimes vertically:
 
 ```text
                   01 Cart      02 Delivery      03 Payment      04 Review      05 Confirmation
 
-DESKTOP           [ frame ]    [ frame ]        [ frame ]       [ frame ]      [ frame ]
+WIDE              [ frame ]    [ frame ]        [ frame ]       [ frame ]      [ frame ]
 
-TABLET            [ frame ]    [ frame ]        [ frame ]       [ frame ]      [ frame ]
+MEDIUM            [ frame ]    [ frame ]        [ frame ]       [ frame ]      [ frame ]
 
-MOBILE            [ frame ]    [ frame ]        [ frame ]       [ frame ]      [ frame ]
+COMPACT           [ frame ]    [ frame ]        [ frame ]       [ frame ]      [ frame ]
 ```
 
-If Tablet adds no useful design information, do not duplicate it merely to complete the matrix. Add a note such as:
+If Medium adds no structural information, do not draw it. Add a note:
 
 ```text
-Tablet follows the Wide shell. Apply Device=Tablet only if Tablet tokens exist;
+Medium follows the Wide shell. Apply Device=Medium only if Medium tokens exist;
 otherwise use the adopted shared token context. See the mapping in project setup.
 ```
 
@@ -178,25 +128,19 @@ otherwise use the adopted shared token context. See the mapping in project setup
 
 ### 7.6. Primary success path
 
-Every journey has one clearly identified primary success path.
-
 ```text
 J05.A · CHECKOUT · PRIMARY SUCCESS
 
 01 Cart → 02 Delivery → 03 Payment → 04 Review → 05 Confirmation
 ```
 
-Keep the primary flow clean. It answers:
-
-> What happens when the intended journey succeeds normally?
-
-Do not interrupt this line with every possible validation error.
+The primary line shows normal success only; validation errors sit beside steps, not on this line.
 
 ---
 
 ### 7.7. Failure, recovery, alternative success, and exit paths
 
-Meaningful changes to the flow become branches. Record one primary path category and optional cause tags. Categories can describe outcome or purpose; permission and system conditions may be cause tags on a recovery path. Do not infer category from an identifier or duplicate a branch just to give it several classifications.
+Meaningful changes to the flow become branches. Record one primary path category and optional cause tags; do not duplicate a branch to give it several classifications.
 
 ```text
 03 Payment
@@ -220,7 +164,7 @@ Meaningful changes to the flow become branches. Record one primary path category
         Retry / exit
 ```
 
-Use the following controlled labels for primary category and optional cause tags:
+Controlled labels for primary category and cause tags:
 
 - **PRIMARY SUCCESS** — normal intended completion;
 - **ALTERNATIVE SUCCESS** — another valid completion route;
@@ -230,21 +174,9 @@ Use the following controlled labels for primary category and optional cause tags
 - **PERMISSION / ACCESS** — authentication or authorization blocks progress;
 - **SYSTEM INTERRUPTION** — network/service/timeout/dependency issue.
 
-Example path names (category is a separate metadata field):
-
-```text
-J05.A · Checkout · Primary success
-J05.B · Checkout · Card declined
-J05.C · Checkout · Payment timeout
-J05.D · Checkout · User cancels authentication
-J05.E · Checkout · Item becomes unavailable
-```
-
 ---
 
 ### 7.8. Local state or separate branch?
-
-This decision keeps journey files from becoming either incomplete or enormous.
 
 #### Keep it beside the screen when:
 
@@ -253,10 +185,8 @@ This decision keeps journey files from becoming either incomplete or enormous.
 - the recovery action is obvious and immediate;
 - no meaningful navigation/business-path change occurs.
 
-Example:
-
 ```text
-03 · Payment / Mobile
+03 · Payment / Compact
 
 [ Default ]   [ Validation error ]   [ Submitting ]   [ Server error ]
 ```
@@ -270,64 +200,46 @@ Example:
 - the user can reach a different end state;
 - the scenario requires explicit product review.
 
----
-
-For every documented transition, identify the trigger, precondition, resulting state, data preserved or changed, destination/rejoin step, and focus/status behavior. A timeout can leave the operation's result unknown; do not label it a confirmed failure without evidence. Define how status is checked and when retry is safe with engineering.
+For every documented transition, identify the trigger, precondition, resulting state, data preserved or changed, destination/rejoin step, and focus/status behavior. A timeout leaves the operation's result unknown; do not label it a confirmed failure without evidence.
 
 ---
 
 ### 7.9. Important screen states
 
-Capture states that materially affect behavior, accessibility, content, layout, or implementation.
-
-Typical categories:
-
 ```text
-PRIMARY
-[ Default ]
-
-TRANSIENT
-[ Loading ] [ Submitting ]
-
-RESULT
-[ Success ] [ Error ]
-
-CONTENT
-[ Empty ] [ Partial ] [ Long / max content ]
-
-ACCESS / SYSTEM
-[ Offline ] [ Permission denied ] [ Session expired ] [ Service unavailable ]
+PRIMARY        [ Default ]
+TRANSIENT      [ Loading ] [ Submitting ]
+RESULT         [ Success ] [ Error ]
+CONTENT        [ Empty ] [ Partial ] [ Long / max content ]
+ACCESS/SYSTEM  [ Offline ] [ Permission denied ] [ Session expired ] [ Service unavailable ]
 ```
 
-Do not draw every theoretical permutation.
+Draw the states that change behavior, accessibility, content, layout, or implementation — not every permutation.
 
 ---
 
 ### 7.10. Theme context and comparison frames
 
-Use the product-default Color value in the main flow. Set the frame's context explicitly when needed; do not manually recolor descendants. Configure themes using Section 2.7 and the responsive mapping in Section 5.3.1.
+Use the product-default Color value in the main flow. Set the frame's context explicitly when needed; do not manually recolor descendants (`pen-mechanics.md` §2.7).
 
-Zone 40 contains selected comparisons for every adopted presentation mode, focusing on forms, feedback, overlays, focus, and data graphics. Label each QA frame with its source frame and reviewed revision. Side-by-side copies are intentional test fixtures; they are not separate product specifications. Check the implementation scope using Section 10.2.
+Zone 40 contains selected comparisons for every adopted presentation mode, focusing on forms, feedback, overlays, focus, and data graphics. Label each QA frame with its source frame and reviewed revision. Side-by-side copies are test fixtures, not separate product specifications.
 
 ---
 
 ### 7.11. Journey naming convention
 
-Maintain an app-scoped journey registry containing ID, goal, owning file, owner, status, and related journeys. IDs remain stable when a journey moves or is renamed; do not reuse retired IDs. Filenames identify journey families/product areas and may have optional ordering prefixes. Their prefixes need not equal a journey ID.
+Journey IDs are stable when a journey moves or is renamed; retired IDs are never reused. Filenames identify journey families/product areas and may have optional ordering prefixes; the prefix need not equal a journey ID.
 
-Use lowercase kebab-case filenames. Use sentence case for human-readable names; uppercase zone/status labels are visual signage. Theme identifiers retain their exact declared casing. A fully qualified frame name is `J05.A / 03 · Payment / Mobile / Validation error`; short names below are acceptable inside an unambiguous journey/path group. Include the full identifier in review links, annotations, and exports. These human identifiers are distinct from pen.dev object IDs.
+Use lowercase kebab-case filenames. Use sentence case for human-readable names; uppercase zone/status labels are visual signage. Theme identifiers retain their exact declared casing. A fully qualified frame name is `J05.A / 03 · Payment / Compact / Validation error`; short names below are acceptable inside an unambiguous journey/path group. Include the full identifier in review links, annotations, and exports. These human identifiers are distinct from pen.dev object IDs.
 
-Allocate `.A` to primary success and stable additional path IDs to meaningful branches. Keep a step identifier stable; record display order separately if inserting a step would otherwise force renumbering. Responsive and local-state representations share the conceptual step ID. Optional themes may appear in QA labels for comparison, but not as a mandatory suffix on main-flow names.
+Allocate `.A` to primary success and stable additional path IDs to meaningful branches. Keep a step identifier stable; record display order separately if inserting a step would otherwise force renumbering. Responsive and local-state representations share the conceptual step ID. Themes may appear in QA labels for comparison, but not as a suffix on main-flow names.
 
 #### Journey IDs
 
 ```text
 J01 · Create account
 J02 · Sign in
-J03 · View dashboard
-J04 · Search
 J05 · Checkout
-J06 · Manage account
 J12 · Edit team member
 ```
 
@@ -353,19 +265,19 @@ J05.E · Checkout · Item becomes unavailable
 #### Responsive frames
 
 ```text
-03 · Payment / Desktop
-03 · Payment / Tablet
-03 · Payment / Mobile
+03 · Payment / Wide
+03 · Payment / Medium
+03 · Payment / Compact
 ```
 
 #### Local states
 
 ```text
-03 · Payment / Mobile / Default
-03 · Payment / Mobile / Validation error
-03 · Payment / Mobile / Submitting
+03 · Payment / Compact / Default
+03 · Payment / Compact / Validation error
+03 · Payment / Compact / Submitting
 ```
 
-Do not append `Light` or `Dark` to every frame name when the frame's `Color` theme value already expresses it.
+Do not append `Light` or `Dark` to frame names when the frame's `Color` theme value already expresses it.
 
 ---

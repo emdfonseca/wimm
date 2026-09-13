@@ -1,14 +1,12 @@
 # Adding an app or package
 
-Work through this in order. The steps that get skipped — workspace registration, the verb set, ownership — are precisely the ones that make a directory invisible to CI and to the next person.
-
 ## 1. Decide what it is
 
-- [ ] Deployable → `apps/`; importable → `packages/`; repo-local tooling → `tools/`.
+- [ ] Deployable → `apps/`; importable → `packages/`.
 - [ ] Name is a domain noun in kebab-case, not a technology (`billing`, not `billing-svc-go`).
-- [ ] It is not one of the banned names (`utils`, `common`, `shared`, `core`, `helpers`) — see `references/cohesion.md`.
+- [ ] Not a banned name (`lib`, `utils`, `common`, `misc`, `helpers`).
 - [ ] You can state its one reason to change in a sentence.
-- [ ] It is genuinely not an existing package. Two packages that will always change together should be one.
+- [ ] It is not an existing package. Two packages that always change together should be one.
 
 ## 2. Create it
 
@@ -20,25 +18,22 @@ Work through this in order. The steps that get skipped — workspace registratio
 ## 3. Register it
 
 - [ ] Workspace manifest updated: `pnpm-workspace.yaml`, `go.work`, or the uv workspace members.
-- [ ] Added to the root justfile's package list.
-- [ ] `CODEOWNERS` entry.
 - [ ] Any new tool it needs is pinned in `devbox.json`.
 
 ## 4. Wire the verbs
 
-- [ ] `justfile` implements `build`, `test`, `lint`, `fmt`, `check`, `dev`, `clean`.
+- [ ] `justfile` implements `build`, `test`, `lint`, `fmt`, `check`, `dev`, `clean` (the root justfile discovers it by this file).
 - [ ] Verbs that do not apply fail with a clear message rather than being absent.
 - [ ] `just check <dir>` passes from a clean clone.
 
 ## 5. Check the boundaries
 
-- [ ] Dependency direction is legal (`packages/` never depends on `apps/`).
+- [ ] Dependency direction is legal (`packages/` never depends on `apps/`; apps never import apps).
 - [ ] No cycle introduced.
 - [ ] Nothing shared with another package by copy — extract or generate instead.
-- [ ] Boundary linter rules updated if the package introduces a new layer.
 
 ## 6. Confirm
 
 - [ ] `devbox run -- just ci` passes.
 - [ ] Build outputs are gitignored.
-- [ ] It appears in `just --list` output the way a newcomer would expect to find it.
+- [ ] It appears in `just --list` output the way a newcomer would expect.

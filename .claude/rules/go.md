@@ -15,5 +15,6 @@ Decisions, not tutorials. Effective Go and the Code Review Comments apply as wri
 - **Context** — `ctx context.Context` is the first parameter of anything that does I/O or can block. Propagate it; `context.Background()` appears in `main` and tests only.
 - **Interfaces** — declared where consumed, sized to what the consumer uses. Return concrete types.
 - **Tests** — stdlib `testing`; table-driven with `t.Run`; external `_test` package by default; fakes over mocks; `go test -race ./...` in `just test`. No assertion library.
+- **Handler tests** — `net/http/httptest.NewServer` around the real Connect handler, called through the generated Connect client. No mocks of the transport.
 - **Lint** — root `.golangci.yml` inherited by every module; `depguard` encodes the dependency rules; `forbidigo` bans unstructured logging. `GOFLAGS=-mod=readonly` from devbox so builds never rewrite `go.mod`.
 - **Generated code** — `*.pb.go`, `*.connect.go`, `*.gen.go` are never edited; change the source and run `just gen`.

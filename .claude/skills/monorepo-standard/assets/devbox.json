@@ -1,14 +1,14 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.7/.schema/devbox.schema.json",
   "packages": [
-    "go@1.23",
+    "go@1.27",
     "nodejs@22",
-    "pnpm@9",
-    "uv@0.5",
-    "terraform@1.9",
-    "just@1.36",
-    "golangci-lint@1.61",
-    "protobuf@28"
+    "pnpm@10",
+    "uv@latest",
+    "just@latest",
+    "golangci-lint@2.13",
+    "buf@1.73",
+    "goose@3.28"
   ],
   "shell": {
     "init_hook": [

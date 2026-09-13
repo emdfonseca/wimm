@@ -2,10 +2,10 @@
 name := file_name(justfile_directory())
 
 build:
-    go build -o ../../dist/{{name}} ./cmd/{{name}}
+    go build -o dist/{{name}} ./cmd/{{name}}
 
 test:
-    go test ./...
+    go test -race ./...
 
 lint:
     golangci-lint run
@@ -20,3 +20,4 @@ dev:
 
 clean:
     go clean
+    rm -rf dist

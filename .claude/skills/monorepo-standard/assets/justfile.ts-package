@@ -19,4 +19,4 @@ dev:
     pnpm dev
 
 clean:
-    rm -rf dist .turbo
+    rm -rf dist

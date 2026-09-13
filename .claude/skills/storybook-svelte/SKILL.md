@@ -3,50 +3,47 @@ name: storybook-svelte
 paths:
   - "**/*.stories.svelte"
   - "**/.storybook/**"
-  - "**/*.mdx"
-description: How the pen.dev design system becomes Storybook stories in a SvelteKit project - which layers get stories (Atoms through Pages, where a Page means the pure screen component and never the connected route or the journey), how design states become the story set, how Light/Dark and Compact/Medium/Wide map to globals and viewports instead of duplicated stories, and how accessibility contracts become play functions and a11y checks. Use this whenever someone writes, reviews, organizes, or names a .stories.svelte file; sets up or changes .storybook/main.ts or preview.ts; asks where stories live or what should have one; builds a component, template, screen, or app shell that came out of a .pen design; asks whether a page like sign-in or dashboard should have a story; wires Storybook into CI or testing; or asks how to show components, variants, states, themes, or responsive behavior in Storybook. Reach for it even when the ask is a single component ("add a story for the button", "show this in dark mode") - the answer is usually a global or an arg, not another story.
+  - "**/src/**/*.mdx"
+description: "Storybook for the SvelteKit design system: which layers get stories (Atoms to pure-screen Pages, never routes or journeys), one story per state with theme and viewport as globals, a11y contracts as play functions. Use whenever writing, reviewing, or naming a .stories.svelte file, editing .storybook/main.ts or preview.ts, wiring it into tests or CI, or asked to show a state or theme in Storybook."
 ---
 
 # Storybook for the Svelte design system
 
-**Storybook is the implementation-side mirror of the `.lib.pen` design library.** The design library says what reusable UI exists and how it must behave; Storybook proves the built components actually do. If something is in the library, it has stories. If it is not in the library, it almost certainly does not belong in Storybook.
+Storybook mirrors the `.lib.pen` design library: a story is a *state*; theme and viewport are globals selected at view time. Never multiply stories by theme × viewport × state.
 
-That mirror relationship gives every rule below its shape — including the most important one, which is inherited directly from the canvas: **do not multiply stories by theme × viewport × state.** A story is a *state*. Theme and viewport are context, selected at view time.
+## What gets a story
 
-```text
-.lib.pen library          Storybook
-─────────────────────────────────────────────────────
-Foundations         →     tokens as CSS custom properties, documented not storied
-Atom                →     Atoms/<Name>
-Molecule            →     Molecules/<Name>
-Organism            →     Organisms/<Name>
-Template            →     Templates/<Name>
-Page                →     Pages/<Name> — the PURE screen component only
-(route module)      →     not a story — +page.svelte wires data and navigation
-Journey             →     not a story — it lives in the .pen file and in e2e tests
-```
+| Design layer | Storybook title | Notes |
+|---|---|---|
+| Foundations | `Foundations/*` MDX docs | Read live CSS custom properties; no story per token |
+| Atom | `Atoms/<Name>` | Every variant an arg, every state a story |
+| Molecule | `Molecules/<Name>` | Includes composed states (field + error + hint) |
+| Organism | `Organisms/<Name>` | Mock data as args; no network |
+| Template | `Templates/<Name>` | Placeholder regions, not real pages; one story per structurally distinct shell, fluid adaptation is the viewport global |
+| Page | `Pages/<Name>` | The **pure** screen component in `src/lib/screens/<Name>/`: data as props, actions as callbacks |
+| (route module) | — | `+page.svelte` / `+page.server.ts` wire data and navigation. Not a story. |
+| Journey | — | Lives in the `.pen` file; verified by e2e tests |
+
+If a Page story needs `$app/state`, a load function, or `fetch` mocked to render, the screen is still connected: split the pure screen out of the route instead of mocking.
 
 ## Start here, every time
 
-1. **Which layer is this?** That decides the story title. Every layer through Pages gets stories; journeys do not, and neither does a connected route module — putting those here means mocking routing and data until the story verifies the mocks.
-2. **What are its states?** The story set comes from the design: the local states beside the journey step, plus the stress fixtures. Not from imagination, and not one story per visual variant.
-3. **Is this a new story, or an arg / global / play step?** Most additions are an arg (component API), a global (theme, viewport), or an assertion inside an existing story. Add a story only for a genuinely distinct state.
+1. **Which layer is this?** That decides the title.
+2. **What are its states?** The local states beside the journey step plus the stress fixtures — not one story per visual variant.
+3. **New story, or an arg / global / play step?** Add a story only for a genuinely distinct state.
 
 ## Where to read next
 
-The API below is current as of the Storybook 10.2 docs (checked 2026-09-13). Storybook moves quickly — if something does not behave as described, fetch the current docs rather than working around it.
-
 | Read this | When |
 |---|---|
-| `references/setup.md` | Installing or changing `.storybook/main.ts`, `preview.ts`, framework and addon packages, SvelteKit mocking (`sveltekit_experimental`). |
-| `references/story-format.md` | Writing a `.stories.svelte` file: `defineMeta`, snippets, args, tags, naming, file placement. |
-| `references/taxonomy.md` | Deciding what gets a story, the title hierarchy, and where the Page/journey line falls. |
-| `references/states-and-fixtures.md` | Choosing the story set for a component; stress fixtures; mapping design states to story names. |
-| `references/theming-and-viewports.md` | Light/Dark via globals; Compact/Medium/Wide viewport presets matching the design frames; the one legitimate side-by-side case. |
-| `references/accessibility.md` | a11y addon config, play functions asserting focus/keyboard/name contracts, what automated checks can and cannot prove. |
-| `references/testing-and-ci.md` | `@storybook/addon-vitest`, running stories as tests, the `just` verbs, CI wiring. |
-| `references/tokens.md` | Design tokens as CSS custom properties; keeping story styling honest. |
-| `assets/` | Starter `main.ts`, `preview.ts`, and a `Component.stories.svelte` template. |
+| `references/setup.md` | Packages, `.storybook/main.ts`, `preview.ts`, SvelteKit mocking (`sveltekit_experimental`). |
+| `references/story-format.md` | Writing a `.stories.svelte` file: `defineMeta`, snippets, args, tags, titles. |
+| `references/states-and-fixtures.md` | The story set per layer; stress fixtures. |
+| `references/theming-and-viewports.md` | Light/Dark ↔ `light`/`dark` globals; Compact/Medium/Wide viewports; the one `ThemeQA` exception. |
+| `references/accessibility.md` | a11y addon config; contracts as play functions. |
+| `references/testing-and-ci.md` | `@storybook/addon-vitest`, stories as tests, CI. |
+| `references/tokens.md` | Design variable → CSS custom property mapping; layer → code vocabulary. |
+| `assets/` | Starter `preview.ts` and `Component.stories.svelte`. |
 
 ## Rules that are constantly needed
 
@@ -54,16 +51,14 @@ The API below is current as of the Storybook 10.2 docs (checked 2026-09-13). Sto
 
 ```text
 ✅ Default · Loading · ValidationError · Empty · LongContent · Disabled
-❌ ButtonDark · ButtonMobile · ButtonPrimaryDarkMobile
+❌ ButtonDark · ButtonCompact · ButtonPrimaryDarkCompact
 ```
 
-Theme and viewport are **globals**, switchable from the toolbar and settable per story when a state only makes sense in one context. Duplicating stories across them produces the same unreviewable matrix the design standard exists to prevent, and it doubles every future edit.
-
-The single exception mirrors zone 40 of a journey file: a deliberately labelled side-by-side comparison story for a component whose theming is genuinely risky (focus rings, elevation, error states). One per component at most, named `ThemeQA`, and understood as a test fixture rather than a second specification.
+Theme and viewport are **globals**, switchable from the toolbar and pinnable per story when a state only makes sense in one context. The single exception is one `ThemeQA` story per component at most — `references/theming-and-viewports.md`.
 
 ### Story names come from the design
 
-The local states beside a journey step are the story set. Keep the names recognisably the same — `Validation error` on the canvas becomes `ValidationError` in Storybook — so a reviewer can hold the design and the implementation side by side without translating. A state that exists in the design and not in Storybook is the gap worth flagging.
+Story name = pen state name with spaces stripped, PascalCase: `Validation error` → `ValidationError`. A state in the design with no story is the gap to flag.
 
 ### Stories live beside the component
 
@@ -74,15 +69,13 @@ packages/ui/src/lib/components/Button/
 └── Button.test.ts
 ```
 
-Co-location keeps the story in the same diff as the change that breaks it. A `stories/` directory far from the source guarantees the two drift.
-
 ### Args are the component's API
 
-`args` are props. If a story needs to set something that is not a prop, that is usually a missing prop or a decorator, not a reason to hand-write markup inside the story. Keep the component's public surface honest — the design system's component contract and the Svelte component's props should describe the same thing.
+`args` are props. A story that needs something that is not a prop is missing a prop or a decorator, not hand-written markup.
 
 ### Accessibility contracts are executable here
 
-The design library states contracts (focus moves into the dialog, the control has an accessible name, error is not colour alone). Storybook is where those stop being prose: the a11y addon catches the automatable subset, and a `play` function asserts the behavioural part.
+The a11y addon catches the automatable subset; a `play` function asserts the behavioural part.
 
 ```svelte
 <Story name="Default" play={async ({ canvas, userEvent }) => {
@@ -91,15 +84,15 @@ The design library states contracts (focus moves into the dialog, the control ha
 }} />
 ```
 
-Automated axe checks prove the absence of some failures, never the presence of accessibility — keyboard order, focus return, and announcement still need the play function and a human pass.
+Axe proves the absence of some failures, never the presence of accessibility — keyboard order, focus return, and announcement need the play function and a human pass.
 
 ### Foundations are documented, not storied
 
-Colour ramps, spacing scales, and type scales belong in an MDX docs page that reads the actual CSS custom properties. A story per token is noise, and worse, a story that hardcodes a token's value will keep rendering happily after the token changes.
+Colour ramps, spacing scales, and type scales belong in an MDX page that reads the actual CSS custom properties.
 
 ## Checkpoints
 
-- **A component is "done"** when every design state has a story, the a11y addon is clean, and its accessibility contract has a play function. Visual completeness alone is not done — see `references/accessibility.md`.
-- **Before a library release** — the design standard's §10.3 checklist has counterparts here: every adopted theme renders, narrow and wide viewports hold, long-text and empty fixtures exist. `references/states-and-fixtures.md` lists them.
-- **When a design changes** — the story set changes with it. A removed state leaves a stale story; a new state that never reaches Storybook is invisible to review.
-- **When a story needs heavy mocking** — `$app/state`, load functions, fetch — the component is not decomposed. Split the pure screen out of the route; the story gets simpler and the component gets testable. Reaching for mocks instead is how Storybook slowly becomes a slow integration suite that verifies its own fixtures.
+- **A component is done** when every design state has a story, the a11y addon is clean, and its accessibility contract has a play function.
+- **Before a library release** — every adopted theme renders, Compact and Wide viewports hold, `LongContent` and `Empty` fixtures exist.
+- **When a design changes** — the story set changes with it; a removed state leaves a stale story.
+- **When a story needs heavy mocking** — split the pure screen out of the route.

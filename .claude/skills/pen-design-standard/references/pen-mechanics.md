@@ -14,13 +14,14 @@
 - 2.10. Components, instances, and slots
 - 2.11. Atomic Design terms are taxonomy, not pen.dev object types
 - 2.12. Design representations and executable behavior
+- Appendix A. Vocabulary → pen.dev cheat sheet
 
 
 Before discussing our organization, these are the pen.dev mechanisms the standard relies on.
 
 ### 2.1. `.pen` document
 
-A normal `.pen` file is a design document on an infinite canvas. We use normal `.pen` files for **product journeys, explorations, and prototypes**.
+A normal `.pen` file is a design document on an infinite canvas. We use normal `.pen` files for **product journeys**.
 
 Examples:
 
@@ -117,7 +118,7 @@ and independently:
 
 ```text
 Theme axis: Device
-Values: Mobile, Tablet, Desktop
+Values: Compact, Medium, Wide
 ```
 
 A variable can define values conditional on an axis value or a combination of axis values. Axis names and values in this standard are team conventions, not built-in device detection.
@@ -130,9 +131,9 @@ color.bg.canvas
   Color=Dark   → dark surface value
 
 layout.pageGutter
-  Device=Mobile  → 16
-  Device=Tablet  → 24
-  Device=Desktop → 32
+  Device=Compact → 16
+  Device=Medium  → 24
+  Device=Wide    → 32
 ```
 
 ### 2.7. Creating and applying theme axes
@@ -148,20 +149,20 @@ Then on the canvas:
 
 1. Select a frame.
 2. In the properties panel, use **Theme → Add theme**.
-3. Choose the axis and value, for example `Color = Dark` or `Device = Mobile`.
+3. Choose the axis and value, for example `Color = Dark` or `Device = Compact`.
 4. Child objects inherit that theme selection unless they explicitly override the same axis.
 
 Conceptually:
 
 ```text
-Mobile checkout screen
+Compact checkout screen
 Theme:
   Color  = Light
-  Device = Mobile
+  Device = Compact
 
 └── child components inherit both values
     ├── colors resolve through Color=Light
-    └── device-aware numbers resolve through Device=Mobile
+    └── device-aware numbers resolve through Device=Compact
 ```
 
 #### Defaults and resolution
@@ -179,10 +180,10 @@ A frame resolves **one value from each axis at a time**.
 For example, this frame can simultaneously use:
 
 ```text
-Checkout / Mobile
+Checkout / Compact
 Theme:
   Color  = Dark
-  Device = Mobile
+  Device = Compact
 ```
 
 That means two independent axes are active on the same frame, but only one value from each axis is selected for that frame.
@@ -201,13 +202,13 @@ Think of this as a context selector, not a canvas dimension:
 Variables define what is possible:
 
 Color  → Light | Dark
-Device → Mobile | Tablet | Desktop
+Device → Compact | Medium | Wide
 
 A frame selects its current context:
 
-Frame A → Color=Light + Device=Desktop
-Frame B → Color=Dark  + Device=Desktop
-Frame C → Color=Light + Device=Mobile
+Frame A → Color=Light + Device=Wide
+Frame B → Color=Dark  + Device=Wide
+Frame C → Color=Light + Device=Compact
 ```
 
 #### Can Light and Dark be visible at the same time?
@@ -234,9 +235,9 @@ This is useful for QA. It should **not** become a rule that duplicates every jou
 pen.dev does not automatically produce this matrix:
 
 ```text
-Desktop Light | Desktop Dark
-Tablet Light  | Tablet Dark
-Mobile Light  | Mobile Dark
+Wide Light    | Wide Dark
+Medium Light  | Medium Dark
+Compact Light | Compact Dark
 ```
 
 We create only the responsive compositions that communicate meaningful structural differences. We toggle themes on those frames during design/review, and create side-by-side theme copies only for representative QA cases.
@@ -250,7 +251,7 @@ We create only the responsive compositions that communicate meaningful structura
 Changing a frame from 1440 px to 390 px does **not** automatically change:
 
 ```text
-Device=Desktop → Device=Mobile
+Device=Wide → Device=Compact
 ```
 
 There are no implicit media-query semantics in this convention.
@@ -259,7 +260,7 @@ Therefore responsive design in pen.dev uses **two separate mechanisms**:
 
 ```text
 1. STRUCTURAL RESPONSIVENESS
-   Explicit Desktop / Tablet / Mobile compositions
+   Explicit Compact / Medium / Wide compositions
    + flex layout, Hug, Fill, alignment
    + annotated wrapping/overflow requirements for implementation
 
@@ -268,7 +269,7 @@ Therefore responsive design in pen.dev uses **two separate mechanisms**:
    + variables for systematic values such as gutter or type size
 ```
 
-When we show a Mobile frame, we explicitly assign `Device = Mobile` to that frame if it consumes Device-aware variables.
+When we show a Compact frame, we explicitly assign `Device = Compact` to that frame if it consumes Device-aware variables.
 
 ### 2.10. Components, instances, and slots
 
@@ -312,6 +313,42 @@ Do not assume every pen.dev component is a Molecule, and do not create separate 
 
 ### 2.12. Design representations and executable behavior
 
-Canvas arrows, state frames, accessibility annotations, and the `prototypes/` folder are organizational representations. They do not establish routing, focus management, live announcements, or interactive state transitions by themselves. Record the preview/runtime used for any executable prototype and which behaviors it exercises. Verify product behavior in the target implementation.
+Canvas arrows, state frames, and accessibility annotations are organizational representations. They do not establish routing, focus management, live announcements, or interactive state transitions by themselves. Verify product behavior in the target implementation.
 
 ---
+
+## Appendix A — Vocabulary → pen.dev cheat sheet
+
+| If this standard says… | In pen.dev, that means… |
+|---|---|
+| Journey file | Normal `.pen` document |
+| Design-system library | Converted through Libraries and saved as `.lib.pen`; save source and reopen consumers to adopt updates |
+| Foundation | Shared variables, constraints, and principles; not an Atom |
+| Atom | Small reusable component such as Button, Checkbox, or Input Control |
+| Molecule | Reusable component composed from Atoms, such as Form Field or Search Field |
+| Organism | Larger reusable component/composition such as Navigation, Drawer, Filter Panel, or Form |
+| Template | Reusable page-level composition/scaffold, often implemented with components + slots |
+| Page | Product-specific screen Frame in a journey `.pen` file populated with real content/state |
+| Journey | Ordered/branching collection of Pages, overlays, states, and outcomes in a journey `.pen` file |
+| Screen | Usually a Frame |
+| Responsive row | Group of explicitly sized screen Frames on the canvas |
+| Responsive App Shell | Canonical reusable shell composition from the `.lib.pen` library for a layout regime (Compact/Medium/Wide) |
+| Fluid layout | Frame flex layout + Hug/Fill/fixed sizing decisions |
+| Variable/token | Variable created in the Variables panel |
+| `Color` axis | A theme axis we create with values Light and Dark |
+| `Device` axis | A separate theme axis we create with values Compact, Medium, Wide |
+| Theme axis on canvas | A selectable context on a Frame; one value per axis is active on that Frame at a time |
+| Side-by-side Light/Dark QA | Two intentionally duplicated representative Frames/instances with different `Color` selections |
+| Set theme on screen | Select Frame → properties → Theme → Add theme → choose axis/value |
+| Theme inheritance | Child objects inherit parent frame's axis selection unless overridden |
+| Light/Dark component behavior | Component properties reference Color-aware semantic variables |
+| Responsive token behavior | Component properties reference Device-aware variables; regime widths are in `accessibility-and-responsive.md` §5.3.1 |
+| Structural Compact difference | Explicit Compact composition/component structure, not merely Device variables |
+| Shared reusable asset | Atom/Molecule/Organism/Template implemented as a component/composition in the library and consumed as instances |
+| Flexible reusable region | Empty frame marked as a slot in a component origin; instance content is customizable and suggestions are advisory |
+| Persistent sidebar | Part of the app/page layout, typically navigation; represented with reusable shell/navigation components |
+| Drawer / side panel | Temporary/contextual task surface; usually a reusable Organism; define modal vs non-modal behavior |
+| Modal dialog | Short blocking task/decision with modal focus behavior |
+| Route-backed task | A journey state with a stable destination/deep-link behavior, even if visually presented as an overlay |
+| Navigation depth | Parent-relationship count from the documented root; route mapping is recorded separately |
+| Accessibility | Requirements/annotations/contracts across system and journeys; not a pen.dev theme mechanism by itself |

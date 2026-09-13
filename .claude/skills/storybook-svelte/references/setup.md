@@ -12,78 +12,17 @@ API current as of Storybook 10.2 docs, checked 2026-09-13. Verify against curren
 @storybook/addon-docs         autodocs / MDX pages
 ```
 
-Pin the toolchain (node, pnpm) in `devbox.json` as usual; Storybook itself is a normal dev dependency of the design-system package.
+Storybook is a dev dependency of `packages/ui`; toolchain versions come from `devbox.json`.
 
 ## main.ts
 
-```ts
-import type { StorybookConfig } from '@storybook/sveltekit';
-
-const config: StorybookConfig = {
-  stories: ['../src/**/*.stories.svelte', '../src/**/*.mdx'],
-  framework: '@storybook/sveltekit',
-  addons: [
-    '@storybook/addon-svelte-csf',
-    '@storybook/addon-docs',
-    '@storybook/addon-a11y',
-    '@storybook/addon-vitest',
-  ],
-};
-
-export default config;
-```
-
-Storybook belongs to the design-system package (`packages/ui/.storybook/`), not the repo root — it documents that package, and keeping it there means `just dev packages/ui` starts it.
+`npx storybook init` in `packages/ui` generates `.storybook/main.ts`. Confirm it has `framework: '@storybook/sveltekit'`, the five addons above, and `stories: ['../src/**/*.stories.svelte', '../src/**/*.mdx']`. Storybook lives in `packages/ui/.storybook/`, not the repo root.
 
 ## preview.ts
 
-Three jobs: import the real token stylesheet, declare the theme global, declare the viewport presets.
+Copy `assets/preview.ts` to `packages/ui/.storybook/preview.ts`. It imports the real token stylesheet (`../src/lib/styles/tokens.css`), sets `a11y.test: 'error'`, declares the `theme` global with a `data-theme` decorator, and declares the `compact` / `medium` / `wide` viewport presets.
 
-```ts
-import type { Preview } from '@storybook/sveltekit';
-import '../src/lib/styles/tokens.css';   // the real tokens, not a copy
-
-const preview: Preview = {
-  parameters: {
-    a11y: { test: 'error' },
-    viewport: {
-      options: {
-        compact: { name: 'Compact (390)', styles: { width: '390px', height: '844px' }, type: 'mobile' },
-        medium:  { name: 'Medium (768)',  styles: { width: '768px', height: '1024px' }, type: 'tablet' },
-        wide:    { name: 'Wide (1440)',   styles: { width: '1440px', height: '900px' }, type: 'desktop' },
-      },
-    },
-  },
-  initialGlobals: {
-    theme: 'light',
-    viewport: { value: 'wide', isRotated: false },
-  },
-  globalTypes: {
-    theme: {
-      description: 'Color theme',
-      toolbar: {
-        title: 'Theme',
-        icon: 'circlehollow',
-        items: [
-          { value: 'light', icon: 'sun', title: 'Light' },
-          { value: 'dark', icon: 'moon', title: 'Dark' },
-        ],
-        dynamicTitle: true,
-      },
-    },
-  },
-  decorators: [
-    (story, { globals }) => {
-      document.documentElement.dataset.theme = globals.theme ?? 'light';
-      return story();
-    },
-  ],
-};
-
-export default preview;
-```
-
-`@storybook/addon-themes` (`withThemeByDataAttribute`) does the same job if you prefer an addon to a hand-written decorator; either is fine, but pick one — two theme mechanisms fighting over the same attribute is a confusing afternoon.
+`@storybook/addon-themes` (`withThemeByDataAttribute`) does the same job as the decorator; pick one mechanism, never both.
 
 ## SvelteKit mocking
 
@@ -113,4 +52,4 @@ parameters: {
 }
 ```
 
-Needing heavy mocking is a design signal: a library component reaching into `$app/state` is coupled to the app. Push that dependency up into the route and pass data as props — the component gets simpler and the story stops needing a fixture.
+A library component reaching into `$app/state` is coupled to the app: push that dependency into the route and pass data as props.

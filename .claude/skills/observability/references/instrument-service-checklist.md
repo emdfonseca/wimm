@@ -1,34 +1,27 @@
 # Making a service observable
 
-In order. Do this before the first deploy; a service that reaches staging without it will have its first incident before its first instrumentation PR.
+Do this before the first deploy.
 
 ## Bootstrap
 
 - [ ] `main` calls `telemetry.Init(ctx, service, version)` first and defers `shutdown` with a bounded context.
 - [ ] `service.name` equals the app directory name; `service.version` from the build; `deployment.environment.name` from the environment.
-- [ ] Exports to the collector via `OTEL_EXPORTER_OTLP_ENDPOINT`; no backend-specific configuration in the service.
-- [ ] Composite propagator (`TraceContext` + `Baggage`) set globally.
+- [ ] Exports via `OTEL_EXPORTER_OTLP_ENDPOINT`; no backend-specific configuration in the service.
+- [ ] `TraceContext` propagator set globally.
 
 ## Boundaries
 
 - [ ] Inbound HTTP wrapped with `otelhttp.NewHandler`; Connect handlers registered with the `otelconnect` interceptor.
-- [ ] Outbound HTTP uses `otelhttp.NewTransport`; database client uses instrumented driver; queue publish/consume propagate context.
+- [ ] Outbound HTTP uses `otelhttp.NewTransport`; database client uses the instrumented driver; queue publish/consume propagate context.
 - [ ] Boundary interceptor logs one line per request outcome with the required fields.
 
 ## Signals
 
 - [ ] `slog` default handler is the `otelslog` bridge; no `fmt.Println` / `log.Printf` (linter enforced).
-- [ ] Domain spans named `<domain>.<entity>.<operation>` with attributes, not events, for facts.
+- [ ] Domain spans named `<domain>.<entity>.<operation>`; facts as attributes, not events.
 - [ ] Errors recorded on spans (`RecordError` + `SetStatus`).
 - [ ] RED metrics visible for every endpoint in the local stack.
-- [ ] Any custom metric: enumerable labels, declared unit, description.
-
-## Operations
-
-- [ ] SLOs written in the README with owner.
-- [ ] Burn-rate alerts instantiated in `infra/alerts/<service>.yaml` with runbook links.
-- [ ] Dashboard provisioned from `infra/` with RED + SLO panels.
-- [ ] Runbook exists for each alert: meaning, first checks, mitigation, escalation.
+- [ ] Any custom metric: `<domain>.<entity>.<what>`, enumerable labels, declared unit, description.
 
 ## Verify
 

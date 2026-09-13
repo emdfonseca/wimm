@@ -4,7 +4,7 @@
   import Component from './Component.svelte';
 
   const { Story } = defineMeta({
-    // Atoms | Molecules | Organisms | Templates — mirrors the .lib.pen library zones
+    // Atoms | Molecules | Organisms | Templates | Pages — mirrors the design layers
     title: 'Atoms/Component',
     component: Component,
     tags: ['autodocs'],
@@ -19,7 +19,9 @@
   });
 </script>
 
-<!-- Story names mirror the design's local states: Default, Loading, ValidationError, Empty, LongContent -->
+<!-- One story per design state; theme and viewport are globals -->
+
+<!-- Pin a regime only when the state exists in one: globals={{ viewport: { value: 'compact', isRotated: false } }} -->
 
 <Story name="Default" />
 

@@ -7,7 +7,7 @@ The point of this file is that the *safe form* of most operations exists and is 
 ```sql
 -- top of every migration
 SET lock_timeout = '5s';
-SET statement_timeout = '30s';   -- raise deliberately for known-long operations
+SET statement_timeout = '30s';   -- raise only with a comment saying why
 ```
 
 `lock_timeout` makes a migration that would queue behind a long transaction fail fast instead of blocking every query behind it. Failing fast is recoverable; a lock queue on the invoices table is an outage.
