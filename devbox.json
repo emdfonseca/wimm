@@ -8,7 +8,8 @@
     "just@1.58",
     "golangci-lint@2.13",
     "buf@1.72",
-    "goose@3.27"
+    "goose@3.27",
+    "python@3.14"
   ],
   "shell": {
     "init_hook": [
