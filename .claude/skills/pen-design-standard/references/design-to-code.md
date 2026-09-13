@@ -1,5 +1,3 @@
-<!-- Generated from docs/pen-dev-product-design-organization-standard.md
-     by tools/split-standard.py. Edit the standard, not this file. -->
 ## 11. Design-to-code contract
 
 ### 11.1. Vocabulary and token mapping

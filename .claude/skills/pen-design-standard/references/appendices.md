@@ -1,5 +1,3 @@
-<!-- Generated from docs/pen-dev-product-design-organization-standard.md
-     by tools/split-standard.py. Edit the standard, not this file. -->
 ## Appendix A — pen.dev translation cheat sheet
 
 | If this document says… | In pen.dev, that means… |

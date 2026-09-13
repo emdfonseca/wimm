@@ -1,5 +1,3 @@
-<!-- Generated from docs/pen-dev-product-design-organization-standard.md
-     by tools/split-standard.py. Edit the standard, not this file. -->
 ## 2. pen.dev capabilities and limits
 
 **In this file:**

@@ -31,8 +31,6 @@ Three questions decide almost everything. Answer them before opening the editor:
 
 SKILL.md carries the rules you need constantly. Everything else lives in `references/` — read the file when its situation comes up, not preemptively.
 
-Those reference files are generated from `docs/pen-dev-product-design-organization-standard.md`, which is the canonical standard. Edit the standard and run `python3 tools/split-standard.py`; edits made directly to `references/` are overwritten.
-
 | Read this | When |
 |---|---|
 | `references/project-setup.md` | Starting a project or feature; filling or auditing the Project Setup Record; checking Definition of Ready. Long — it has the full category list and the copy-paste record. |

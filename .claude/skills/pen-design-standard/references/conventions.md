@@ -1,5 +1,3 @@
-<!-- Generated from docs/pen-dev-product-design-organization-standard.md
-     by tools/split-standard.py. Edit the standard, not this file. -->
 # pen.dev Product Design Organization Standard
 
 > **Purpose:** Define how we organize product design in pen.dev so multiple user journeys, success and failure paths, responsive layouts, light/dark themes, accessibility requirements, reusable Atomic Design assets, and design-to-code work stay understandable as the product grows.
