@@ -71,6 +71,32 @@ Define `ROOTS` as the zone frames to check, then read the output. Silence is the
 pass condition. Fix what it prints, then run it again — the fix call cannot
 report on itself.
 
+## Target size
+
+Run against a frame themed `device: "compact"` — that is where the floor binds.
+
+```js
+let fails=0;
+Get(COMPACT_ROOT,(n,c)=>{
+  if(n.type!=="ref"&&!/row target/i.test(n.name||""))return;
+  const w=Math.round(c.bounds.width),h=Math.round(c.bounds.height);
+  if(Math.min(w,h)>=24)return;
+  let p=c.parentCtx,covered=false;
+  while(p){ if(Math.min(p.bounds.width,p.bounds.height)>=24 &&
+                /row|target|button|item/i.test(p.node.name||"")){covered=true;break}
+            p=p.parentCtx}
+  if(!covered){fails++;Print("UNDER 24",n.id,n.name,w+"×"+h)}});
+Print("uncovered targets:",fails);
+```
+
+A mark smaller than 24 px is only a defect when **no interactive ancestor covers
+it**. A 20 px checkbox inside a 44 px row passes, and that is the intended design —
+the mark is never the target. Without the ancestry walk this check reports every
+checkbox, radio and switch in the library as a failure and gets ignored.
+
+SC 2.5.8 AA is 24 × 24 or a qualifying spacing exception. 44 px is a stronger
+design choice, not the AA minimum; do not report it as such.
+
 ## Colour value validity
 
 ```js

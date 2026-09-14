@@ -166,10 +166,25 @@ even under a disabled control.
   is what is wrong.
 - **Disabled dims the chrome too.** Symbol, icon and value drop together. An affix
   that stays crisp beside a dimmed value reads as still-editable.
-- **Read-only removes the border, so the affix needs a divider.** With no outer
-  border and a subtle fill, an affix tinted like the field disappears. That is why
-  the divider sits on the affix in every state rather than being added here as a
-  special case — a rule the drawing found and prose would not have.
+- **The affix carries no fill and no divider.** The drawn crossing first produced
+  a tinted affix cell with a divider, which dark theme then killed: field fill,
+  affix fill and canvas are three near-blacks, and in read-only — no outer border —
+  the cell vanished. Every fill and divider candidate measured 1.2:1 to 2.6:1, so
+  none was worth keeping, while the symbol alone is 7.4:1 dark and 6.5:1 light
+  against the field's own fill. The affix is a glyph in a padded cell.
+
+The last one is worth noting as a sequence: the light-theme crossing invented a
+rule, and the dark-theme QA overturned it. Neither pass alone was sufficient.
+
+## Both themes, or neither
+
+A component verified only in light theme is unverified. Light hides the failures
+dark exposes — three near-blacks that read as one, shadows that vanish against the
+canvas — and the contrast maths passes throughout, because the tokens are fine and
+the *rendering* is not.
+
+Build the light-theme crossing first, then QA it in dark before the component is
+called done. Expect the dark pass to overturn decisions the light pass made.
 
 ## Validate the checks
 
