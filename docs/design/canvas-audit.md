@@ -92,28 +92,57 @@ overturned: the row is the *merchant link's* target, not the checkbox's, so a ro
 being 44 px tall says nothing about whether the checkbox is reachable. It also
 meant any container someone named "Row" silently exempted everything inside it.
 
+**A replaced child never appears in the tree.** `Replace("instanceId/childId", …)`
+stores the replacement inside the parent instance's `descendants` map, and a map
+entry is not a child: an unresolved traversal walks straight past it, so the id
+never reaches `isCtrlRef` and the resolved pass has nothing to match. The check
+missed 19 control instances this way, including the icon button the Compact page
+header swaps in for its labelled action — a control that exists on the canvas, is
+measurable, and was invisible to the one check that measures controls. Collect
+ids from the `descendants` maps as well as from the tree.
+
 ```js
 const CONTROL=/^(button|icon button|checkbox|radio|switch|nav item|tab|pagination|segmented control|account trigger)/i;
-const ctrl={}; ROOTS.forEach(r=>Get(r,n=>{if(n.reusable&&CONTROL.test(n.name||""))ctrl[n.id]=n.name}));
-const isCtrlRef={}; ROOTS.forEach(r=>Get(r,n=>{if(n.type==="ref"&&ctrl[n.ref])isCtrlRef[n.id]=ctrl[n.ref]}));
-let seen=0,fails=0;
+const ctrl={}; Get(n=>{if(n.reusable&&CONTROL.test(n.name||""))ctrl[n.id]=n.name});
+const isCtrlRef={};
+const scan=n=>{ if(n.type==="ref"&&ctrl[n.ref])isCtrlRef[n.id]=ctrl[n.ref];
+  if(n.descendants)for(const v of Object.values(n.descendants))
+    if(v&&typeof v==="object"&&v.id){scan(v); if(v.children)v.children.forEach(scan)}};
+ROOTS.forEach(r=>Get(r,n=>scan(n)));
+const abs=c=>{let x=0,y=0,p=c; while(p){x+=p.bounds.x;y+=p.bounds.y;p=p.parentCtx} return[x,y]};
+const T=[]; let seen=0,fails=0;
 ROOTS.forEach(r=>Get(r,(n,c)=>{
   const seg=String(n.id).split("/").pop();
-  if(!isCtrlRef[seg]||n.enabled===false)return;
+  if(!(isCtrlRef[seg]||(n.ref&&ctrl[n.ref]))||n.enabled===false)return;
   seen++;
   const w=Math.round(c.bounds.width),h=Math.round(c.bounds.height);
+  const [x,y]=abs(c);
+  T.push({nm:n.name,w,h,cx:x+c.bounds.width/2,cy:y+c.bounds.height/2});
   if(Math.min(w,h)<24){fails++;Print("UNDER 24",n.id,n.name,w+"×"+h)}
 },{resolveInstances:true}));
-Print("measured:",seen,"under 24:",fails);
+let viol=0,minAll=Infinity;
+for(let i=0;i<T.length;i++){ let best=Infinity,bj=-1;
+  for(let j=0;j<T.length;j++){ if(i===j)continue;
+    const d=Math.hypot(T[i].cx-T[j].cx,T[i].cy-T[j].cy); if(d<best){best=d;bj=j}}
+  if(best<minAll)minAll=best;
+  if(Math.min(T[i].w,T[i].h)<24&&best<24){viol++;
+    Print("SPACING",T[i].nm,"nearest",T[bj].nm,Math.round(best)+"px")}}
+Print("measured:",seen,"under 24:",fails,"spacing:",viol,"min centre distance:",Math.round(minAll));
 ```
 
-It now measures 278 control instances. Print `seen` every run: a sudden drop is
-the check going blind, and that is the failure mode this section exists for.
+It measures 292 control instances: 0 under 24, 0 spacing violations, and the
+closest two target centres anywhere on the canvas are 37 px apart. Print `seen`
+every run: a sudden drop is the check going blind, and that is the failure mode
+this section exists for.
 
 **Validate it before trusting it.** Shrink one instance in a specimen matrix and
 one inside a row instance, confirm both are reported, then restore them. The
 second is the one that matters — the row-nested case is what every previous
-version missed.
+version missed. Both branches have fired here: a row-nested checkbox forced to
+16 × 16 reported `UNDER 24`, and two 20 px icon buttons placed 2 px apart —
+centres 22 px — reported `SPACING` in both directions. The fixtures were deleted
+afterwards, and restoring the checkbox needed an explicit `width: 24, height: 24`
+rather than a removed key, for the reason in `library-conventions.md`.
 
 SC 2.5.8 AA is 24 × 24 or a qualifying spacing exception. `control-target-min` is
 24 and binds always; `density-row-min-touch` is 44 and binds only where the
@@ -123,23 +152,56 @@ pointer is coarse, which is also where compact density is refused. Do not report
 ### The spacing exception
 
 Where several targets share a row, 24 px circles centred on each must not
-intersect. Bounds are relative to each row's own coordinate space, so comparing
-`y` across sibling rows reports 0 px of separation and means nothing — take the
-row pitch from `density-row-height` instead.
+intersect. The check above measures this across the **whole canvas**, not one
+container: it is a distance between two targets, and two targets in different
+blocks are as capable of interfering as two in one row.
 
-This continues the snippet above and reuses its `isCtrlRef` map; run them in one
-call or rebuild the map first.
+That needs absolute coordinates. `ctx.bounds` is relative to the parent, so
+comparing `y` between two rows reports 0 px of separation and means nothing;
+`abs()` sums the chain to the document. An earlier version scoped this to the
+table region and took the row pitch from `density-row-height` to work around the
+relative bounds — a correct measurement of one container, offered as a statement
+about the library.
+
+Read the result as a whole: **no target on this canvas is under 24 px, so the
+exception is not relied on anywhere.** That is the strong form of the claim, and
+it is what the check reports — not that undersized targets are adequately spaced,
+but that there are none. The nearest pair of target centres is 37 px, which also
+says no future 20 px mark could be dropped between two existing controls without
+the check noticing.
+
+## Reflow at 320 CSS px
+
+SC 1.4.10 AA asks that content reflow to 320 CSS px without horizontal scrolling
+and without losing anything. The Compact regime's representative frame is 390,
+which is not the floor and hides the failures — both defects found here were
+invisible at 390 and obvious at 320. Draw the floor, with the longest realistic
+strings, and measure it.
+
+Measure every descendant's left and right edge against its parent. Vertical
+overflow is not a finding: the page scrolls that way by design.
 
 ```js
-const pts=[];
-Get(ROWS_CONTAINER,(n,c)=>{const seg=String(n.id).split("/").pop();
-  if(isCtrlRef[seg]&&n.enabled!==false)
-    pts.push([n.name,c.bounds.x+c.bounds.width/2,c.bounds.y+c.bounds.height/2])},
-  {resolveInstances:true});
+let over=0;
+Get(FRAME,(n,c)=>{
+  if(n.enabled===false)return void c.skipChildren();
+  const b=c.bounds,p=c.parentCtx&&c.parentCtx.bounds; if(!p)return;
+  const m=Math.max(-b.x, b.x+b.width-p.width);
+  if(m>0.5){over++;Print("OVERFLOW",n.id,n.name,"w",Math.round(b.width),
+    "parent",Math.round(p.width),"by",m.toFixed(1))}},{resolveInstances:true});
+Print("horizontal overflow nodes:",over);
 ```
 
-Measured here: select 24 × 24, select-to-merchant centres 404 px apart, row pitch
-56 comfortable and 40 compact. All clear 24.
+**Skip disabled nodes, and skip their subtrees.** A node with `enabled: false` is
+not rendered but still reports bounds, so it overflows on paper and not on screen.
+Three of them — the tab counts the Compact header switches off — were reported as
+overflow here and are not. The same filter belongs on the `ctx.problems` pass
+below, for the same reason.
+
+Measured: `Transactions / 320` 77 rendered descendants and `Transactions / 320 ·
+editing` 39, both with 0 crossing either edge and a worst overhang of 0.00 px.
+There is no dark twin of either: reflow is geometry, the same widths resolve in
+both colour themes, and a twin would assert the same measurement twice.
 
 ## Component legibility on an unknown background
 
@@ -394,7 +456,7 @@ ROOTS.forEach(R=>Get(R,(n,c)=>{
 Print("measured:",seen,"failures:",fail,"manual:",manual);
 ```
 
-It measures 1792 text nodes across the seven zones: 30 failures, all
+It measures 1985 text nodes across the seven zones: 30 failures, all
 `color-text-disabled` on disabled specimens and exempt under SC 1.4.3, and 0
 requiring manual review. Print `manual` every run — a non-zero count is paint the
 check declined to score, which is a result, not a pass. Print `sweeps` too: it is
@@ -426,7 +488,11 @@ instance override.
 ## `ctx.problems` reports nodes that fit
 
 `partially clipped` fires on nodes whose bounds lie entirely inside their parent —
-eight of them here, in three different zones. Chasing them wastes a session.
+eight of them here, in three different zones. It also fires on disabled nodes,
+which have bounds and no rendering: the App header's own nav trigger is 44 px in a
+36 px title row and is switched off everywhere except Compact, where the row grows
+to fit it. Filter `enabled === false` and skip its subtree before measuring.
+
 Before treating one as real, measure the overflow on each side:
 
 ```js

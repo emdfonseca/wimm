@@ -161,6 +161,40 @@ Project-specific requirements:
 - Charts state the value in text near the mark; never colour alone.
 - Account numbers are masked by default and revealed by an explicit control.
 
+**What is measured, and what is only promised.** The distinction matters more than
+the list: a measured claim is re-checked by `canvas-audit.md` on every pass, and a
+promised one is a test waiting for code that does not exist yet.
+
+```text
+measured   target size      292 control instances, 0 under 24 × 24, nearest two
+                            centres 37 px apart, so the spacing exception is not
+                            relied on anywhere
+measured   reflow at 320    two 320 px frames carrying the longest realistic
+                            strings, 0 nodes crossing either edge
+measured   text contrast    1985 text nodes, 30 failures, all color-text-disabled
+                            and exempt under SC 1.4.3
+derived    focus order      read out of the canvas per surface, in 50 · TEMPLATES
+                            → Focus order; stops a frame does not draw are marked
+promised   keyboard         40 · ORGANISMS → Keyboard contract: operability, focus
+                            transitions, error identification and status
+                            announcement, one row per organism, none of it
+                            measurable until there is markup
+```
+
+**Skip link.** `20 · ATOMS` → Skip link, a preset of Button, first in the tab
+order of every shell and off-screen until focused. It exists because the Wide
+shell puts twelve tab stops between the top of the page and the first ledger row.
+It is deliberately absent from the shell templates: a control that is invisible
+until focused, drawn always-visible in a composition template, teaches the
+composition wrong. Its position is recorded in the Focus order block instead.
+
+**The Compact page header is its own component.** `App header/compact` drops the
+breadcrumb and the tab counts and renders the primary action as an icon button
+with the label as its accessible name. At 320 CSS px a 141 px labelled action left
+90 px for the page title, which broke mid-word. Repeating those overrides per
+screen was the alternative, and it is the drift the one-component rule exists to
+prevent.
+
 ## System
 
 **Library path + revision** — `packages/ui/design/product-ui.lib.pen`.

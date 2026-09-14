@@ -14684,6 +14684,101 @@
         },
         {
           "type": "frame",
+          "id": "Hgs7O",
+          "name": "Skip link",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "zBxSz",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "H4b5hf",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Skip link",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "zWEB9",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The first focusable thing in every shell, and a preset of Button rather than a second control. Off-screen until it receives focus, then it appears at the top left and moves focus to Main. It exists because the Wide shell puts twelve tab stops between the top of the page and the first row of the ledger — six nav items, the account trigger, the collapse control, the page action and three tabs. SC 2.4.1, Level A.\n\nDeliberately not drawn in the shell templates. A control that is invisible until focused, drawn always-visible in a composition template, teaches the composition wrong — it reads as a button the page is supposed to show. It is drawn here, in its visible state, and its place in the tab order is recorded in 50 · TEMPLATES → Focus order.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nYFoK",
+              "name": "Specimens",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "g3EpL",
+                  "name": "Cell",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "l8D82j",
+                      "name": "Skip link",
+                      "reusable": true,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "id": "CbeJT",
+                          "type": "ref",
+                          "ref": "W2gOKx",
+                          "name": "Control",
+                          "height": 36,
+                          "descendants": {
+                            "iYHDG": {
+                              "content": "Skip to content"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "Olx05",
+                  "name": "Caption",
+                  "fill": "$color-text-secondary",
+                  "content": "first in the tab order · off-screen until focused",
+                  "fontFamily": "$type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
           "id": "bQaTk",
           "name": "Button size and configuration",
           "width": "fill_container",
@@ -24752,7 +24847,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "The row the product is built around. The leading slot carries merchant identity, because scanning a ledger you look for who, then how much — category is what you filter and verify by, not what you identify by, so it sits in its own aligned column where it can be scanned and sorted. The amount anchors the right edge, mono and decimal-aligned. The row is the hit target; nothing inside competes. Density drives height, cell padding and gaps, so one setting reflows every ledger.",
+                  "content": "The row the product is built around. The leading slot carries merchant identity, because scanning a ledger you look for who, then how much — category is what you filter and verify by, not what you identify by, so it sits in its own aligned column where it can be scanned and sorted. The amount anchors the right edge, mono and decimal-aligned. Density drives height, cell padding and gaps, so one setting reflows every ledger.\n\nThe row is not the target. It holds several — the select control, the merchant link that opens the editor, and any action a row-scoped notice carries — and the routing between them is settled once in 40 · ORGANISMS → Row interaction, not restated here.\n\nThe merchant name is one line and truncates — a hard clip on the canvas, an ellipsis in code, because pen cannot draw one. It is the only unbounded string in the row, and the row's height is the density contract: a name long enough to wrap would push every following row down and make density mean nothing. Drawn at 320 CSS px, “Waitrose Kensington High Street” wrapped and overflowed a 64 px row by 2.5 px before this was stated.",
                   "lineHeight": 1.45,
                   "fontFamily": "$type-family-body",
                   "fontSize": "$type-size-body-sm",
@@ -25399,6 +25494,7 @@
                                   "type": "frame",
                                   "id": "z4soC",
                                   "name": "Line 1",
+                                  "clip": true,
                                   "width": "fill_container",
                                   "gap": 10,
                                   "alignItems": "center",
@@ -25408,9 +25504,11 @@
                                       "id": "lRCOR",
                                       "name": "Merchant",
                                       "fill": "$color-text-primary",
-                                      "textGrowth": "fixed-width",
+                                      "textGrowth": "fixed-width-height",
                                       "width": "fill_container",
+                                      "height": 18,
                                       "content": "Whole Foods",
+                                      "lineHeight": 1.25,
                                       "fontFamily": "$type-family-body",
                                       "fontSize": 14,
                                       "fontWeight": "500"
@@ -28847,6 +28945,327 @@
               ]
             }
           ]
+        },
+        {
+          "type": "frame",
+          "id": "O8AR0",
+          "name": "Reflow at 320",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "krg8t",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "uXPE2",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Reflow at 320 CSS px",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "OyD6z",
+                  "name": "Note",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "SC 1.4.10 AA: content reflows to 320 CSS px with no horizontal scrolling and nothing lost. The 390 frames in 50 · TEMPLATES are not evidence — 390 is the representative Compact width, not the floor. These two frames are the floor, carrying the longest realistic strings, and every descendant is measured against the 320 edge rather than eyeballed.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "R5BXse",
+              "name": "Pair",
+              "width": "fill_container",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "iUzy0",
+                  "name": "Transactions / 320",
+                  "theme": {
+                    "device": "compact"
+                  },
+                  "clip": true,
+                  "width": 320,
+                  "fill": "$color-bg-canvas",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "id": "y6NjK",
+                      "type": "ref",
+                      "ref": "CowGt",
+                      "name": "Page header",
+                      "width": "fill_container"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "vcb7d",
+                      "name": "Body",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": "$density-stack-gap",
+                      "padding": "$layout-page-gutter",
+                      "children": [
+                        {
+                          "id": "WLzeP",
+                          "type": "ref",
+                          "ref": "n9KlSw",
+                          "name": "Search",
+                          "width": "fill_container"
+                        },
+                        {
+                          "id": "x5pmW",
+                          "type": "ref",
+                          "ref": "hcT3D",
+                          "name": "Direction"
+                        },
+                        {
+                          "id": "NviEh",
+                          "type": "ref",
+                          "ref": "WFSg5",
+                          "name": "Notice",
+                          "width": "fill_container"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "FLmOO",
+                          "name": "List",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "children": [
+                            {
+                              "id": "O8jjK",
+                              "type": "ref",
+                              "ref": "wUywT",
+                              "name": "Row",
+                              "width": "fill_container",
+                              "descendants": {
+                                "lRCOR": {
+                                  "content": "Waitrose Kensington High Street"
+                                },
+                                "sHZFy": {
+                                  "content": "−$1,284.20",
+                                  "fill": "$color-amount-negative"
+                                },
+                                "jNnq7": {
+                                  "content": "Groceries"
+                                },
+                                "jYyap": {
+                                  "content": "1 Sep"
+                                }
+                              }
+                            },
+                            {
+                              "id": "KBLjY",
+                              "type": "ref",
+                              "ref": "wUywT",
+                              "name": "Row",
+                              "width": "fill_container",
+                              "descendants": {
+                                "lRCOR": {
+                                  "content": "Transport for London Travel"
+                                },
+                                "sHZFy": {
+                                  "content": "−$42.80",
+                                  "fill": "$color-amount-negative"
+                                },
+                                "jNnq7": {
+                                  "content": "Transport"
+                                },
+                                "jYyap": {
+                                  "content": "1 Sep"
+                                }
+                              }
+                            },
+                            {
+                              "id": "iA6ys",
+                              "type": "ref",
+                              "ref": "wUywT",
+                              "name": "Row",
+                              "width": "fill_container",
+                              "descendants": {
+                                "lRCOR": {
+                                  "content": "Monthly salary payment"
+                                },
+                                "sHZFy": {
+                                  "content": "+$4,200.00",
+                                  "fill": "$color-amount-positive"
+                                },
+                                "jNnq7": {
+                                  "content": "Income"
+                                },
+                                "jYyap": {
+                                  "content": "31 Aug"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "DcDX7",
+                          "type": "ref",
+                          "ref": "HlRZX",
+                          "name": "Pagination",
+                          "width": "fill_container"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "G5oyVc",
+                  "name": "Transactions / 320 · editing",
+                  "theme": {
+                    "device": "compact"
+                  },
+                  "clip": true,
+                  "width": 320,
+                  "height": 568,
+                  "fill": "$color-bg-canvas",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "id": "eSkIX",
+                      "type": "ref",
+                      "ref": "yhPTP",
+                      "name": "Sheet",
+                      "width": "fill_container",
+                      "x": 0,
+                      "y": 0,
+                      "height": "fill_container",
+                      "cornerRadius": 0,
+                      "strokeWidth": 0,
+                      "descendants": {
+                        "ZXZB2": {
+                          "content": "Edit transaction"
+                        },
+                        "S9Qtgj": {
+                          "width": 44,
+                          "height": 44
+                        },
+                        "W3sEe": {
+                          "type": "frame",
+                          "id": "wGT2E",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "layout": "vertical",
+                          "gap": 14,
+                          "padding": 16,
+                          "children": [
+                            {
+                              "id": "x32Yuo",
+                              "type": "ref",
+                              "ref": "gJtKG",
+                              "width": "fill_container",
+                              "name": "Merchant field",
+                              "descendants": {
+                                "i8d1yF/Iv0pS": {
+                                  "content": "Whole Foods",
+                                  "fill": "$color-text-primary"
+                                },
+                                "cPq1t": {
+                                  "height": 30,
+                                  "alignItems": "start"
+                                },
+                                "y5Zem": {
+                                  "textGrowth": "fixed-width-height",
+                                  "height": 30,
+                                  "textAlignVertical": "top",
+                                  "lineHeight": 1.35
+                                }
+                              }
+                            },
+                            {
+                              "id": "G4TEaP",
+                              "type": "ref",
+                              "ref": "gJtKG",
+                              "width": "fill_container",
+                              "name": "Amount field",
+                              "descendants": {
+                                "C8B2G": {
+                                  "content": "Amount"
+                                },
+                                "qUxkJ": {
+                                  "enabled": true
+                                },
+                                "i8d1yF/ndIcN": {
+                                  "enabled": true
+                                },
+                                "i8d1yF/Iv0pS": {
+                                  "content": "84.20",
+                                  "fill": "$color-text-primary",
+                                  "fontFamily": "$type-family-mono",
+                                  "textAlign": "right"
+                                },
+                                "cPq1t": {
+                                  "height": 30,
+                                  "alignItems": "start"
+                                },
+                                "y5Zem": {
+                                  "content": "Unsigned — direction is chosen below",
+                                  "textGrowth": "fixed-width-height",
+                                  "height": 30,
+                                  "textAlignVertical": "top",
+                                  "lineHeight": 1.35
+                                }
+                              }
+                            },
+                            {
+                              "id": "h60NE",
+                              "type": "ref",
+                              "ref": "hcT3D",
+                              "name": "Direction"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "z6d4Ej",
+              "name": "Measurement",
+              "fill": "$color-text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Measured, both frames at 320 CSS px: 77 and 39 rendered descendants, 0 crossing either edge, worst overhang 0.00 px. Disabled nodes are excluded — they keep bounds without rendering, and counting them reported three phantom overflows on the tab counts the compact header switches off.\n\nThe list screen is 665 tall and scrolls vertically, which SC 1.4.10 allows; what it must not do is scroll sideways, and it does not. Two things had to change to get here, both hidden at 390 and both found by drawing 320: the page title had 90 px left over beside a 141 px labelled action and broke mid-word, and the tab strip had to lose its counts. Both now live in App header/compact rather than being repeated per screen.\n\nThere is no dark twin. Reflow is geometry — the same widths resolve in both colour themes, and a twin here would assert a second measurement that is the same measurement.",
+              "lineHeight": 1.45,
+              "fontFamily": "$type-family-body",
+              "fontSize": "$type-size-body-sm",
+              "fontWeight": "normal"
+            }
+          ]
         }
       ]
     },
@@ -29121,6 +29540,138 @@
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
                   "content": "breadcrumbs above · one action · tabs below",
+                  "fontFamily": "$type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "kvggU",
+          "name": "App header/compact",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "OPcjY",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "L2vaUH",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "App header/compact",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "q09QQ7",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The Compact configuration of App header, as one component rather than five overrides repeated on every Compact screen. Breadcrumbs are dropped — at this width the back control carries return. Tab counts are dropped. The primary action becomes an icon button and its label moves to the accessible name: a 141 px labelled button leaves 90 px for the title at 320 CSS px, which breaks the page title mid-word. Nothing reachable at Wide is unreachable here.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ooLSq",
+              "name": "Specimens",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "A7fgPl",
+                  "name": "Viewport 320",
+                  "clip": true,
+                  "width": 320,
+                  "fill": "$color-bg-canvas",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "CowGt",
+                      "name": "App header/compact",
+                      "reusable": true,
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "id": "NDwpA",
+                          "type": "ref",
+                          "ref": "uC4nV",
+                          "name": "Header",
+                          "width": "fill_container",
+                          "cornerRadius": 0,
+                          "stroke": "$color-border-default",
+                          "strokeWidth": {
+                            "bottom": 1
+                          },
+                          "descendants": {
+                            "d0eDYj": {
+                              "enabled": false
+                            },
+                            "tquly": {
+                              "enabled": true
+                            },
+                            "mgAmK": {
+                              "id": "n8KeLf",
+                              "type": "ref",
+                              "ref": "mRsB3",
+                              "name": "Primary action",
+                              "width": 44,
+                              "height": 44,
+                              "descendants": {
+                                "heS79": {
+                                  "icon": "plus"
+                                }
+                              }
+                            },
+                            "mEaUK/Enur3": {
+                              "enabled": false
+                            },
+                            "DaJIq/Enur3": {
+                              "enabled": false
+                            },
+                            "xfNuS/Enur3": {
+                              "enabled": false
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "Q7QSA",
+                  "name": "Caption",
+                  "fill": "$color-text-secondary",
+                  "content": "320 · nav trigger · title · icon action · tabs without counts",
                   "fontFamily": "$type-family-mono",
                   "fontSize": 10,
                   "fontWeight": "normal"
@@ -31574,7 +32125,9 @@
                               "fill": "#FFFFFF00",
                               "stroke": "#FFFFFF00",
                               "strokeWidth": 0,
-                              "cornerRadius": 0
+                              "cornerRadius": 0,
+                              "width": 24,
+                              "height": 24
                             },
                             "DiY6n/jS7xJ": {
                               "fill": "$color-action-primary",
@@ -33964,6 +34517,1056 @@
               "fontWeight": "normal"
             }
           ]
+        },
+        {
+          "type": "frame",
+          "id": "r5kED",
+          "name": "Keyboard contract",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "O8KAol",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "BiwvZ",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Keyboard contract",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "M9tBpw",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Four questions asked of every organism, because the answers are decided here and implemented somewhere else. Unlike the target and reflow numbers, none of this is measured — there is no running code to measure. Each cell is a promise, and each promise is one test when the component is built. A dash means the organism has no answer to give, not that the question was skipped.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "RHe01",
+              "name": "Table",
+              "width": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Lplbc",
+                  "name": "Head",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 16,
+                  "padding": [
+                    10,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "c9qWwq",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Organism",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Mb7zF",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Operable by keyboard\n2.1.1 · 2.1.2",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ENHAp",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Focus moves\n2.4.3 · 2.4.7 · 3.2.1",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "q1wst",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Errors identified\n3.3.1 · 3.3.3",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "HGG9V",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Status announced\n4.1.3",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "u1YNTF",
+                  "name": "Row",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 16,
+                  "padding": [
+                    10,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "r2jMa",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "App header",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "fBB1b",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Every stop is a link or a button. At Compact the nav trigger opens the sidebar and returns focus to itself on close.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "o9AZZ2",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Tabs are route-backed, so each is a link and its own stop — no roving selection. The current one is programmatically current, not only coloured.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "NOQjJ",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "—",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "HAz5K",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Navigating moves focus to the page heading, which is what announces where you now are.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "iiEvV",
+                  "name": "Row",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 16,
+                  "padding": [
+                    10,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "FJDx7",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Sidebar nav",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "s9JaL",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Items are links. Collapse is a button that exposes its expanded state.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "EGKmD",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Collapsing does not move focus: the control stays where the hand left it.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "H9RwC",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "—",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "eG73v",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "—",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "gbC1r",
+                  "name": "Row",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 16,
+                  "padding": [
+                    10,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "fAWh4",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Secondary nav",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "SUICc",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "A list of links inside the page, never a second tab strip.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "MVPBq",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Same as the header: the destination page moves focus to its heading.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "H9Y0b",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "—",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "e3EKJs",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "—",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "uURCP",
+                  "name": "Row",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 16,
+                  "padding": [
+                    10,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Rlf8K",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Table region",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "sMUJE",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Sort is a button in the column header, activated by Enter or Space. Select all and each row's select are checkboxes toggled with Space. Shift with Up or Down extends a selection, so shift-click is never the only route.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "kPKVd",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Sorting keeps focus on the header button and changes the rows beneath it. Paging keeps focus on the pagination control.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "uHKhY",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "—",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "K3HkGS",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Sort order and selected count are announced politely — “sorted by date, newest first”, “3 of 12 selected”. The count is visible as well as spoken.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "X1uXU6",
+                  "name": "Row",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 16,
+                  "padding": [
+                    10,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "zx4i9",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Row",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "U06DUi",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Two stops: the select checkbox, then the merchant link that opens the editor. The row's click handler duplicates the link for a pointer and is never the only route.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "GManW",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Opening the editor moves focus into it; closing returns here, to the merchant link.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "xts96",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "—",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "xUp8e",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "A row-scoped notice is announced when it appears. Its single action, Review, is the next stop after the merchant link.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "lQif8",
+                  "name": "Row",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 16,
+                  "padding": [
+                    10,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ufSgT",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Chart region",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "P0EK4Z",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The chart is not a control. Every value it draws is also in the table beneath it, and that table is the keyboard route to the data.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "w5B1Y",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "—",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "gVYNt",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "—",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "tdggV",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Values are stated in text beside the mark. Nothing is carried by colour alone.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "IQbb3",
+                  "name": "Row",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 16,
+                  "padding": [
+                    10,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "uNqa1",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Drawer",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "llfEv",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Escape closes it. Cancel and Escape do the same thing, so there is no state reachable only by pointing.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "f9btQj",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "In on open, back to the row on close. Not trapped: Tab past Save continues into the page, which is what non-modal means.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "gvcvW",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Field errors render in the field's own message row and name the fix. The row is reserved at both states, so identifying an error moves nothing.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "OMxGI",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Saving announces the saved value. No toast — the panel already shows it.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Fny8k",
+                  "name": "Row",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 16,
+                  "padding": [
+                    10,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jCaN0",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Dialog",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "r5t1Ex",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Escape cancels. Enter activates the focused button, and the focused button is never the destructive one.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "QxTFl",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Trapped while open, returned to the trigger on close. Initial focus is the least destructive action, which on a confirmation is Cancel.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "CJBPC",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "—",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "yr1Hm",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The outcome is announced by the surface it lands on. The dialog is gone by then and cannot announce anything.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "rnGLp",
+                  "name": "Row",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 16,
+                  "padding": [
+                    10,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "R4NhoA",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Notice · four placements",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "E5Ar21",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "At most one action, and it is an ordinary button or link in the tab order.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jVza6",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "A notice never takes focus. It is announced where it appears, in place.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "E4ebB",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "A field error is not a notice — it belongs to the field.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "k3joL",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Page and global banners are assertive. Inline and row notices are polite. A toast is polite and never carries anything that must be read.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pzKYo",
+                  "name": "Row",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 16,
+                  "padding": [
+                    10,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "E9Gqc",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Empty state",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "LxRiO",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Its action is an ordinary button in the tab order.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "YNG8p",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "—",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "J0J45O",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "—",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "MjpNo",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "A filter returning nothing announces the result count; the empty state is what explains it.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Vbjgo",
+                  "name": "Row",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 16,
+                  "padding": [
+                    10,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "mHo3v",
+                      "name": "Cell",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Form field",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Y3m2F",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The control is reachable and operable; read-only stays selectable and copyable, which matters for an account number.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "a1hPK",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Disabled stays focusable enough to be discoverable, and focus stacks on top of every other state.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "C3Uw7",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The message row is reserved at both states, the message names the field and the fix, and the control is programmatically invalid — not red only.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "QCoK4",
+                      "name": "Cell",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "An error appearing is announced once, by the field, not by a banner.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -34564,33 +36167,11 @@
           "layout": "vertical",
           "children": [
             {
-              "id": "zJPte",
+              "id": "WrQEK",
               "type": "ref",
-              "ref": "uC4nV",
+              "ref": "CowGt",
               "name": "Page header",
-              "width": "fill_container",
-              "cornerRadius": 0,
-              "stroke": "$color-border-default",
-              "strokeWidth": {
-                "bottom": 1
-              },
-              "descendants": {
-                "d0eDYj": {
-                  "enabled": false
-                },
-                "tquly": {
-                  "enabled": true
-                },
-                "mEaUK/Enur3": {
-                  "enabled": false
-                },
-                "DaJIq/Enur3": {
-                  "enabled": false
-                },
-                "xfNuS/Enur3": {
-                  "enabled": false
-                }
-              }
+              "width": "fill_container"
             },
             {
               "type": "frame",
@@ -36061,6 +37642,259 @@
                       "fontWeight": "normal"
                     }
                   ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "U2jyBA",
+          "name": "Focus order",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "gf2zB",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "W8eWD",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Focus order",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "qlmSC",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Read out of the canvas, not asserted: the pass walks each frame with resolveInstances and lists every control instance in tree order, so this is the order the markup will have if the composition is built as drawn. Stops the frame does not draw are marked ·named — the skip link, which is off-screen until focused, and the content slot's own controls. Re-derive it after any change to a shell: a stop that moves while this block does not is the failure it exists to make visible.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "T84bQ",
+              "name": "Orders",
+              "width": "fill_container",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "XuxEx",
+                  "name": "Wide 1440 · shell",
+                  "width": "fill_container",
+                  "fill": "$color-bg-surface",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Wsz2o",
+                      "name": "Title",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Wide 1440 · shell",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-md",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hOcQe",
+                      "name": "Stops",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "1  Skip to content        ·named\n2  Overview\n3  Accounts\n4  Transactions\n5  Budgets\n6  Reports\n7  Settings\n8  Account trigger\n9  Collapse sidebar\n10 Add transaction\n11 Tab · Activity\n12 Tab · Pending\n13 Tab · Uncategorised\n14 Search             ·named\n15 Filter             ·named\n16 Select all         ·named\n17 per row: select,\n   then merchant      ·named\n18 Previous page      ·named\n19 Next page          ·named\n\n·named = stated here, not drawn\nin the frame. Everything else is\nread out of the canvas.",
+                      "lineHeight": 1.7,
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "KVM4o",
+                  "name": "Wide 1440 · editing drawer",
+                  "width": "fill_container",
+                  "fill": "$color-bg-surface",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "EFvjC",
+                      "name": "Title",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Wide 1440 · editing drawer",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-md",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "JbBXe",
+                      "name": "Stops",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "1–13 as the shell, unchanged\n14 Close drawer\n15 Merchant\n16 Amount\n17 Direction\n18 Cancel\n19 Save changes\n\nThe drawer is non-modal, so 14–19\nfollow the page rather than\nreplacing it. Nothing behind is\ninert and nothing is trapped.",
+                      "lineHeight": 1.7,
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LGYJw",
+                  "name": "Ultra 1920 · inspector",
+                  "width": "fill_container",
+                  "fill": "$color-bg-surface",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "IGPRO",
+                      "name": "Title",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Ultra 1920 · inspector",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-md",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "vznbx",
+                      "name": "Stops",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "1–13 as the shell, unchanged\n14 Merchant\n15 Amount\n16 Direction\n17 Cancel\n18 Save changes\n\nNo Close: the pane is persistent,\nso there is nothing to dismiss.\nSelecting a row does not move\nfocus — the row keeps it and the\npane is reached by Tab.",
+                      "lineHeight": 1.7,
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "U5JTi1",
+                  "name": "Compact 320 and 390",
+                  "width": "fill_container",
+                  "fill": "$color-bg-surface",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Vyehp",
+                      "name": "Title",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Compact 320 and 390",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-md",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jNLzQ",
+                      "name": "Stops",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "1 Skip to content   ·named\n2 Open navigation\n3 Add transaction\n4 Tab · Activity\n5 Tab · Pending\n6 Tab · Uncategorised\n7 Search\n8 Direction\n9 Pagination\n\nEditing replaces the list, so its\norder is the sheet alone:\n1 Close · 2 Merchant · 3 Amount\n4 Direction · 5 Cancel · 6 Save",
+                      "lineHeight": 1.7,
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "vDmQU",
+              "name": "Transitions",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dOf5n",
+                  "name": "Title",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Where focus goes, and where it comes back to",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-md",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "MRuBz",
+                  "name": "Body",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Drawer — focus moves to Close on open and returns to the row's merchant link on close, by Escape, by Back, or by Save. It is not trapped: Tab past Save continues into the page behind, which is the point of a non-modal panel.\n\nDialog — focus moves in, is trapped until it closes, Escape cancels, and focus returns to the control that opened it. Initial focus is the least destructive action: on a confirmation that is Cancel.\n\nInspector — no transition at all. Selecting a row leaves focus on the row; the pane is the next stop after the page's own controls. A pane that grabbed focus on every arrow-key move down the ledger would make the ledger unusable.\n\nCompact sheet — the list is not rendered, so there is nothing behind to return to on Tab. Back closes the route and the list restores with the edited row focused.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
                 }
               ]
             }

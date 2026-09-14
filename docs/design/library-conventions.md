@@ -126,24 +126,38 @@ removes. It was deleted and rebuilt as affix cells on the Input atom.
 
 The test: **if the new thing re-draws the atom's chrome, extend the atom.**
 
-## `Update` replaces the descendants map, it does not merge it
+## The descendants map merges on `Update` and replaces on `Copy`
 
-`Update(id, {descendants: {...}})` swaps the whole map. Every entry not repeated
-in the call is dropped, silently, and the instance falls back to origin defaults —
-which looks like a rendering glitch, not an error.
+The two operations disagree, which is the whole trap. Measured on an instance
+holding nine override keys:
 
-Restructuring the Checkbox atom hit this twice in one pass: relocating eleven
-instances' chrome overrides onto a new child deleted their check-glyph overrides,
-so every checked box in the library quietly unchecked itself. Read the current map
-and spread it:
-
-```js
-const cur = Get(id, {depth: 0}).descendants || {};
-Update(id, {descendants: {...cur, [newChildId]: chrome}});
+```text
+Update(id, {descendants: {k: v}})        the other eight keys survive
+                                         and v merges into the k entry
+Copy(src, parent, {descendants: {k: v}}) the copy carries k and nothing else
 ```
 
-Top-level properties do merge. It is only `descendants` that replaces, which is
-why the trap is easy to walk into.
+So a `Copy` that names one override silently drops the rest. Copying the Compact
+page header and passing a single title override re-enabled the breadcrumb and the
+three tab counts the original switched off — and the counts then overflowed their
+tabs, which is how it was noticed rather than shipped. Read the source's map and
+spread it into the `Copy`:
+
+```js
+const cur = Get(src, {depth: 0}).descendants || {};
+Copy(src, parent, {descendants: {...cur, [childId]: override}});
+```
+
+Spreading on `Update` too costs nothing and removes the need to remember which is
+which.
+
+**An `Update` through an instance path writes more than you passed.**
+`Update("instanceId/childId", {width: 16})` materialises the child's whole
+resolved property set into the override entry — fill, stroke, stroke width, corner
+radius, all of it — not just `width`. The entry then stops tracking the origin for
+every one of those properties. There is also no way to remove a key once written:
+undoing that `width` meant setting it back to the origin's 24 explicitly, leaving
+a pinned override where there had been none.
 
 ## Moving a node inside a component origin voids its overrides
 
