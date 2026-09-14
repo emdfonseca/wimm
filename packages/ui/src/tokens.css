@@ -82,6 +82,7 @@
   --layout-page-gutter: 16px;
   --layout-section-gap: 24px;
   --layout-sidebar-width: 0;
+  --layout-subnav-width: 0;
   --motion-duration-base: 200ms;
   --motion-duration-fast: 120ms;
   --motion-duration-slow: 320ms;
@@ -324,6 +325,7 @@
     --layout-page-gutter: 24px;
     --layout-section-gap: 32px;
     --layout-sidebar-width: 72px;
+    --layout-subnav-width: 212px;
     --type-size-amount-hero: 40px;
     --type-size-page-title: 28px;
   }
@@ -339,6 +341,7 @@
     --layout-page-gutter: 32px;
     --layout-section-gap: 40px;
     --layout-sidebar-width: 264px;
+    --layout-subnav-width: 212px;
     --type-size-amount-hero: 48px;
     --type-size-page-title: 32px;
   }
@@ -354,6 +357,7 @@
     --layout-page-gutter: 48px;
     --layout-section-gap: 40px;
     --layout-sidebar-width: 288px;
+    --layout-subnav-width: 212px;
     --type-size-amount-hero: 48px;
     --type-size-page-title: 32px;
   }

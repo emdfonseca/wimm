@@ -5,6 +5,11 @@ Project-level design decisions. Journey files carry a short summary and their ow
 
 ## Product
 
+**Name**
+`wimm` — where is my money? The lock-up ends in the question mark the initialism
+stands for, set in the accent blue. The mark alone never carries it: a lone `?`
+in a rounded square is a help affordance everywhere else.
+
 **Problem / in scope / out of scope**
 Personal money management: where the money is, where it went, and whether the plan
 holds. In scope: accounts and balances, transactions, categorisation, budgets,
@@ -48,16 +53,30 @@ Delete anything money-bearing → Destructive confirmation dialog naming the rec
 
 Destructive actions never reuse the editing drawer.
 
+**One editing surface, three renderings.** Edit transaction is one route and one
+Drawer component throughout. It is a full-bleed sheet at Compact, where there is
+no list worth keeping visible; a right-anchored overlay at Medium and Wide,
+non-modal so the list stays readable; and a persistent inspector pane at Ultra,
+with the elevation and the close control removed because nothing is dismissed.
+Nothing is reachable at one width and not another.
+
+**View preferences live in the account menu.** Appearance (light / dark / system)
+and density (comfortable / compact) are set there, reached from the account
+trigger in the sidebar footer. Density is hidden under `any-pointer: coarse`
+(ADR 0004). Sidebar collapse is the exception: its control sits in the sidebar
+footer beside the account trigger, because it acts on the thing it sits in.
+Width sets the default form — rail below 1200 CSS px — and the control overrides
+it for the session.
+
 ## Responsive
 
 **Regimes drawn**
 
 ```text
 Compact → 390 px representative frame   (width < 768 CSS px)
-Wide    → 1440 px representative frame  (768 ≤ width < 1800 CSS px)
+Medium  → 1024 px representative frame  (768 ≤ width < 1200 CSS px)
+Wide    → 1440 px representative frame  (1200 ≤ width < 1800 CSS px)
 Ultra   → 1920 px representative frame  (width ≥ 1800 CSS px)
-Medium  → no separate canvas row. Shares Wide structure; the sidebar renders as an
-          icon rail below 1200 CSS px. Recorded here rather than drawn.
 ```
 
 Ultra is a deviation from the pen-design standard's canonical three regimes
@@ -71,11 +90,15 @@ a transaction can be edited without losing the list.
 1800 — the overlay drawer becomes a persistent inspector pane.
 
 **What Ultra does not do**
-The content column never exceeds `layout-content-max` (1200). Extra width becomes
-gutter, never longer lines or wider table cells. Ultra buys a second pane, not
-bigger controls: control heights and type sizes resolve identically to Wide.
-A surface with nothing to put in a second pane is not drawn at Ultra — it uses the
-Wide composition centred, and that mapping is recorded rather than duplicated.
+Ultra buys a second pane, not bigger controls: control heights and type sizes
+resolve identically to Wide. A surface with nothing to put in a second pane is not
+drawn at Ultra — it uses the Wide composition, and that mapping is recorded rather
+than duplicated.
+
+`layout-content-max` (1200) caps **text measure only** — prose, help, long-form
+settings copy. It does not cap panels, tables or chart regions, which take the
+full Main column. Capping everything cost 212 px of a 1920 screen and made the
+extra width buy nothing.
 
 ## Themes
 
@@ -162,6 +185,8 @@ Accent tokens for the teal family: `color-accent`, `color-accent-hover`,
 `color-accent-subtle`.
 Layout tokens for the two-pane regime: `layout-inspector-width` (0 until Ultra) and
 `layout-drawer-width` (the overlay width at Compact through Wide).
+`layout-subnav-width` (212) is the in-page subsection list, identical at every
+pointer regime.
 
 **Typography** — Schibsted Grotesk for the interface: a newspaper-grade grotesque
 that stays quiet at 13 px and carries character at 32 px. IBM Plex Mono for amounts,

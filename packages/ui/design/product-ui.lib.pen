@@ -13638,6 +13638,249 @@
         },
         {
           "type": "frame",
+          "id": "FZOjp",
+          "name": "Brand",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "SnSJF",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "TzZlK",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Brand",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "YHgv2",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "A lettermark in the interface face, not artwork: the display weight at −2% tracking on a pine tile. The name is an initialism — where is my money? — so the lock-up ends in the question mark it stands for, set in the accent blue that carries every other query in the product: links, selection, focus. The question mark never appears alone and never on the tile, because a lone ? in a rounded square is a help affordance in every other interface and would be read as one here. It identifies the product and nothing else — never a link to a marketing page, never a home button competing with Overview, never coloured by state. The mark alone is what the rail uses; the lock-up is what the labelled sidebar uses. Pine is a fill here, which is the only way the brand green may appear beside an income amount in dark theme.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "lWCc2",
+              "name": "Specimens",
+              "width": "fill_container",
+              "fill": "$color-bg-surface",
+              "cornerRadius": "$radius-md",
+              "stroke": "$color-border-default",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "gap": 24,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Kn29w",
+                  "name": "mark",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "P0UZw",
+                      "name": "Slot",
+                      "height": 36,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ttoEX",
+                          "name": "Brand mark",
+                          "reusable": true,
+                          "width": 24,
+                          "height": 24,
+                          "fill": "$color-action-primary",
+                          "cornerRadius": "$radius-sm",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "KNGIb",
+                              "name": "Letter",
+                              "fill": "$color-text-inverse",
+                              "content": "w",
+                              "fontFamily": "$type-family-display",
+                              "fontSize": 14,
+                              "fontWeight": "600",
+                              "letterSpacing": -0.3
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "shqqO",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "content": "origin · Brand mark",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "nbREA",
+                  "name": "lock-up",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "O67ZFE",
+                      "name": "Slot",
+                      "height": 36,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "vGjfy",
+                          "name": "Brand",
+                          "reusable": true,
+                          "gap": 9,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "eSujL",
+                              "type": "ref",
+                              "ref": "ttoEX",
+                              "name": "Mark"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "AAB56",
+                              "name": "Wordmark",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "bwH8r",
+                                  "name": "Name",
+                                  "fill": "$color-text-primary",
+                                  "content": "wimm",
+                                  "fontFamily": "$type-family-display",
+                                  "fontSize": 16,
+                                  "fontWeight": "600",
+                                  "letterSpacing": -0.32
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "gXRg2",
+                                  "name": "Query",
+                                  "fill": "$color-accent",
+                                  "content": "?",
+                                  "fontFamily": "$type-family-display",
+                                  "fontSize": 16,
+                                  "fontWeight": "600",
+                                  "letterSpacing": -0.32
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "NnSC1",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "content": "origin · Brand",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "f9B9Tj",
+                  "name": "account trigger · rail",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "SpUFW",
+                      "name": "Slot",
+                      "height": 36,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "k8vDz",
+                          "name": "Account trigger/rail",
+                          "reusable": true,
+                          "width": 44,
+                          "height": 36,
+                          "fill": "#FFFFFF00",
+                          "cornerRadius": "$radius-sm",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "uAaKu",
+                              "type": "ref",
+                              "ref": "Z2oYAy",
+                              "name": "Avatar",
+                              "width": 26,
+                              "height": 26,
+                              "descendants": {
+                                "rv5n0": {
+                                  "content": "EF",
+                                  "fontSize": 10
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "pMwCw",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "content": "origin · Account trigger/rail",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
           "id": "pEybE",
           "name": "Button",
           "width": "fill_container",
@@ -24781,9 +25024,7 @@
               "type": "frame",
               "id": "g5psOZ",
               "name": "Compact device",
-              "theme": {
-                "device": "compact"
-              },
+              "theme": {},
               "width": 380,
               "layout": "vertical",
               "gap": 8,
@@ -24804,6 +25045,9 @@
                   "type": "frame",
                   "id": "hgGS2",
                   "name": "Ledger",
+                  "theme": {
+                    "device": "compact"
+                  },
                   "clip": true,
                   "width": "fill_container",
                   "fill": "$color-bg-surface",
@@ -24814,125 +25058,10 @@
                   "layout": "vertical",
                   "children": [
                     {
-                      "type": "frame",
-                      "id": "wUywT",
-                      "name": "Transaction row/compact",
-                      "reusable": true,
-                      "width": "fill_container",
-                      "height": 64,
-                      "fill": "#FFFFFF00",
-                      "gap": 11,
-                      "padding": [
-                        0,
-                        "$density-cell-padding-x"
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "id": "Qa3DX",
-                          "type": "ref",
-                          "ref": "Z2oYAy",
-                          "name": "Mark",
-                          "width": 32,
-                          "height": 32,
-                          "descendants": {
-                            "rv5n0": {
-                              "content": "WF",
-                              "fontSize": 12
-                            }
-                          }
-                        },
-                        {
-                          "type": "frame",
-                          "id": "N51Evi",
-                          "name": "Stack",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 3,
-                          "children": [
-                            {
-                              "type": "frame",
-                              "id": "z4soC",
-                              "name": "Line 1",
-                              "width": "fill_container",
-                              "gap": 10,
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "lRCOR",
-                                  "name": "Merchant",
-                                  "fill": "$color-text-primary",
-                                  "textGrowth": "fixed-width",
-                                  "width": "fill_container",
-                                  "content": "Whole Foods",
-                                  "fontFamily": "$type-family-body",
-                                  "fontSize": 14,
-                                  "fontWeight": "500"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "sHZFy",
-                                  "name": "Amount",
-                                  "fill": "$color-amount-negative",
-                                  "content": "−$84.20",
-                                  "fontFamily": "$type-family-mono",
-                                  "fontSize": 14,
-                                  "fontWeight": "normal"
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "k3Op9",
-                              "name": "Line 2",
-                              "width": "fill_container",
-                              "gap": 6,
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "ellipse",
-                                  "id": "kVrOo",
-                                  "name": "Dot",
-                                  "fill": "$color-chart-3",
-                                  "width": 6,
-                                  "height": 6
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "jNnq7",
-                                  "name": "Category",
-                                  "fill": "$color-text-secondary",
-                                  "content": "Groceries",
-                                  "fontFamily": "$type-family-body",
-                                  "fontSize": 12,
-                                  "fontWeight": "normal"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "eYohj",
-                                  "name": "Sep",
-                                  "fill": "$color-text-secondary",
-                                  "content": "·",
-                                  "fontFamily": "$type-family-body",
-                                  "fontSize": 12,
-                                  "fontWeight": "normal"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "jYyap",
-                                  "name": "Date",
-                                  "fill": "$color-text-secondary",
-                                  "content": "1 Sep",
-                                  "fontFamily": "$type-family-mono",
-                                  "fontSize": 11,
-                                  "fontWeight": "normal"
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
+                      "id": "yNe92",
+                      "type": "ref",
+                      "ref": "wUywT",
+                      "name": "Row"
                     },
                     {
                       "id": "fjMLy",
@@ -25032,6 +25161,177 @@
                   "fontFamily": "$type-family-body",
                   "fontSize": 11,
                   "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "SNRY5",
+                  "name": "Origin",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ZqQ4S",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "origin · outside the themed ledger",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "YCDI4",
+                      "name": "Housing",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$color-bg-surface",
+                      "cornerRadius": "$radius-md",
+                      "stroke": "$color-border-default",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "wUywT",
+                          "name": "Transaction row/compact",
+                          "reusable": true,
+                          "width": "fill_container",
+                          "height": 64,
+                          "fill": "#FFFFFF00",
+                          "gap": 11,
+                          "padding": [
+                            0,
+                            "$density-cell-padding-x"
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "Qa3DX",
+                              "type": "ref",
+                              "ref": "Z2oYAy",
+                              "name": "Mark",
+                              "width": 32,
+                              "height": 32,
+                              "descendants": {
+                                "rv5n0": {
+                                  "content": "WF",
+                                  "fontSize": 12
+                                }
+                              }
+                            },
+                            {
+                              "type": "frame",
+                              "id": "N51Evi",
+                              "name": "Stack",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 3,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "z4soC",
+                                  "name": "Line 1",
+                                  "width": "fill_container",
+                                  "gap": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "lRCOR",
+                                      "name": "Merchant",
+                                      "fill": "$color-text-primary",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "Whole Foods",
+                                      "fontFamily": "$type-family-body",
+                                      "fontSize": 14,
+                                      "fontWeight": "500"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "sHZFy",
+                                      "name": "Amount",
+                                      "fill": "$color-amount-negative",
+                                      "content": "−$84.20",
+                                      "fontFamily": "$type-family-mono",
+                                      "fontSize": 14,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "k3Op9",
+                                  "name": "Line 2",
+                                  "width": "fill_container",
+                                  "gap": 6,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "kVrOo",
+                                      "name": "Dot",
+                                      "fill": "$color-chart-3",
+                                      "width": 6,
+                                      "height": 6
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "jNnq7",
+                                      "name": "Category",
+                                      "fill": "$color-text-secondary",
+                                      "content": "Groceries",
+                                      "fontFamily": "$type-family-body",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "eYohj",
+                                      "name": "Sep",
+                                      "fill": "$color-text-secondary",
+                                      "content": "·",
+                                      "fontFamily": "$type-family-body",
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "jYyap",
+                                      "name": "Date",
+                                      "fill": "$color-text-secondary",
+                                      "content": "1 Sep",
+                                      "fontFamily": "$type-family-mono",
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "tXFnu",
+                      "name": "Note",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "An origin inherits any theme pinned on an ancestor, which freezes it and its Components-panel tile to that value. The ledger above is pinned to device = compact so it demonstrates the regime; the origin sits outside it and resolves from wherever an instance is placed.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
                 }
               ]
             }
@@ -27164,6 +27464,18 @@
                       "alignItems": "center",
                       "children": [
                         {
+                          "id": "tquly",
+                          "type": "ref",
+                          "ref": "mRsB3",
+                          "name": "Nav trigger",
+                          "enabled": false,
+                          "descendants": {
+                            "heS79": {
+                              "icon": "menu"
+                            }
+                          }
+                        },
+                        {
                           "type": "text",
                           "id": "YKiLb",
                           "name": "Title",
@@ -27299,7 +27611,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Top-level destinations, grouped but never nested — one level of depth, because the rail has nowhere to render a second. Rows are Nav item instances, so a sidebar row, a menu row and a sub-nav row are identical by construction rather than by care. Section headers degrade to dividers in the rail; child items would degrade to nothing, which is why there are none.",
+                  "content": "Three regions, top to bottom: the brand, the destinations, and a footer pinned to the bottom by a spacer so it sits at the foot whatever the viewport height. The footer holds the account trigger and the collapse control. Top-level destinations, grouped but never nested — one level of depth, because the rail has nowhere to render a second. Rows are Nav item instances, so a sidebar row, a menu row and a sub-nav row are identical by construction rather than by care. Section headers degrade to dividers in the rail; child items would degrade to nothing, which is why there are none. The brand degrades to its mark, the account trigger to its avatar, and the collapse control reverses its glyph; nothing disappears between the two forms, which is what makes the rail a rendering of this component rather than a second one. Width sets which form appears by default — rail below 1200 CSS px — and the control overrides that for the session. Below 768 there is no sidebar to collapse, so the control is not rendered rather than shown disabled.",
                   "lineHeight": 1.45,
                   "fontFamily": "$type-family-body",
                   "fontSize": "$type-size-body-sm",
@@ -27337,6 +27649,7 @@
                       "name": "Sidebar nav",
                       "reusable": true,
                       "width": 264,
+                      "height": 640,
                       "fill": "$color-bg-surface",
                       "cornerRadius": "$radius-md",
                       "stroke": "$color-border-default",
@@ -27346,6 +27659,26 @@
                       "gap": 2,
                       "padding": 12,
                       "children": [
+                        {
+                          "type": "frame",
+                          "id": "aiiUC",
+                          "name": "Brand",
+                          "width": "fill_container",
+                          "height": 44,
+                          "padding": [
+                            0,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "vbr4c",
+                              "type": "ref",
+                              "ref": "vGjfy",
+                              "name": "Lock-up"
+                            }
+                          ]
+                        },
                         {
                           "id": "PwD8Z",
                           "type": "ref",
@@ -27541,6 +27874,60 @@
                               "enabled": false
                             }
                           }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "oimJ5",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fill_container"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "J3eTj",
+                          "name": "Footer divider",
+                          "width": "fill_container",
+                          "height": 12,
+                          "padding": [
+                            0,
+                            10
+                          ],
+                          "alignItems": "end"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "eWCcX",
+                          "name": "Footer",
+                          "width": "fill_container",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "FJLeG",
+                              "type": "ref",
+                              "ref": "QETwn",
+                              "name": "Account trigger",
+                              "width": "fill_container"
+                            },
+                            {
+                              "id": "ZpGH4",
+                              "type": "ref",
+                              "ref": "mRsB3",
+                              "name": "Collapse",
+                              "width": 36,
+                              "height": 36,
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
+                              "descendants": {
+                                "heS79": {
+                                  "icon": "panel-left-close",
+                                  "fill": "$color-text-secondary",
+                                  "width": 16,
+                                  "height": 16
+                                }
+                              }
+                            }
+                          ]
                         }
                       ]
                     }
@@ -27569,6 +27956,7 @@
                       "name": "Sidebar nav/rail",
                       "reusable": true,
                       "width": 72,
+                      "height": 640,
                       "fill": "$color-bg-surface",
                       "cornerRadius": "$radius-md",
                       "stroke": "$color-border-default",
@@ -27579,6 +27967,23 @@
                       "padding": 12,
                       "alignItems": "center",
                       "children": [
+                        {
+                          "type": "frame",
+                          "id": "jZHqM",
+                          "name": "Brand",
+                          "width": 44,
+                          "height": 36,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "wBQBc",
+                              "type": "ref",
+                              "ref": "ttoEX",
+                              "name": "Mark"
+                            }
+                          ]
+                        },
                         {
                           "type": "frame",
                           "id": "Ogizy",
@@ -27719,6 +28124,59 @@
                               "icon": "settings"
                             }
                           }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "w7bh3O",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fill_container"
+                        },
+                        {
+                          "id": "fsycE",
+                          "type": "ref",
+                          "ref": "mRsB3",
+                          "name": "Expand",
+                          "width": 44,
+                          "height": 36,
+                          "fill": "#FFFFFF00",
+                          "stroke": "#FFFFFF00",
+                          "descendants": {
+                            "heS79": {
+                              "icon": "panel-left-open",
+                              "fill": "$color-text-secondary",
+                              "width": 16,
+                              "height": 16
+                            }
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "KQu9E",
+                          "name": "Footer divider",
+                          "width": "fill_container",
+                          "height": 12,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "PwnZS",
+                              "x": 10,
+                              "y": 5.5,
+                              "name": "Rule",
+                              "enabled": false,
+                              "fill": "$color-border-default",
+                              "width": 28,
+                              "height": 1
+                            }
+                          ]
+                        },
+                        {
+                          "id": "LskX5",
+                          "type": "ref",
+                          "ref": "k8vDz",
+                          "name": "Account trigger"
                         }
                       ]
                     }
@@ -28081,7 +28539,7 @@
         {
           "type": "frame",
           "id": "n2TGXn",
-          "name": "Secondary nav at Ultra",
+          "name": "Secondary nav form and placement",
           "width": "fill_container",
           "layout": "vertical",
           "gap": 12,
@@ -28101,7 +28559,7 @@
                   "fill": "$color-text-primary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Secondary nav at Ultra",
+                  "content": "Secondary nav form and placement",
                   "fontFamily": "$type-family-body",
                   "fontSize": "$type-size-heading-sm",
                   "fontWeight": "600"
@@ -28113,7 +28571,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "The list form and the tab form are not two renderings of one thing — they answer to different content, and the choice is made once by that content, never by the regime. A fixed handful of peer views is tabs, horizontal, always, at every size. A longer or growing set of subdivisions is a list, vertical, and at 1800 and above that list may promote out of the page into a column beside the sidebar. Tabs never promote: four peer views do not need a column, and giving them one would make the same relationship look different at different widths.",
+                  "content": "The list form and the tab form are not two renderings of one thing — they answer to different content, and the choice is made once by that content, never by the regime. A fixed handful of peer views is tabs, horizontal, in the page header, at every size. A longer or growing set of subdivisions is a list, and that list is a card inside the page, under the header that names the area it belongs to, at every size. Neither form is promoted by width. A subsection list never becomes a second full-height column beside the sidebar: the sections belong to the page, and a column outside the page header claims they are a peer of the primary nav.",
                   "lineHeight": 1.45,
                   "fontFamily": "$type-family-body",
                   "fontSize": "$type-size-body-sm",
@@ -28142,7 +28600,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Drawn to scale — one pixel here is 1.78 real pixels, and each row is as wide as its viewport. The width difference between the rows is the argument.",
+                  "content": "Drawn to scale — one pixel here is 1.78 real pixels, and each row is as wide as its viewport. The composition is identical in all three; what changes is how much is left for the content.",
                   "lineHeight": 1.5,
                   "fontFamily": "$type-family-body",
                   "fontSize": 11,
@@ -28163,12 +28621,230 @@
                 },
                 {
                   "type": "text",
+                  "id": "UHPr3",
+                  "name": "Caption",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Medium 1024 — the list is a card in the page, beside the content",
+                  "fontFamily": "$type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "G5PWrR",
+                  "name": "Shell 1024",
+                  "clip": true,
+                  "width": 576,
+                  "height": 104,
+                  "fill": "$color-bg-surface",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "UQuP2",
+                      "name": "Sidebar",
+                      "width": 40,
+                      "height": "fill_container",
+                      "fill": "$color-bg-subtle",
+                      "stroke": "$color-border-default",
+                      "strokeWidth": {
+                        "right": 1
+                      },
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "padding": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "kDcf0",
+                          "name": "Label",
+                          "fill": "$color-text-primary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Sidebar",
+                          "textAlign": "center",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": 10,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "MExBX",
+                          "name": "Note",
+                          "fill": "$color-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "72",
+                          "textAlign": "center",
+                          "fontFamily": "$type-family-mono",
+                          "fontSize": 9,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "A0h48b",
+                      "name": "Page",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "xod4a",
+                          "name": "Page header",
+                          "width": "fill_container",
+                          "height": 24,
+                          "fill": "$color-bg-surface",
+                          "stroke": "$color-border-default",
+                          "strokeWidth": {
+                            "bottom": 1
+                          },
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 1,
+                          "padding": [
+                            4,
+                            8
+                          ],
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "dfZGu",
+                              "name": "Label",
+                              "fill": "$color-text-primary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Settings",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 10,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "R0OxC0",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "gap": 6,
+                          "padding": 8,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "JjEPM",
+                              "name": "Sections",
+                              "width": 119,
+                              "height": "fill_container",
+                              "fill": "$color-accent-subtle",
+                              "cornerRadius": 3,
+                              "stroke": "$color-border-default",
+                              "strokeWidth": 1,
+                              "strokeAlignment": "inner",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": 6,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "lavNj",
+                                  "name": "Label",
+                                  "fill": "$color-text-primary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Sections",
+                                  "textAlign": "center",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 10,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "NS9oO",
+                                  "name": "Note",
+                                  "fill": "$color-text-secondary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "212",
+                                  "textAlign": "center",
+                                  "fontFamily": "$type-family-mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "wmU0Q",
+                              "name": "Content",
+                              "width": "fill_container",
+                              "height": "fill_container",
+                              "fill": "$color-bg-subtle",
+                              "cornerRadius": 3,
+                              "stroke": "$color-border-default",
+                              "strokeWidth": 1,
+                              "strokeAlignment": "inner",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": 6,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "A67RN2",
+                                  "name": "Label",
+                                  "fill": "$color-text-primary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Content",
+                                  "textAlign": "center",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 10,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "ftWel",
+                                  "name": "Note",
+                                  "fill": "$color-text-secondary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "remainder",
+                                  "textAlign": "center",
+                                  "fontFamily": "$type-family-mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
                   "id": "d2cbo1",
                   "name": "Caption",
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Wide 1440 — the list sits inside the page",
+                  "content": "Wide 1440 — the same card, in the same place",
                   "fontFamily": "$type-family-mono",
                   "fontSize": 10,
                   "fontWeight": "normal"
@@ -28188,7 +28864,7 @@
                   "children": [
                     {
                       "type": "frame",
-                      "id": "sFa9c",
+                      "id": "CXJgv",
                       "name": "Sidebar",
                       "width": 149,
                       "height": "fill_container",
@@ -28206,7 +28882,7 @@
                       "children": [
                         {
                           "type": "text",
-                          "id": "p6n6t",
+                          "id": "Jb9WP",
                           "name": "Label",
                           "fill": "$color-text-primary",
                           "textGrowth": "fixed-width",
@@ -28219,7 +28895,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "wCtdv",
+                          "id": "vz2Pj",
                           "name": "Note",
                           "fill": "$color-text-secondary",
                           "textGrowth": "fixed-width",
@@ -28234,47 +28910,146 @@
                     },
                     {
                       "type": "frame",
-                      "id": "z39mb9",
-                      "name": "Content",
+                      "id": "r1goa",
+                      "name": "Page",
                       "width": "fill_container",
                       "height": "fill_container",
-                      "fill": "#FFFFFF00",
-                      "stroke": "$color-border-default",
-                      "strokeWidth": {
-                        "right": 1
-                      },
-                      "strokeAlignment": "inner",
                       "layout": "vertical",
-                      "gap": 3,
-                      "padding": 8,
-                      "justifyContent": "center",
-                      "alignItems": "center",
                       "children": [
                         {
-                          "type": "text",
-                          "id": "eJe6g",
-                          "name": "Label",
-                          "fill": "$color-text-primary",
-                          "textGrowth": "fixed-width",
+                          "type": "frame",
+                          "id": "xvcMf",
+                          "name": "Page header",
                           "width": "fill_container",
-                          "content": "Content",
-                          "textAlign": "center",
-                          "fontFamily": "$type-family-body",
-                          "fontSize": 10,
-                          "fontWeight": "600"
+                          "height": 24,
+                          "fill": "$color-bg-surface",
+                          "stroke": "$color-border-default",
+                          "strokeWidth": {
+                            "bottom": 1
+                          },
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 1,
+                          "padding": [
+                            4,
+                            8
+                          ],
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "wszvu",
+                              "name": "Label",
+                              "fill": "$color-text-primary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Settings",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 10,
+                              "fontWeight": "600"
+                            }
+                          ]
                         },
                         {
-                          "type": "text",
-                          "id": "sxeYn",
-                          "name": "Note",
-                          "fill": "$color-text-secondary",
-                          "textGrowth": "fixed-width",
+                          "type": "frame",
+                          "id": "b95ejQ",
+                          "name": "Body",
                           "width": "fill_container",
-                          "content": "remainder",
-                          "textAlign": "center",
-                          "fontFamily": "$type-family-mono",
-                          "fontSize": 9,
-                          "fontWeight": "normal"
+                          "height": "fill_container",
+                          "gap": 6,
+                          "padding": 8,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "B3sC3y",
+                              "name": "Sections",
+                              "width": 119,
+                              "height": "fill_container",
+                              "fill": "$color-accent-subtle",
+                              "cornerRadius": 3,
+                              "stroke": "$color-border-default",
+                              "strokeWidth": 1,
+                              "strokeAlignment": "inner",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": 6,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "mxm2u",
+                                  "name": "Label",
+                                  "fill": "$color-text-primary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Sections",
+                                  "textAlign": "center",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 10,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "M2fdvp",
+                                  "name": "Note",
+                                  "fill": "$color-text-secondary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "212",
+                                  "textAlign": "center",
+                                  "fontFamily": "$type-family-mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "GEqdP",
+                              "name": "Content",
+                              "width": "fill_container",
+                              "height": "fill_container",
+                              "fill": "$color-bg-subtle",
+                              "cornerRadius": 3,
+                              "stroke": "$color-border-default",
+                              "strokeWidth": 1,
+                              "strokeAlignment": "inner",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": 6,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "zUzbR",
+                                  "name": "Label",
+                                  "fill": "$color-text-primary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Content",
+                                  "textAlign": "center",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 10,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "C0sWqz",
+                                  "name": "Note",
+                                  "fill": "$color-text-secondary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "remainder",
+                                  "textAlign": "center",
+                                  "fontFamily": "$type-family-mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
                         }
                       ]
                     }
@@ -28287,7 +29062,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Ultra 1920 — the same list promotes to a column",
+                  "content": "Ultra 1920 — still the same card. Ultra spends its width on the content panel.",
                   "fontFamily": "$type-family-mono",
                   "fontSize": 10,
                   "fontWeight": "normal"
@@ -28307,7 +29082,7 @@
                   "children": [
                     {
                       "type": "frame",
-                      "id": "E3f7n",
+                      "id": "UTFXt",
                       "name": "Sidebar",
                       "width": 162,
                       "height": "fill_container",
@@ -28325,7 +29100,7 @@
                       "children": [
                         {
                           "type": "text",
-                          "id": "vccxl",
+                          "id": "o1OBy",
                           "name": "Label",
                           "fill": "$color-text-primary",
                           "textGrowth": "fixed-width",
@@ -28338,7 +29113,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "feY1H",
+                          "id": "MaDVJ",
                           "name": "Note",
                           "fill": "$color-text-secondary",
                           "textGrowth": "fixed-width",
@@ -28353,93 +29128,146 @@
                     },
                     {
                       "type": "frame",
-                      "id": "fpiSj",
-                      "name": "Settings sections",
-                      "width": 124,
-                      "height": "fill_container",
-                      "fill": "$color-accent-subtle",
-                      "stroke": "$color-border-default",
-                      "strokeWidth": {
-                        "right": 1
-                      },
-                      "strokeAlignment": "inner",
-                      "layout": "vertical",
-                      "gap": 3,
-                      "padding": 8,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "HMJLX",
-                          "name": "Label",
-                          "fill": "$color-text-primary",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Settings sections",
-                          "textAlign": "center",
-                          "fontFamily": "$type-family-body",
-                          "fontSize": 10,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "vptMj",
-                          "name": "Note",
-                          "fill": "$color-text-secondary",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "220",
-                          "textAlign": "center",
-                          "fontFamily": "$type-family-mono",
-                          "fontSize": 9,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "PHhBa",
-                      "name": "Content",
+                      "id": "uePXG",
+                      "name": "Page",
                       "width": "fill_container",
                       "height": "fill_container",
-                      "fill": "#FFFFFF00",
-                      "stroke": "$color-border-default",
-                      "strokeWidth": {
-                        "right": 1
-                      },
-                      "strokeAlignment": "inner",
                       "layout": "vertical",
-                      "gap": 3,
-                      "padding": 8,
-                      "justifyContent": "center",
-                      "alignItems": "center",
                       "children": [
                         {
-                          "type": "text",
-                          "id": "X3jgiU",
-                          "name": "Label",
-                          "fill": "$color-text-primary",
-                          "textGrowth": "fixed-width",
+                          "type": "frame",
+                          "id": "J3z4I",
+                          "name": "Page header",
                           "width": "fill_container",
-                          "content": "Content",
-                          "textAlign": "center",
-                          "fontFamily": "$type-family-body",
-                          "fontSize": 10,
-                          "fontWeight": "600"
+                          "height": 24,
+                          "fill": "$color-bg-surface",
+                          "stroke": "$color-border-default",
+                          "strokeWidth": {
+                            "bottom": 1
+                          },
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 1,
+                          "padding": [
+                            4,
+                            8
+                          ],
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ETovj",
+                              "name": "Label",
+                              "fill": "$color-text-primary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Settings",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 10,
+                              "fontWeight": "600"
+                            }
+                          ]
                         },
                         {
-                          "type": "text",
-                          "id": "j9HBnD",
-                          "name": "Note",
-                          "fill": "$color-text-secondary",
-                          "textGrowth": "fixed-width",
+                          "type": "frame",
+                          "id": "N2gF4",
+                          "name": "Body",
                           "width": "fill_container",
-                          "content": "remainder",
-                          "textAlign": "center",
-                          "fontFamily": "$type-family-mono",
-                          "fontSize": 9,
-                          "fontWeight": "normal"
+                          "height": "fill_container",
+                          "gap": 6,
+                          "padding": 8,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "ZCRDb",
+                              "name": "Sections",
+                              "width": 119,
+                              "height": "fill_container",
+                              "fill": "$color-accent-subtle",
+                              "cornerRadius": 3,
+                              "stroke": "$color-border-default",
+                              "strokeWidth": 1,
+                              "strokeAlignment": "inner",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": 6,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "c16KV",
+                                  "name": "Label",
+                                  "fill": "$color-text-primary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Sections",
+                                  "textAlign": "center",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 10,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "zz26B",
+                                  "name": "Note",
+                                  "fill": "$color-text-secondary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "212",
+                                  "textAlign": "center",
+                                  "fontFamily": "$type-family-mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "lyu95",
+                              "name": "Content",
+                              "width": "fill_container",
+                              "height": "fill_container",
+                              "fill": "$color-bg-subtle",
+                              "cornerRadius": 3,
+                              "stroke": "$color-border-default",
+                              "strokeWidth": 1,
+                              "strokeAlignment": "inner",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": 6,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "jXT6d",
+                                  "name": "Label",
+                                  "fill": "$color-text-primary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Content",
+                                  "textAlign": "center",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 10,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "ANea7",
+                                  "name": "Note",
+                                  "fill": "$color-text-secondary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "remainder",
+                                  "textAlign": "center",
+                                  "fontFamily": "$type-family-mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
                         }
                       ]
                     }
@@ -28473,7 +29301,7 @@
                 {
                   "type": "frame",
                   "id": "hbbM3",
-                  "name": "Shell 1920",
+                  "name": "Shell 1920 · tabs",
                   "clip": true,
                   "width": 1080,
                   "height": 104,
@@ -28485,7 +29313,7 @@
                   "children": [
                     {
                       "type": "frame",
-                      "id": "k3JIg",
+                      "id": "K7eXce",
                       "name": "Sidebar",
                       "width": 162,
                       "height": "fill_container",
@@ -28503,7 +29331,7 @@
                       "children": [
                         {
                           "type": "text",
-                          "id": "TViAs",
+                          "id": "QLL45",
                           "name": "Label",
                           "fill": "$color-text-primary",
                           "textGrowth": "fixed-width",
@@ -28516,7 +29344,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "XCoQu",
+                          "id": "m6f07u",
                           "name": "Note",
                           "fill": "$color-text-secondary",
                           "textGrowth": "fixed-width",
@@ -28531,47 +29359,113 @@
                     },
                     {
                       "type": "frame",
-                      "id": "subBX",
-                      "name": "Content",
+                      "id": "mdCn4",
+                      "name": "Page",
                       "width": "fill_container",
                       "height": "fill_container",
-                      "fill": "#FFFFFF00",
-                      "stroke": "$color-border-default",
-                      "strokeWidth": {
-                        "right": 1
-                      },
-                      "strokeAlignment": "inner",
                       "layout": "vertical",
-                      "gap": 3,
-                      "padding": 8,
-                      "justifyContent": "center",
-                      "alignItems": "center",
                       "children": [
                         {
-                          "type": "text",
-                          "id": "U0oQ6",
-                          "name": "Label",
-                          "fill": "$color-text-primary",
-                          "textGrowth": "fixed-width",
+                          "type": "frame",
+                          "id": "jQ1IB",
+                          "name": "Page header",
                           "width": "fill_container",
-                          "content": "Content",
-                          "textAlign": "center",
-                          "fontFamily": "$type-family-body",
-                          "fontSize": 10,
-                          "fontWeight": "600"
+                          "height": 34,
+                          "fill": "$color-bg-surface",
+                          "stroke": "$color-border-default",
+                          "strokeWidth": {
+                            "bottom": 1
+                          },
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 1,
+                          "padding": [
+                            4,
+                            8
+                          ],
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "D50Zh3",
+                              "name": "Label",
+                              "fill": "$color-text-primary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Settings",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 10,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "yxByF",
+                              "name": "Note",
+                              "fill": "$color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Profile · Connections · Categories · Rules",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 9,
+                              "fontWeight": "normal"
+                            }
+                          ]
                         },
                         {
-                          "type": "text",
-                          "id": "jPKQv",
-                          "name": "Note",
-                          "fill": "$color-text-secondary",
-                          "textGrowth": "fixed-width",
+                          "type": "frame",
+                          "id": "hSSo4",
+                          "name": "Body",
                           "width": "fill_container",
-                          "content": "remainder",
-                          "textAlign": "center",
-                          "fontFamily": "$type-family-mono",
-                          "fontSize": 9,
-                          "fontWeight": "normal"
+                          "height": "fill_container",
+                          "gap": 6,
+                          "padding": 8,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "xlHHF",
+                              "name": "Content",
+                              "width": "fill_container",
+                              "height": "fill_container",
+                              "fill": "$color-bg-subtle",
+                              "cornerRadius": 3,
+                              "stroke": "$color-border-default",
+                              "strokeWidth": 1,
+                              "strokeAlignment": "inner",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": 6,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "WdYIK",
+                                  "name": "Label",
+                                  "fill": "$color-text-primary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Content",
+                                  "textAlign": "center",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 10,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "vQzsn",
+                                  "name": "Note",
+                                  "fill": "$color-text-secondary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "remainder",
+                                  "textAlign": "center",
+                                  "fontFamily": "$type-family-mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
                         }
                       ]
                     }
@@ -28584,7 +29478,7 @@
                   "fill": "$color-feedback-error",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "REFUSED · both at once",
+                  "content": "REFUSED · the list as a second full-height column",
                   "fontFamily": "$type-family-body",
                   "fontSize": 11,
                   "fontWeight": "600",
@@ -28597,7 +29491,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Ultra 1920 — 908 of 1920 is chrome",
+                  "content": "Ultra 1920 — 908 of 1920 is chrome, and the sections sit outside the header that owns them",
                   "fontFamily": "$type-family-mono",
                   "fontSize": 10,
                   "fontWeight": "normal"
@@ -28665,7 +29559,7 @@
                       "type": "frame",
                       "id": "uAYih",
                       "name": "Sections",
-                      "width": 124,
+                      "width": 119,
                       "height": "fill_container",
                       "fill": "$color-feedback-error-bg",
                       "stroke": "$color-border-default",
@@ -28699,7 +29593,7 @@
                           "fill": "$color-text-secondary",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
-                          "content": "220",
+                          "content": "212",
                           "textAlign": "center",
                           "fontFamily": "$type-family-mono",
                           "fontSize": 9,
@@ -28822,7 +29716,7 @@
                       "fill": "$color-feedback-error",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "A promoted list and an inspector are never both present",
+                      "content": "A subsection list is never a second sidebar",
                       "fontFamily": "$type-family-body",
                       "fontSize": 12,
                       "fontWeight": "600"
@@ -28834,7 +29728,7 @@
                       "fill": "$color-text-primary",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "The last row is drawn at the same scale as the others, which is the point: 288 + 220 + 400 leaves 1012 px of a 1920 screen for what you came to read — less than the Wide layout gives you at 1440. One persistent pane per side: left is navigation, right is the record. In practice this rarely collides, because an area with a per-row inspector is a ledger, and a ledger's peer views are tabs rather than a growing list.",
+                      "content": "Two objections, and the second is the one that decides it. The arithmetic: 288 + 220 + 400 leaves 1012 px of a 1920 screen for what you came to read, against 1176 in the Wide shell at 1440 — one persistent pane per side, left for navigation and right for the record. The hierarchy: Settings owns its subsections, so they belong under the page header that names Settings. A full-height column starting above that header claims they are a peer of Accounts and Transactions, which they are not.",
                       "lineHeight": 1.55,
                       "fontFamily": "$type-family-body",
                       "fontSize": 11,
@@ -32089,6 +32983,429 @@
         },
         {
           "type": "text",
+          "id": "YOjsk",
+          "name": "Caption",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Transactions / Compact 390 — no sidebar. Primary nav collapses behind the header's nav trigger; the page header keeps the title, the primary action and the tabs.",
+          "fontFamily": "$type-family-mono",
+          "fontSize": 11,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "Tr38o",
+          "name": "Transactions / Compact 390",
+          "theme": {
+            "device": "compact"
+          },
+          "clip": true,
+          "width": 390,
+          "height": 844,
+          "fill": "$color-bg-canvas",
+          "cornerRadius": "$radius-lg",
+          "stroke": "$color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "zJPte",
+              "type": "ref",
+              "ref": "uC4nV",
+              "name": "Page header",
+              "width": "fill_container",
+              "cornerRadius": 0,
+              "stroke": "$color-border-default",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "descendants": {
+                "d0eDYj": {
+                  "enabled": false
+                },
+                "tquly": {
+                  "enabled": true
+                },
+                "mEaUK/Enur3": {
+                  "enabled": false
+                },
+                "DaJIq/Enur3": {
+                  "enabled": false
+                },
+                "xfNuS/Enur3": {
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "D1scb1",
+              "name": "Body",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "padding": "$layout-page-gutter",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "D6XlH",
+                  "name": "CONTENT SLOT",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$color-bg-subtle",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-strong",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "mNxjy",
+                      "name": "Label",
+                      "fill": "$color-text-secondary",
+                      "content": "CONTENT SLOT",
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "GFsQf",
+                      "name": "Note",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "the list fills this — at Compact the transaction row reflows to two lines, drawn in 30 · MOLECULES / Transaction row / Compact device",
+                      "lineHeight": 1.45,
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "Ms6LR",
+          "name": "Caption",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Transactions / Compact 390 · editing — the same Drawer component again, full-bleed. One route, one component, three renderings: full-bleed sheet at Compact, overlay at Medium and Wide, persistent pane at Ultra. Nothing is unreachable at any width.",
+          "fontFamily": "$type-family-mono",
+          "fontSize": 11,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "JZNMG",
+          "name": "Transactions / Compact 390 · editing",
+          "theme": {
+            "device": "compact"
+          },
+          "clip": true,
+          "width": 390,
+          "height": 844,
+          "fill": "$color-bg-canvas",
+          "cornerRadius": "$radius-lg",
+          "stroke": "$color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "oENxd",
+              "type": "ref",
+              "ref": "uC4nV",
+              "name": "Page header",
+              "width": "fill_container",
+              "cornerRadius": 0,
+              "stroke": "$color-border-default",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "descendants": {
+                "d0eDYj": {
+                  "enabled": false
+                },
+                "tquly": {
+                  "enabled": true
+                },
+                "mEaUK/Enur3": {
+                  "enabled": false
+                },
+                "DaJIq/Enur3": {
+                  "enabled": false
+                },
+                "xfNuS/Enur3": {
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "zuIZZ",
+              "name": "Body",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "padding": "$layout-page-gutter",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Ey5nu",
+                  "name": "CONTENT SLOT",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$color-bg-subtle",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-strong",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rssng",
+                      "name": "Label",
+                      "fill": "$color-text-secondary",
+                      "content": "CONTENT SLOT",
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "lOVpN",
+                      "name": "Note",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "the list fills this — at Compact the transaction row reflows to two lines, drawn in 30 · MOLECULES / Transaction row / Compact device",
+                      "lineHeight": 1.45,
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "omDL5",
+              "type": "ref",
+              "ref": "yhPTP",
+              "name": "Sheet",
+              "layoutPosition": "absolute",
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844,
+              "cornerRadius": 0,
+              "strokeWidth": 0,
+              "descendants": {
+                "ZXZB2": {
+                  "content": "Edit transaction"
+                },
+                "W3sEe": {
+                  "type": "frame",
+                  "id": "K1GgFv",
+                  "name": "SHEET SLOT",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$color-bg-subtle",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-strong",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "p8KFT",
+                      "name": "Label",
+                      "fill": "$color-text-secondary",
+                      "content": "SHEET SLOT",
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "GYlWr",
+                      "name": "Note",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "the same editor, filling the viewport — at 390 there is no list to keep visible, so keeping it visible is not a goal worth 400 px",
+                      "lineHeight": 1.45,
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "zo11y",
+          "name": "Caption",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Transactions / Medium 1024 — the sidebar renders as the 72 px icon rail. Same header, same single content slot; only the navigation's form changes.",
+          "fontFamily": "$type-family-mono",
+          "fontSize": 11,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "UNWKw",
+          "name": "Transactions / Medium 1024",
+          "theme": {
+            "device": "medium"
+          },
+          "clip": true,
+          "width": 1024,
+          "height": 760,
+          "fill": "$color-bg-canvas",
+          "cornerRadius": "$radius-lg",
+          "stroke": "$color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "children": [
+            {
+              "id": "g0n2I",
+              "type": "ref",
+              "ref": "UwIRb",
+              "name": "Sidebar rail",
+              "width": 72,
+              "height": "fill_container",
+              "cornerRadius": 0,
+              "stroke": "$color-border-default",
+              "strokeWidth": {
+                "right": 1
+              }
+            },
+            {
+              "type": "frame",
+              "id": "t4XTD",
+              "name": "Main",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "$color-bg-canvas",
+              "layout": "vertical",
+              "children": [
+                {
+                  "id": "mg076",
+                  "type": "ref",
+                  "ref": "uC4nV",
+                  "name": "Page header",
+                  "width": "fill_container",
+                  "cornerRadius": 0,
+                  "stroke": "$color-border-default",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "descendants": {
+                    "d0eDYj": {
+                      "enabled": false
+                    },
+                    "mEaUK/Enur3": {
+                      "enabled": false
+                    },
+                    "DaJIq/Enur3": {
+                      "enabled": false
+                    },
+                    "xfNuS/Enur3": {
+                      "enabled": false
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "tqlYe",
+                  "name": "Body",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "padding": "$layout-page-gutter",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "daoOh",
+                      "name": "CONTENT SLOT",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "$color-bg-subtle",
+                      "cornerRadius": "$radius-md",
+                      "stroke": "$color-border-strong",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 5,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Ge2oP",
+                          "name": "Label",
+                          "fill": "$color-text-secondary",
+                          "content": "CONTENT SLOT",
+                          "textAlign": "center",
+                          "fontFamily": "$type-family-mono",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "cD5r6",
+                          "name": "Note",
+                          "fill": "$color-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "the page fills this — a table region, a chart region, an empty state",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
           "id": "wpcsR",
           "name": "Caption",
           "fill": "$color-text-secondary",
@@ -32103,6 +33420,9 @@
           "type": "frame",
           "id": "Bz87r",
           "name": "Transactions / Wide",
+          "theme": {
+            "device": "wide"
+          },
           "clip": true,
           "width": 1440,
           "height": 760,
@@ -32220,12 +33540,404 @@
         },
         {
           "type": "text",
+          "id": "wPN89",
+          "name": "Caption",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Transactions / Wide 1440 · editing — the same Drawer component, here as a right-anchored overlay at layout-drawer-width 400. Non-modal and route-backed: no scrim, the list stays readable behind it, Back closes it, and a refresh reopens it.",
+          "fontFamily": "$type-family-mono",
+          "fontSize": 11,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "LeDrc",
+          "name": "Transactions / Wide 1440 · editing",
+          "theme": {
+            "device": "wide"
+          },
+          "clip": true,
+          "width": 1440,
+          "height": 760,
+          "fill": "$color-bg-canvas",
+          "cornerRadius": "$radius-lg",
+          "stroke": "$color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "children": [
+            {
+              "id": "uSk1V",
+              "type": "ref",
+              "ref": "fwKnX",
+              "name": "Sidebar",
+              "width": 264,
+              "height": "fill_container",
+              "cornerRadius": 0,
+              "stroke": "$color-border-default",
+              "strokeWidth": {
+                "right": 1
+              }
+            },
+            {
+              "type": "frame",
+              "id": "o6VBbb",
+              "name": "Main",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "$color-bg-canvas",
+              "layout": "vertical",
+              "children": [
+                {
+                  "id": "mtERT",
+                  "type": "ref",
+                  "ref": "uC4nV",
+                  "name": "Page header",
+                  "width": "fill_container",
+                  "cornerRadius": 0,
+                  "stroke": "$color-border-default",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "descendants": {
+                    "d0eDYj": {
+                      "enabled": false
+                    },
+                    "mEaUK/Enur3": {
+                      "enabled": false
+                    },
+                    "DaJIq/Enur3": {
+                      "enabled": false
+                    },
+                    "xfNuS/Enur3": {
+                      "enabled": false
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "RKoEp",
+                  "name": "Body",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "padding": "$layout-page-gutter",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "chid7",
+                      "name": "CONTENT SLOT",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "$color-bg-subtle",
+                      "cornerRadius": "$radius-md",
+                      "stroke": "$color-border-strong",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 5,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "EIKcH",
+                          "name": "Label",
+                          "fill": "$color-text-secondary",
+                          "content": "CONTENT SLOT",
+                          "textAlign": "center",
+                          "fontFamily": "$type-family-mono",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Z7vVa",
+                          "name": "Note",
+                          "fill": "$color-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "the page fills this — a table region, a chart region, an empty state",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "pd6eD",
+              "type": "ref",
+              "ref": "yhPTP",
+              "name": "Drawer",
+              "layoutPosition": "absolute",
+              "x": 1040,
+              "y": 0,
+              "width": 400,
+              "height": 760,
+              "descendants": {
+                "ZXZB2": {
+                  "content": "Edit transaction"
+                },
+                "W3sEe": {
+                  "type": "frame",
+                  "id": "LwZZY",
+                  "name": "DRAWER SLOT",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$color-bg-subtle",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-strong",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "bp1xd",
+                      "name": "Label",
+                      "fill": "$color-text-secondary",
+                      "content": "DRAWER SLOT",
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "C9cFv1",
+                      "name": "Note",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "the record's editor — the same fields the Ultra inspector holds",
+                      "lineHeight": 1.45,
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "zdqfP",
+          "name": "Caption",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Transactions / Ultra 1920 — 288 sidebar, 400 inspector, 1136 of content between them. The drawer stops being an overlay: no scrim, no shadow, no close control, and the list stays operable beside it. This pane is the whole justification for a fourth regime.",
+          "fontFamily": "$type-family-mono",
+          "fontSize": 11,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "CqsXh",
+          "name": "Transactions / Ultra 1920",
+          "theme": {
+            "device": "ultra"
+          },
+          "clip": true,
+          "width": 1920,
+          "height": 860,
+          "fill": "$color-bg-canvas",
+          "cornerRadius": "$radius-lg",
+          "stroke": "$color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "children": [
+            {
+              "id": "q07jQ",
+              "type": "ref",
+              "ref": "fwKnX",
+              "name": "Sidebar",
+              "width": 288,
+              "height": "fill_container",
+              "cornerRadius": 0,
+              "stroke": "$color-border-default",
+              "strokeWidth": {
+                "right": 1
+              }
+            },
+            {
+              "type": "frame",
+              "id": "VrvQg",
+              "name": "Main",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "$color-bg-canvas",
+              "layout": "vertical",
+              "children": [
+                {
+                  "id": "C1gcC",
+                  "type": "ref",
+                  "ref": "uC4nV",
+                  "name": "Page header",
+                  "width": "fill_container",
+                  "cornerRadius": 0,
+                  "stroke": "$color-border-default",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "descendants": {
+                    "d0eDYj": {
+                      "enabled": false
+                    },
+                    "mEaUK/Enur3": {
+                      "enabled": false
+                    },
+                    "DaJIq/Enur3": {
+                      "enabled": false
+                    },
+                    "xfNuS/Enur3": {
+                      "enabled": false
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "mDftN",
+                  "name": "Body",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "padding": "$layout-page-gutter",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "sbUlw",
+                      "name": "CONTENT SLOT",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "$color-bg-subtle",
+                      "cornerRadius": "$radius-md",
+                      "stroke": "$color-border-strong",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 5,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "OLTPE",
+                          "name": "Label",
+                          "fill": "$color-text-secondary",
+                          "content": "CONTENT SLOT",
+                          "textAlign": "center",
+                          "fontFamily": "$type-family-mono",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "V4ROJz",
+                          "name": "Note",
+                          "fill": "$color-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "the list fills this and stays operable while the inspector is open — selection moves the inspector, it does not block the list",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "lTT6E",
+              "type": "ref",
+              "ref": "yhPTP",
+              "name": "Inspector",
+              "width": 400,
+              "height": "fill_container",
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "enabled": false,
+                "color": "#000000"
+              },
+              "descendants": {
+                "ZXZB2": {
+                  "content": "Inspector"
+                },
+                "S9Qtgj": {
+                  "enabled": false
+                },
+                "W3sEe": {
+                  "type": "frame",
+                  "id": "baLxr",
+                  "name": "INSPECTOR SLOT",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$color-bg-subtle",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-strong",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "o073J",
+                      "name": "Label",
+                      "fill": "$color-text-secondary",
+                      "content": "INSPECTOR SLOT",
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "iQe6X",
+                      "name": "Note",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "the selected record's editor — the same fields the Wide drawer carries, with no scrim and nothing to dismiss",
+                      "lineHeight": 1.45,
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "text",
           "id": "G0rjN",
           "name": "Caption",
           "fill": "$color-text-secondary",
           "textGrowth": "fixed-width",
           "width": "fill_container",
-          "content": "Settings / Wide 1440 — primary nav, page header, secondary nav list inside the page, one content slot. All three navigation layers at once.",
+          "content": "Settings / Wide 1440 — primary nav, page header, and the subsection list as a card inside the page. All three navigation layers at once.",
           "fontFamily": "$type-family-mono",
           "fontSize": 11,
           "fontWeight": "normal"
@@ -32234,6 +33946,9 @@
           "type": "frame",
           "id": "H0APd",
           "name": "Settings / Wide",
+          "theme": {
+            "device": "wide"
+          },
           "clip": true,
           "width": 1440,
           "height": 760,
@@ -32334,7 +34049,11 @@
                       "type": "ref",
                       "ref": "L0hfW",
                       "name": "Secondary nav",
-                      "width": 212
+                      "width": 212,
+                      "height": "fit_content",
+                      "cornerRadius": "$radius-md",
+                      "stroke": "$color-border-default",
+                      "strokeWidth": 1
                     },
                     {
                       "type": "frame",
@@ -32395,6 +34114,478 @@
                           ]
                         }
                       ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "qrWpF",
+          "name": "Caption",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Settings / Ultra 1920 — the same composition, unchanged by the regime. Ultra spends its extra width on the content panel, not on chrome: layout-content-max governs text measure, and a settings panel is forms. The subsection list never becomes a second full-height column.",
+          "fontFamily": "$type-family-mono",
+          "fontSize": 11,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "Z9Dpm",
+          "name": "Settings / Ultra 1920",
+          "theme": {
+            "device": "ultra"
+          },
+          "clip": true,
+          "width": 1920,
+          "height": 860,
+          "fill": "$color-bg-canvas",
+          "cornerRadius": "$radius-lg",
+          "stroke": "$color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "children": [
+            {
+              "id": "Ot5mK",
+              "type": "ref",
+              "ref": "fwKnX",
+              "name": "Sidebar",
+              "width": 288,
+              "height": "fill_container",
+              "cornerRadius": 0,
+              "stroke": "$color-border-default",
+              "strokeWidth": {
+                "right": 1
+              },
+              "descendants": {
+                "l4tOM": {
+                  "fill": "#FFFFFF00"
+                },
+                "l4tOM/TVqlB": {
+                  "fill": "$color-text-secondary"
+                },
+                "l4tOM/KfRDI": {
+                  "fill": "$color-text-primary",
+                  "fontWeight": "500"
+                },
+                "zVJvb": {
+                  "fill": "$color-accent-subtle"
+                },
+                "zVJvb/TVqlB": {
+                  "fill": "$color-accent"
+                },
+                "zVJvb/KfRDI": {
+                  "fill": "$color-accent",
+                  "fontWeight": "600"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "UsEil",
+              "name": "Main",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "$color-bg-canvas",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "DWFv5",
+                  "name": "Page header",
+                  "width": "fill_container",
+                  "fill": "$color-bg-surface",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": [
+                    16,
+                    "$layout-page-gutter"
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jY9Eg",
+                      "name": "Title",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Settings",
+                      "fontFamily": "$type-family-display",
+                      "fontSize": "$type-size-page-title",
+                      "fontWeight": "600",
+                      "letterSpacing": -0.6
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dOlDf",
+                  "name": "Body",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "gap": 24,
+                  "padding": "$layout-page-gutter",
+                  "children": [
+                    {
+                      "id": "HEz8Y",
+                      "type": "ref",
+                      "ref": "L0hfW",
+                      "name": "Settings sections",
+                      "width": 212,
+                      "height": "fit_content",
+                      "cornerRadius": "$radius-md",
+                      "stroke": "$color-border-default",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ZkUMv",
+                      "name": "Content column",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "$color-bg-surface",
+                      "cornerRadius": "$radius-md",
+                      "stroke": "$color-border-default",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "padding": 20,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "bl1IK",
+                          "name": "CONTENT SLOT",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "$color-bg-subtle",
+                          "cornerRadius": "$radius-md",
+                          "stroke": "$color-border-strong",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 5,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "jXjME",
+                              "name": "Label",
+                              "fill": "$color-text-secondary",
+                              "content": "CONTENT SLOT",
+                              "textAlign": "center",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "MsyUQ",
+                              "name": "Note",
+                              "fill": "$color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "the section the promoted list selected",
+                              "lineHeight": 1.45,
+                              "textAlign": "center",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "gUCE2",
+          "name": "Caption",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "List scaffold / Wide — what fills the shell's CONTENT SLOT in a list area. Drawn at 1176, the Main column of Transactions / Wide. The count and the pagination belong to the table region's own toolbar and footer, not to this scaffold.",
+          "fontFamily": "$type-family-mono",
+          "fontSize": 11,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "eykQg",
+          "name": "List scaffold / Wide",
+          "theme": {
+            "device": "wide"
+          },
+          "clip": true,
+          "width": 1176,
+          "height": 440,
+          "fill": "$color-bg-canvas",
+          "cornerRadius": "$radius-lg",
+          "stroke": "$color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "i0PVTt",
+              "name": "Body",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": "$density-stack-gap",
+              "padding": "$layout-page-gutter",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "LNxG0",
+                  "name": "FILTER BAR SLOT",
+                  "width": "fill_container",
+                  "height": 64,
+                  "fill": "$color-bg-subtle",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-strong",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "mSybg",
+                      "name": "Label",
+                      "fill": "$color-text-secondary",
+                      "content": "FILTER BAR SLOT",
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "fCQ0p",
+                      "name": "Note",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "removable chips naming each active filter. A filtered view carries chips and no breadcrumb — a filter is not containment.",
+                      "lineHeight": 1.45,
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Yz20X",
+                  "name": "LIST REGION SLOT",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$color-bg-subtle",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-strong",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "B1Tqg",
+                      "name": "Label",
+                      "fill": "$color-text-secondary",
+                      "content": "LIST REGION SLOT",
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Em3Uc",
+                      "name": "Note",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "40 · ORGANISMS / Table region at pointer widths; stacked two-line rows at Compact. Empty, loading and filtered-to-nothing replace this region only — the shell and the filter bar stay.",
+                      "lineHeight": 1.45,
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "KnWcx",
+          "name": "Caption",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Detail scaffold / Wide — the same page header organism with breadcrumbs enabled, which is the only place they appear: a detail record that failed the one-home test is genuinely nested. Summary first, then the record's peer views as tabs.",
+          "fontFamily": "$type-family-mono",
+          "fontSize": 11,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "LHBGo",
+          "name": "Detail scaffold / Wide",
+          "theme": {
+            "device": "wide"
+          },
+          "clip": true,
+          "width": 1176,
+          "height": 560,
+          "fill": "$color-bg-canvas",
+          "cornerRadius": "$radius-lg",
+          "stroke": "$color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "xp5SB",
+              "type": "ref",
+              "ref": "uC4nV",
+              "name": "Page header",
+              "width": "fill_container",
+              "cornerRadius": 0,
+              "stroke": "$color-border-default",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "descendants": {
+                "mEaUK/Enur3": {
+                  "enabled": false
+                },
+                "DaJIq/Enur3": {
+                  "enabled": false
+                },
+                "xfNuS/Enur3": {
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "BQVOZ",
+              "name": "Body",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": "$density-stack-gap",
+              "padding": "$layout-page-gutter",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pV01n",
+                  "name": "SUMMARY SLOT",
+                  "width": "fill_container",
+                  "height": 128,
+                  "fill": "$color-bg-subtle",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-strong",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "psg4q",
+                      "name": "Label",
+                      "fill": "$color-text-secondary",
+                      "content": "SUMMARY SLOT",
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "WzujU",
+                      "name": "Note",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "metric tiles or a balance card — the few numbers that answer the question the record was opened to answer",
+                      "lineHeight": 1.45,
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "BmXJJ",
+                  "name": "SECTION SLOT",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$color-bg-subtle",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-border-strong",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "sobrc",
+                      "name": "Label",
+                      "fill": "$color-text-secondary",
+                      "content": "SECTION SLOT",
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "EEqqR",
+                      "name": "Note",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "the tab the header selected. One tab is current at all times; there is no untabbed state underneath.",
+                      "lineHeight": 1.45,
+                      "textAlign": "center",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -33991,6 +36182,35 @@
           "value": "#688C74",
           "theme": {
             "color": "dark"
+          }
+        }
+      ]
+    },
+    "layout-subnav-width": {
+      "type": "number",
+      "value": [
+        {
+          "value": 0,
+          "theme": {
+            "device": "compact"
+          }
+        },
+        {
+          "value": 212,
+          "theme": {
+            "device": "medium"
+          }
+        },
+        {
+          "value": 212,
+          "theme": {
+            "device": "wide"
+          }
+        },
+        {
+          "value": 212,
+          "theme": {
+            "device": "ultra"
           }
         }
       ]

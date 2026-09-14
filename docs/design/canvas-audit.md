@@ -148,8 +148,18 @@ Print("origins pinned to a theme:",bad);
 ```
 
 Zone frames must not carry a theme. Only frames whose *purpose* is a fixed context
-may: the QA light/dark pairs, the token swatch chips, and the device and density
-demos. Clear one with `Update(id,{theme:{}})`.
+may: the QA light/dark pairs, the token swatch chips, the device and density
+demos, and the regime templates in `50 · TEMPLATES`, each of which is named for
+the regime it renders. Clear one with `Update(id,{theme:{}})`.
+
+A template named for a regime and *not* carrying that regime's theme is the worse
+failure, and it is silent: both Wide shells here resolved `device = compact` for
+months, drawing a 16 px gutter and a 24 px page title under the name "Wide 1440".
+Assert the resolved value, never the frame's width:
+
+```js
+Print(Get(BODY_ID,{depth:0,resolveVariables:true}).padding);
+```
 
 A theme can appear on a frame without being authored in a script — selecting a
 frame and using the app's theme switcher writes one. Re-run this after any session
@@ -232,6 +242,56 @@ if(new Set(rows).size!==1||rows[0]!==EXPECTED)
 ```
 
 Rows hugging to 28 px instead of 56 read as a slightly tight table, not a defect.
+
+## Text contrast
+
+The table above promises this check and the file shipped without the code for it,
+which meant it was never run document-wide. Every text node is measured against
+the nearest filled ancestor, resolved through whatever theme the node sits in.
+
+```js
+const hx=c=>{if(!c)return null;if(typeof c==="string")return /^#/.test(c)?c:null;
+  if(Array.isArray(c))return hx(c[0]);if(c.type==="color")return hx(c.color);return null};
+const rgb=h=>{let s=h.slice(1);if(s.length===3)s=s.split("").map(x=>x+x).join("");
+  return[parseInt(s.slice(0,2),16),parseInt(s.slice(2,4),16),parseInt(s.slice(4,6),16)]};
+const lum=h=>{const[r,g,b]=rgb(h);const f=v=>{v/=255;
+  return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4)};
+  return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b)};
+const ratio=(a,b)=>{const l1=lum(a),l2=lum(b);
+  return(Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05)};
+let seen=0,fail=0;
+ROOTS.forEach(R=>Get(R,(n,c)=>{
+  if(n.type!=="text"||n.enabled===false)return;
+  const fg=hx(n.fill); if(!fg)return;
+  let p=c.parentCtx,bg=null;
+  while(p){const b=hx(p.node.fill); if(b&&!/00$/.test(b)){bg=b;break} p=p.parentCtx}
+  if(!bg)return;
+  seen++;
+  const sz=n.fontSize||14, bold=/600|700|bold/.test(String(n.fontWeight||""));
+  const need=(sz>=24||(sz>=18.66&&bold))?3:4.5;
+  const r=ratio(fg,bg);
+  if(r<need){fail++;Print("CONTRAST",n.id,n.name,r.toFixed(2),"<",need,fg,"on",bg)}
+},{resolveVariables:true,resolveInstances:true}));
+Print("measured:",seen,"failures:",fail);
+```
+
+`color-text-disabled` on a disabled specimen is the expected failure and is exempt
+under SC 1.4.3. Everything else is a defect. Run it with `resolveInstances: true`
+or it measures the origins and skips every instance override.
+
+## `ctx.problems` reports nodes that fit
+
+`partially clipped` fires on nodes whose bounds lie entirely inside their parent —
+eight of them here, in three different zones. Chasing them wastes a session.
+Before treating one as real, measure the overflow on each side:
+
+```js
+const b=c.bounds,p=c.parentCtx.bounds;
+Print(n.name,JSON.stringify({l:-b.x,t:-b.y,r:b.x+b.width-p.width,bo:b.y+b.height-p.height}));
+```
+
+All four numbers at or below zero means the node fits and the flag is noise. Only a
+positive number on some side is a finding.
 
 ## Colour value validity
 

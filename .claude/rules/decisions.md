@@ -77,3 +77,27 @@ work out how to enable it.
 
 This supersedes the density consequence in ADR 0002. The three-axis decision
 itself is unchanged.
+
+## 0005 · Secondary navigation placement and content width — Accepted
+
+**A subsection list is a card inside the page, at every pointer regime.** It sits
+under the page header that names the area it belongs to. It is never a
+full-height column beside the sidebar: the sections belong to the page, and a
+column that starts above the page header claims they are a peer of the primary
+nav. Width plays no part in the choice.
+
+The form is chosen by the content and only by the content, which is what the
+secondary-nav contract already said before the regime clause was added to it:
+
+```text
+a fixed handful of peer views   → tabs, in the page header, at every size
+a longer or growing set         → a list card in the page, at every size
+```
+
+`layout-subnav-width` is 212 at Medium, Wide and Ultra, and 0 at Compact, where
+Settings stacks.
+
+**`layout-content-max` caps text measure only.** Prose, help and long-form
+settings copy stay within 1200. Panels, tables and chart regions take the full
+Main column. The token exists to protect line length; a form panel and a ledger
+have no measure to protect.
