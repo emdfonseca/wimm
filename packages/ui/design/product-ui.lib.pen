@@ -2657,8 +2657,8 @@
     {
       "type": "frame",
       "id": "iEzP7",
-      "x": 0,
-      "y": 3113,
+      "x": 1360,
+      "y": 0,
       "name": "10 · FOUNDATIONS",
       "theme": {},
       "width": 1200,
@@ -11981,8 +11981,8 @@
     {
       "type": "frame",
       "id": "C1M5zg",
-      "x": 0,
-      "y": 9550,
+      "x": 2720,
+      "y": 0,
       "name": "20 · ATOMS",
       "theme": {},
       "width": 1200,
@@ -17926,8 +17926,8 @@
     {
       "type": "frame",
       "id": "gy8qm",
-      "x": 0,
-      "y": 13605,
+      "x": 4080,
+      "y": 0,
       "name": "30 · MOLECULES",
       "width": 1200,
       "fill": "$color-bg-canvas",
@@ -22082,8 +22082,8 @@
     {
       "type": "frame",
       "id": "U3Tzr",
-      "x": 0,
-      "y": 17767,
+      "x": 6800,
+      "y": 0,
       "name": "90 · QA",
       "width": 1200,
       "fill": "$color-bg-canvas",
@@ -24027,55 +24027,893 @@
       ]
     },
     {
-      "id": "JpOM0",
-      "type": "ref",
-      "ref": "W2gOKx",
-      "x": 1240,
-      "y": 0
-    },
-    {
-      "id": "QC1Bk",
-      "type": "ref",
-      "ref": "U5GuDg",
-      "x": 1400,
-      "y": 0
-    },
-    {
-      "id": "dM1nk",
-      "type": "ref",
-      "ref": "U5GuDg",
-      "x": 1753.3333333333333,
+      "type": "frame",
+      "id": "exiPr",
+      "x": 5440,
       "y": 0,
-      "name": "Input"
-    },
-    {
-      "id": "nUjpb",
-      "type": "ref",
-      "ref": "oVoOj",
-      "x": 2106.6666666666665,
-      "y": 0,
-      "enabled": true
-    },
-    {
-      "id": "h3alQ0",
-      "type": "ref",
-      "ref": "oweC0",
-      "x": 2386.6666666666665,
-      "y": 0
-    },
-    {
-      "id": "ph6GN",
-      "type": "ref",
-      "ref": "oweC0",
-      "x": 2774.6666666666665,
-      "y": 0
-    },
-    {
-      "id": "t5WfM",
-      "type": "ref",
-      "ref": "oweC0",
-      "x": 3162.6666666666665,
-      "y": 0
+      "name": "40 · ORGANISMS",
+      "width": 1200,
+      "fill": "$color-bg-canvas",
+      "cornerRadius": 16,
+      "layout": "vertical",
+      "gap": 32,
+      "padding": 44,
+      "children": [
+        {
+          "type": "frame",
+          "id": "A3a0GA",
+          "name": "Header",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "TapRj",
+              "name": "Eyebrow",
+              "fill": "$color-text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "40 · ORGANISMS",
+              "fontFamily": "$type-family-mono",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "letterSpacing": 1.2
+            },
+            {
+              "type": "text",
+              "id": "QSbw7",
+              "name": "Title",
+              "fill": "$color-text-primary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Organisms",
+              "fontFamily": "$type-family-body",
+              "fontSize": 32,
+              "fontWeight": "600",
+              "letterSpacing": -0.6
+            },
+            {
+              "type": "text",
+              "id": "A5c9Bf",
+              "name": "Note",
+              "fill": "$color-text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "The surfaces the decision tables in 00 · README choose between. Each one states what it is for and what it refuses, because an organism used in the wrong place is a bigger mistake than an atom styled wrongly.",
+              "lineHeight": 1.55,
+              "fontFamily": "$type-family-body",
+              "fontSize": "$type-size-body-md",
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "kTkwT",
+          "name": "Toast",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "FYWHG",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "CgwJT",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Toast",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "Om1HI",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "A completed action that needed no decision. Auto-dismisses, and the same fact is always visible somewhere else, so missing it costs nothing. Never carries the only copy of anything, and never reports a failed money operation.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "y0MP7",
+              "name": "Specimens",
+              "width": "fill_container",
+              "fill": "$color-bg-surface",
+              "cornerRadius": "$radius-md",
+              "stroke": "$color-border-default",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "afxfS",
+                  "name": "Caption",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "confirmation · auto-dismiss",
+                  "fontFamily": "$type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "FELcC",
+                  "name": "Slot",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "OI1aj",
+                      "name": "Toast",
+                      "reusable": true,
+                      "width": 400,
+                      "fill": "$color-bg-inverse",
+                      "cornerRadius": "$radius-md",
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "$shadow-color-strong",
+                        "offset": {
+                          "x": 0,
+                          "y": "$elevation-2-y"
+                        },
+                        "blur": "$elevation-2-blur"
+                      },
+                      "gap": 10,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "LswpE",
+                          "name": "Icon",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "check",
+                          "library": "lucide",
+                          "fill": "$color-text-inverse"
+                        },
+                        {
+                          "type": "text",
+                          "id": "p3QasW",
+                          "name": "Message",
+                          "fill": "$color-text-inverse",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Category updated",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "V9rDC",
+                          "name": "Action",
+                          "fill": "$color-text-inverse",
+                          "content": "Undo",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qABew",
+          "name": "Inline alert",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "W8YGqJ",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "kl919",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Inline alert",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "nIMNK",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "A condition affecting one section, shown where the condition is. Lives in the flow, moves with the content it describes, and carries the action that resolves it. Never used for anything page-wide.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "X3yH2",
+              "name": "Specimens",
+              "width": "fill_container",
+              "fill": "$color-bg-surface",
+              "cornerRadius": "$radius-md",
+              "stroke": "$color-border-default",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "SaTdr",
+                  "name": "Inline alert",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "fill": "$color-feedback-warning-bg",
+                  "cornerRadius": "$radius-md",
+                  "gap": 11,
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "xejXl",
+                      "name": "Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "triangle-alert",
+                      "library": "lucide",
+                      "fill": "$color-feedback-warning"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ub9Jc",
+                      "name": "Body",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Uize2",
+                          "name": "Title",
+                          "fill": "$color-text-primary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Groceries is over budget",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "pZtE0",
+                          "name": "Message",
+                          "fill": "$color-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "$412.60 of $350.00 spent, with 9 days left in the period.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$type-family-body",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "xfHq2",
+                          "name": "Action",
+                          "fill": "$color-accent",
+                          "content": "Adjust budget",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "X8BnuX",
+                  "name": "Caption",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "warning · in the flow, beside what it describes",
+                  "fontFamily": "$type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "id": "Zdwyw",
+                  "type": "ref",
+                  "ref": "SaTdr",
+                  "name": "Alert info",
+                  "width": "fill_container",
+                  "fill": "$color-feedback-info-bg",
+                  "descendants": {
+                    "xejXl": {
+                      "icon": "info",
+                      "fill": "$color-feedback-info"
+                    },
+                    "Uize2": {
+                      "content": "Three transactions need a category"
+                    },
+                    "pZtE0": {
+                      "content": "Imported from the March statement and left uncategorised."
+                    },
+                    "xfHq2": {
+                      "content": "Review them"
+                    }
+                  }
+                },
+                {
+                  "type": "text",
+                  "id": "VTbBX",
+                  "name": "Caption",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "info · same shape, different meaning",
+                  "fontFamily": "$type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qKa3d",
+          "name": "Page banner",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "eTuFw",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Mpq9L",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Page banner",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "u5Kc1",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "A condition affecting the whole page or account, persistent until resolved, carrying the action that resolves it. This is where a failed money operation goes — a toast would let it disappear, leaving someone believing money moved. Survives a refresh, because the condition does.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "svB4y",
+              "name": "Specimens",
+              "width": "fill_container",
+              "fill": "$color-bg-surface",
+              "cornerRadius": "$radius-md",
+              "stroke": "$color-border-default",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "sGYuY",
+                  "name": "Page banner",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "fill": "$color-feedback-error-bg",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-feedback-error",
+                  "strokeWidth": {
+                    "left": 3
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 12,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "zpG8q",
+                      "name": "Icon",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "circle-alert",
+                      "library": "lucide",
+                      "fill": "$color-feedback-error"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "sXaTn",
+                      "name": "Body",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "t5E9N",
+                          "name": "Title",
+                          "fill": "$color-text-primary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Transfer to Savings did not complete",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "OVHof",
+                          "name": "Message",
+                          "fill": "$color-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "$500.00 was not moved. Your balances are unchanged and nothing was taken.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$type-family-body",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "p6zWO",
+                      "type": "ref",
+                      "ref": "W2gOKx",
+                      "name": "Action",
+                      "height": 32,
+                      "descendants": {
+                        "iYHDG": {
+                          "content": "Try again",
+                          "fontSize": 12
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "j1Vfk4",
+                  "name": "Caption",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "failed money operation — the case that must never be a toast",
+                  "fontFamily": "$type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "id": "U7xZPM",
+                  "type": "ref",
+                  "ref": "sGYuY",
+                  "name": "Banner stale",
+                  "width": "fill_container",
+                  "fill": "$color-feedback-warning-bg",
+                  "stroke": "$color-feedback-warning",
+                  "descendants": {
+                    "zpG8q": {
+                      "icon": "refresh-cw",
+                      "fill": "$color-feedback-warning"
+                    },
+                    "t5E9N": {
+                      "content": "Amex has not synced since 8 March"
+                    },
+                    "OVHof": {
+                      "content": "Balances and recent transactions for this account may be out of date."
+                    },
+                    "p6zWO/iYHDG": {
+                      "content": "Reconnect",
+                      "fontSize": 12
+                    }
+                  }
+                },
+                {
+                  "type": "text",
+                  "id": "N7C68Z",
+                  "name": "Caption",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "stale data — a condition, not an event",
+                  "fontFamily": "$type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Q6eD50",
+          "name": "Global banner",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "pi4aM",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dTYUi",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Global banner",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "gEiUI",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Account-wide and above the shell: a payment method expired, service degraded, a scheduled outage. Dismissible only when the condition is resolved, because dismissing it does not fix anything. One at a time — a stack of global banners means the product is in a state nobody designed.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "wP4wh",
+              "name": "Specimens",
+              "width": "fill_container",
+              "fill": "$color-bg-surface",
+              "cornerRadius": "$radius-md",
+              "stroke": "$color-border-default",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "HMxpD",
+                  "name": "Global banner",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "$color-bg-inverse",
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "sWxLW",
+                      "name": "Icon",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "credit-card",
+                      "library": "lucide",
+                      "fill": "$color-text-inverse"
+                    },
+                    {
+                      "type": "text",
+                      "id": "vXRkH",
+                      "name": "Message",
+                      "fill": "$color-text-inverse",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your card on file expires this month. Update it to keep syncing.",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "G0rP40",
+                      "name": "Action",
+                      "fill": "$color-text-inverse",
+                      "content": "Update card",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "UNbQK",
+                  "name": "Caption",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "above the shell · not dismissible until resolved",
+                  "fontFamily": "$type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "PB6kW",
+          "name": "Empty state",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "zV9E9",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "KZGTH",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Empty state",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "ZWqNy",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Three different situations that look alike and are not: nothing yet, nothing matching, and nothing left. Each needs a different sentence and a different action — an empty filter offering 'Add your first account' is the classic tell that they were treated as one.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "z470vC",
+              "name": "Specimens",
+              "width": "fill_container",
+              "fill": "$color-bg-surface",
+              "cornerRadius": "$radius-md",
+              "stroke": "$color-border-default",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "y0Xgc",
+                  "name": "Row",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "w5ZouR",
+                      "name": "Empty state",
+                      "reusable": true,
+                      "width": "fill_container",
+                      "fill": "$color-bg-subtle",
+                      "cornerRadius": "$radius-lg",
+                      "layout": "vertical",
+                      "gap": 7,
+                      "padding": [
+                        30,
+                        22
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "e0t45q",
+                          "name": "Icon",
+                          "width": 24,
+                          "height": 24,
+                          "icon": "landmark",
+                          "library": "lucide",
+                          "fill": "$color-text-secondary"
+                        },
+                        {
+                          "type": "text",
+                          "id": "WIXtr",
+                          "name": "Title",
+                          "fill": "$color-text-primary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "No accounts yet",
+                          "textAlign": "center",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "HViAc",
+                          "name": "Message",
+                          "fill": "$color-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Add one to start seeing where your money goes.",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "id": "MkvyB",
+                          "type": "ref",
+                          "ref": "W2gOKx",
+                          "name": "Action",
+                          "height": 32,
+                          "descendants": {
+                            "iYHDG": {
+                              "content": "Add account",
+                              "fontSize": 12
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "TNjgl",
+                      "type": "ref",
+                      "ref": "w5ZouR",
+                      "name": "Empty filtered",
+                      "width": "fill_container",
+                      "descendants": {
+                        "e0t45q": {
+                          "icon": "search-x"
+                        },
+                        "WIXtr": {
+                          "content": "No transactions match"
+                        },
+                        "HViAc": {
+                          "content": "Try a wider date range, or clear the category filter."
+                        },
+                        "MkvyB/iYHDG": {
+                          "content": "Clear filters",
+                          "fontSize": 12
+                        }
+                      }
+                    },
+                    {
+                      "id": "hjL0l",
+                      "type": "ref",
+                      "ref": "w5ZouR",
+                      "name": "Empty done",
+                      "width": "fill_container",
+                      "descendants": {
+                        "e0t45q": {
+                          "icon": "check-check",
+                          "fill": "$color-feedback-success"
+                        },
+                        "WIXtr": {
+                          "content": "Everything is categorised"
+                        },
+                        "HViAc": {
+                          "content": "Nothing is waiting for you. New transactions will appear here."
+                        },
+                        "MkvyB": {
+                          "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "sVeZu",
+                  "name": "Caption",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "nothing yet  ·  nothing matching  ·  nothing left",
+                  "fontFamily": "$type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "themes": {

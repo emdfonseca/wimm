@@ -33,6 +33,8 @@ Never build `journey × path × regime × theme × state × component variant` a
 | `references/navigation-and-surfaces.md` | Navigation pattern table; inline / modal / drawer / full page; route-backed vs ephemeral; overlay accessibility contracts. |
 | `references/design-system-library.md` | Library zoning, layer table, token names. |
 | `references/accessibility-and-responsive.md` | WCAG 2.2 AA measurable baseline; regime widths. |
+| `references/tooling-traps.md` | **Before the first `execute` call.** Silent property drops, stale reads, visitor and instance traps. |
+| `references/library-method.md` | Building or extending the design-system library: component tables, specimen cells, origins, presets, theme QA. |
 | `references/verification-gates.md` | Readiness checklist before READY FOR BUILD. |
 | `assets/project-setup-record.md` | Copy-paste Project Setup Record. |
 
@@ -83,6 +85,28 @@ Pages live in journey files, not the library. In code a Page is a presentational
 ### Accessibility is not a phase or an axis
 
 WCAG 2.2 AA is the web baseline and applies to the default experience — never model it as `Accessibility = On/Off`. Component-level accessibility does not make a journey accessible: check keyboard completion, focus order and transitions, error identification and recovery, status announcement, zoom and reflow, and whether responsive variants still expose every essential action. When you need exact thresholds (contrast ratios, target sizes, reflow widths, text spacing), read `references/accessibility-and-responsive.md` rather than recalling numbers — the criteria have exceptions that matter and are easy to state wrongly.
+
+### Verify in a separate call, and before reporting
+
+Anything read in the call that made the change is stale — bounds, `ctx.problems`
+and screenshots all return the pre-layout frame. Mutate, then verify in a second
+call, then fix. Run the audit before showing the work rather than after a reviewer
+finds something; a defect a person had to catch is one the check should have.
+
+A check that has never fired is not evidence. Build the defect it is meant to
+catch, confirm it fires, delete the fixture.
+
+### Variants are rows, states are columns
+
+One table per component, with the `rest` column serving as the variant showcase.
+A separate variants row beside a state matrix is the same specimens twice and two
+places to update. Draw the crossing rather than writing prose verdicts about it —
+prose gravitates to the obvious and skips what is actually undecided.
+
+### Anything that redraws an atom's chrome is that atom
+
+A component reproducing a control's border, height, focus ring and states is a
+configuration of it, not a new component. Build a preset that wraps an instance.
 
 ## Working with .pen files
 
