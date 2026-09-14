@@ -212,8 +212,21 @@ reflow promise — each correct in one place and stale in another, with nothing
 failing.
 
 Keep the reasoning in one place and have the others point at it. When a decision
-changes, grep for its terms before claiming it is done; the canvas and the docs
-are separate universes and only one of them is searchable.
+changes, search for its terms before claiming it is done — and the canvas needs
+searching too, which nothing in the editor does for you:
+
+```js
+ROOTS.forEach(r=>Get(r,n=>{
+  if(n.type!=="text")return;
+  const t=Get(n.id,{depth:0}).content;
+  if(typeof t==="string"&&/\b(TERM|OLD_TOKEN|OLD_RULE)\b/i.test(t))
+    Print(n.id,n.name,JSON.stringify(t.slice(0,120)))}));
+```
+
+Run it for the old token name, the old number, and the phrase that stated the old
+rule. Four contradictions survived in one library because the canvas was revised
+and the documents were not, or the reverse — each correct somewhere, and nothing
+failing anywhere.
 
 ### 10.11. Decision sequences run specific to general
 
@@ -231,7 +244,65 @@ nothing. A gap between *needs no action* and *affects more than one row* leaves
 single items needing a decision with nowhere to go, and nothing in the table says
 so.
 
-### 10.12. Verify, then report
+### 10.12. A container is not a target
+
+"The whole row is the target", "the card is clickable", "the tile opens the
+record" — convenient for a pointer, and impossible for everything else the
+moment the container holds a control of its own. A control inside a control is
+invalid markup and unreachable by keyboard, so the container cannot be the
+button.
+
+The resolution is always the same shape:
+
+- **One named control inside is the primary action** — a link or button with an
+  accessible name, in the tab order. That is the real route in.
+- **The container's click handler is pointer convenience**, doing the same thing,
+  and never the only way to reach it.
+- **Every other interactive thing inside keeps its own hit area**, its own label,
+  and its own place in the tab order.
+
+The correction this forces is easy to miss: a small mark inside such a container
+is *not* covered by the container's target size. A 20 px checkbox in a 44 px row
+is only acceptable if the row is the checkbox's target — and it is not, it is the
+primary control's. The mark needs its own padded hit area, and the spacing
+exception then governs whether the several targets in one row interfere.
+
+**Check every interaction claim against each input modality.** A sentence that is
+true for a mouse and false for a keyboard is not a partial truth; it is a defect
+with a comfortable half.
+
+### 10.13. Reserving space needs an overflow rule
+
+Reserving height to prevent reflow — a message row, a caption, a status line —
+is only half a decision. The other half is what happens when content exceeds the
+reservation, and leaving it unstated just relocates the bug.
+
+There are two honest answers and one dishonest one. **Grow** and accept the
+reflow in the exceptional case. **Constrain the content** so it cannot exceed the
+reservation, and check that. **Clip** is the dishonest one, and for an error
+message it is a conformance failure: an error that cannot be read has not been
+identified.
+
+Say which one applies, in the contract, next to the reservation.
+
+### 10.14. Findings cluster around one wrong belief
+
+A review returns a list, and the list invites fixing items. Read it for the
+premise underneath instead — several findings usually share one, and patching
+them individually leaves the belief intact to generate more.
+
+One belief, *"the whole row is a single target"*, produced three separate
+findings across two review rounds: a checkbox exempted from target sizing that
+was not exempt, a rule forbidding row-level alerts that contradicted a worked
+example, and unresolved competition between selecting, opening and acting on a
+row. Fixed one at a time they would have stayed inconsistent with each other.
+Fixed at the premise, all three resolve and so do the ones nobody had noticed
+yet.
+
+The tell is a finding that feels like an edge case in something you already
+decided. It is usually the decision surfacing.
+
+### 10.15. Verify, then report
 
 Run the audit before showing the work, not after it comes back. Findings a reviewer
 has to catch are findings the check should have.

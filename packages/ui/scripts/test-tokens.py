@@ -62,8 +62,37 @@ def run(script, pkg):
                           capture_output=True, text=True)
 
 
+def css_contract():
+    """Assertions about the generated stylesheet that no value check would catch:
+    a promise made in prose is only kept if the output carries it."""
+    out = []
+    css = (PKG / "src/tokens.css").read_text()
+    doc = json.loads((PKG / "design/tokens.json").read_text())
+
+    if "@media (prefers-reduced-motion: reduce)" not in css:
+        out.append("no reduced-motion branch — the documented policy is not in the output")
+    else:
+        block = css.split("@media (prefers-reduced-motion: reduce)", 1)[1].split("}\n}", 1)[0]
+        for name, spec in doc["tokens"].items():
+            if spec["type"] == "duration" and f"--{name}: 0ms;" not in block:
+                out.append(f"{name} is not zeroed under reduced motion")
+
+    for selector in ('[data-density="comfortable"]', '[data-density="compact"]',
+                     "@media (any-pointer: coarse)", ':root[data-theme="light"]',
+                     ':root[data-theme="dark"]'):
+        if selector not in css:
+            out.append(f"missing {selector}")
+
+    if css.count("color-scheme:") < 4:
+        out.append("color-scheme is not set on every theme branch")
+    return out
+
+
 def main():
     failures = []
+    for problem in css_contract():
+        failures.append("css contract: " + problem)
+    print("  css contract" + ("" if not failures else "  FAIL"))
     for label, (mutate, expect) in CASES.items():
         with tempfile.TemporaryDirectory() as tmp:
             pkg = pathlib.Path(tmp) / "ui"

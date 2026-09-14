@@ -38,6 +38,21 @@ Assert two properties per case, not one: the run failed, **and** the output file
 was not modified. A generator that writes garbage and then exits non-zero still
 corrupted the artifact.
 
+## Test the promise, not only the values
+
+Value validation catches a malformed colour. It says nothing about whether the
+documented *behaviour* reached the output — and behaviour is what the
+documentation actually promises.
+
+A token set can be entirely valid while the stylesheet has no reduced-motion
+branch, no explicit `color-scheme` per theme, or only one of two density
+selectors. Every value checks out; every documented guarantee is absent.
+
+So assert the contract against the generated artifact: the branch exists, the
+tokens it should override are overridden, the selectors the documentation names
+are present. These tests are short and they are the only thing standing between a
+written policy and a file that quietly does not implement it.
+
 ## Name the guarantee precisely
 
 "CI verifies the design system" is the kind of claim that survives until someone

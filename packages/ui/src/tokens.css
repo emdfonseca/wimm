@@ -378,6 +378,18 @@
   --density-stack-gap: 10px;
 }
 
+/* Reduced motion. The durations collapse; the easing tokens are left alone
+   because a curve with no time to run is harmless, and keeping them means
+   a component need not branch. Nothing is removed and no state becomes
+   unreachable — a drawer still opens, it simply is open. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-base: 0ms;
+    --motion-duration-fast: 0ms;
+    --motion-duration-slow: 0ms;
+  }
+}
+
 /* Touch floor. Keyed to pointer capability, not width: a large tablet is
    a wide viewport with coarse input, and a narrow desktop window is the
    reverse. Layout regimes stay width-driven; the target floor does not. */

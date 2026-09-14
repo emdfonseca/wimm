@@ -13283,7 +13283,7 @@
                   "fill": "$color-feedback-warning",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "density = compact never applies at device = compact",
+                  "content": "density = compact is never honoured where the pointer is coarse",
                   "fontFamily": "$type-family-body",
                   "fontSize": 12,
                   "fontWeight": "600"
@@ -13295,7 +13295,7 @@
                   "fill": "$color-text-primary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "The two axes are independent in the variable system but not in the product. A 40 px row is a comfortable pointer target and a poor thumb target, so on touch the row height floor is density-row-min-touch at 44 regardless of the density setting. Density is offered on pointer regimes; on Compact the control resolves to comfortable and the setting is hidden rather than shown disabled.",
+                  "content": "The two axes are independent in the variable system but not in the product. A 40 px row is a comfortable pointer target and a poor thumb target, so where the pointer is coarse the density values revert to comfortable whatever the setting says, and the control that sets them is hidden rather than shown disabled.\n\nThis is keyed to input capability, not to width. A large tablet is a wide viewport with coarse input and a narrow desktop window is the reverse, so a breakpoint gets both backwards. Layout regimes stay width-driven — that is what they describe — and the target floor does not. Recorded in ADR 0004.",
                   "lineHeight": 1.5,
                   "fontFamily": "$type-family-body",
                   "fontSize": 11,
@@ -19628,7 +19628,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Label, control, and exactly one message. The message row is a fixed two lines tall and always present — a hint at rest, an error when invalid — so validation never moves the content beneath it. Reserving one line would not be enough: the moment a message wraps, every field below it shifts, which is what a no-reflow promise has to survive. The label is always visible: a placeholder is not a label, because it disappears the moment someone starts typing. The error names the fix, is announced in code, and carries an icon, so it never depends on the red alone. The focus ring lives on a wrapper rather than the control, so focus costs no layout shift either. Amount fields hold an unsigned magnitude; direction is a separate control, never a typed minus.",
+                  "content": "Label, control, and exactly one message. The message row reserves two lines and is always present — a hint at rest, an error when invalid — so validation never moves the content beneath it. Reserving one line would not be enough: the moment a message wraps, every field below it shifts, which is what a no-reflow promise has to survive.\n\nTwo lines is a reservation, not a clip. An error longer than two lines grows the row and does move the content below, and that is the correct trade: a clipped error is unperceivable, and SC 3.3.1 requires the error be identified in text. Treat the growth as the signal it is — a message that does not fit is a message that is explaining rather than instructing. Name the fix and stop.\n\nThe label is always visible: a placeholder is not a label, because it disappears the moment someone starts typing. The error carries an icon and is announced in code, so it never depends on the red alone. The focus ring lives on a wrapper rather than the control, so focus costs no layout shift either. Amount fields hold an unsigned magnitude; direction is a separate control, never a typed minus.",
                   "lineHeight": 1.45,
                   "fontFamily": "$type-family-body",
                   "fontSize": "$type-size-body-sm",
@@ -29349,6 +29349,439 @@
         },
         {
           "type": "frame",
+          "id": "yv69e",
+          "name": "Row interaction",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "CPO77",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "KK0Jy",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Row interaction",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "B3N13r",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "“The row is the target” is true for a pointer and impossible for everything else. A ledger row selects, opens, and sometimes carries a notice with its own buttons — three interactive things inside one that claims to be a single target. Nesting a control inside a control is invalid markup and unreachable by keyboard, so the row cannot be a button or a link.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "PPrJ7",
+              "name": "Rules",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$color-bg-surface",
+              "cornerRadius": "$radius-md",
+              "stroke": "$color-border-default",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "svvnw",
+                  "name": "Head",
+                  "width": "fill_container",
+                  "fill": "$color-bg-subtle",
+                  "gap": 14,
+                  "padding": [
+                    9,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MElAE",
+                      "name": "what",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "what",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "NtBDP",
+                      "name": "it is",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 190,
+                      "content": "it is",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "yOrgc",
+                      "name": "reached by",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "reached by",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "oncLV",
+                  "name": "The row",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeAlignment": "inner",
+                  "gap": 14,
+                  "padding": [
+                    11,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "JhOOc",
+                      "name": "A",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "The row",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "bRhru",
+                      "name": "B",
+                      "fill": "$color-accent",
+                      "textGrowth": "fixed-width",
+                      "width": 190,
+                      "content": "not a control",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Wkq1r",
+                      "name": "C",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "a pointer, via a click handler on the row — convenience only, and never the sole route to anything",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "HJ9dt",
+                  "name": "Merchant name",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 14,
+                  "padding": [
+                    11,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MXotv",
+                      "name": "A",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Merchant name",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "d0TMa",
+                      "name": "B",
+                      "fill": "$color-accent",
+                      "textGrowth": "fixed-width",
+                      "width": 190,
+                      "content": "the primary action",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "GVB3D",
+                      "name": "C",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "a link with an accessible name, in the tab order. This is what opens the editor, and it is what a keyboard or screen reader uses. The row's click handler does the same thing for a mouse.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "A1aug9",
+                  "name": "Select checkbox",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 14,
+                  "padding": [
+                    11,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "krVcQ",
+                      "name": "A",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Select checkbox",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "l4rs6",
+                      "name": "B",
+                      "fill": "$color-accent",
+                      "textGrowth": "fixed-width",
+                      "width": 190,
+                      "content": "its own control",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "c9RANk",
+                      "name": "C",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "tab order, before the name. Its label names the record, not “select”.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ap27B",
+                  "name": "Notice actions",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 14,
+                  "padding": [
+                    11,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Z1GGb",
+                      "name": "A",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Notice actions",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "R7qKBI",
+                      "name": "B",
+                      "fill": "$color-accent",
+                      "textGrowth": "fixed-width",
+                      "width": 190,
+                      "content": "their own controls",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jE2aB",
+                      "name": "C",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "tab order, inside the row's notice. Keep and Merge are buttons and cannot be a badge or a row click.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "F9KwSQ",
+                  "name": "Category chip",
+                  "width": "fill_container",
+                  "stroke": "$color-border-subtle",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 14,
+                  "padding": [
+                    11,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "WaS7D",
+                      "name": "A",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 150,
+                      "content": "Category chip",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "DDQT9",
+                      "name": "B",
+                      "fill": "$color-accent",
+                      "textGrowth": "fixed-width",
+                      "width": 190,
+                      "content": "not a control here",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "PiLzy",
+                      "name": "C",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "nothing. It filters on the Transactions page, where it is a button; inside a row it is a label. The same component, two contracts, decided by the surface.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$type-family-body",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "I15c6y",
+              "name": "Consequence",
+              "width": "fill_container",
+              "fill": "$color-bg-subtle",
+              "cornerRadius": "$radius-md",
+              "layout": "vertical",
+              "gap": 6,
+              "padding": [
+                14,
+                16
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "GaVJ0",
+                  "name": "Title",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "What this changes about the target-size rule",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "B2zaO",
+                  "name": "Body",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The earlier contract said a 20 px checkbox is fine because the row is its target. That was wrong in one direction: the row is not the checkbox's target, it is the *name's*. The checkbox needs its own hit area of at least control-target-min, achieved with padding around the mark rather than by growing the mark.\n\nSo the row carries three separate targets, and the spacing exception under SC 2.5.8 is what keeps them from interfering: 24 px circles centred on each must not intersect. At density = compact that is the constraint to check first, and it is why compact density is not offered where the pointer is coarse.",
+                  "lineHeight": 1.55,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
           "id": "QMA4I",
           "name": "Chart region",
           "width": "fill_container",
@@ -30058,6 +30491,10 @@
                           "name": "Merchant field",
                           "width": "fill_container",
                           "descendants": {
+                            "i8d1yF/Iv0pS": {
+                              "content": "Whole Foods",
+                              "fill": "$color-text-primary"
+                            },
                             "cPq1t": {
                               "height": 30,
                               "alignItems": "start"
@@ -30706,7 +31143,7 @@
                       "fill": "$color-feedback-error",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "Conditions that are not local to that section. Transient confirmations. A per-row state, which is a badge.",
+                      "content": "Conditions not local to that section. Transient confirmations. A per-row state that needs no action — that is a badge. A per-row state that needs a decision is this, at row scope.",
                       "lineHeight": 1.45,
                       "fontFamily": "$type-family-body",
                       "fontSize": 12,

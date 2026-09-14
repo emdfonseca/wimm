@@ -108,6 +108,18 @@ def build(doc):
         L += rows
         add("}")
         add("")
+    add("/* Reduced motion. The durations collapse; the easing tokens are left alone")
+    add("   because a curve with no time to run is harmless, and keeping them means")
+    add("   a component need not branch. Nothing is removed and no state becomes")
+    add("   unreachable — a drawer still opens, it simply is open. */")
+    add("@media (prefers-reduced-motion: reduce) {")
+    add("  :root {")
+    for name, spec in t.items():
+        if spec["type"] == "duration":
+            L.append(f"    --{name}: 0ms;")
+    add("  }")
+    add("}")
+    add("")
     add("/* Touch floor. Keyed to pointer capability, not width: a large tablet is")
     add("   a wide viewport with coarse input, and a narrow desktop window is the")
     add("   reverse. Layout regimes stay width-driven; the target floor does not. */")

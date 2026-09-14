@@ -84,7 +84,7 @@ Most of these are the ones people get wrong, and several resolve to no surface.
 | surface | never |
 |---|---|
 | Toast | A failed money operation. Anything the user must act on. Anything whose only copy is the toast — if missing it loses information, it is the wrong surface. |
-| Inline alert | Conditions not local to that section. Transient confirmations. A per-row state, which is a badge. |
+| Inline alert | Conditions not local to that section. Transient confirmations. A per-row state that needs **no** action — that is a badge. A per-row state needing a decision *is* this, at row scope. |
 | Page banner | Success messages. Anything unactionable from this page. Stacking — two page banners means neither is read. |
 | Global banner | Anything page-specific. More than one at a time: a stack means the product is in a state nobody designed. |
 | Dialog | Information needing no action. Anything that could be inline. Chaining — a dialog opening another is a flow that wanted a page. |

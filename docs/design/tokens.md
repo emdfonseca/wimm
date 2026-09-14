@@ -55,6 +55,13 @@ reach the JSON.
 - Only declared axes appear, every branch of each axis is present, and no token
   carries both a default and axis values.
 
+**Motion respects the preference**
+
+Under `prefers-reduced-motion: reduce` every duration token resolves to `0ms`.
+The easing tokens are left as they are: a curve with no time to run is harmless,
+and keeping them means a component never has to branch. Nothing is removed and no
+state becomes unreachable — a drawer still opens, it simply is open.
+
 **The stylesheet agrees with the export**
 
 - Regenerating `tokens.css` is a no-op.
