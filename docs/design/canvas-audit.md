@@ -155,6 +155,36 @@ A theme can appear on a frame without being authored in a script — selecting a
 frame and using the app's theme switcher writes one. Re-run this after any session
 of hand-editing on the canvas.
 
+## Stray nodes at the document root
+
+Dragging a component out of the Components panel drops the instance at the
+**document root**, not into whatever zone is under the pointer. Seven accumulated
+here unnoticed. While zones were stacked vertically the strays sat in the gaps and
+looked deliberate; laying the zones out in a row put them straight on top of two
+of them.
+
+The root holds zone frames and nothing else:
+
+```js
+const boxes=[];
+Get((n,c)=>{if(c.depth!==0)return;
+  boxes.push({id:n.id,name:n.name||"(unnamed)",type:n.type});c.skipChildren()});
+let stray=0;
+boxes.forEach(b=>{ if(b.type!=="frame"||!/^\d\d · /.test(b.name)){
+  stray++; Print("STRAY",b.id,b.name,b.type)}});
+Print("stray root nodes:",stray);
+```
+
+Before deleting one, check it is a plain instance — no own overrides, no
+descendant overrides. A stray carrying overrides is somebody's work in progress,
+not litter:
+
+```js
+const n=Get(id,{depth:0});
+const own=Object.keys(n).filter(k=>!["id","type","ref","name","x","y","width","height"].includes(k));
+Print(id,"own:",own,"descendants:",Object.keys(n.descendants||{}));
+```
+
 ## Colour value validity
 
 ```js
@@ -184,8 +214,8 @@ const boxes=[];
 Get((n,c)=>{if(c.depth!==0)return;
   boxes.push({name:n.name,x:c.bounds.x,y:c.bounds.y,w:c.bounds.width,h:c.bounds.height});
   c.skipChildren()});
-boxes.sort((a,b)=>a.y-b.y);
-boxes.forEach(b=>Print(b.name,"| y",Math.round(b.y),"→",Math.round(b.y+b.h)));
+boxes.sort((a,b)=>a.x-b.x);
+boxes.forEach(b=>Print(b.name,"| x",Math.round(b.x),"→",Math.round(b.x+b.w)));
 let o=0;
 for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){
   const a=boxes[i],b=boxes[j];
@@ -199,7 +229,23 @@ Print("overlaps:",o);
 dump everything. Use the visitor with `c.depth!==0` and `skipChildren()` as above.
 
 Re-run it after any call that adds content to an existing zone, not just after
-creating one. Keep at least 120 px between zones so a later addition has room.
+creating one.
+
+**Zones sit side by side, not stacked.** A zone grows downward as content is
+added, so stacking them vertically means every addition pushes the rest of the
+library down and the canvas becomes a ribbon — 1200 × 20,000 at one point here,
+a 1:17 aspect ratio that makes zoom-to-fit useless. In a row the same content is
+8160 × 6317, close enough to square to see at once, and a zone growing taller
+disturbs nothing beside it.
+
+Reflow with a fixed 160 px gutter, all zones top-aligned at y = 0:
+
+```js
+const ORDER=[/* zone ids, in numeric order */];
+const w={},h={};
+Get((n,c)=>{if(c.depth!==0)return;w[n.id]=c.bounds.width;h[n.id]=c.bounds.height;c.skipChildren()});
+let x=0; for(const id of ORDER){Update(id,{x,y:0}); x+=w[id]+160}
+```
 
 ## Order of work
 
