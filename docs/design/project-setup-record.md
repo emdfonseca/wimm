@@ -44,20 +44,34 @@ Per journey.
 ```text
 Add account            → Full page   / route-backed   (multi-step, resumable)
 Add transaction        → Modal       / ephemeral      (short, blocking)
-Edit transaction       → Drawer, non-modal / route-backed (context stays visible)
+Edit transaction       → Drawer     / route-backed   (renders per regime, below)
 Recategorise           → Inline edit
 Split transaction      → Full page   / route-backed   (likely to grow)
-Edit budget            → Drawer, non-modal / route-backed
+Edit budget            → Drawer     / route-backed   (renders per regime, below)
 Delete anything money-bearing → Destructive confirmation dialog naming the record
 ```
 
 Destructive actions never reuse the editing drawer.
 
 **One editing surface, three renderings.** Edit transaction is one route and one
-Drawer component throughout. It is a full-bleed sheet at Compact, where there is
-no list worth keeping visible; a right-anchored overlay at Medium and Wide,
-non-modal so the list stays readable; and a persistent inspector pane at Ultra,
-with the elevation and the close control removed because nothing is dismissed.
+Drawer component throughout, and modality is a property of the rendering rather
+than of the component — which is why the table above states the route and defers
+the rest to here.
+
+- **Compact** — an in-page replacement. The list is not rendered, so there is
+  nothing behind it: no scrim, nothing to make inert, no focus to trap. Back
+  returns to the list with the row restored. At 390 there is no list worth
+  keeping visible, so keeping it visible is not a goal worth paying for.
+- **Medium and Wide** — a right-anchored overlay at `layout-drawer-width` 400,
+  **non-modal**: the ledger stays visible *and interactive* behind it, which is
+  the whole reason to prefer it over a dialog. Focus moves in on open and returns
+  to the row on close.
+- **Ultra** — a persistent inspector pane, with the elevation and the close
+  control removed because nothing is dismissed.
+
+Only the middle one has anything behind it, so only the middle one has a modality
+question to answer. A full-bleed sheet inheriting the non-modal contract would be
+the worst of both: covering the page while leaving focus free to wander behind it.
 Nothing is reachable at one width and not another.
 
 **View preferences live in the account menu.** Appearance (light / dark / system)

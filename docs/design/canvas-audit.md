@@ -289,56 +289,139 @@ Rows hugging to 28 px instead of 56 read as a slightly tight table, not a defect
 
 ## Text contrast
 
-The table above promises this check and the file shipped without the code for it,
-which meant it was never run document-wide.
+Every text node against the nearest filled ancestor, resolved through whatever
+theme the node sits in. Six things have gone wrong here, each producing a clean
+run over a check measuring the wrong thing. They are listed because every one of
+them looked correct when it was written.
 
-**It must resolve gradients, or it invents failures.** A gradient fill is not a
-hex string, so a naive background lookup skips straight past it to whatever solid
-fill is further up — on the balance card, the page canvas. The three labels on
-that card then measure against white and are reported as failures at 1.08, 1.25
-and 1.40 when they are white and mint on deep pine and perfectly legible. This
-has now happened twice in this library, which is why the stop-collecting helper
-below is the check rather than an improvement to it.
+**Alpha is not the last two characters.** `/00$/` as a transparency test drops
+opaque `#000000` — and any colour whose blue channel ends in `00`. Parse the
+length: only `#RRGGBBAA` and `#RGBA` carry alpha.
 
-Collect every stop of whatever fill is found and score against the **worst** one,
-so a gradient passes only if the text clears its least favourable end.
+**A translucent colour must be composited, not measured.** `#00000080` read as
+pure black scores 21:1 against white. Over white it is mid-grey and scores 4.00.
+Composite every translucent layer onto what is behind it, the foreground included.
+
+**Gradients must be resolved at all.** A gradient fill is not a hex string, so a
+naive lookup walks past it to the solid fill above — on the balance card, the page
+canvas — inventing three failures at 1.08, 1.25 and 1.40 for white and mint on
+deep pine. This regression has shipped twice.
+
+**A gradient is not its endpoints.** Scoring the stops and taking the worst is a
+false pass whenever the text's luminance lies *between* them: interpolation is
+continuous, so somewhere along the fill contrast passes through exactly 1:1.
+`#777777` on white-to-black scores 4.48 at the worst endpoint and 1.00 in the
+middle.
+
+**Never truncate the stop set.** Capping it at six to bound the compositing work
+silently discarded everything after the sixth — and `slice(0, 6)` keeps the
+*first* six, so a gradient ending in white loses precisely the stop that matters.
+A seven-stop pine-to-white gradient then reported a comfortable pass for white
+text that has a 1:1 region in it. When the paint is too complex to evaluate,
+**say so and stop**; do not evaluate part of it and report a number. A number is
+read as an answer.
+
+**The foreground must be paired with the background it sits on.** Compositing
+translucent text against one arbitrary member of the stop set makes the verdict
+depend on the order the stops happen to be listed in: `#ffffff58` on
+`#000000`→`#0a0a0a` scored 2.86 forward and 3.00 reversed, which straddles the
+large-text threshold. Same paint, different answer. Composite the foreground
+against *each* candidate background and score that pair, and sample along a
+continuous fill rather than only at its stops, since both the text and the
+backdrop vary together across it.
+
+**Discrete candidates are not a sweep.** The interior test is only valid for a
+continuous fill. Alternative backgrounds produced by compositing translucent
+layers are discrete possibilities that never blend into one another, so applying
+the range test to them reports 1:1 between two backgrounds that never touch.
+Track whether any contributing layer was a gradient, and only sweep then.
 
 ```js
-const stops=c=>{if(!c)return[];
-  if(typeof c==="string")return /^#/.test(c)?[c]:[];
-  if(Array.isArray(c))return c.flatMap(stops);
-  if(c.type==="color")return stops(c.color);
-  if(c.type==="gradient")return (c.colors||[]).flatMap(s=>stops(s.color));
-  if(c.type==="mesh_gradient")return (c.colors||[]).flatMap(stops);
-  return[]};
-const solid=c=>stops(c).filter(h=>!/00$/.test(h));
-const rgb=h=>{let s=h.slice(1);if(s.length===3)s=s.split("").map(x=>x+x).join("");
-  return[parseInt(s.slice(0,2),16),parseInt(s.slice(2,4),16),parseInt(s.slice(4,6),16)]};
-const lum=h=>{const[r,g,b]=rgb(h);const f=v=>{v/=255;
+const paint=c=>{if(!c)return{cols:[],cont:false};
+  if(typeof c==="string")return{cols:/^#/.test(c)?[c]:[],cont:false};
+  if(Array.isArray(c)){const r={cols:[],cont:false};
+    c.forEach(x=>{const p=paint(x);r.cols=r.cols.concat(p.cols);r.cont=r.cont||p.cont});return r}
+  if(c.enabled===false)return{cols:[],cont:false};
+  if(c.type==="color")return paint(c.color);
+  if(c.type==="gradient"||c.type==="mesh_gradient"){
+    const cols=(c.colors||[]).flatMap(s=>paint(s&&s.color!==undefined?s.color:s).cols);
+    return{cols:cols,cont:cols.length>1}}
+  return{cols:[],cont:false}};
+const parse=h=>{let s=h.slice(1);
+  if(s.length===3||s.length===4)s=s.split("").map(x=>x+x).join("");
+  const a=s.length===8?parseInt(s.slice(6,8),16)/255:1;
+  return[parseInt(s.slice(0,2),16),parseInt(s.slice(2,4),16),parseInt(s.slice(4,6),16),a]};
+const over=(f0,b0)=>{const f=parse(f0),b=parse(b0),a=f[3];
+  const m=i=>f[i]*a+b[i]*(1-a);
+  return"#"+[m(0),m(1),m(2)].map(v=>Math.round(v).toString(16).padStart(2,"0")).join("")};
+const lum=h=>{const[r,g,b]=parse(h);const f=v=>{v/=255;
   return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4)};
   return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b)};
 const ratio=(a,b)=>{const l1=lum(a),l2=lum(b);
   return(Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05)};
-let seen=0,fail=0;
+const hx=(r,g,b)=>"#"+[r,g,b].map(v=>Math.round(v).toString(16).padStart(2,"0")).join("");
+const lerp=(a0,b0,t)=>{const a=parse(a0),b=parse(b0);
+  return hx(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t)};
+const CANVAS="#F4F7F5", LIMIT=64, N=8;
+let seen=0,fail=0,manual=0;
 ROOTS.forEach(R=>Get(R,(n,c)=>{
   if(n.type!=="text"||n.enabled===false)return;
-  const fg=solid(n.fill)[0]; if(!fg)return;
-  let p=c.parentCtx,bgs=null;
-  while(p){const b=solid(p.node.fill); if(b.length){bgs=b;break} p=p.parentCtx}
-  if(!bgs)return;
+  const fp=paint(n.fill), fs=fp.cols.filter(h=>parse(h)[3]>0); if(!fs.length)return;
+  const chain=[]; let p=c.parentCtx;
+  while(p){const lp=paint(p.node.fill); const cols=lp.cols.filter(h=>parse(h)[3]>0);
+    if(cols.length)chain.push({cols:cols,cont:lp.cont}); p=p.parentCtx}
+  if(!chain.length)return;
   seen++;
+  let set=[CANVAS], cont=false, bail=false;
+  for(let i=chain.length-1;i>=0;i--){const L=chain[i];
+    cont=cont||L.cont;
+    if(L.cols.every(h=>parse(h)[3]===1)){set=L.cols}
+    else{ if(L.cols.length*set.length>LIMIT){bail=true;break}
+      const out=[];L.cols.forEach(s=>set.forEach(b=>out.push(over(s,b))));set=[...new Set(out)]}}
+  if(bail){manual++;Print("MANUAL REVIEW",n.id,n.name,"paint too complex to evaluate");return}
+  const raw=fs[0], opaque=parse(raw)[3]===1;
+  const at=b=>ratio(opaque?raw:over(raw,b), b);
   const sz=n.fontSize||14, bold=/600|700|bold/.test(String(n.fontWeight||""));
   const need=(sz>=24||(sz>=18.66&&bold))?3:4.5;
-  const worst=Math.min(...bgs.map(b=>ratio(fg,b)));
-  if(worst<need){fail++;Print("CONTRAST",n.id,n.name,worst.toFixed(2),"<",need,fg,"on",JSON.stringify(bgs))}
+  let w;
+  if(!cont||set.length<2)w=Math.min(...set.map(at));
+  else{ w=Infinity;
+    for(let i=0;i<set.length-1;i++)for(let k=0;k<=N;k++)w=Math.min(w,at(lerp(set[i],set[i+1],k/N)));
+    if(opaque){const lf=lum(raw),ls=set.map(lum);
+      if(lf>=Math.min(...ls)&&lf<=Math.max(...ls))w=1}}
+  if(w<need){fail++;Print("CONTRAST",n.id,n.name,w.toFixed(2),"<",need,cont?"[sweep]":"",raw,"on",JSON.stringify(set.slice(0,4)))}
 },{resolveVariables:true,resolveInstances:true}));
-Print("measured:",seen,"failures:",fail);
+Print("measured:",seen,"failures:",fail,"manual:",manual);
 ```
 
-It measures 1802 text nodes across the seven zones. `color-text-disabled` on a
-disabled specimen is the expected failure and is exempt under SC 1.4.3; there are
-30, and everything else is a defect. Run it with `resolveInstances: true` or it
-measures the origins and skips every instance override.
+It measures 1792 text nodes across the seven zones: 30 failures, all
+`color-text-disabled` on disabled specimens and exempt under SC 1.4.3, and 0
+requiring manual review. Print `manual` every run — a non-zero count is paint the
+check declined to score, which is a result, not a pass. Print `sweeps` too: it is
+3 here, the balance card's labels, and a sudden 0 means gradient resolution has
+broken again.
+
+**Run it in two calls.** `execute` is killed at 60 s and the whole document with
+`resolveVariables` and `resolveInstances` does not finish inside it. Split the
+zones — `00/10/20` then `30/40/50/90` — and add the two totals. Sampling a
+continuous fill at `N=8` per stop pair is what keeps each half inside the limit;
+33 samples was enough to blow it.
+
+**Validate it on values, not on the document.** The canvas passing proves nothing
+about the check, because the canvas is valid. Assert these directly:
+
+| case | correct answer | what it catches |
+|---|---|---|
+| `#000000` through the alpha filter | kept | six-digit hex read as having alpha |
+| `#00000080` over `#FFFFFF` | 4.00, not 21.00 | alpha ignored instead of composited |
+| `#777777` on `#FFFFFF`→`#000000` | 1.00, not 4.48 | endpoints scored, interior missed |
+| `#FFFFFF` on a 7-stop gradient ending `#FFFFFF` | 1.00, not a pass | stop set truncated |
+| `#777777` against two *discrete* candidates | 4.48, not 1.00 | sweep test applied to non-sweep |
+| `#ffffff58` on `#000000`→`#0a0a0a`, then reversed | same both ways | foreground paired with one arbitrary stop |
+| `#FFFFFF` on `#1B5340`→`#0C2B20` | 8.91 | the balance card still passes |
+
+Run it with `resolveInstances: true` or it measures the origins and skips every
+instance override.
 
 ## `ctx.problems` reports nodes that fit
 
