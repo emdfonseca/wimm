@@ -13671,7 +13671,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "A lettermark in the interface face, not artwork: the display weight at −2% tracking on a pine tile. The name is an initialism — where is my money? — so the lock-up ends in the question mark it stands for, set in the accent blue that carries every other query in the product: links, selection, focus. The question mark never appears alone and never on the tile, because a lone ? in a rounded square is a help affordance in every other interface and would be read as one here. It identifies the product and nothing else — never a link to a marketing page, never a home button competing with Overview, never coloured by state. The mark alone is what the rail uses; the lock-up is what the labelled sidebar uses. Pine is a fill here, which is the only way the brand green may appear beside an income amount in dark theme.",
+                  "content": "A drawn mark, not a set letter: a rounded lowercase w in a single stroke of even weight, with a detached point trailing at its lower right. The name is an initialism — where is my money? — and the mark carries that question as punctuation rather than as a glyph. There is no question mark anywhere in the identity: a curved stroke and a separated point are the grammar of one, and that is the whole of the reference. A literal ? was drawn and cut, because a ? on a rounded tile is a help affordance in every other interface and would be read as one here. The mark reverses out of a pine tile at 24, which is the rail size and the only size that has to work; the lock-up adds the plain wordmark beside it. It identifies the product and nothing else — never a link to a marketing page, never a home button competing with Overview, never coloured by state. Pine appears here as a fill, which is the only way the brand green may sit near an income amount in dark theme.",
                   "lineHeight": 1.45,
                   "fontFamily": "$type-family-body",
                   "fontSize": "$type-size-body-sm",
@@ -13719,15 +13719,36 @@
                           "alignItems": "center",
                           "children": [
                             {
-                              "type": "text",
-                              "id": "KNGIb",
-                              "name": "Letter",
-                              "fill": "$color-text-inverse",
-                              "content": "w",
-                              "fontFamily": "$type-family-display",
-                              "fontSize": 14,
-                              "fontWeight": "600",
-                              "letterSpacing": -0.3
+                              "type": "frame",
+                              "id": "R3Bzrb",
+                              "name": "Mark",
+                              "width": 16,
+                              "height": 16,
+                              "layout": "none",
+                              "children": [
+                                {
+                                  "type": "path",
+                                  "id": "cyMbd",
+                                  "x": 0,
+                                  "y": 2.7704079257424015,
+                                  "name": "Letter",
+                                  "geometry": "M126.52777 85.27776l-0.27777 0.1389c-1.3889 0.55556-3.05557 0.83333-4.86111 0.83333-6.52779 0-10.83335-4.44444-12.36112-12.36111l-10.69444-57.77777c-1.52779-8.47222-6.25-13.19444-13.61112-13.19445-5.27777 0-12.08333 2.63889-14.30554 13.75l-10.41667 58.88889c-1.11111 5.83334-5 10.69444-11.11111 10.69444-5.83334 0-10-3.75-11.11111-11.25l-8.75001-51.94444c-2.08333-13.61111-12.36111-23.05555-26.24999-23.05555l-2.77778 0 0 14.86111 1.25 0c5.55556-0.13889 10.13889 3.19444 11.66667 8.61111 0.83333 5 9.02778 53.33333 9.16666 54.02777 2.36111 14.02777 10.69445 23.33335 26.38889 24.86112 13.47222 0.27777 23.33334-7.5 26.52778-21.25l9.44444-54.44445 8.75 49.30556c2.22221 13.75 10.13889 24.86112 25.83333 26.38889 2.63889 0.13888 5.13889-0.13889 7.22223-0.41667l0 0 0-16.80556 0.27777 0.13888z",
+                                  "fill": "$color-text-inverse",
+                                  "width": 12.910547142797924,
+                                  "height": 10.448409016265371
+                                },
+                                {
+                                  "type": "path",
+                                  "id": "oaTkM",
+                                  "x": 14.043946162602714,
+                                  "y": 11.20265296816757,
+                                  "name": "Point",
+                                  "geometry": "M9.58672 0c-5 0-9.44444 4.02777-9.58335 9.44443-0.13889 5.41667 4.02779 10.41667 9.58335 10.41667 5.41667 0.13889 9.58333-3.75 9.58332-9.58333 0-4.86111-3.88889-10.27777-9.58332-10.27777z",
+                                  "fill": "$color-text-inverse",
+                                  "width": 1.9560538373972851,
+                                  "height": 2.0269391060900284
+                                }
+                              ]
                             }
                           ]
                         }
@@ -13785,17 +13806,6 @@
                                   "name": "Name",
                                   "fill": "$color-text-primary",
                                   "content": "wimm",
-                                  "fontFamily": "$type-family-display",
-                                  "fontSize": 16,
-                                  "fontWeight": "600",
-                                  "letterSpacing": -0.32
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "gXRg2",
-                                  "name": "Query",
-                                  "fill": "$color-accent",
-                                  "content": "?",
                                   "fontFamily": "$type-family-display",
                                   "fontSize": 16,
                                   "fontWeight": "600",
@@ -18106,7 +18116,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "The mark never carries the hit area — each of these sits inside a row target of at least control-target-min. Hover deepens the border on an unselected mark and the fill on a selected one. Focus is the same ring as every other control; its radius follows the mark, so it is round on a radio and rounded-square on a checkbox.",
+                  "content": "The mark never carries the hit area — each of these sits in its own hit area of at least control-target-min, made with padding around the mark rather than by growing the mark. That hit area belongs to the control itself, not to whatever row or cell it happens to sit in. Hover deepens the border on an unselected mark and the fill on a selected one. Focus is the same ring as every other control; its radius follows the mark, so it is round on a radio and rounded-square on a checkbox.",
                   "lineHeight": 1.45,
                   "fontFamily": "$type-family-body",
                   "fontSize": "$type-size-body-sm",
@@ -18237,28 +18247,42 @@
                               "id": "UEy2Z",
                               "name": "Checkbox",
                               "reusable": true,
-                              "width": 20,
-                              "height": 20,
-                              "fill": "$color-bg-surface",
-                              "cornerRadius": "$radius-sm",
-                              "stroke": "$color-control-border",
-                              "strokeWidth": 1.5,
+                              "width": 24,
+                              "height": 24,
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
                               "strokeAlignment": "inner",
                               "justifyContent": "center",
                               "alignItems": "center",
                               "children": [
                                 {
-                                  "type": "icon",
-                                  "id": "brJbg",
-                                  "x": 0,
-                                  "y": 0,
-                                  "name": "Check",
-                                  "enabled": false,
-                                  "width": 14,
-                                  "height": 14,
-                                  "icon": "check",
-                                  "library": "lucide",
-                                  "fill": "$color-action-on-primary"
+                                  "type": "frame",
+                                  "id": "jS7xJ",
+                                  "name": "Mark",
+                                  "width": 20,
+                                  "height": 20,
+                                  "fill": "$color-bg-surface",
+                                  "cornerRadius": "$radius-sm",
+                                  "stroke": "$color-control-border",
+                                  "strokeWidth": 1.5,
+                                  "strokeAlignment": "inner",
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "brJbg",
+                                      "x": 0,
+                                      "y": 0,
+                                      "name": "Check",
+                                      "enabled": false,
+                                      "width": 14,
+                                      "height": 14,
+                                      "icon": "check",
+                                      "library": "lucide",
+                                      "fill": "$color-action-on-primary"
+                                    }
+                                  ]
                                 }
                               ]
                             }
@@ -18285,7 +18309,15 @@
                               "type": "ref",
                               "ref": "UEy2Z",
                               "name": "checkbox off hover",
-                              "stroke": "$color-control-border-hover"
+                              "stroke": "#FFFFFF00",
+                              "fill": "#FFFFFF00",
+                              "strokeWidth": 0,
+                              "cornerRadius": 0,
+                              "descendants": {
+                                "jS7xJ": {
+                                  "stroke": "$color-control-border-hover"
+                                }
+                              }
                             }
                           ]
                         }
@@ -18319,7 +18351,11 @@
                                   "id": "gG1DZ",
                                   "type": "ref",
                                   "ref": "UEy2Z",
-                                  "name": "checkbox off focus"
+                                  "name": "checkbox off focus",
+                                  "fill": "#FFFFFF00",
+                                  "stroke": "#FFFFFF00",
+                                  "strokeWidth": 0,
+                                  "cornerRadius": 0
                                 }
                               ]
                             }
@@ -18346,10 +18382,19 @@
                               "type": "ref",
                               "ref": "UEy2Z",
                               "name": "checkbox off disabled",
-                              "fill": "$color-bg-disabled",
-                              "stroke": "$color-border-disabled",
-                              "strokeWidth": 1.5,
-                              "strokeAlignment": "inner"
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
+                              "strokeWidth": 0,
+                              "strokeAlignment": "inner",
+                              "cornerRadius": 0,
+                              "descendants": {
+                                "jS7xJ": {
+                                  "fill": "$color-bg-disabled",
+                                  "stroke": "$color-border-disabled",
+                                  "strokeWidth": 1.5,
+                                  "strokeAlignment": "inner"
+                                }
+                              }
                             }
                           ]
                         }
@@ -18397,9 +18442,15 @@
                               "type": "ref",
                               "ref": "UEy2Z",
                               "name": "checkbox on rest",
-                              "fill": "$color-action-primary",
-                              "stroke": "$color-action-primary",
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
+                              "strokeWidth": 0,
+                              "cornerRadius": 0,
                               "descendants": {
+                                "jS7xJ": {
+                                  "fill": "$color-action-primary",
+                                  "stroke": "$color-action-primary"
+                                },
                                 "brJbg": {
                                   "enabled": true
                                 }
@@ -18428,9 +18479,15 @@
                               "type": "ref",
                               "ref": "UEy2Z",
                               "name": "checkbox on hover",
-                              "fill": "$color-action-primary-hover",
-                              "stroke": "$color-action-primary-hover",
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
+                              "strokeWidth": 0,
+                              "cornerRadius": 0,
                               "descendants": {
+                                "jS7xJ": {
+                                  "fill": "$color-action-primary-hover",
+                                  "stroke": "$color-action-primary-hover"
+                                },
                                 "brJbg": {
                                   "enabled": true
                                 }
@@ -18469,9 +18526,15 @@
                                   "type": "ref",
                                   "ref": "UEy2Z",
                                   "name": "checkbox on focus",
-                                  "fill": "$color-action-primary",
-                                  "stroke": "$color-action-primary",
+                                  "fill": "#FFFFFF00",
+                                  "stroke": "#FFFFFF00",
+                                  "strokeWidth": 0,
+                                  "cornerRadius": 0,
                                   "descendants": {
+                                    "jS7xJ": {
+                                      "fill": "$color-action-primary",
+                                      "stroke": "$color-action-primary"
+                                    },
                                     "brJbg": {
                                       "enabled": true
                                     }
@@ -18502,11 +18565,18 @@
                               "type": "ref",
                               "ref": "UEy2Z",
                               "name": "checkbox on disabled",
-                              "fill": "$color-bg-disabled",
-                              "stroke": "$color-border-disabled",
-                              "strokeWidth": 1.5,
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
+                              "strokeWidth": 0,
                               "strokeAlignment": "inner",
+                              "cornerRadius": 0,
                               "descendants": {
+                                "jS7xJ": {
+                                  "fill": "$color-bg-disabled",
+                                  "stroke": "$color-border-disabled",
+                                  "strokeWidth": 1.5,
+                                  "strokeAlignment": "inner"
+                                },
                                 "brJbg": {
                                   "enabled": true,
                                   "fill": "$color-text-disabled"
@@ -18559,9 +18629,15 @@
                               "type": "ref",
                               "ref": "UEy2Z",
                               "name": "mixed rest",
-                              "fill": "$color-action-primary",
-                              "stroke": "$color-action-primary",
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
+                              "strokeWidth": 0,
+                              "cornerRadius": 0,
                               "descendants": {
+                                "jS7xJ": {
+                                  "fill": "$color-action-primary",
+                                  "stroke": "$color-action-primary"
+                                },
                                 "brJbg": {
                                   "enabled": true,
                                   "icon": "minus"
@@ -18591,9 +18667,15 @@
                               "type": "ref",
                               "ref": "UEy2Z",
                               "name": "mixed hover",
-                              "fill": "$color-action-primary-hover",
-                              "stroke": "$color-action-primary-hover",
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
+                              "strokeWidth": 0,
+                              "cornerRadius": 0,
                               "descendants": {
+                                "jS7xJ": {
+                                  "fill": "$color-action-primary-hover",
+                                  "stroke": "$color-action-primary-hover"
+                                },
                                 "brJbg": {
                                   "enabled": true,
                                   "icon": "minus"
@@ -18633,9 +18715,15 @@
                                   "type": "ref",
                                   "ref": "UEy2Z",
                                   "name": "mixed focus",
-                                  "fill": "$color-action-primary",
-                                  "stroke": "$color-action-primary",
+                                  "fill": "#FFFFFF00",
+                                  "stroke": "#FFFFFF00",
+                                  "strokeWidth": 0,
+                                  "cornerRadius": 0,
                                   "descendants": {
+                                    "jS7xJ": {
+                                      "fill": "$color-action-primary",
+                                      "stroke": "$color-action-primary"
+                                    },
                                     "brJbg": {
                                       "enabled": true,
                                       "icon": "minus"
@@ -18667,11 +18755,18 @@
                               "type": "ref",
                               "ref": "UEy2Z",
                               "name": "mixed disabled",
-                              "fill": "$color-bg-disabled",
-                              "stroke": "$color-border-disabled",
-                              "strokeWidth": 1.5,
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
+                              "strokeWidth": 0,
                               "strokeAlignment": "inner",
+                              "cornerRadius": 0,
                               "descendants": {
+                                "jS7xJ": {
+                                  "fill": "$color-bg-disabled",
+                                  "stroke": "$color-border-disabled",
+                                  "strokeWidth": 1.5,
+                                  "strokeAlignment": "inner"
+                                },
                                 "brJbg": {
                                   "enabled": true,
                                   "icon": "minus",
@@ -18725,26 +18820,40 @@
                               "id": "A4E1dT",
                               "name": "Radio",
                               "reusable": true,
-                              "width": 20,
-                              "height": 20,
-                              "fill": "$color-bg-surface",
-                              "cornerRadius": "$radius-full",
-                              "stroke": "$color-control-border",
-                              "strokeWidth": 1.5,
+                              "width": 24,
+                              "height": 24,
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
                               "strokeAlignment": "inner",
                               "justifyContent": "center",
                               "alignItems": "center",
                               "children": [
                                 {
-                                  "type": "ellipse",
-                                  "id": "narSb",
-                                  "x": 0,
-                                  "y": 0,
-                                  "name": "Dot",
-                                  "enabled": false,
-                                  "fill": "$color-action-on-primary",
-                                  "width": 9,
-                                  "height": 9
+                                  "type": "frame",
+                                  "id": "hJhj0",
+                                  "name": "Mark",
+                                  "width": 20,
+                                  "height": 20,
+                                  "fill": "$color-bg-surface",
+                                  "cornerRadius": "$radius-full",
+                                  "stroke": "$color-control-border",
+                                  "strokeWidth": 1.5,
+                                  "strokeAlignment": "inner",
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "narSb",
+                                      "x": 0,
+                                      "y": 0,
+                                      "name": "Dot",
+                                      "enabled": false,
+                                      "fill": "$color-action-on-primary",
+                                      "width": 9,
+                                      "height": 9
+                                    }
+                                  ]
                                 }
                               ]
                             }
@@ -18771,7 +18880,15 @@
                               "type": "ref",
                               "ref": "A4E1dT",
                               "name": "radio off hover",
-                              "stroke": "$color-control-border-hover"
+                              "stroke": "#FFFFFF00",
+                              "fill": "#FFFFFF00",
+                              "strokeWidth": 0,
+                              "cornerRadius": 0,
+                              "descendants": {
+                                "hJhj0": {
+                                  "stroke": "$color-control-border-hover"
+                                }
+                              }
                             }
                           ]
                         }
@@ -18805,7 +18922,13 @@
                                   "id": "jd6PY",
                                   "type": "ref",
                                   "ref": "A4E1dT",
-                                  "name": "radio off focus"
+                                  "name": "radio off focus",
+                                  "fill": "#FFFFFF00",
+                                  "stroke": "#FFFFFF00",
+                                  "strokeWidth": 0,
+                                  "cornerRadius": 0,
+                                  "width": 24,
+                                  "height": 24
                                 }
                               ]
                             }
@@ -18832,10 +18955,19 @@
                               "type": "ref",
                               "ref": "A4E1dT",
                               "name": "radio off disabled",
-                              "fill": "$color-bg-disabled",
-                              "stroke": "$color-border-disabled",
-                              "strokeWidth": 1.5,
-                              "strokeAlignment": "inner"
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
+                              "strokeWidth": 0,
+                              "strokeAlignment": "inner",
+                              "cornerRadius": 0,
+                              "descendants": {
+                                "hJhj0": {
+                                  "fill": "$color-bg-disabled",
+                                  "stroke": "$color-border-disabled",
+                                  "strokeWidth": 1.5,
+                                  "strokeAlignment": "inner"
+                                }
+                              }
                             }
                           ]
                         }
@@ -18883,9 +19015,15 @@
                               "type": "ref",
                               "ref": "A4E1dT",
                               "name": "radio on rest",
-                              "fill": "$color-action-primary",
-                              "stroke": "$color-action-primary",
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
+                              "strokeWidth": 0,
+                              "cornerRadius": 0,
                               "descendants": {
+                                "hJhj0": {
+                                  "fill": "$color-action-primary",
+                                  "stroke": "$color-action-primary"
+                                },
                                 "narSb": {
                                   "enabled": true
                                 }
@@ -18914,9 +19052,15 @@
                               "type": "ref",
                               "ref": "A4E1dT",
                               "name": "radio on hover",
-                              "fill": "$color-action-primary-hover",
-                              "stroke": "$color-action-primary-hover",
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
+                              "strokeWidth": 0,
+                              "cornerRadius": 0,
                               "descendants": {
+                                "hJhj0": {
+                                  "fill": "$color-action-primary-hover",
+                                  "stroke": "$color-action-primary-hover"
+                                },
                                 "narSb": {
                                   "enabled": true
                                 }
@@ -18955,9 +19099,15 @@
                                   "type": "ref",
                                   "ref": "A4E1dT",
                                   "name": "radio on focus",
-                                  "fill": "$color-action-primary",
-                                  "stroke": "$color-action-primary",
+                                  "fill": "#FFFFFF00",
+                                  "stroke": "#FFFFFF00",
+                                  "strokeWidth": 0,
+                                  "cornerRadius": 0,
                                   "descendants": {
+                                    "hJhj0": {
+                                      "fill": "$color-action-primary",
+                                      "stroke": "$color-action-primary"
+                                    },
                                     "narSb": {
                                       "enabled": true
                                     }
@@ -18988,11 +19138,18 @@
                               "type": "ref",
                               "ref": "A4E1dT",
                               "name": "radio on disabled",
-                              "fill": "$color-bg-disabled",
-                              "stroke": "$color-border-disabled",
-                              "strokeWidth": 1.5,
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
+                              "strokeWidth": 0,
                               "strokeAlignment": "inner",
+                              "cornerRadius": 0,
                               "descendants": {
+                                "hJhj0": {
+                                  "fill": "$color-bg-disabled",
+                                  "stroke": "$color-border-disabled",
+                                  "strokeWidth": 1.5,
+                                  "strokeAlignment": "inner"
+                                },
                                 "narSb": {
                                   "enabled": true,
                                   "fill": "$color-text-disabled"
@@ -24656,7 +24813,13 @@
                           "type": "ref",
                           "ref": "UEy2Z",
                           "name": "Select",
-                          "enabled": false
+                          "enabled": false,
+                          "fill": "#FFFFFF00",
+                          "stroke": "#FFFFFF00",
+                          "strokeWidth": 0,
+                          "cornerRadius": 0,
+                          "width": 24,
+                          "height": 24
                         },
                         {
                           "id": "Q0YXSi",
@@ -27080,6 +27243,172 @@
         },
         {
           "type": "frame",
+          "id": "unWvr",
+          "name": "Sidebar · brand, footer and rail",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "aivYO",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "w01tO",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Sidebar · brand, footer and rail",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "ufQiG",
+                  "name": "Note",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Three things are unverified in dark until this pair exists: the pine brand tile against a near-black surface, the avatar in the account trigger, and the collapse glyph, which is the only control in the sidebar without a resting border. The brand tile is also the adjacency case — a pine fill inside a panel that will sit beside income amounts.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "yn9UX",
+              "name": "Pair",
+              "width": "fill_container",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "x0R8u",
+                  "name": "light",
+                  "theme": {
+                    "color": "light"
+                  },
+                  "width": "fill_container",
+                  "fill": "$color-bg-canvas",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "V640ER",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "color = light",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "z2pwum",
+                      "name": "Forms",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "id": "hIOSd",
+                          "type": "ref",
+                          "ref": "fwKnX",
+                          "name": "Labelled",
+                          "width": 264,
+                          "height": 480
+                        },
+                        {
+                          "id": "zi7XI",
+                          "type": "ref",
+                          "ref": "UwIRb",
+                          "name": "Rail",
+                          "width": 72,
+                          "height": 480
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "x1kEHE",
+                  "name": "dark",
+                  "theme": {
+                    "color": "dark"
+                  },
+                  "width": "fill_container",
+                  "fill": "$color-bg-canvas",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "mdVf4",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "color = dark",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "jQztn",
+                      "name": "Forms",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "id": "Q84sUD",
+                          "type": "ref",
+                          "ref": "fwKnX",
+                          "name": "Labelled",
+                          "width": 264,
+                          "height": 480
+                        },
+                        {
+                          "id": "sXKVO",
+                          "type": "ref",
+                          "ref": "UwIRb",
+                          "name": "Rail",
+                          "width": 72,
+                          "height": 480
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
           "id": "lUzxR",
           "name": "Target size",
           "width": "fill_container",
@@ -27249,7 +27578,11 @@
                           "id": "kQDo7",
                           "type": "ref",
                           "ref": "UEy2Z",
-                          "name": "Select"
+                          "name": "Select",
+                          "fill": "#FFFFFF00",
+                          "stroke": "#FFFFFF00",
+                          "strokeWidth": 0,
+                          "cornerRadius": 0
                         },
                         {
                           "type": "text",
@@ -27285,7 +27618,7 @@
                       "fill": "$color-text-secondary",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "Measured: icon buttons 44×44, row target 1080×44, checkbox mark 20×20. The mark is under the 24 px floor on its own — which is exactly why the contract says the mark is never the target. Its target is the row. Nothing else in the row is interactive, so no spacing exception is needed. A sub-24 mark is only a defect when no interactive ancestor covers it.",
+                      "content": "Measured at device = compact: icon buttons 44 × 44, select hit area 24 × 24 around a 20 px mark, merchant link inside the row. The mark does not rely on the row: the row is the merchant link's target, not the checkbox's. Three targets in one row, so the spacing exception is what has to hold, and the audit measures it rather than assuming it.",
                       "lineHeight": 1.5,
                       "fontFamily": "$type-family-body",
                       "fontSize": 11,
@@ -27469,6 +27802,8 @@
                           "ref": "mRsB3",
                           "name": "Nav trigger",
                           "enabled": false,
+                          "width": 44,
+                          "height": 44,
                           "descendants": {
                             "heS79": {
                               "icon": "menu"
@@ -29843,7 +30178,7 @@
                           "width": 220,
                           "descendants": {
                             "sYZDM": {
-                              "height": 32
+                              "height": 36
                             }
                           }
                         },
@@ -29888,9 +30223,15 @@
                           "type": "ref",
                           "ref": "UEy2Z",
                           "name": "Select all",
-                          "fill": "$color-action-primary",
-                          "stroke": "$color-action-primary",
+                          "fill": "#FFFFFF00",
+                          "stroke": "#FFFFFF00",
+                          "strokeWidth": 0,
+                          "cornerRadius": 0,
                           "descendants": {
+                            "jS7xJ": {
+                              "fill": "$color-action-primary",
+                              "stroke": "$color-action-primary"
+                            },
                             "brJbg": {
                               "enabled": true,
                               "icon": "minus"
@@ -30012,6 +30353,12 @@
                           "descendants": {
                             "DiY6n": {
                               "enabled": true,
+                              "fill": "#FFFFFF00",
+                              "stroke": "#FFFFFF00",
+                              "strokeWidth": 0,
+                              "cornerRadius": 0
+                            },
+                            "DiY6n/jS7xJ": {
                               "fill": "$color-action-primary",
                               "stroke": "$color-action-primary"
                             },
@@ -30056,9 +30403,6 @@
                             "DiY6n": {
                               "enabled": true
                             },
-                            "DiY6n/brJbg": {
-                              "enabled": false
-                            },
                             "Q0YXSi/rv5n0": {
                               "content": "SA"
                             },
@@ -30096,9 +30440,6 @@
                           "descendants": {
                             "DiY6n": {
                               "enabled": true
-                            },
-                            "DiY6n/brJbg": {
-                              "enabled": false
                             },
                             "Q0YXSi/rv5n0": {
                               "content": "RE"
@@ -30138,9 +30479,6 @@
                             "DiY6n": {
                               "enabled": true
                             },
-                            "DiY6n/brJbg": {
-                              "enabled": false
-                            },
                             "Q0YXSi/rv5n0": {
                               "content": "TF"
                             },
@@ -30178,9 +30516,6 @@
                           "descendants": {
                             "DiY6n": {
                               "enabled": true
-                            },
-                            "DiY6n/brJbg": {
-                              "enabled": false
                             },
                             "Q0YXSi/rv5n0": {
                               "content": "SP"
@@ -30276,7 +30611,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "“The row is the target” is true for a pointer and impossible for everything else. A ledger row selects, opens, and sometimes carries a notice with its own buttons — three interactive things inside one that claims to be a single target. Nesting a control inside a control is invalid markup and unreachable by keyboard, so the row cannot be a button or a link.",
+                  "content": "“The row is the target” is true for a pointer and impossible for everything else. A ledger row selects, opens, and sometimes carries a notice with an action of its own — three interactive things inside one that claims to be a single target. Nesting a control inside a control is invalid markup and unreachable by keyboard, so the row cannot be a button or a link.",
                   "lineHeight": 1.45,
                   "fontFamily": "$type-family-body",
                   "fontSize": "$type-size-body-sm",
@@ -30538,7 +30873,7 @@
                       "fill": "$color-text-primary",
                       "textGrowth": "fixed-width",
                       "width": 150,
-                      "content": "Notice actions",
+                      "content": "Notice action",
                       "lineHeight": 1.4,
                       "fontFamily": "$type-family-body",
                       "fontSize": 12,
@@ -30551,7 +30886,7 @@
                       "fill": "$color-accent",
                       "textGrowth": "fixed-width",
                       "width": 190,
-                      "content": "their own controls",
+                      "content": "its own control",
                       "lineHeight": 1.4,
                       "fontFamily": "$type-family-body",
                       "fontSize": 12,
@@ -30564,7 +30899,7 @@
                       "fill": "$color-text-secondary",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "tab order, inside the row's notice. Keep and Merge are buttons and cannot be a badge or a row click.",
+                      "content": "tab order, inside the row's notice. One action: Review, which opens the comparison. Merging two transactions is reclassifying money, so it is a consequential submission under SC 3.3.4 and cannot be a single click taken with neither record in view.",
                       "lineHeight": 1.45,
                       "fontFamily": "$type-family-body",
                       "fontSize": 12,
@@ -30664,7 +30999,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "The earlier contract said a 20 px checkbox is fine because the row is its target. That was wrong in one direction: the row is not the checkbox's target, it is the *name's*. The checkbox needs its own hit area of at least control-target-min, achieved with padding around the mark rather than by growing the mark.\n\nSo the row carries three separate targets, and the spacing exception under SC 2.5.8 is what keeps them from interfering: 24 px circles centred on each must not intersect. At density = compact that is the constraint to check first, and it is why compact density is not offered where the pointer is coarse.",
+                  "content": "The earlier contract said a 20 px checkbox is fine because the row is its target. That was wrong: the row is not the checkbox's target, it is the *name's*. The checkbox carries its own hit area, made with padding around the mark — Checkbox and Radio are 24 × 24 around a 20 px mark, and Switch is 44 × 24.\n\nThere are two numbers, not one, and conflating them is what made this hard to state. control-target-min is 24 and is the SC 2.5.8 AA floor, which binds always. density-row-min-touch is 44, the product's own standard, and binds only where the pointer is coarse — which is also where compact density is refused (ADR 0004), so a 44 px target is never asked to fit a 40 px row.\n\nSo the row carries three separate targets and the spacing exception keeps them from interfering: 24 px circles centred on each must not intersect. Measured on the table region at density = comfortable: select 24 × 24, consecutive select centres 56 px apart vertically, select to merchant-link centres 404 px apart horizontally. At density = compact the row is 40, so consecutive centres are 40 px apart. All clear 24.",
                   "lineHeight": 1.55,
                   "fontFamily": "$type-family-body",
                   "fontSize": 11,
@@ -31054,7 +31389,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Non-modal and route-backed: the ledger stays visible and interactive behind it, Back closes it, and a refresh reopens it on the same record. That is the whole reason to prefer it over a dialog — you can keep scanning the list while editing one row. Focus moves in on open and returns to the row on close. At Ultra it stops being an overlay and becomes the persistent inspector pane.",
+                  "content": "Non-modal and route-backed at Medium and Wide: the ledger stays visible and interactive behind it, Back closes it, and a refresh reopens it on the same record. That is the whole reason to prefer it over a dialog — you can keep scanning the list while editing one row. Focus moves in on open and returns to the row on close.\n\nAt Compact the same route renders as a page, not an overlay. Nothing is behind it, so there is nothing to make inert and no focus to trap: the list is not rendered, Back returns to it, and the row is restored on return. A full-bleed sheet that declared itself non-modal would be the worst of both — it covers the page while leaving focus free to wander behind it.\n\nAt Ultra it stops being an overlay in the other direction and becomes the persistent inspector pane, with the elevation and the close control removed because nothing is dismissed.",
                   "lineHeight": 1.45,
                   "fontFamily": "$type-family-body",
                   "fontSize": "$type-size-body-sm",
@@ -33102,7 +33437,7 @@
           "fill": "$color-text-secondary",
           "textGrowth": "fixed-width",
           "width": "fill_container",
-          "content": "Transactions / Compact 390 · editing — the same Drawer component again, full-bleed. One route, one component, three renderings: full-bleed sheet at Compact, overlay at Medium and Wide, persistent pane at Ultra. Nothing is unreachable at any width.",
+          "content": "Transactions / Compact 390 · editing — the same Drawer component as a page. One route and one component with three renderings: a page at Compact, a non-modal overlay at Medium and Wide, a persistent pane at Ultra. Only the middle one has anything behind it, which is why only the middle one has a modality question to answer.",
           "fontFamily": "$type-family-mono",
           "fontSize": 11,
           "fontWeight": "normal"
@@ -33125,103 +33460,23 @@
           "layout": "vertical",
           "children": [
             {
-              "id": "oENxd",
-              "type": "ref",
-              "ref": "uC4nV",
-              "name": "Page header",
-              "width": "fill_container",
-              "cornerRadius": 0,
-              "stroke": "$color-border-default",
-              "strokeWidth": {
-                "bottom": 1
-              },
-              "descendants": {
-                "d0eDYj": {
-                  "enabled": false
-                },
-                "tquly": {
-                  "enabled": true
-                },
-                "mEaUK/Enur3": {
-                  "enabled": false
-                },
-                "DaJIq/Enur3": {
-                  "enabled": false
-                },
-                "xfNuS/Enur3": {
-                  "enabled": false
-                }
-              }
-            },
-            {
-              "type": "frame",
-              "id": "zuIZZ",
-              "name": "Body",
-              "width": "fill_container",
-              "height": "fill_container",
-              "layout": "vertical",
-              "padding": "$layout-page-gutter",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "Ey5nu",
-                  "name": "CONTENT SLOT",
-                  "width": "fill_container",
-                  "height": "fill_container",
-                  "fill": "$color-bg-subtle",
-                  "cornerRadius": "$radius-md",
-                  "stroke": "$color-border-strong",
-                  "strokeWidth": 1,
-                  "strokeAlignment": "inner",
-                  "layout": "vertical",
-                  "gap": 5,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "rssng",
-                      "name": "Label",
-                      "fill": "$color-text-secondary",
-                      "content": "CONTENT SLOT",
-                      "textAlign": "center",
-                      "fontFamily": "$type-family-mono",
-                      "fontSize": 12,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "lOVpN",
-                      "name": "Note",
-                      "fill": "$color-text-secondary",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "the list fills this — at Compact the transaction row reflows to two lines, drawn in 30 · MOLECULES / Transaction row / Compact device",
-                      "lineHeight": 1.45,
-                      "textAlign": "center",
-                      "fontFamily": "$type-family-body",
-                      "fontSize": 11,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
               "id": "omDL5",
               "type": "ref",
               "ref": "yhPTP",
               "name": "Sheet",
-              "layoutPosition": "absolute",
               "x": 0,
               "y": 0,
-              "width": 390,
-              "height": 844,
+              "width": "fill_container",
+              "height": "fill_container",
               "cornerRadius": 0,
               "strokeWidth": 0,
               "descendants": {
                 "ZXZB2": {
                   "content": "Edit transaction"
+                },
+                "S9Qtgj": {
+                  "width": 44,
+                  "height": 44
                 },
                 "W3sEe": {
                   "type": "frame",
@@ -35573,7 +35828,7 @@
     },
     "control-target-min": {
       "type": "number",
-      "value": 44
+      "value": 24
     },
     "type-family-body": {
       "type": "string",

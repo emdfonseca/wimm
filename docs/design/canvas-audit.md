@@ -73,29 +73,73 @@ report on itself.
 
 ## Target size
 
-Run against a frame themed `device: "compact"` — that is where the floor binds.
+Every control instance carries its own hit area, so this measures instances and
+exempts nothing. Two earlier versions of this check passed on every run while
+scanning nothing useful, for two separate reasons, and both are worth stating.
+
+**`resolveInstances` deletes the `ref` field.** A resolved node is a plain frame
+whose id is `instanceId/originChildId`; it has no `ref` to match on. So a check
+that filters `n.type === "ref"` and also passes `resolveInstances: true` matches
+zero nodes. Without the flag it matches only top-level instances and never
+descends into a row, which is where every checkbox in this library actually
+lives. The fix is to collect control-instance ids in an unresolved pass, then
+match the **last path segment** of each resolved node against that set.
+
+**A large ancestor is not a licence.** The previous check walked up looking for an
+ancestor over 24 px named `row`, `target`, `button` or `item`, and exempted the
+mark if it found one. That encoded the belief the row-interaction contract
+overturned: the row is the *merchant link's* target, not the checkbox's, so a row
+being 44 px tall says nothing about whether the checkbox is reachable. It also
+meant any container someone named "Row" silently exempted everything inside it.
 
 ```js
-let fails=0;
-Get(COMPACT_ROOT,(n,c)=>{
-  if(n.type!=="ref"&&!/row target/i.test(n.name||""))return;
+const CONTROL=/^(button|icon button|checkbox|radio|switch|nav item|tab|pagination|segmented control|account trigger)/i;
+const ctrl={}; ROOTS.forEach(r=>Get(r,n=>{if(n.reusable&&CONTROL.test(n.name||""))ctrl[n.id]=n.name}));
+const isCtrlRef={}; ROOTS.forEach(r=>Get(r,n=>{if(n.type==="ref"&&ctrl[n.ref])isCtrlRef[n.id]=ctrl[n.ref]}));
+let seen=0,fails=0;
+ROOTS.forEach(r=>Get(r,(n,c)=>{
+  const seg=String(n.id).split("/").pop();
+  if(!isCtrlRef[seg]||n.enabled===false)return;
+  seen++;
   const w=Math.round(c.bounds.width),h=Math.round(c.bounds.height);
-  if(Math.min(w,h)>=24)return;
-  let p=c.parentCtx,covered=false;
-  while(p){ if(Math.min(p.bounds.width,p.bounds.height)>=24 &&
-                /row|target|button|item/i.test(p.node.name||"")){covered=true;break}
-            p=p.parentCtx}
-  if(!covered){fails++;Print("UNDER 24",n.id,n.name,w+"×"+h)}});
-Print("uncovered targets:",fails);
+  if(Math.min(w,h)<24){fails++;Print("UNDER 24",n.id,n.name,w+"×"+h)}
+},{resolveInstances:true}));
+Print("measured:",seen,"under 24:",fails);
 ```
 
-A mark smaller than 24 px is only a defect when **no interactive ancestor covers
-it**. A 20 px checkbox inside a 44 px row passes, and that is the intended design —
-the mark is never the target. Without the ancestry walk this check reports every
-checkbox, radio and switch in the library as a failure and gets ignored.
+It now measures 278 control instances. Print `seen` every run: a sudden drop is
+the check going blind, and that is the failure mode this section exists for.
 
-SC 2.5.8 AA is 24 × 24 or a qualifying spacing exception. 44 px is a stronger
-design choice, not the AA minimum; do not report it as such.
+**Validate it before trusting it.** Shrink one instance in a specimen matrix and
+one inside a row instance, confirm both are reported, then restore them. The
+second is the one that matters — the row-nested case is what every previous
+version missed.
+
+SC 2.5.8 AA is 24 × 24 or a qualifying spacing exception. `control-target-min` is
+24 and binds always; `density-row-min-touch` is 44 and binds only where the
+pointer is coarse, which is also where compact density is refused. Do not report
+44 as the AA minimum.
+
+### The spacing exception
+
+Where several targets share a row, 24 px circles centred on each must not
+intersect. Bounds are relative to each row's own coordinate space, so comparing
+`y` across sibling rows reports 0 px of separation and means nothing — take the
+row pitch from `density-row-height` instead.
+
+This continues the snippet above and reuses its `isCtrlRef` map; run them in one
+call or rebuild the map first.
+
+```js
+const pts=[];
+Get(ROWS_CONTAINER,(n,c)=>{const seg=String(n.id).split("/").pop();
+  if(isCtrlRef[seg]&&n.enabled!==false)
+    pts.push([n.name,c.bounds.x+c.bounds.width/2,c.bounds.y+c.bounds.height/2])},
+  {resolveInstances:true});
+```
+
+Measured here: select 24 × 24, select-to-merchant centres 404 px apart, row pitch
+56 comfortable and 40 compact. All clear 24.
 
 ## Component legibility on an unknown background
 
@@ -246,12 +290,28 @@ Rows hugging to 28 px instead of 56 read as a slightly tight table, not a defect
 ## Text contrast
 
 The table above promises this check and the file shipped without the code for it,
-which meant it was never run document-wide. Every text node is measured against
-the nearest filled ancestor, resolved through whatever theme the node sits in.
+which meant it was never run document-wide.
+
+**It must resolve gradients, or it invents failures.** A gradient fill is not a
+hex string, so a naive background lookup skips straight past it to whatever solid
+fill is further up — on the balance card, the page canvas. The three labels on
+that card then measure against white and are reported as failures at 1.08, 1.25
+and 1.40 when they are white and mint on deep pine and perfectly legible. This
+has now happened twice in this library, which is why the stop-collecting helper
+below is the check rather than an improvement to it.
+
+Collect every stop of whatever fill is found and score against the **worst** one,
+so a gradient passes only if the text clears its least favourable end.
 
 ```js
-const hx=c=>{if(!c)return null;if(typeof c==="string")return /^#/.test(c)?c:null;
-  if(Array.isArray(c))return hx(c[0]);if(c.type==="color")return hx(c.color);return null};
+const stops=c=>{if(!c)return[];
+  if(typeof c==="string")return /^#/.test(c)?[c]:[];
+  if(Array.isArray(c))return c.flatMap(stops);
+  if(c.type==="color")return stops(c.color);
+  if(c.type==="gradient")return (c.colors||[]).flatMap(s=>stops(s.color));
+  if(c.type==="mesh_gradient")return (c.colors||[]).flatMap(stops);
+  return[]};
+const solid=c=>stops(c).filter(h=>!/00$/.test(h));
 const rgb=h=>{let s=h.slice(1);if(s.length===3)s=s.split("").map(x=>x+x).join("");
   return[parseInt(s.slice(0,2),16),parseInt(s.slice(2,4),16),parseInt(s.slice(4,6),16)]};
 const lum=h=>{const[r,g,b]=rgb(h);const f=v=>{v/=255;
@@ -262,22 +322,23 @@ const ratio=(a,b)=>{const l1=lum(a),l2=lum(b);
 let seen=0,fail=0;
 ROOTS.forEach(R=>Get(R,(n,c)=>{
   if(n.type!=="text"||n.enabled===false)return;
-  const fg=hx(n.fill); if(!fg)return;
-  let p=c.parentCtx,bg=null;
-  while(p){const b=hx(p.node.fill); if(b&&!/00$/.test(b)){bg=b;break} p=p.parentCtx}
-  if(!bg)return;
+  const fg=solid(n.fill)[0]; if(!fg)return;
+  let p=c.parentCtx,bgs=null;
+  while(p){const b=solid(p.node.fill); if(b.length){bgs=b;break} p=p.parentCtx}
+  if(!bgs)return;
   seen++;
   const sz=n.fontSize||14, bold=/600|700|bold/.test(String(n.fontWeight||""));
   const need=(sz>=24||(sz>=18.66&&bold))?3:4.5;
-  const r=ratio(fg,bg);
-  if(r<need){fail++;Print("CONTRAST",n.id,n.name,r.toFixed(2),"<",need,fg,"on",bg)}
+  const worst=Math.min(...bgs.map(b=>ratio(fg,b)));
+  if(worst<need){fail++;Print("CONTRAST",n.id,n.name,worst.toFixed(2),"<",need,fg,"on",JSON.stringify(bgs))}
 },{resolveVariables:true,resolveInstances:true}));
 Print("measured:",seen,"failures:",fail);
 ```
 
-`color-text-disabled` on a disabled specimen is the expected failure and is exempt
-under SC 1.4.3. Everything else is a defect. Run it with `resolveInstances: true`
-or it measures the origins and skips every instance override.
+It measures 1802 text nodes across the seven zones. `color-text-disabled` on a
+disabled specimen is the expected failure and is exempt under SC 1.4.3; there are
+30, and everything else is a defect. Run it with `resolveInstances: true` or it
+measures the origins and skips every instance override.
 
 ## `ctx.problems` reports nodes that fit
 

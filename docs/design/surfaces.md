@@ -76,7 +76,7 @@ Most of these are the ones people get wrong, and several resolve to no surface.
 | Card on file expires this month | **Global banner** | Q5 at account scope. Not about whichever page you are on. |
 | Saved an edit in the drawer | **nothing** | The panel shows the saved value. A toast here trains people to ignore toasts. |
 | Data is still loading | **nothing** | A skeleton is the answer. Feedback is for what happened, not what has not finished. |
-| One transaction looks like a duplicate | **Inline alert on the row** | Q5 at row scope. It needs a decision, so Q4 does not take it — a badge cannot carry Keep or Merge. An earlier version of these rules had this case falling through to showing nothing. |
+| One transaction looks like a duplicate | **Inline alert on the row** | Q5 at row scope. It needs a decision, so Q4 does not take it — a badge carries no action at all. The action is **Review**, singular, which opens the comparison; Keep and Merge are decided there, with both records visible. An earlier version of these rules had this case falling through to showing nothing, and a later one put Keep and Merge in the row. |
 | A filter returned no rows | **nothing — empty state** | Not feedback. The list owns this state, and it belongs in the list. |
 
 ### What each surface refuses
@@ -89,6 +89,7 @@ Most of these are the ones people get wrong, and several resolve to no surface.
 | Global banner | Anything page-specific. More than one at a time: a stack means the product is in a state nobody designed. |
 | Dialog | Information needing no action. Anything that could be inline. Chaining — a dialog opening another is a flow that wanted a page. |
 | Badge | Anything carrying an action. The moment a badge needs a button it is an alert. |
+| Notice, any placement | More than one action. The molecule has a single action slot, so a message offering a choice is offering the wrong thing: give it one action that opens where the choice belongs. |
 | Field error | System failures unrelated to the input. Import or sync problems are not the typist's fault and belong in a banner. |
 
 ## Navigation depth — when a resource appears at more than one level
@@ -140,7 +141,9 @@ believing money moved.
 
 **Moving, deleting or reclassifying money is a consequential submission**
 (SC 3.3.4): review-and-confirm naming the record and the amount, or a reversal
-with a stated window.
+with a stated window. Merging two transactions is reclassifying money, so it
+cannot be a single click from a row with neither record visible — the row's
+notice offers Review, and the merge is confirmed against both records.
 
 **Optimistic UI is allowed for categorisation and renaming, never for a transfer.**
 The test is whether being wrong for two seconds is recoverable by the user alone.

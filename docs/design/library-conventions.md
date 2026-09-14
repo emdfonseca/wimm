@@ -126,6 +126,25 @@ removes. It was deleted and rebuilt as affix cells on the Input atom.
 
 The test: **if the new thing re-draws the atom's chrome, extend the atom.**
 
+## `Update` replaces the descendants map, it does not merge it
+
+`Update(id, {descendants: {...}})` swaps the whole map. Every entry not repeated
+in the call is dropped, silently, and the instance falls back to origin defaults —
+which looks like a rendering glitch, not an error.
+
+Restructuring the Checkbox atom hit this twice in one pass: relocating eleven
+instances' chrome overrides onto a new child deleted their check-glyph overrides,
+so every checked box in the library quietly unchecked itself. Read the current map
+and spread it:
+
+```js
+const cur = Get(id, {depth: 0}).descendants || {};
+Update(id, {descendants: {...cur, [newChildId]: chrome}});
+```
+
+Top-level properties do merge. It is only `descendants` that replaces, which is
+why the trap is easy to walk into.
+
 ## Moving a node inside a component origin voids its overrides
 
 Every instance override keyed to a descendant stops resolving when that descendant
