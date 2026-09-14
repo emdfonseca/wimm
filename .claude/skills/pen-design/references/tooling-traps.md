@@ -18,6 +18,25 @@ Read this before the first `execute` call of a session.
 | Trap | What happens |
 |---|---|
 | `width`/`height` bound to a `$variable` | The property is **discarded**. The frame falls back to hugging its content, so a 40 px control renders at 17 px. Colour, padding, corner radius, stroke width and type size all bind normally — only the two size properties are affected. Use literals and keep the token authoritative in code. |
+
+**A dropped size binding leaves no trace.** The property is simply absent
+afterwards, so scanning for `$` in `width`/`height` finds nothing — and scanning
+with `resolveVariables: true` cannot find it either, because that pass reports
+resolved values and says nothing about what was requested. Neither direction
+detects it.
+
+The only reliable detection is to check the **rendered** size against intent.
+For anything that repeats — table rows, list items, grid cells — assert both
+uniformity and the expected value:
+
+```js
+const rows=Get(CONTAINER,(k,kc)=>kc.depth===1?Math.round(kc.bounds.height):undefined);
+const uniform=new Set(rows).size===1;
+if(!uniform||rows[0]!==EXPECTED)Print("row height",JSON.stringify(rows),"expected",EXPECTED);
+```
+
+Rows silently hugging to 28 px instead of the intended 56 look like a slightly
+tight table, not a bug.
 | Malformed hex in `SetVariables` | Accepted without complaint. Any contrast pass then *skips* the token it cannot parse, so a broken value looks like a clean run. Validate against `^#([0-9a-fA-F]{3}\|[0-9a-fA-F]{6}\|[0-9a-fA-F]{8})$` after every write. |
 | Globals between `execute` calls | Assigning without `const`/`let` is documented to persist. It does not, reliably. Capture ids from the response mapping and paste them as literals into the next call. |
 

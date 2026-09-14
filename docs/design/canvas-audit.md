@@ -185,6 +185,20 @@ const own=Object.keys(n).filter(k=>!["id","type","ref","name","x","y","width","h
 Print(id,"own:",own,"descendants:",Object.keys(n.descendants||{}));
 ```
 
+## Repeated-row height
+
+A size bound to a variable is discarded and the property left absent, so no scan
+of the source finds it and `resolveVariables` cannot see it either. Check the
+rendered result against intent instead, wherever something repeats:
+
+```js
+const rows=Get(ROWS_CONTAINER,(k,kc)=>kc.depth===1?Math.round(kc.bounds.height):undefined);
+if(new Set(rows).size!==1||rows[0]!==EXPECTED)
+  Print("row height",JSON.stringify(rows),"expected",EXPECTED);
+```
+
+Rows hugging to 28 px instead of 56 read as a slightly tight table, not a defect.
+
 ## Colour value validity
 
 ```js
