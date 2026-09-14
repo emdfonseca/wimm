@@ -97,6 +97,37 @@ checkbox, radio and switch in the library as a failure and gets ignored.
 SC 2.5.8 AA is 24 × 24 or a qualifying spacing exception. 44 px is a stronger
 design choice, not the AA minimum; do not report it as such.
 
+## Component legibility on an unknown background
+
+A component is dropped onto surfaces the library does not control — including the
+Components panel, which renders each origin with **no page behind it**. Anything
+that borrows the page for contrast is illegible there, and the panel is how people
+browse a library.
+
+The dangerous shape is a container that draws an **edge but no surface**: it looks
+like it provides a background and does not, so its content contrast is whatever
+happens to be underneath.
+
+```js
+const hex=c=>!c?null:typeof c==="string"?c:Array.isArray(c)?hex(c[0]):(c.color||null);
+const origins=[]; ROOTS.forEach(r=>Get(r,n=>{if(n.reusable)origins.push(n.id)}));
+let fails=0;
+for(const id of origins){
+  const n=Get(id,{depth:0,resolveVariables:true});
+  const f=hex(n.fill), s=hex(n.stroke);
+  const noFill=!f||/00$/.test(f), hasEdge=!!s&&!/00$/.test(s);
+  if(hasEdge&&noFill){fails++;Print("EDGE WITHOUT SURFACE",n.name)}}
+Print("failures:",fails);
+```
+
+Text-only components (an amount, a form field) legitimately have no surface and
+inherit the one they are placed on — they are exempt, not broken.
+
+A corollary for choosing origins: **the origin is what the panel shows**, so it
+must be the representative variant. Icon button originally originated as its ghost
+variant — transparent fill, near-black glyph — and rendered as an empty box in the
+panel. It now originates as the outlined variant, with ghost as an override.
+
 ## Colour value validity
 
 ```js

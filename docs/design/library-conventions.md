@@ -202,6 +202,21 @@ Generalisation: any token whose name describes an *appearance* ("subtle",
 "raised") rather than a *role* ("disabled", "elevated") will eventually be wrong
 in one theme. Name tokens for what they are for.
 
+## The origin is what the panel shows
+
+A library is browsed through the Components panel, which renders each origin alone
+on its own chrome — no canvas, no parent, no theme context from the document. Two
+consequences:
+
+- **Originate the representative variant.** Whichever variant holds the origin is
+  the one everyone sees when picking a component. Icon button originated as ghost
+  (transparent fill, near-black glyph) and appeared as an empty box; it now
+  originates as outlined, with ghost one override away.
+- **A container that draws an edge must draw a surface.** Border without fill looks
+  like it provides a background and does not, so content contrast depends on
+  whatever is underneath. Text-only components are the exception — they inherit
+  their surface by design.
+
 ## Both themes, or neither
 
 A component verified only in light theme is unverified. Light hides the failures
