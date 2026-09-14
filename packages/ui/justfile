@@ -1,0 +1,28 @@
+# packages/ui — the design system token contract.
+# tokens.json is exported from the pen.dev library by hand; tokens.css is generated.
+set shell := ["bash", "-uc"]
+
+default:
+    @just --list
+
+# Regenerate tokens.css from tokens.json
+gen:
+    @python3 scripts/gen-tokens.py
+
+build: gen
+
+fmt:
+    @echo "nothing to format: tokens.css is generated"
+
+# a raw hex colour outside tokens.css means a value escaped the contract
+lint:
+    @! grep -rInE '#[0-9a-fA-F]{3,8}' --include='*.css' --include='*.ts' --include='*.js' --include='*.svelte' src | grep -v '^src/tokens.css:' || { echo "raw hex outside tokens.css — reference a token instead"; exit 1; }
+    @echo "no raw hex outside tokens.css"
+
+test:
+    @python3 scripts/check-tokens.py
+
+check: lint test
+
+clean:
+    @rm -f src/tokens.css
