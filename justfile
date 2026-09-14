@@ -26,9 +26,9 @@ clean dir="": (_fanout "clean" dir)
 _fanout verb dir:
     @if [ -z "{{dir}}" ]; then just all {{verb}}; else just run {{verb}} {{dir}}; fi
 
-# Regenerate cross-language contract clients and the decision index
-gen: adr-index
-    @if [ -d packages/contracts ]; then just run gen packages/contracts; fi
+# Regenerate generated artifacts. No directory regenerates everything.
+gen dir="":
+    @set -e; if [ -z "{{dir}}" ]; then just adr-index && just all gen; else just run gen {{dir}}; fi
 
 # Rebuild .claude/rules/decisions.md from docs/decisions/
 adr-index:

@@ -43,3 +43,37 @@ amount's colour means exactly one thing.
   justified by row height being the most consequential number in a ledger: at
   1440 × 900, roughly 684 px of table area shows 12 comfortable rows or 17
   compact ones.
+
+## 0003 · Token pipeline provenance — Accepted
+
+`design/tokens.json` is the contract CI owns. It carries, for every token, an
+explicit `type` and `unit`; nothing downstream infers either.
+
+`just check packages/ui` validates two separate things:
+
+- **The export is a valid token document** — kebab-case names, known types,
+  units legal for their type, values well-formed for their type, only declared
+  axes, every branch of each axis present, no unknown fields, and no token
+  carrying both a default and axis values.
+- **The stylesheet agrees with the export** — regenerating is a no-op, every
+  token reaches the CSS, and nothing else declares a custom property.
+
+The validator is itself tested against inputs that must fail: a malformed hex, an
+unknown type, an undeclared axis, a missing theme branch, and a non-kebab name.
+
+**Library-to-export agreement is verified by a person, not by CI.** Re-exporting
+is part of any change to variables, in the same commit, and the diff is the
+review artifact.
+
+## 0004 · Density availability follows pointer capability — Accepted
+
+Layout regimes stay width-driven: the `device` axis describes available space,
+which is what a width query measures.
+
+The touch floor does not. `density = compact` reverts to comfortable under
+`@media (any-pointer: coarse)`, and the control that sets density is hidden where
+it does not apply rather than shown disabled — a greyed control invites someone to
+work out how to enable it.
+
+This supersedes the density consequence in ADR 0002. The three-axis decision
+itself is unchanged.

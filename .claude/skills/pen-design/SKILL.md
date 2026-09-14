@@ -103,6 +103,13 @@ A separate variants row beside a state matrix is the same specimens twice and tw
 places to update. Draw the crossing rather than writing prose verdicts about it —
 prose gravitates to the obvious and skips what is actually undecided.
 
+### A contract that states a number needs a measurement
+
+*Clears 3:1*, *never reflows*, *one level of depth* — prose like this is read as
+verified, and a false claim in a contract is worse than no claim, because it
+tells the next person the check was already done. Measure every number and every
+absolute when you write it, and again when the thing it describes changes.
+
 ### Anything that redraws an atom's chrome is that atom
 
 A component reproducing a control's border, height, focus ring and states is a

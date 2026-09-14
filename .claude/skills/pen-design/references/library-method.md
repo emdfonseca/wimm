@@ -78,6 +78,11 @@ on its own chrome — no canvas, no parent, no theme.
 - **A container that draws an edge must draw a surface.** Border without fill looks
   like it provides a background and does not, so content contrast becomes whatever
   happens to be underneath. A ghost variant as origin renders as an empty box.
+- **And the inverse: a surface must draw its own edge.** A fill that reads as a
+  card against the editor's dark chrome disappears against its light chrome, where
+  the fill and the background are the same value. The editor's appearance is not
+  part of the design and will not be there later. Check the containers in both
+  editor themes, not only the components inside them.
 - Text-only components legitimately have no surface and inherit the one they are
   placed on. They are the exception, not a defect.
 
@@ -127,7 +132,23 @@ correct in one theme and backwards in the other.
 **Name tokens for their role, not their look.** `disabled`, `affix` and `elevated`
 survive a theme flip; `subtle` does not.
 
-### 10.7. Measure composition
+### 10.7. Re-sort after every move
+
+Canvas order defaults to the order things were built in, which carries no meaning
+for a reader and drifts further with every addition. Zones, the blocks inside
+them, and the sections inside those all need their order re-stated deliberately —
+moving one block is enough to leave a zone incoherent.
+
+Zones carrying a numeric prefix can be checked mechanically: read them left to
+right and assert the prefixes ascend. Blocks have no key, so group them by family
+and keep a component's configuration and state blocks immediately after it.
+
+The reason to bother is not tidiness. Sorting puts related things side by side,
+and adjacency is what exposes duplication: two sections covering the same idea are
+invisible when separated by ten unrelated blocks and obvious the moment they land
+next to each other.
+
+### 10.8. Measure composition
 
 A library is only a system if the larger pieces are built from the smaller ones.
 Drawn-by-hand components look right on the day and drift apart by the week: three
@@ -165,7 +186,52 @@ Three questions the numbers answer that intuition does not:
 
 Run it whenever a zone is finished, and before claiming a layer is done.
 
-### 10.8. Verify, then report
+### 10.9. A contract that states a number needs a measurement
+
+Component contracts accumulate claims: *clears 3:1 unaided*, *never reflows*,
+*one level of depth*, *the row is the target*. Prose like this is read as
+verified. Much of it is not, and a false claim in a contract is worse than no
+claim — it tells the next person the check has already been done.
+
+Any sentence containing a number, or an absolute like *never* or *always*, is a
+testable assertion. Measure it when you write it, and measure it again whenever
+the thing it describes changes. Three examples from one library, all shipped and
+all wrong: a border contract asserting 3:1 while measuring 1.99, a field
+promising no reflow while varying 14 px between states, and a token described as
+recessed that advanced in the opposite theme.
+
+If a claim cannot be measured, it is decoration — cut it or rewrite it as
+something that can be.
+
+### 10.10. A decision recorded twice will disagree
+
+The same rule written on the canvas, in a conventions document, and in a decision
+record drifts the moment one is revised. In one library this produced four
+contradictions: an affix treatment, a density rule, a decision sequence, and a
+reflow promise — each correct in one place and stale in another, with nothing
+failing.
+
+Keep the reasoning in one place and have the others point at it. When a decision
+changes, grep for its terms before claiming it is done; the canvas and the docs
+are separate universes and only one of them is searchable.
+
+### 10.11. Decision sequences run specific to general
+
+A decision table people read top to bottom is an ordered sequence whether or not
+it was designed as one. General questions swallow specific ones: *is this a
+persisting condition?* is true of invalid input, of a per-row status, and of a
+system-wide outage, so asking it early captures all three and the specific
+answers are never reached.
+
+Order from most specific to most general, and state in each row why it sits where
+it does — that reasoning is what stops the next person reordering it.
+
+Then walk the sequence backwards looking for cases that reach the end and match
+nothing. A gap between *needs no action* and *affects more than one row* leaves
+single items needing a decision with nowhere to go, and nothing in the table says
+so.
+
+### 10.12. Verify, then report
 
 Run the audit before showing the work, not after it comes back. Findings a reviewer
 has to catch are findings the check should have.

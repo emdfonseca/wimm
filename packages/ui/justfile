@@ -5,7 +5,7 @@ set shell := ["bash", "-uc"]
 default:
     @just --list
 
-# Regenerate tokens.css from tokens.json
+# Regenerate tokens.css from tokens.json. Refuses to write an invalid document.
 gen:
     @python3 scripts/gen-tokens.py
 
@@ -21,6 +21,7 @@ lint:
 
 test:
     @python3 scripts/check-tokens.py
+    @python3 scripts/test-tokens.py
 
 check: lint test
 

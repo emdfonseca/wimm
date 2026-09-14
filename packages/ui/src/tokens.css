@@ -39,6 +39,8 @@
   --color-chart-4: #B54708;
   --color-chart-5: #6D3AF2;
   --color-chart-6: #A21CAF;
+  --color-control-border: #748A7E;
+  --color-control-border-hover: #5A7064;
   --color-feedback-error: #B42318;
   --color-feedback-error-bg: #FDF0EE;
   --color-feedback-info: #2563EB;
@@ -119,18 +121,20 @@
   --type-size-heading-md: 20px;
   --type-size-heading-sm: 16px;
   --type-size-page-title: 24px;
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
-/* The viewer's setting, unless the page pins a theme. */
+/* The viewer's setting, unless the page pins a theme. color-scheme is set
+   alongside the custom properties: without it, native controls, form
+   widgets and scrollbars keep the OS appearance and contradict the page. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --color-accent: #6699FF;
     --color-accent-hover: #8AB4FF;
     --color-accent-subtle: #0E1E3D;
     --color-action-destructive: #D93A36;
-    --color-action-destructive-active: #C43230;
-    --color-action-destructive-hover: #E5514D;
+    --color-action-destructive-active: #A82A28;
+    --color-action-destructive-hover: #C43230;
     --color-action-on-destructive: #FFFFFF;
     --color-action-on-primary: #07120D;
     --color-action-primary: #9FE0C0;
@@ -162,6 +166,8 @@
     --color-chart-4: #F5A524;
     --color-chart-5: #B49BFF;
     --color-chart-6: #E879F9;
+    --color-control-border: #567763;
+    --color-control-border-hover: #688C74;
     --color-feedback-error: #FF8A7A;
     --color-feedback-error-bg: #3A100C;
     --color-feedback-info: #6699FF;
@@ -180,17 +186,18 @@
     --gradient-brand-to: #07120D;
     --shadow-color: #00000099;
     --shadow-color-strong: #000000B3;
+    color-scheme: dark;
   }
 }
 
-/* An explicit choice always wins, in both directions. */
+/* An explicit choice wins in both directions, and carries color-scheme with it. */
 :root[data-theme="dark"] {
   --color-accent: #6699FF;
   --color-accent-hover: #8AB4FF;
   --color-accent-subtle: #0E1E3D;
   --color-action-destructive: #D93A36;
-  --color-action-destructive-active: #C43230;
-  --color-action-destructive-hover: #E5514D;
+  --color-action-destructive-active: #A82A28;
+  --color-action-destructive-hover: #C43230;
   --color-action-on-destructive: #FFFFFF;
   --color-action-on-primary: #07120D;
   --color-action-primary: #9FE0C0;
@@ -222,6 +229,8 @@
   --color-chart-4: #F5A524;
   --color-chart-5: #B49BFF;
   --color-chart-6: #E879F9;
+  --color-control-border: #567763;
+  --color-control-border-hover: #688C74;
   --color-feedback-error: #FF8A7A;
   --color-feedback-error-bg: #3A100C;
   --color-feedback-info: #6699FF;
@@ -240,6 +249,68 @@
   --gradient-brand-to: #07120D;
   --shadow-color: #00000099;
   --shadow-color-strong: #000000B3;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --color-accent: #2563EB;
+  --color-accent-hover: #1D4ED8;
+  --color-accent-subtle: #E8F0FE;
+  --color-action-destructive: #B42318;
+  --color-action-destructive-active: #7A190F;
+  --color-action-destructive-hover: #8E1D13;
+  --color-action-on-destructive: #FFFFFF;
+  --color-action-on-primary: #FFFFFF;
+  --color-action-primary: #14402F;
+  --color-action-primary-active: #0F3325;
+  --color-action-primary-hover: #1B5340;
+  --color-action-secondary: #FFFFFF;
+  --color-action-secondary-active: #D6E3DA;
+  --color-action-secondary-hover: #E7EFE9;
+  --color-amount-negative: #B42318;
+  --color-amount-neutral: #101C16;
+  --color-amount-positive: #067647;
+  --color-bg-active: #D6E3DA;
+  --color-bg-affix: #E7EFE9;
+  --color-bg-canvas: #F4F7F5;
+  --color-bg-disabled: #E7EFE9;
+  --color-bg-elevated: #FFFFFF;
+  --color-bg-hover: #E0EAE3;
+  --color-bg-inverse: #101C16;
+  --color-bg-subtle: #E7EFE9;
+  --color-bg-surface: #FFFFFF;
+  --color-border-default: #D7E2DA;
+  --color-border-disabled: #DFE8E2;
+  --color-border-hover: #8CA096;
+  --color-border-strong: #ABBCB2;
+  --color-border-subtle: #E8EFEA;
+  --color-chart-1: #14402F;
+  --color-chart-2: #2563EB;
+  --color-chart-3: #0E7490;
+  --color-chart-4: #B54708;
+  --color-chart-5: #6D3AF2;
+  --color-chart-6: #A21CAF;
+  --color-control-border: #748A7E;
+  --color-control-border-hover: #5A7064;
+  --color-feedback-error: #B42318;
+  --color-feedback-error-bg: #FDF0EE;
+  --color-feedback-info: #2563EB;
+  --color-feedback-info-bg: #E9F0FD;
+  --color-feedback-success: #067647;
+  --color-feedback-success-bg: #E8F5EE;
+  --color-feedback-warning: #B54708;
+  --color-feedback-warning-bg: #FBF6E8;
+  --color-text-disabled: #98A9A0;
+  --color-text-inverse: #FFFFFF;
+  --color-text-placeholder: #4F625A;
+  --color-text-primary: #101C16;
+  --color-text-secondary: #4F625A;
+  --focus-ring-color: #2563EB;
+  --gradient-brand-from: #1B5340;
+  --gradient-brand-to: #0C2B20;
+  --shadow-color: #10231A1F;
+  --shadow-color-strong: #10231A2E;
+  color-scheme: light;
 }
 
 /* device axis. Unlike the canvas, this resolves from the viewport. */
@@ -288,7 +359,17 @@
   }
 }
 
-/* density axis. Opt in per subtree. */
+/* density axis. Both values are emitted so a comfortable subtree nested
+   inside a compact one resolves correctly — with only the compact rule,
+   the inner subtree would inherit compact values it never asked for. */
+[data-density="comfortable"] {
+  --density-cell-padding-x: 16px;
+  --density-cell-padding-y: 12px;
+  --density-row-height: 56px;
+  --density-section-gap: 32px;
+  --density-stack-gap: 16px;
+}
+
 [data-density="compact"] {
   --density-cell-padding-x: 12px;
   --density-cell-padding-y: 6px;
@@ -297,9 +378,10 @@
   --density-stack-gap: 10px;
 }
 
-/* density=compact is never honoured on touch: a 40px row is a poor thumb
-   target, so below the compact breakpoint it reverts to comfortable. */
-@media (max-width: 767px) {
+/* Touch floor. Keyed to pointer capability, not width: a large tablet is
+   a wide viewport with coarse input, and a narrow desktop window is the
+   reverse. Layout regimes stay width-driven; the target floor does not. */
+@media (any-pointer: coarse) {
   [data-density="compact"] {
     --density-cell-padding-x: 16px;
     --density-cell-padding-y: 12px;

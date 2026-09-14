@@ -166,15 +166,21 @@ even under a disabled control.
   is what is wrong.
 - **Disabled dims the chrome too.** Symbol, icon and value drop together. An affix
   that stays crisp beside a dimmed value reads as still-editable.
-- **The affix carries no fill and no divider.** The drawn crossing first produced
-  a tinted affix cell with a divider, which dark theme then killed: field fill,
-  affix fill and canvas are three near-blacks, and in read-only — no outer border —
-  the cell vanished. Every fill and divider candidate measured 1.2:1 to 2.6:1, so
-  none was worth keeping, while the symbol alone is 7.4:1 dark and 6.5:1 light
-  against the field's own fill. The affix is a glyph in a padded cell.
+- **The affix recedes toward the canvas in both themes.** The drawn crossing first
+  produced a tinted affix with a divider; dark theme killed it, because field
+  fill, affix fill and canvas were three near-blacks and in read-only the cell
+  vanished. It was then removed entirely on the grounds that every tint measured
+  1.2–2.6:1 — which was the wrong instrument, since that is a text threshold and
+  two large adjacent surfaces separate far below it. The real fault was
+  directional: the tint reused `bg-subtle`, which sits below the surface in light
+  and above it in dark. `color-bg-affix` goes toward the canvas in both, and the
+  tint is back.
 
-The last one is worth noting as a sequence: the light-theme crossing invented a
-rule, and the dark-theme QA overturned it. Neither pass alone was sufficient.
+Worth noting as a sequence: the light crossing invented a rule, the dark QA
+overturned it, and a contrast measurement overturned the replacement. Each pass
+was necessary and none sufficient — which is the argument for recording a
+decision in one place once it settles. This one lived in two (a canvas note and
+this file) and they disagreed for a while.
 
 ## "Recede" is a different direction in each theme
 

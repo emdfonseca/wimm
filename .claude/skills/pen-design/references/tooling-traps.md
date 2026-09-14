@@ -70,8 +70,13 @@ present and correct. Do not chase them.
   a rendering glitch rather than an error. After restructuring an origin, re-apply
   overrides by resolved path (`Update("instanceId/childId", …)`) and look at every
   instance.
-- **Instances do not pick up an origin's size retroactively.** Setting height on an
-  origin after its instances exist leaves them hugging. Set it on each instance.
+- **Instances do not pick up an origin's size retroactively.** Setting a size on an
+  origin after its instances exist leaves every instance at the old one, and
+  nothing reports it — the component simply renders two different heights
+  depending on where you look. This trap recurs because the origin looks correct
+  when you check it. After changing geometry on an origin, enumerate its
+  instances and apply the same change by resolved path, then measure them all and
+  assert a single value.
 - **Deleting a block deletes any origin inside it.** Origins live in specimen
   cells. Move the origin out first, delete the instance standing in for it, then
   delete the block.

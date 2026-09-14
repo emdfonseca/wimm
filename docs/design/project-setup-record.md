@@ -90,10 +90,20 @@ Drives row height, cell padding, stack and section gaps. In a ledger the row hei
 is the most consequential number in the system: at 1440 × 900 roughly 684 px of
 table area shows 12 comfortable rows or 17 compact ones.
 
-`Density = Compact` is never applied at `Device = Compact`. A 40 px row is a fine
-pointer target and a poor thumb target, so on touch the row height floor is
-`density-row-min-touch` (44) whatever the setting says. The density control is
-offered on pointer regimes only, and hidden rather than shown disabled on touch.
+`Density = Compact` is never honoured on touch. A 40 px row is a fine pointer
+target and a poor thumb target, so where the input is coarse the density values
+revert to comfortable whatever the setting says, and the control that sets them is
+hidden rather than shown disabled.
+
+**Touch is an input capability, not a width.** The CSS keys this to
+`any-pointer: coarse`, not to a breakpoint: a large tablet is a wide viewport with
+coarse input, and a narrow desktop window is a small viewport with fine input.
+Keying it to width gets both backwards. Layout regimes stay width-driven — that is
+what they describe — but the target floor does not.
+
+This is stricter than WCAG requires: 40 px already clears the 24 px AA minimum.
+The floor exists because a ledger row is a frequent, precise target and 44 px is
+the product's own standard, not because the smaller value fails.
 
 **Device axis** — yes: `Compact`, `Medium`, `Wide`, `Ultra`. Drives page gutter,
 section gap, header height, sidebar width, inspector width, page-title and

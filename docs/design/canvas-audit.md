@@ -155,6 +155,40 @@ A theme can appear on a frame without being authored in a script — selecting a
 frame and using the app's theme switcher writes one. Re-run this after any session
 of hand-editing on the canvas.
 
+## Order
+
+Nothing enforces order, so everything drifts into build order — the sequence
+things happened to be made in, which is meaningless to a reader. Check it
+explicitly; it is the cheapest thing here to get wrong and the most visible.
+
+**Zones** are numbered, so this is mechanical:
+
+```js
+const z=[]; Get((n,c)=>{if(c.depth!==0)return;
+  z.push({name:n.name||"",x:c.bounds.x}); c.skipChildren()});
+z.sort((a,b)=>a.x-b.x);
+const nums=z.map(v=>parseInt((v.name.match(/^(\d+)/)||[0,999])[1],10));
+const sorted=nums.every((v,i)=>i===0||nums[i-1]<=v);
+z.forEach(v=>Print(v.name)); Print("zones in numeric order:",sorted);
+```
+
+Reflow with `ids.sort()` by that prefix, then lay out left to right.
+
+**Blocks inside a zone** have no numeric key, so the order is a judgement and
+has to be re-stated deliberately after any move:
+
+```js
+const order=(zone,ids)=>{ids.forEach((id,i)=>Move(id,zone,i))};
+```
+
+Group by family, not by when it was built — inputs together, navigation
+together, feedback together, domain components together. A component's
+configuration and state blocks sit immediately after it.
+
+Sorting also surfaces duplicates that are invisible in build order: putting
+`Layout and motion` next to a later `Motion` section made it obvious that motion
+had two homes, which is how a token ends up with two values.
+
 ## Stray nodes at the document root
 
 Dragging a component out of the Components panel drops the instance at the
