@@ -127,7 +127,45 @@ correct in one theme and backwards in the other.
 **Name tokens for their role, not their look.** `disabled`, `affix` and `elevated`
 survive a theme flip; `subtle` does not.
 
-### 10.7. Verify, then report
+### 10.7. Measure composition
+
+A library is only a system if the larger pieces are built from the smaller ones.
+Drawn-by-hand components look right on the day and drift apart by the week: three
+copies of one row ended up at 36, 38 and 34 px here, with three different
+treatments of "current", before anyone noticed.
+
+Count it rather than eyeballing it:
+
+```js
+const names={}; ROOTS.forEach(r=>Get(r,n=>{if(n.reusable)names[n.id]=n.name}));
+Get(ZONE,n=>{ if(!n.reusable)return;
+  let nodes=0,refs=0,used={};
+  Get(n.id,x=>{nodes++; if(x.type==="ref"){refs++; used[names[x.ref]||x.ref]=1}});
+  Print(n.name, nodes, refs, Math.round(refs/nodes*100)+"%", Object.keys(used).join(", "))});
+```
+
+Read the result by layer:
+
+- **A leaf molecule at 0% is correct** — it is made of primitives, and that is what
+  a leaf is.
+- **A large component at 0% is a defect.** It is redrawing things the library
+  already has.
+- **The reuse list is the interesting column.** A component that reuses nothing
+  while a near-identical component exists is a missing shared molecule, not a
+  coincidence.
+
+Three questions the numbers answer that intuition does not:
+
+1. **Is this a molecule wearing an organism's name?** A small composition with one
+   purpose is a molecule wherever it was filed.
+2. **Do several components share a shape?** Four surfaces differing only in
+   placement and tone are one molecule with four presets.
+3. **Is the same row implemented more than once?** Menu rows, sidebar rows and
+   sub-nav rows are one component. So are a list row and a table row.
+
+Run it whenever a zone is finished, and before claiming a layer is done.
+
+### 10.8. Verify, then report
 
 Run the audit before showing the work, not after it comes back. Findings a reviewer
 has to catch are findings the check should have.
