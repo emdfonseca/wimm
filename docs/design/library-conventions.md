@@ -217,6 +217,13 @@ consequences:
   whatever is underneath. Text-only components are the exception — they inherit
   their surface by design.
 
+## Origins live in neutral frames
+
+A component origin inherits any theme pinned on an ancestor, which freezes it and
+its panel tile to that theme. Keep zone frames theme-free; pin a theme only on
+frames whose whole purpose is a fixed context — QA pairs, swatch chips, axis
+demos.
+
 ## Both themes, or neither
 
 A component verified only in light theme is unverified. Light hides the failures

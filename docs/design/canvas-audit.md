@@ -128,6 +128,33 @@ must be the representative variant. Icon button originally originated as its gho
 variant — transparent fill, near-black glyph — and rendered as an empty box in the
 panel. It now originates as the outlined variant, with ghost as an override.
 
+## No component origin may inherit a theme
+
+An origin inside a themed frame is pinned to that theme. Instances still resolve
+from wherever they are placed, so the canvas looks correct and nothing fails —
+but the origin itself, and therefore its Components-panel tile, is frozen. It is
+invisible until someone wonders why half the panel is one theme.
+
+```js
+let bad=0;
+ROOTS.forEach(r=>Get(r,(n,c)=>{
+  if(!n.reusable)return;
+  const chain=[]; let p=c;
+  while(p){ if(p.node.theme&&Object.keys(p.node.theme).length)
+              chain.push(p.node.name||p.node.id); p=p.parentCtx}
+  if(n.theme&&Object.keys(n.theme).length)chain.push("SELF");
+  if(chain.length){bad++;Print("PINNED",n.name,chain.join(" <- "))}}));
+Print("origins pinned to a theme:",bad);
+```
+
+Zone frames must not carry a theme. Only frames whose *purpose* is a fixed context
+may: the QA light/dark pairs, the token swatch chips, and the device and density
+demos. Clear one with `Update(id,{theme:{}})`.
+
+A theme can appear on a frame without being authored in a script — selecting a
+frame and using the app's theme switcher writes one. Re-run this after any session
+of hand-editing on the canvas.
+
 ## Colour value validity
 
 ```js
