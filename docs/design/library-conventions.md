@@ -176,6 +176,32 @@ even under a disabled control.
 The last one is worth noting as a sequence: the light-theme crossing invented a
 rule, and the dark-theme QA overturned it. Neither pass alone was sufficient.
 
+## "Recede" is a different direction in each theme
+
+A disabled control recedes by moving **toward the canvas**. In light that means
+getting darker; in dark it means getting *darker still*. Reusing one "subtle"
+token for both gets it backwards in one of them.
+
+That is exactly what happened here. `color-bg-subtle` served as the disabled fill:
+in light it sits below the white surface and recedes correctly, but in dark it is
+**lighter** than the surface, so a disabled field advanced toward the viewer. A
+disabled secondary button was worse — `color-action-secondary` and
+`color-bg-subtle` resolve to the same value in dark, so rest and disabled were
+pixel-identical apart from the label.
+
+Two fixes, and the second is the one that carries it:
+
+- `color-bg-disabled` — always toward the canvas, in both themes.
+- `color-border-disabled` — near-invisible by design. In a palette compressed at
+  the dark end, fills cannot separate states (every candidate measured 1.1–1.2:1).
+  **The edge does the work**: a resting control has a visible border at ~2:1
+  against its own fill, a disabled one has none. "Has an edge / has no edge" reads
+  at a glance where "slightly different grey" does not.
+
+Generalisation: any token whose name describes an *appearance* ("subtle",
+"raised") rather than a *role* ("disabled", "elevated") will eventually be wrong
+in one theme. Name tokens for what they are for.
+
 ## Both themes, or neither
 
 A component verified only in light theme is unverified. Light hides the failures
