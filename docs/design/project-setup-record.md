@@ -212,22 +212,16 @@ treatment, not a second font: weight 600 and −2% tracking, permitted on page t
 and hero amounts only. Hero amounts stay in IBM Plex Mono — a proportional face
 would cost the decimal alignment that makes the ledger readable.
 
-**Palette** — Pine & Signal. Deep pine green (`#14402F`, 11.6:1 on white) is the
-brand and primary action; blue (`#2563EB`) is the highlight for links, selection and
-focus; neutrals are tinted green-grey.
+**Palette** — Pine & Signal. Deep pine green (`#0C7A57`) is the brand and primary
+action; blue (`#1F5FF0`) is the highlight for links, selection and focus;
+neutrals are tinted green-grey. Revised in ADR 0006 — see it for the values, the
+alternatives, and the reasoning; they are not repeated here.
 
-Green and red are reserved for money direction and feedback. Pine is dark and flat
-where income green is bright and saturated, and the two separate at 2.05:1 in light
-theme.
+Green and red are reserved for money direction and feedback, never for branding.
 
-**The dark-theme constraint.** In dark theme the brand resolves to mint `#9FE0C0`
-and income to `#3DD68C`, which separate at only **1.24:1** — effectively
-indistinguishable by lightness. Both alternatives fail: a deep pine button reaches
-just 2.16:1 against the near-black canvas, below the 3:1 that SC 1.4.11 requires for
-the control to be identifiable at all; desaturating far enough to separate by
-lightness washes the brand out to near-white.
-
-Context is therefore what keeps them apart, and it is a rule, not a hope:
+**The two greens are separated by hue, not by lightness.** Brand green sits at
+hue 161/159 and income green at 139/135, a gap of 22° and 24°. By lightness they
+are still close — 1.17:1 in dark — so the contextual rule stands unchanged:
 
 ```text
 Brand green   fill only   — buttons, selected nav, chart series 1
@@ -236,9 +230,16 @@ Never adjacent in dark theme.
 Charts never use income green; the green slot in the chart ramp is teal.
 ```
 
-Any design that puts a pine-brand fill beside an income amount in dark theme is
-wrong even though every contrast check passes, because the checks measure text
-against its background and this is a fill against a fill.
+That rule is not redundant now that the hues differ. A 22° separation inside the
+green band is close to invisible under deuteranopia, which is the case the rule
+was protecting in the first place — hue separation helps typical vision and does
+nothing for that one. What carries direction is the sign: every amount shows `+`
+or `−`, so no reading of the ledger depends on telling two greens apart.
+
+**Text on the brand surface has its own tokens.** `color-text-on-brand` and
+`color-text-on-brand-secondary` are theme-invariant, because the brand surface is
+dark in both themes. The balance card used to hard-code these and the values
+broke the moment the gradient moved.
 
 ## Constraints
 

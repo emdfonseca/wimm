@@ -9857,7 +9857,7 @@
                           "type": "text",
                           "id": "tdbdi",
                           "name": "Label",
-                          "fill": "#CFE3D8",
+                          "fill": "$color-text-on-brand-secondary",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
                           "content": "Net worth",
@@ -9869,7 +9869,7 @@
                           "type": "text",
                           "id": "uQWz5",
                           "name": "Value",
-                          "fill": "#FFFFFF",
+                          "fill": "$color-text-on-brand",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
                           "content": "$128,405.19",
@@ -9882,7 +9882,7 @@
                           "type": "text",
                           "id": "IZJxu",
                           "name": "Delta",
-                          "fill": "#9FE0C0",
+                          "fill": "$color-text-on-brand-secondary",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
                           "content": "+$2,265.80 this month",
@@ -27629,6 +27629,1224 @@
               ]
             }
           ]
+        },
+        {
+          "type": "frame",
+          "id": "JYdmM",
+          "name": "Palette · vivid trial",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "jEFOR",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "e7KyL",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Palette · options considered",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "TCNOM",
+                  "name": "Note",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Hard-coded on all three so the comparison stays stable now that the tokens have moved. The third column is what was adopted; the reasoning, and why the other two were rejected, is in ADR 0006 and is not repeated here. Money reds and neutrals are unchanged throughout — only brand, accent and the income green moved.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "BEbyQ",
+              "name": "Pair",
+              "width": "fill_container",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "T2YIk",
+                  "name": "current",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "JIvwe",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "rejected A — today's palette. Brand and income are 2° apart in hue and near-identical in lightness.",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kCbD9",
+                      "name": "light",
+                      "width": "fill_container",
+                      "fill": "#F4F7F5",
+                      "cornerRadius": "$radius-lg",
+                      "stroke": "#D7E2DA",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "padding": 14,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "FJthy",
+                          "name": "Mode",
+                          "fill": "#4F625A",
+                          "content": "color = light",
+                          "fontFamily": "$type-family-mono",
+                          "fontSize": 9,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "W1VoyO",
+                          "name": "Controls",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "o2Si3",
+                              "name": "Button",
+                              "height": 36,
+                              "fill": "#14402F",
+                              "cornerRadius": "$radius-control",
+                              "padding": [
+                                0,
+                                14
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "i0cHHu",
+                                  "name": "Label",
+                                  "fill": "#FFFFFF",
+                                  "content": "Add",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "VkTAJ",
+                              "name": "Nav current",
+                              "height": 36,
+                              "fill": "#E8F0FE",
+                              "cornerRadius": "$radius-sm",
+                              "padding": [
+                                0,
+                                12
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "nIilZ",
+                                  "name": "Label",
+                                  "fill": "#2563EB",
+                                  "content": "Transactions",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "K6fq7",
+                              "name": "Brand tile",
+                              "width": 36,
+                              "height": 36,
+                              "fill": "#14402F",
+                              "cornerRadius": "$radius-sm",
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "e0sOdw",
+                                  "name": "w",
+                                  "fill": "#FFFFFF",
+                                  "content": "w",
+                                  "fontFamily": "$type-family-display",
+                                  "fontSize": 18,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "zs9bO",
+                              "name": "Link",
+                              "fill": "#2563EB",
+                              "content": "Statement",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "LLxFg",
+                          "name": "Adjacency",
+                          "width": "fill_container",
+                          "fill": "#FFFFFF",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "#D7E2DA",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "gap": 10,
+                          "padding": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "BeSB3",
+                              "name": "Brand fill",
+                              "height": 26,
+                              "fill": "#14402F",
+                              "cornerRadius": "$radius-sm",
+                              "padding": [
+                                0,
+                                10
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "SUrkl",
+                                  "name": "Label",
+                                  "fill": "#FFFFFF",
+                                  "content": "Categorise",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "jIEl8",
+                              "name": "Income",
+                              "fill": "#067647",
+                              "content": "+$4,200.00",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "yXjNC",
+                              "name": "Expense",
+                              "fill": "#B42318",
+                              "content": "−$84.20",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Y6vtv",
+                      "name": "dark",
+                      "width": "fill_container",
+                      "fill": "#07120D",
+                      "cornerRadius": "$radius-lg",
+                      "stroke": "#1E3529",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "padding": 14,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "F7mFGf",
+                          "name": "Mode",
+                          "fill": "#93AFA2",
+                          "content": "color = dark",
+                          "fontFamily": "$type-family-mono",
+                          "fontSize": 9,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "caQR0",
+                          "name": "Controls",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "pOw8x",
+                              "name": "Button",
+                              "height": 36,
+                              "fill": "#9FE0C0",
+                              "cornerRadius": "$radius-control",
+                              "padding": [
+                                0,
+                                14
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "uu9LY",
+                                  "name": "Label",
+                                  "fill": "#07120D",
+                                  "content": "Add",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "ms4Zi",
+                              "name": "Nav current",
+                              "height": 36,
+                              "fill": "#0E1E3D",
+                              "cornerRadius": "$radius-sm",
+                              "padding": [
+                                0,
+                                12
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "ur2Bu",
+                                  "name": "Label",
+                                  "fill": "#6699FF",
+                                  "content": "Transactions",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "dx5qr",
+                              "name": "Brand tile",
+                              "width": 36,
+                              "height": 36,
+                              "fill": "#9FE0C0",
+                              "cornerRadius": "$radius-sm",
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "T5LSVU",
+                                  "name": "w",
+                                  "fill": "#07120D",
+                                  "content": "w",
+                                  "fontFamily": "$type-family-display",
+                                  "fontSize": 18,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "oGTpY",
+                              "name": "Link",
+                              "fill": "#6699FF",
+                              "content": "Statement",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Cf5FA",
+                          "name": "Adjacency",
+                          "width": "fill_container",
+                          "fill": "#0F1D17",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "#1E3529",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "gap": 10,
+                          "padding": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "CHtFe",
+                              "name": "Brand fill",
+                              "height": 26,
+                              "fill": "#9FE0C0",
+                              "cornerRadius": "$radius-sm",
+                              "padding": [
+                                0,
+                                10
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Sp4No",
+                                  "name": "Label",
+                                  "fill": "#07120D",
+                                  "content": "Categorise",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "nHpDI",
+                              "name": "Income",
+                              "fill": "#3DD68C",
+                              "content": "+$4,200.00",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "C0B8JX",
+                              "name": "Expense",
+                              "fill": "#FF8A7A",
+                              "content": "−$84.20",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ZWm2a",
+                  "name": "vivid",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "y245y7",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "rejected B — vivid brand at its original darkness. More vivid, but leaves the brand/income collision exactly where it was.",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Y9zNY",
+                      "name": "light",
+                      "width": "fill_container",
+                      "fill": "#F4F7F5",
+                      "cornerRadius": "$radius-lg",
+                      "stroke": "#D7E2DA",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "padding": 14,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Kc1r4",
+                          "name": "Mode",
+                          "fill": "#4F625A",
+                          "content": "color = light",
+                          "fontFamily": "$type-family-mono",
+                          "fontSize": 9,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "aSiHB",
+                          "name": "Controls",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "nQqPS",
+                              "name": "Button",
+                              "height": 36,
+                              "fill": "#0A6B4C",
+                              "cornerRadius": "$radius-control",
+                              "padding": [
+                                0,
+                                14
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "HuIA9",
+                                  "name": "Label",
+                                  "fill": "#FFFFFF",
+                                  "content": "Add",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "znvlM",
+                              "name": "Nav current",
+                              "height": 36,
+                              "fill": "#E6EEFE",
+                              "cornerRadius": "$radius-sm",
+                              "padding": [
+                                0,
+                                12
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "T59ja2",
+                                  "name": "Label",
+                                  "fill": "#1F5FF0",
+                                  "content": "Transactions",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "xdDs5",
+                              "name": "Brand tile",
+                              "width": 36,
+                              "height": 36,
+                              "fill": "#0A6B4C",
+                              "cornerRadius": "$radius-sm",
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "FCrAK",
+                                  "name": "w",
+                                  "fill": "#FFFFFF",
+                                  "content": "w",
+                                  "fontFamily": "$type-family-display",
+                                  "fontSize": 18,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "lxKwT",
+                              "name": "Link",
+                              "fill": "#1F5FF0",
+                              "content": "Statement",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "wLGZd",
+                          "name": "Adjacency",
+                          "width": "fill_container",
+                          "fill": "#FFFFFF",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "#D7E2DA",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "gap": 10,
+                          "padding": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "DzUdS",
+                              "name": "Brand fill",
+                              "height": 26,
+                              "fill": "#0A6B4C",
+                              "cornerRadius": "$radius-sm",
+                              "padding": [
+                                0,
+                                10
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "f8Csue",
+                                  "name": "Label",
+                                  "fill": "#FFFFFF",
+                                  "content": "Categorise",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "y0SrPn",
+                              "name": "Income",
+                              "fill": "#067647",
+                              "content": "+$4,200.00",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "R6LrgK",
+                              "name": "Expense",
+                              "fill": "#B42318",
+                              "content": "−$84.20",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "XC9S1",
+                      "name": "dark",
+                      "width": "fill_container",
+                      "fill": "#07120D",
+                      "cornerRadius": "$radius-lg",
+                      "stroke": "#1E3529",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "padding": 14,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "jc8Ff",
+                          "name": "Mode",
+                          "fill": "#93AFA2",
+                          "content": "color = dark",
+                          "fontFamily": "$type-family-mono",
+                          "fontSize": 9,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "cwrhF",
+                          "name": "Controls",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "jKb0D",
+                              "name": "Button",
+                              "height": 36,
+                              "fill": "#5FE7B8",
+                              "cornerRadius": "$radius-control",
+                              "padding": [
+                                0,
+                                14
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "u26DkY",
+                                  "name": "Label",
+                                  "fill": "#07120D",
+                                  "content": "Add",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "GkQiP",
+                              "name": "Nav current",
+                              "height": 36,
+                              "fill": "#0E1E3D",
+                              "cornerRadius": "$radius-sm",
+                              "padding": [
+                                0,
+                                12
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "pMEG6",
+                                  "name": "Label",
+                                  "fill": "#7AA8FF",
+                                  "content": "Transactions",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "xME4g",
+                              "name": "Brand tile",
+                              "width": 36,
+                              "height": 36,
+                              "fill": "#5FE7B8",
+                              "cornerRadius": "$radius-sm",
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "zhWyF",
+                                  "name": "w",
+                                  "fill": "#07120D",
+                                  "content": "w",
+                                  "fontFamily": "$type-family-display",
+                                  "fontSize": 18,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "dRx5C",
+                              "name": "Link",
+                              "fill": "#7AA8FF",
+                              "content": "Statement",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "rFyVW",
+                          "name": "Adjacency",
+                          "width": "fill_container",
+                          "fill": "#0F1D17",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "#1E3529",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "gap": 10,
+                          "padding": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "nuObm",
+                              "name": "Brand fill",
+                              "height": 26,
+                              "fill": "#5FE7B8",
+                              "cornerRadius": "$radius-sm",
+                              "padding": [
+                                0,
+                                10
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "IvL0J",
+                                  "name": "Label",
+                                  "fill": "#07120D",
+                                  "content": "Categorise",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "iR8T8",
+                              "name": "Income",
+                              "fill": "#3DD68C",
+                              "content": "+$4,200.00",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "or1CE",
+                              "name": "Expense",
+                              "fill": "#FF8A7A",
+                              "content": "−$84.20",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pU6IB",
+                  "name": "vivid · lighter",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "j5egx",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "ADOPTED — brand #0C7A57 / #5FE7B8 · accent #1F5FF0 / #7AA8FF · income moved to #127A33 / #4ADB6E, 22° and 24° of hue from the brand instead of 2° and 1°",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "DEVBi",
+                      "name": "light",
+                      "width": "fill_container",
+                      "fill": "#F4F7F5",
+                      "cornerRadius": "$radius-lg",
+                      "stroke": "#D7E2DA",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "padding": 14,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "s6fCKJ",
+                          "name": "Mode",
+                          "fill": "#4F625A",
+                          "content": "color = light",
+                          "fontFamily": "$type-family-mono",
+                          "fontSize": 9,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "E0R6of",
+                          "name": "Controls",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "OisDS",
+                              "name": "Button",
+                              "height": 36,
+                              "fill": "#0C7A57",
+                              "cornerRadius": "$radius-control",
+                              "padding": [
+                                0,
+                                14
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "suf9P",
+                                  "name": "Label",
+                                  "fill": "#FFFFFF",
+                                  "content": "Add",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "SO7Ih",
+                              "name": "Nav current",
+                              "height": 36,
+                              "fill": "#E6EEFE",
+                              "cornerRadius": "$radius-sm",
+                              "padding": [
+                                0,
+                                12
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "ogrrp",
+                                  "name": "Label",
+                                  "fill": "#1F5FF0",
+                                  "content": "Transactions",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "og5Z4",
+                              "name": "Brand tile",
+                              "width": 36,
+                              "height": 36,
+                              "fill": "#0C7A57",
+                              "cornerRadius": "$radius-sm",
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Pr5rN",
+                                  "name": "w",
+                                  "fill": "#FFFFFF",
+                                  "content": "w",
+                                  "fontFamily": "$type-family-display",
+                                  "fontSize": 18,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "kj4da",
+                              "name": "Link",
+                              "fill": "#1F5FF0",
+                              "content": "Statement",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "b2Ogk",
+                          "name": "Adjacency",
+                          "width": "fill_container",
+                          "fill": "#FFFFFF",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "#D7E2DA",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "gap": 10,
+                          "padding": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "PNgtL",
+                              "name": "Brand fill",
+                              "height": 26,
+                              "fill": "#0C7A57",
+                              "cornerRadius": "$radius-sm",
+                              "padding": [
+                                0,
+                                10
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "t00eQ",
+                                  "name": "Label",
+                                  "fill": "#FFFFFF",
+                                  "content": "Categorise",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "f8ARQ",
+                              "name": "Income",
+                              "fill": "#127A33",
+                              "content": "+$4,200.00",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "PKv2g",
+                              "name": "Expense",
+                              "fill": "#B42318",
+                              "content": "−$84.20",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "I7YAkd",
+                      "name": "dark",
+                      "width": "fill_container",
+                      "fill": "#07120D",
+                      "cornerRadius": "$radius-lg",
+                      "stroke": "#1E3529",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "padding": 14,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "It7yc",
+                          "name": "Mode",
+                          "fill": "#93AFA2",
+                          "content": "color = dark",
+                          "fontFamily": "$type-family-mono",
+                          "fontSize": 9,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "cxbxG",
+                          "name": "Controls",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "tguBS",
+                              "name": "Button",
+                              "height": 36,
+                              "fill": "#5FE7B8",
+                              "cornerRadius": "$radius-control",
+                              "padding": [
+                                0,
+                                14
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "TtLfm",
+                                  "name": "Label",
+                                  "fill": "#07120D",
+                                  "content": "Add",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "mLkBj",
+                              "name": "Nav current",
+                              "height": 36,
+                              "fill": "#0E1E3D",
+                              "cornerRadius": "$radius-sm",
+                              "padding": [
+                                0,
+                                12
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Q7f71d",
+                                  "name": "Label",
+                                  "fill": "#7AA8FF",
+                                  "content": "Transactions",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "mGPRx",
+                              "name": "Brand tile",
+                              "width": 36,
+                              "height": 36,
+                              "fill": "#5FE7B8",
+                              "cornerRadius": "$radius-sm",
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "h3CCgO",
+                                  "name": "w",
+                                  "fill": "#07120D",
+                                  "content": "w",
+                                  "fontFamily": "$type-family-display",
+                                  "fontSize": 18,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "E1alAt",
+                              "name": "Link",
+                              "fill": "#7AA8FF",
+                              "content": "Statement",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "uDxMI",
+                          "name": "Adjacency",
+                          "width": "fill_container",
+                          "fill": "#0F1D17",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "#1E3529",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "gap": 10,
+                          "padding": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "rEGOo",
+                              "name": "Brand fill",
+                              "height": 26,
+                              "fill": "#5FE7B8",
+                              "cornerRadius": "$radius-sm",
+                              "padding": [
+                                0,
+                                10
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "boGhP",
+                                  "name": "Label",
+                                  "fill": "#07120D",
+                                  "content": "Categorise",
+                                  "fontFamily": "$type-family-body",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "Nxxei",
+                              "name": "Income",
+                              "fill": "#4ADB6E",
+                              "content": "+$4,200.00",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "BhVVu",
+                              "name": "Expense",
+                              "fill": "#FF8A7A",
+                              "content": "−$84.20",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -35134,13 +36352,13 @@
       "type": "color",
       "value": [
         {
-          "value": "#14402F",
+          "value": "#0C7A57",
           "theme": {
             "color": "light"
           }
         },
         {
-          "value": "#9FE0C0",
+          "value": "#5FE7B8",
           "theme": {
             "color": "dark"
           }
@@ -35151,13 +36369,13 @@
       "type": "color",
       "value": [
         {
-          "value": "#1B5340",
+          "value": "#0A6B4C",
           "theme": {
             "color": "light"
           }
         },
         {
-          "value": "#B8E9D2",
+          "value": "#7DEDC7",
           "theme": {
             "color": "dark"
           }
@@ -35253,13 +36471,13 @@
       "type": "color",
       "value": [
         {
-          "value": "#067647",
+          "value": "#127A33",
           "theme": {
             "color": "light"
           }
         },
         {
-          "value": "#3DD68C",
+          "value": "#4ADB6E",
           "theme": {
             "color": "dark"
           }
@@ -35270,13 +36488,13 @@
       "type": "color",
       "value": [
         {
-          "value": "#E8F5EE",
+          "value": "#E9F5EC",
           "theme": {
             "color": "light"
           }
         },
         {
-          "value": "#06281C",
+          "value": "#07270F",
           "theme": {
             "color": "dark"
           }
@@ -35355,13 +36573,13 @@
       "type": "color",
       "value": [
         {
-          "value": "#2563EB",
+          "value": "#1F5FF0",
           "theme": {
             "color": "light"
           }
         },
         {
-          "value": "#6699FF",
+          "value": "#7AA8FF",
           "theme": {
             "color": "dark"
           }
@@ -35372,7 +36590,7 @@
       "type": "color",
       "value": [
         {
-          "value": "#E9F0FD",
+          "value": "#E6EEFE",
           "theme": {
             "color": "light"
           }
@@ -35389,13 +36607,13 @@
       "type": "color",
       "value": [
         {
-          "value": "#067647",
+          "value": "#127A33",
           "theme": {
             "color": "light"
           }
         },
         {
-          "value": "#3DD68C",
+          "value": "#4ADB6E",
           "theme": {
             "color": "dark"
           }
@@ -35440,13 +36658,13 @@
       "type": "color",
       "value": [
         {
-          "value": "#14402F",
+          "value": "#0C7A57",
           "theme": {
             "color": "light"
           }
         },
         {
-          "value": "#9FE0C0",
+          "value": "#5FE7B8",
           "theme": {
             "color": "dark"
           }
@@ -35457,13 +36675,13 @@
       "type": "color",
       "value": [
         {
-          "value": "#2563EB",
+          "value": "#1F5FF0",
           "theme": {
             "color": "light"
           }
         },
         {
-          "value": "#6699FF",
+          "value": "#7AA8FF",
           "theme": {
             "color": "dark"
           }
@@ -35542,13 +36760,13 @@
       "type": "color",
       "value": [
         {
-          "value": "#2563EB",
+          "value": "#1F5FF0",
           "theme": {
             "color": "light"
           }
         },
         {
-          "value": "#6699FF",
+          "value": "#7AA8FF",
           "theme": {
             "color": "dark"
           }
@@ -36103,13 +37321,13 @@
       "type": "color",
       "value": [
         {
-          "value": "#0F3325",
+          "value": "#085C41",
           "theme": {
             "color": "light"
           }
         },
         {
-          "value": "#86D4AE",
+          "value": "#4CDCA9",
           "theme": {
             "color": "dark"
           }
@@ -36205,13 +37423,13 @@
       "type": "color",
       "value": [
         {
-          "value": "#2563EB",
+          "value": "#1F5FF0",
           "theme": {
             "color": "light"
           }
         },
         {
-          "value": "#6699FF",
+          "value": "#7AA8FF",
           "theme": {
             "color": "dark"
           }
@@ -36222,13 +37440,13 @@
       "type": "color",
       "value": [
         {
-          "value": "#1D4ED8",
+          "value": "#1A52D6",
           "theme": {
             "color": "light"
           }
         },
         {
-          "value": "#8AB4FF",
+          "value": "#94BAFF",
           "theme": {
             "color": "dark"
           }
@@ -36239,7 +37457,7 @@
       "type": "color",
       "value": [
         {
-          "value": "#E8F0FE",
+          "value": "#E6EEFE",
           "theme": {
             "color": "light"
           }
@@ -36314,13 +37532,13 @@
       "type": "color",
       "value": [
         {
-          "value": "#1B5340",
+          "value": "#0E6E4F",
           "theme": {
             "color": "light"
           }
         },
         {
-          "value": "#123226",
+          "value": "#164534",
           "theme": {
             "color": "dark"
           }
@@ -36331,7 +37549,7 @@
       "type": "color",
       "value": [
         {
-          "value": "#0C2B20",
+          "value": "#084A34",
           "theme": {
             "color": "light"
           }
@@ -36466,6 +37684,40 @@
           "value": 212,
           "theme": {
             "device": "ultra"
+          }
+        }
+      ]
+    },
+    "color-text-on-brand": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#FFFFFF",
+          "theme": {
+            "color": "light"
+          }
+        },
+        {
+          "value": "#FFFFFF",
+          "theme": {
+            "color": "dark"
+          }
+        }
+      ]
+    },
+    "color-text-on-brand-secondary": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#CFE3D8",
+          "theme": {
+            "color": "light"
+          }
+        },
+        {
+          "value": "#CFE3D8",
+          "theme": {
+            "color": "dark"
           }
         }
       ]
