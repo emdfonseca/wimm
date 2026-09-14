@@ -4852,7 +4852,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "input placeholders · 6.2:1, never text-disabled",
+                  "content": "input placeholders · 6.5:1 light, 7.4:1 dark, on the field · never text-disabled",
                   "lineHeight": 1.4,
                   "fontFamily": "$type-family-body",
                   "fontSize": 11,
@@ -5674,7 +5674,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Primary is deep pine green — 11.6:1 on white, and dark and flat enough that it never reads as the brighter, saturated green an amount uses. Blue is the highlight: links, selection, focus. Green and red stay reserved for money direction and feedback, so an amount's colour always means exactly one thing.",
+                  "content": "Primary is deep pine green. White on it measures 5.33:1 and it measures 4.95:1 as text on the canvas — the lightest the brand can be before a button label fails. Blue is the highlight: links, selection, focus. Green and red stay reserved for money direction and feedback, so an amount's colour always means exactly one thing. ADR 0006 carries the values and the alternatives that were rejected.",
                   "lineHeight": 1.5,
                   "fontFamily": "$type-family-body",
                   "fontSize": "$type-size-body-sm",
@@ -9476,7 +9476,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Shadow says how far a surface is from the page, and nothing else. Three steps, because a fourth would be a distinction nobody can see. Every elevated surface also keeps a border, so it survives on a dark canvas where shadow alone disappears.",
+                  "content": "Shadow says how far a surface is from the page, and nothing else. Two steps, because the page has only two kinds of thing floating above it: something anchored to the control that opened it, and something that owns the screen until it is dismissed. Every elevated surface also keeps a border, so it survives on a dark canvas where shadow alone disappears.\n\nThere is no lightest step. It had one consumer — the selected segment of a segmented control — and that is a surface at rest on the page, which this scale is not for. A rung with nothing sanctioned to use it is a rung that gets used for the wrong thing.",
                   "lineHeight": 1.5,
                   "fontFamily": "$type-family-body",
                   "fontSize": "$type-size-body-sm",
@@ -9543,76 +9543,7 @@
                       "fill": "$color-text-secondary",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "cards, table, inline panels",
-                      "fontFamily": "$type-family-mono",
-                      "fontSize": 10,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "QJ7U0",
-                  "name": "elevation-1",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 8,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "uvSlR",
-                      "name": "Slot",
-                      "width": "fill_container",
-                      "height": 88,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "s72wkV",
-                          "name": "Surface",
-                          "width": "fill_container",
-                          "height": 64,
-                          "fill": "$color-bg-elevated",
-                          "cornerRadius": "$radius-lg",
-                          "stroke": "$color-border-default",
-                          "strokeWidth": 1,
-                          "strokeAlignment": "inner",
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "$shadow-color",
-                            "offset": {
-                              "x": 0,
-                              "y": "$elevation-1-y"
-                            },
-                            "blur": "$elevation-1-blur"
-                          },
-                          "justifyContent": "center",
-                          "alignItems": "center"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "QT0LT",
-                      "name": "Token",
-                      "fill": "$color-text-primary",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "elevation-1",
-                      "fontFamily": "$type-family-mono",
-                      "fontSize": 11,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "text",
-                      "id": "M9trJ",
-                      "name": "Caption",
-                      "fill": "$color-text-secondary",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "menus, dropdowns, tooltips",
+                      "content": "cards, tables, inline panels, the Ultra inspector",
                       "fontFamily": "$type-family-mono",
                       "fontSize": 10,
                       "fontWeight": "normal"
@@ -9681,7 +9612,7 @@
                       "fill": "$color-text-secondary",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "popovers, toasts, raised cards",
+                      "content": "menus, popovers, toasts",
                       "fontFamily": "$type-family-mono",
                       "fontSize": 10,
                       "fontWeight": "normal"
@@ -9750,7 +9681,7 @@
                       "fill": "$color-text-secondary",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "dialogs, drawers, the inspector",
+                      "content": "dialogs, and the drawer while it overlays",
                       "fontFamily": "$type-family-mono",
                       "fontSize": 10,
                       "fontWeight": "normal"
@@ -21511,7 +21442,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "One choice from two or three peers, all visible at once. Use it where a dropdown would hide the alternatives — money direction, date range, density. Beyond three segments it becomes a dropdown; beyond that a filter. The selected segment carries a surface and a weight change, never colour alone.",
+                  "content": "One choice from two or three peers, all visible at once. Use it where a dropdown would hide the alternatives — money direction, date range, density. Beyond three segments it becomes a dropdown; beyond that a filter. The selected segment carries a surface and a weight change, never colour alone, and no shadow: the thumb sits on the page rather than above it.",
                   "lineHeight": 1.45,
                   "fontFamily": "$type-family-body",
                   "fontSize": "$type-size-body-sm",
@@ -21565,16 +21496,6 @@
                               "height": 30,
                               "fill": "$color-bg-surface",
                               "cornerRadius": 6,
-                              "effect": {
-                                "type": "shadow",
-                                "shadowType": "outer",
-                                "color": "$shadow-color",
-                                "offset": {
-                                  "x": 0,
-                                  "y": "$elevation-1-y"
-                                },
-                                "blur": "$elevation-1-blur"
-                              },
                               "padding": [
                                 0,
                                 14
@@ -21666,16 +21587,7 @@
                             },
                             "s9ZCf": {
                               "fill": "$color-bg-surface",
-                              "effect": {
-                                "type": "shadow",
-                                "shadowType": "outer",
-                                "color": "$shadow-color",
-                                "offset": {
-                                  "x": 0,
-                                  "y": "$elevation-1-y"
-                                },
-                                "blur": "$elevation-1-blur"
-                              }
+                              "effect": []
                             },
                             "s1fWHC": {
                               "fontWeight": "600",
@@ -22973,7 +22885,7 @@
                       "id": "F3Es9",
                       "name": "Caption",
                       "fill": "$color-text-secondary",
-                      "content": "open · elevation-1",
+                      "content": "open · elevation-2",
                       "fontFamily": "$type-family-mono",
                       "fontSize": 10,
                       "fontWeight": "normal"
@@ -23383,7 +23295,7 @@
                   "width": "fill_container",
                   "fill": "$color-feedback-warning-bg",
                   "cornerRadius": "$radius-md",
-                  "stroke": "#FFFFFF00",
+                  "stroke": "$color-feedback-warning",
                   "strokeWidth": {
                     "left": 3
                   },
@@ -23569,7 +23481,7 @@
                   "name": "Notice toast",
                   "width": 420,
                   "fill": "$color-bg-inverse",
-                  "stroke": "#FFFFFF00",
+                  "stroke": "$color-border-default",
                   "padding": [
                     11,
                     14
@@ -23585,6 +23497,7 @@
                     },
                     "blur": "$elevation-2-blur"
                   },
+                  "strokeWidth": 1,
                   "descendants": {
                     "g1efk1": {
                       "icon": "check",
@@ -26386,42 +26299,6 @@
                       "children": [
                         {
                           "type": "frame",
-                          "id": "duW1b",
-                          "name": "elevation-1",
-                          "width": "fill_container",
-                          "height": 52,
-                          "fill": "$color-bg-elevated",
-                          "cornerRadius": "$radius-lg",
-                          "stroke": "$color-border-default",
-                          "strokeWidth": 1,
-                          "strokeAlignment": "inner",
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "$shadow-color",
-                            "offset": {
-                              "x": 0,
-                              "y": "$elevation-1-y"
-                            },
-                            "blur": "$elevation-1-blur"
-                          },
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "jjCJd",
-                              "name": "Label",
-                              "fill": "$color-text-secondary",
-                              "content": "elevation-1",
-                              "fontFamily": "$type-family-mono",
-                              "fontSize": 10,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
                           "id": "LK54d",
                           "name": "elevation-2",
                           "width": "fill_container",
@@ -26533,42 +26410,6 @@
                       "gap": 12,
                       "alignItems": "center",
                       "children": [
-                        {
-                          "type": "frame",
-                          "id": "KeLXi",
-                          "name": "elevation-1",
-                          "width": "fill_container",
-                          "height": 52,
-                          "fill": "$color-bg-elevated",
-                          "cornerRadius": "$radius-lg",
-                          "stroke": "$color-border-default",
-                          "strokeWidth": 1,
-                          "strokeAlignment": "inner",
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "$shadow-color",
-                            "offset": {
-                              "x": 0,
-                              "y": "$elevation-1-y"
-                            },
-                            "blur": "$elevation-1-blur"
-                          },
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "Qxuni",
-                              "name": "Label",
-                              "fill": "$color-text-secondary",
-                              "content": "elevation-1",
-                              "fontFamily": "$type-family-mono",
-                              "fontSize": 10,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
                         {
                           "type": "frame",
                           "id": "j2tnxn",
@@ -26930,7 +26771,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "ADR 0002 records that in dark theme the brand mint and income green separate at only 1.24:1, and that context rather than colour keeps them apart: brand is fill-only, income is text-only. No contrast check can verify that — the audit compares text against its background, and this is a fill beside a fill. It has to be looked at.",
+                  "content": "ADR 0006 supersedes the separation ADR 0002 recorded. The two greens are now apart by hue — brand at 161° and 159°, income at 139° and 135° — and still close by lightness, 1.17:1 in dark. That is why the rule is unchanged rather than retired: a 22° gap inside the green band is close to invisible under deuteranopia, which is the case the rule was protecting in the first place. Brand is fill-only, income is text-only, and the sign on every amount is what actually carries direction. No contrast check can verify any of this — the audit compares text against its background, and this is a fill beside a fill. It has to be looked at.",
                   "lineHeight": 1.45,
                   "fontFamily": "$type-family-body",
                   "fontSize": "$type-size-body-sm",
@@ -29162,6 +29003,7 @@
                       "height": "fill_container",
                       "cornerRadius": 0,
                       "strokeWidth": 0,
+                      "effect": [],
                       "descendants": {
                         "ZXZB2": {
                           "content": "Edit transaction"
@@ -29264,6 +29106,388 @@
               "fontFamily": "$type-family-body",
               "fontSize": "$type-size-body-sm",
               "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "sPqSC",
+          "name": "Notice toast",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "NKwSM",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dI8mH",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Notice toast · the border on both canvases",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "CpNyf",
+                  "name": "Note",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The toast is the one elevated surface that was shipping without a border. Its fill inverts with the theme, so it separates from the canvas on its own and the omission never showed — but a toast floats over whatever is under it, including the balance card, and the shadow that was supposed to define it is invisible on a dark canvas. color-border-default is the right value precisely because it does not invert: it lands light on the dark toast and dark on the light one.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Wk2i2",
+              "name": "Pair",
+              "width": "fill_container",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "kVRdr",
+                  "name": "light",
+                  "theme": {
+                    "color": "light"
+                  },
+                  "width": "fill_container",
+                  "fill": "$color-bg-canvas",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "dk1Tp",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "color = light",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "id": "C3YH9",
+                      "type": "ref",
+                      "ref": "WFSg5",
+                      "name": "Toast on canvas",
+                      "width": "fill_container",
+                      "fill": "$color-bg-inverse",
+                      "stroke": "$color-border-default",
+                      "strokeWidth": 1,
+                      "padding": [
+                        11,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "$shadow-color-strong",
+                        "offset": {
+                          "x": 0,
+                          "y": "$elevation-2-y"
+                        },
+                        "blur": "$elevation-2-blur"
+                      },
+                      "descendants": {
+                        "g1efk1": {
+                          "icon": "check",
+                          "fill": "$color-text-inverse"
+                        },
+                        "Z5ONBF": {
+                          "enabled": false
+                        },
+                        "NAIMe": {
+                          "content": "Category updated",
+                          "fill": "$color-text-inverse"
+                        },
+                        "gofcu": {
+                          "content": "Undo",
+                          "fill": "$color-text-inverse"
+                        },
+                        "A4SKK": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BKn5o",
+                      "name": "On the balance card",
+                      "width": "fill_container",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 160,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "$gradient-brand-from",
+                            "position": 0
+                          },
+                          {
+                            "color": "$gradient-brand-to",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "cornerRadius": "$radius-md",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "padding": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "GsnsN",
+                          "name": "Caption",
+                          "fill": "$color-text-on-brand-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "over the one dark surface in the product",
+                          "fontFamily": "$type-family-mono",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "id": "SOq2h",
+                          "type": "ref",
+                          "ref": "WFSg5",
+                          "name": "Toast on brand",
+                          "width": "fill_container",
+                          "fill": "$color-bg-inverse",
+                          "stroke": "$color-border-default",
+                          "strokeWidth": 1,
+                          "padding": [
+                            11,
+                            14
+                          ],
+                          "alignItems": "center",
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "$shadow-color-strong",
+                            "offset": {
+                              "x": 0,
+                              "y": "$elevation-2-y"
+                            },
+                            "blur": "$elevation-2-blur"
+                          },
+                          "descendants": {
+                            "g1efk1": {
+                              "icon": "check",
+                              "fill": "$color-text-inverse"
+                            },
+                            "Z5ONBF": {
+                              "enabled": false
+                            },
+                            "NAIMe": {
+                              "content": "Category updated",
+                              "fill": "$color-text-inverse"
+                            },
+                            "gofcu": {
+                              "content": "Undo",
+                              "fill": "$color-text-inverse"
+                            },
+                            "A4SKK": {
+                              "enabled": false
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Glxte",
+                  "name": "dark",
+                  "theme": {
+                    "color": "dark"
+                  },
+                  "width": "fill_container",
+                  "fill": "$color-bg-canvas",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "CSFi2",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "color = dark",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "id": "pThY3",
+                      "type": "ref",
+                      "ref": "WFSg5",
+                      "name": "Toast on canvas",
+                      "width": "fill_container",
+                      "fill": "$color-bg-inverse",
+                      "stroke": "$color-border-default",
+                      "strokeWidth": 1,
+                      "padding": [
+                        11,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "$shadow-color-strong",
+                        "offset": {
+                          "x": 0,
+                          "y": "$elevation-2-y"
+                        },
+                        "blur": "$elevation-2-blur"
+                      },
+                      "descendants": {
+                        "g1efk1": {
+                          "icon": "check",
+                          "fill": "$color-text-inverse"
+                        },
+                        "Z5ONBF": {
+                          "enabled": false
+                        },
+                        "NAIMe": {
+                          "content": "Category updated",
+                          "fill": "$color-text-inverse"
+                        },
+                        "gofcu": {
+                          "content": "Undo",
+                          "fill": "$color-text-inverse"
+                        },
+                        "A4SKK": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "eRRk1",
+                      "name": "On the balance card",
+                      "width": "fill_container",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 160,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "$gradient-brand-from",
+                            "position": 0
+                          },
+                          {
+                            "color": "$gradient-brand-to",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "cornerRadius": "$radius-md",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "padding": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "eFa03",
+                          "name": "Caption",
+                          "fill": "$color-text-on-brand-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "over the one dark surface in the product",
+                          "fontFamily": "$type-family-mono",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "id": "ULD4L",
+                          "type": "ref",
+                          "ref": "WFSg5",
+                          "name": "Toast on brand",
+                          "width": "fill_container",
+                          "fill": "$color-bg-inverse",
+                          "stroke": "$color-border-default",
+                          "strokeWidth": 1,
+                          "padding": [
+                            11,
+                            14
+                          ],
+                          "alignItems": "center",
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "$shadow-color-strong",
+                            "offset": {
+                              "x": 0,
+                              "y": "$elevation-2-y"
+                            },
+                            "blur": "$elevation-2-blur"
+                          },
+                          "descendants": {
+                            "g1efk1": {
+                              "icon": "check",
+                              "fill": "$color-text-inverse"
+                            },
+                            "Z5ONBF": {
+                              "enabled": false
+                            },
+                            "NAIMe": {
+                              "content": "Category updated",
+                              "fill": "$color-text-inverse"
+                            },
+                            "gofcu": {
+                              "content": "Undo",
+                              "fill": "$color-text-inverse"
+                            },
+                            "A4SKK": {
+                              "enabled": false
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -35390,7 +35614,7 @@
                       "fill": "$color-text-secondary",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "Page and global banners are assertive. Inline and row notices are polite. A toast is polite and never carries anything that must be read.",
+                      "content": "Urgency decides this, not placement. A failed money operation is assertive, because finding out late has a cost. Everything else is polite however prominent it looks — a sync reminder, an expiring card, an import that left work to do. Inline and row notices are always polite. A toast is polite and never carries anything that must be read.",
                       "lineHeight": 1.45,
                       "fontFamily": "$type-family-body",
                       "fontSize": "$type-size-body-sm",
@@ -36269,6 +36493,7 @@
               "height": "fill_container",
               "cornerRadius": 0,
               "strokeWidth": 0,
+              "effect": [],
               "descendants": {
                 "ZXZB2": {
                   "content": "Edit transaction"
@@ -37771,7 +37996,7 @@
                       "fill": "$color-text-secondary",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "1–13 as the shell, unchanged\n14 Close drawer\n15 Merchant\n16 Amount\n17 Direction\n18 Cancel\n19 Save changes\n\nThe drawer is non-modal, so 14–19\nfollow the page rather than\nreplacing it. Nothing behind is\ninert and nothing is trapped.",
+                      "content": "1–19 as the shell, unchanged —\nthe drawer sits after Main, so\nthe page's own stops come first\n\n20 Close drawer\n21 Merchant\n22 Amount\n23 Direction\n24 Cancel\n25 Save changes\n\nThe drawer is non-modal, so 20–25\nfollow the page rather than\nreplacing it. Nothing behind is\ninert and nothing is trapped.",
                       "lineHeight": 1.7,
                       "fontFamily": "$type-family-mono",
                       "fontSize": 10,
@@ -37812,7 +38037,7 @@
                       "fill": "$color-text-secondary",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "1–13 as the shell, unchanged\n14 Merchant\n15 Amount\n16 Direction\n17 Cancel\n18 Save changes\n\nNo Close: the pane is persistent,\nso there is nothing to dismiss.\nSelecting a row does not move\nfocus — the row keeps it and the\npane is reached by Tab.",
+                      "content": "1–19 as the shell, unchanged —\nthe pane sits after Main, so\nthe page's own stops come first\n\n20 Merchant\n21 Amount\n22 Direction\n23 Cancel\n24 Save changes\n\nNo Close: the pane is persistent,\nso there is nothing to dismiss.\nSelecting a row does not move\nfocus — the row keeps it and the\npane is reached by Tab.",
                       "lineHeight": 1.7,
                       "fontFamily": "$type-family-mono",
                       "fontSize": 10,
@@ -37853,7 +38078,7 @@
                       "fill": "$color-text-secondary",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "1 Skip to content   ·named\n2 Open navigation\n3 Add transaction\n4 Tab · Activity\n5 Tab · Pending\n6 Tab · Uncategorised\n7 Search\n8 Direction\n9 Pagination\n\nEditing replaces the list, so its\norder is the sheet alone:\n1 Close · 2 Merchant · 3 Amount\n4 Direction · 5 Cancel · 6 Save",
+                      "content": "1  Skip to content  ·named\n2  Open navigation\n3  Add transaction\n4  Tab · Activity\n5  Tab · Pending\n6  Tab · Uncategorised\n7  Search\n8  Direction\n9  Adjust budget\n10 Waitrose Kensington  ·named\n11 Transport for London ·named\n12 Monthly salary       ·named\n13 Previous page\n14 Next page\n\nEditing replaces the list, so its\norder is the sheet alone:\n1 Back · 2 Merchant · 3 Amount\n4 Direction · 5 Cancel · 6 Save",
                       "lineHeight": 1.7,
                       "fontFamily": "$type-family-mono",
                       "fontSize": 10,
@@ -37890,7 +38115,7 @@
                   "fill": "$color-text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Drawer — focus moves to Close on open and returns to the row's merchant link on close, by Escape, by Back, or by Save. It is not trapped: Tab past Save continues into the page behind, which is the point of a non-modal panel.\n\nDialog — focus moves in, is trapped until it closes, Escape cancels, and focus returns to the control that opened it. Initial focus is the least destructive action: on a confirmation that is Cancel.\n\nInspector — no transition at all. Selecting a row leaves focus on the row; the pane is the next stop after the page's own controls. A pane that grabbed focus on every arrow-key move down the ledger would make the ledger unusable.\n\nCompact sheet — the list is not rendered, so there is nothing behind to return to on Tab. Back closes the route and the list restores with the edited row focused.",
+                  "content": "Drawer — focus moves to Close on open and returns to the row's merchant link on close, by Escape, by Back, or by Save. It is not trapped: Tab past Save continues into the page behind, which is the point of a non-modal panel.\n\nDialog — focus moves in, is trapped until it closes, Escape cancels, and focus returns to the control that opened it. Initial focus is the least destructive action: on a confirmation that is Cancel.\n\nInspector — no transition at all. Selecting a row leaves focus on the row; the pane is the next stop after the page's own controls. A pane that grabbed focus on every arrow-key move down the ledger would make the ledger unusable.\n\nCompact sheet — the list is not rendered, so there is nothing behind to return to on Tab. Back closes the route and the list restores with the edited row focused.\n\nWhat counts as one stop — a segmented control is one, because the segments are a radio group and arrows move between them. Pagination is two, because Previous and Next are separate buttons. A row is as many stops as it has controls, never one because it looks like one thing.",
                   "lineHeight": 1.5,
                   "fontFamily": "$type-family-body",
                   "fontSize": "$type-size-body-sm",
@@ -39337,14 +39562,6 @@
           }
         }
       ]
-    },
-    "elevation-1-y": {
-      "type": "number",
-      "value": 1
-    },
-    "elevation-1-blur": {
-      "type": "number",
-      "value": 3
     },
     "elevation-2-y": {
       "type": "number",

@@ -102,7 +102,7 @@ expressive goes where there is no figure to undermine.
 | Treatment | Where it is allowed | Where it is a bug |
 |---|---|---|
 | Gradient | One hero surface — the balance card. Chart area fills. | On an amount, a button, a table, or behind any dense data. |
-| Elevation | Menus, popovers, dialogs, drawers. Always with a border as well, since shadow vanishes on a dark canvas. | Cards in a list. A table. Anything at rest on the page. |
+| Elevation | Menus, popovers, toasts, dialogs, the drawer while it overlays. Always with a border as well, since shadow vanishes on a dark canvas — the border is the channel that survives, so it is not optional on the one surface whose fill happens to separate well. | Cards in a list. A table. The persistent inspector. Anything at rest on the page, including a selected segment inside a control. |
 | Motion | Answering a question the user already has: where did this come from, did it save, what is loading, what changed. | Anything animating to be pleasant. Amounts never count up — a number still moving is a number you cannot read. |
 | Texture | Empty states, onboarding, the marketing surface. | Behind a ledger. |
 

@@ -22,6 +22,15 @@ defect in this library so far came from reading results in the mutating call.
 | Invalid colour values | `SetVariables` accepts a malformed hex without complaint, and the token then resolves to nothing at render time. Validate every colour value against `^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$`. |
 | Root overlap | Zone frames hug their content, so adding a section to one grows it downward into the next. `FindEmptySpace` only knows the sizes at the moment it runs. |
 
+Two more properties that vanish without complaint, both found while removing a
+token. A **gradient fill missing `gradientType`** is discarded whole — the node
+renders with no fill at all, which on a dark card reads as a light one rather than
+as an error. Copy the shape from a node that already works:
+`{type:"gradient", gradientType:"linear", rotation, size, colors:[{color, position}]}`,
+and note that a stop without `position` is rejected outright, which is the kinder
+failure. And an **effect cannot be removed with `null`** — that fails validation.
+The empty array clears it: `Update(id, {effect: []})`, on an instance override too.
+
 Sub-pixel overflow (under 0.5 px) is ignored: `fill_container` siblings divide odd
 widths into repeating decimals and would otherwise report every split row.
 All-lowercase kebab names are skipped by the control-height check: those are token
@@ -456,12 +465,12 @@ ROOTS.forEach(R=>Get(R,(n,c)=>{
 Print("measured:",seen,"failures:",fail,"manual:",manual);
 ```
 
-It measures 1985 text nodes across the seven zones: 30 failures, all
+It measures 2002 text nodes across the seven zones: 30 failures, all
 `color-text-disabled` on disabled specimens and exempt under SC 1.4.3, and 0
 requiring manual review. Print `manual` every run — a non-zero count is paint the
 check declined to score, which is a result, not a pass. Print `sweeps` too: it is
-3 here, the balance card's labels, and a sudden 0 means gradient resolution has
-broken again.
+5 here — the balance card's labels and the two toast-on-brand captions in QA —
+and a sudden 0 means gradient resolution has broken again.
 
 **Run it in two calls.** `execute` is killed at 60 s and the whole document with
 `resolveVariables` and `resolveInstances` does not finish inside it. Split the
