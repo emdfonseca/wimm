@@ -27,6 +27,13 @@ if [ -z "${snippet//[[:space:]]/}" ]; then
   exit 2
 fi
 
+# The renderer fetches webfonts over the network. Node's fetch ignores the proxy
+# environment unless told, and a font that does not arrive does not error — text
+# collapses, every text-driven height measures short, and a layout check reports
+# a clean pass over a canvas that overlaps on screen.
+export NODE_USE_ENV_PROXY=1
+[ -n "${NIX_SSL_CERT_FILE:-}" ] && export NODE_EXTRA_CA_CERTS="${NODE_EXTRA_CA_CERTS:-$NIX_SSL_CERT_FILE}"
+
 out="$(printf '%s\n' "$snippet" \
   | python3 -c 'import json,sys; print("execute({ input: " + json.dumps(sys.stdin.read()) + " })"); print("save()"); print("exit()")' \
   | npm exec -y --package="@pen.dev/cli@0.3.7" -- pen interactive --in "$file" --out "$file" 2>&1)"
@@ -35,5 +42,12 @@ printf '%s\n' "$out" | grep -vE '^[[:space:]]*$|Interactive Shell|Type tool call
 
 if printf '%s' "$out" | grep -qiE 'failed to execute operation|Errors in the input code|Invalid properties'; then
   echo "pen-exec: execute reported errors; nothing was written" >&2
+  exit 1
+fi
+
+# A missing font is not cosmetic: it silently shortens every text-driven height,
+# so bounds read in this run describe a layout nobody will see. Fail loudly.
+if printf '%s' "$out" | grep -qiE 'Failed to load font|AssetFetchError'; then
+  echo "pen-exec: an asset did not load; measurements from this run are not trustworthy" >&2
   exit 1
 fi

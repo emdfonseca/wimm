@@ -29,8 +29,9 @@ if not os.path.isfile(library):
     sys.exit(f"pen-import: no such library: {library}")
 
 rel = os.path.relpath(os.path.abspath(library), os.path.dirname(os.path.abspath(journey)))
-if rel.startswith(os.pardir + os.sep):
-    sys.exit(f"pen-import: library must sit beside the journey, got {rel}")
+root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
+if os.path.relpath(os.path.abspath(library), root).startswith(os.pardir + os.sep):
+    sys.exit(f"pen-import: library must live inside the repository, got {library}")
 
 if os.path.exists(journey):
     doc = json.load(open(journey))
