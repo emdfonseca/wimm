@@ -7,7 +7,7 @@
 
 ## 2. Decision record
 
-- [ ] 2.1 Write `docs/decisions/0014-*.md` recording the enrolment-link trust model, the opaque server-side session, the relying-party identifier as a one-way door, the separated admin listener and the operator credential; verify `just adr-index-check` passes and the entry appears in `.claude/rules/decisions.md`.
+- [ ] 2.1 Write `docs/decisions/0015-*.md` recording the enrolment-link trust model, the opaque server-side session, the relying-party identifier as a one-way door, the separated admin listener and the operator credential; verify `just adr-index-check` passes and the entry appears in `.claude/rules/decisions.md`.
 
 ## 3. Contracts
 
