@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Assert the pen library's variables match design/tokens.json, value for value.
+#
+# ADR 0003 makes tokens.json the contract and leaves library-to-export agreement
+# to a person. A person forgets. When they do, every canvas renders a palette the
+# product no longer has, and nothing anywhere reports it: the export is valid, the
+# stylesheet agrees with the export, and the .pen quietly disagrees with both.
+#
+# This needs the pen CLI, so it is not part of `just check`. Run it whenever
+# either side moves, which is the same commit by ADR 0003's own rule.
+set -euo pipefail
+
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+tokens="$root/packages/ui/design/tokens.json"
+library="${1:-$root/packages/ui/design/product-ui.lib.pen}"
+
+[ -f "$tokens" ] || { echo "pen-verify-tokens: no such file: $tokens" >&2; exit 2; }
+[ -f "$library" ] || { echo "pen-verify-tokens: no such file: $library" >&2; exit 2; }
+
+snippet="$(python3 - "$tokens" <<'PY'
+import json, sys
+document = json.load(open(sys.argv[1]))
+tokens = document.get("tokens", document)
+want = {
+    name: token["color"]
+    for name, token in tokens.items()
+    if token.get("type") == "color" and isinstance(token.get("color"), dict)
+}
+print(
+    "const want=%s;const v=GetVariables().variables;let bad=0;"
+    "for(const n of Object.keys(want)){const d=v[n];"
+    "if(!d){Print('MISSING',n);bad++;continue;}"
+    "const got={};for(const e of (Array.isArray(d.value)?d.value:[]))got[e.theme.color]=e.value;"
+    "for(const th of Object.keys(want[n]))"
+    "if((got[th]||'').toUpperCase()!==want[n][th].toUpperCase()){"
+    "Print('DRIFT',n,th,'library',got[th]||'(none)','export',want[n][th]);bad++;}}"
+    "Print('RESULT',Object.keys(want).length,bad);" % json.dumps(want)
+)
+PY
+)"
+
+out="$(printf '%s\n' "$snippet" | "$root/bin/pen-exec" "$library")"
+printf '%s\n' "$out" | grep -E '^(DRIFT|MISSING)' || true
+
+result="$(printf '%s\n' "$out" | grep '^RESULT' | tail -1)"
+compared="$(printf '%s' "$result" | awk '{print $2}')"
+drift="$(printf '%s' "$result" | awk '{print $3}')"
+
+if [ -z "${drift:-}" ]; then
+  echo "pen-verify-tokens: the library returned no result; is the file readable?" >&2
+  exit 1
+fi
+if [ "$drift" != "0" ]; then
+  echo "pen-verify-tokens: $drift of $compared colour tokens disagree with tokens.json" >&2
+  exit 1
+fi
+echo "pen-verify-tokens: $compared colour tokens agree with tokens.json"

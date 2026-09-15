@@ -33,27 +33,36 @@ checked either.
 
 ## Decision
 
-**Dark is a cool near-black. Green and blue are highlights on it, not the ground
-it is made of.** Surfaces run from `#0A0C11` to `#2A3240` as a slate ramp, and the
-only saturated areas on a dark screen are the ones carrying meaning: the brand
-panel's gradient, the primary action, the selected row, links, amounts and charts.
-
-The ramp is slightly blue rather than neutral grey, because a neutral one reads as
-the absence of a colour decision rather than as a colour. The cast is far below
-the chroma of anything it carries, so nothing on it competes with the accent.
+**Dark is a cool near-black, and its surfaces step evenly.** The ramp is built in
+L\*, not in contrast ratio, at a fixed slate hue, with a step of five between
+each surface and the next:
 
 ```text
-bg-canvas       #07120D → #0A0C11
-bg-surface      #0F1D17 → #141821      1.10 → 1.31 against the canvas
-bg-subtle       #16281F → #1A1F29
-bg-elevated     #16281F → #1E242F
-border-default  #1E3529 → #2E3644      1.27 → 1.63 against the surface
-text-primary    #E6F0EA → #E9ECF1
-text-secondary  #93AFA2 → #9AA3B2
-accent-subtle   #0E1E3D → #17263F      1.01 → 1.27 against the surface
-action-primary  #5FE7B8 → #38B48C      12.36 → 6.44 against the canvas
-gradient-to     #07120D → #0C2E22      1.00 → 2.98 against the canvas
+                      L*
+bg-canvas    #0A0B0D     3.0
+bg-surface   #16181C     8.2      chrome: the sidebar, an auth card
+bg-subtle    #1F2228    13.2
+bg-elevated  #282C34    17.9      content that sits on the chrome
+bg-hover     #323741    23.0
+bg-active    #3D424E    27.9
 ```
+
+Only the areas carrying meaning are saturated: the brand panel's gradient, the
+primary action, the selected row, links, amounts and charts. The ground is
+slightly blue rather than neutral grey, because a neutral one reads as the
+absence of a colour decision rather than as a colour; the cast sits far below the
+chroma of anything it carries.
+
+**Contrast ratio is the wrong instrument down here.** Two adjacent surfaces at
+L\* 8 and L\* 13 measure 1.07 against each other, and two at L\* 3 and L\* 8
+measure 1.31 — the second pair looks no further apart than the first, because
+ratio compresses towards black while perception does not. An earlier version of
+this ramp was tuned by ratio and came out visibly muddy in its middle, with
+perceptual steps of 4.9, 3.5, 2.4, 2.4 and 4.1 where it should have been even.
+
+**Content sits one step above chrome.** A card on `bg-surface` inside a shell
+also on `bg-surface` gives the eye two equal planes and no hierarchy. Page
+content uses `bg-elevated`.
 
 Hover, active, secondary, disabled, control and feedback-background derivatives
 follow their families. `color-chart-1` follows the brand, so dark carries one
@@ -100,11 +109,13 @@ deuteranopia are unchanged.
 
 ## Consequences
 
-- **The pen library and `tokens.json` are updated together.** ADR 0003 makes the
-  export the contract and leaves library-to-export agreement to a person; a change
-  that edits `tokens.json` without pushing the same values into
-  `product-ui.lib.pen` leaves every canvas rendering a palette the product no
-  longer has.
+- **The pen library and `tokens.json` are updated together, and `just
+  pen-verify-tokens` now asserts it.** ADR 0003 left library-to-export agreement
+  to a person, and a person forgets: when they do, every canvas renders a palette
+  the product no longer has, and nothing reports it, because the export is valid
+  and the stylesheet agrees with the export. The check needs the pen CLI so it
+  cannot join `just check`; it is run whenever either side moves, which ADR 0003's
+  own rule already makes the same commit.
 - **A constructed fixture derives its values from the document.** A fixture that
   hard-codes "the surface colour" stops reproducing its defect the moment the
   surface moves, and then asserts nothing while still reporting a pass. This
@@ -115,6 +126,11 @@ deuteranopia are unchanged.
   opinion about a button being too bright. Moving it is a decision, and moving it
   to accommodate a value rather than to correct the rule is how a check stops
   meaning anything.
+- **`check-palette.py` measures ratio, not lightness.** Its separation floors are
+  contrast ratios, which compress near black, so the ladder above is not something
+  it can verify: a muddy ramp and an even one both pass. Evenness in L\* is a
+  decision recorded here and checked by looking, and a future check that asserts
+  it would have to work in L\*.
 - **The checker cannot see hue.** Every rule here is a luminance ratio, so a
   palette can satisfy all 52 relationships and still put a navy block on a green
   page — which is the defect that prompted the neutral ramp, and which no

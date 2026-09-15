@@ -56,3 +56,7 @@ pen-import journey alias library:
 # Run an execute snippet against a .pen file, headless. Snippet on stdin.
 pen-exec file snippet="":
     @bin/pen-exec {{file}} {{snippet}}
+
+# Assert the pen library's variables match design/tokens.json.
+pen-verify-tokens library="":
+    @bin/pen-verify-tokens {{library}}

@@ -337,27 +337,36 @@ archive verbatim. Free prose would not.
 
 ## 0014 · A neutral dark palette, and a check that can see it — Accepted
 
-**Dark is a cool near-black. Green and blue are highlights on it, not the ground
-it is made of.** Surfaces run from `#0A0C11` to `#2A3240` as a slate ramp, and the
-only saturated areas on a dark screen are the ones carrying meaning: the brand
-panel's gradient, the primary action, the selected row, links, amounts and charts.
-
-The ramp is slightly blue rather than neutral grey, because a neutral one reads as
-the absence of a colour decision rather than as a colour. The cast is far below
-the chroma of anything it carries, so nothing on it competes with the accent.
+**Dark is a cool near-black, and its surfaces step evenly.** The ramp is built in
+L\*, not in contrast ratio, at a fixed slate hue, with a step of five between
+each surface and the next:
 
 ```text
-bg-canvas       #07120D → #0A0C11
-bg-surface      #0F1D17 → #141821      1.10 → 1.31 against the canvas
-bg-subtle       #16281F → #1A1F29
-bg-elevated     #16281F → #1E242F
-border-default  #1E3529 → #2E3644      1.27 → 1.63 against the surface
-text-primary    #E6F0EA → #E9ECF1
-text-secondary  #93AFA2 → #9AA3B2
-accent-subtle   #0E1E3D → #17263F      1.01 → 1.27 against the surface
-action-primary  #5FE7B8 → #38B48C      12.36 → 6.44 against the canvas
-gradient-to     #07120D → #0C2E22      1.00 → 2.98 against the canvas
+                      L*
+bg-canvas    #0A0B0D     3.0
+bg-surface   #16181C     8.2      chrome: the sidebar, an auth card
+bg-subtle    #1F2228    13.2
+bg-elevated  #282C34    17.9      content that sits on the chrome
+bg-hover     #323741    23.0
+bg-active    #3D424E    27.9
 ```
+
+Only the areas carrying meaning are saturated: the brand panel's gradient, the
+primary action, the selected row, links, amounts and charts. The ground is
+slightly blue rather than neutral grey, because a neutral one reads as the
+absence of a colour decision rather than as a colour; the cast sits far below the
+chroma of anything it carries.
+
+**Contrast ratio is the wrong instrument down here.** Two adjacent surfaces at
+L\* 8 and L\* 13 measure 1.07 against each other, and two at L\* 3 and L\* 8
+measure 1.31 — the second pair looks no further apart than the first, because
+ratio compresses towards black while perception does not. An earlier version of
+this ramp was tuned by ratio and came out visibly muddy in its middle, with
+perceptual steps of 4.9, 3.5, 2.4, 2.4 and 4.1 where it should have been even.
+
+**Content sits one step above chrome.** A card on `bg-surface` inside a shell
+also on `bg-surface` gives the eye two equal planes and no hierarchy. Page
+content uses `bg-elevated`.
 
 Hover, active, secondary, disabled, control and feedback-background derivatives
 follow their families. `color-chart-1` follows the brand, so dark carries one
