@@ -164,3 +164,32 @@ introducing an npm manifest to a repo whose one Node package has no
 dependencies.
 
 Claude Code is the only configured tool integration.
+
+## 0008 · The canvas is a proposal artifact — Accepted
+
+A project schema, `openspec/schemas/wimm/`, adds a fifth artifact between design
+and tasks. `openspec/config.yaml` sets `schema: wimm`, so every new change is
+stamped with it.
+
+```text
+proposal → specs → design → canvas → tasks
+                             │
+                             └── tasks is blocked until canvas exists
+```
+
+**`canvas` draws the journey and records what was drawn.** The drawing goes in a
+journey `.pen` under `packages/ui/design/`; `product-ui.lib.pen` keeps holding
+reusable mechanics only. `canvas.md` records the journey ID, the frame IDs, the
+task surfaces, the library components instanced, the components the library is
+missing, the states drawn, and the behavioural contracts the canvas cannot
+execute.
+
+**It is conditional.** A change with no user-facing surface — a worker, a
+migration, a build script — records a deliberate skip. The condition is stated
+in the artifact's own instruction, which is the mechanism OpenSpec already uses
+for a conditional artifact.
+
+**Components come before the screen that uses them.** Each entry under Components
+missing becomes one task covering both the origin in `product-ui.lib.pen` and the
+Svelte component in `packages/ui/src`. The screen composes instances and cannot
+share a task with the components it instances.

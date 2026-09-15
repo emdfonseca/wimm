@@ -1,4 +1,4 @@
-schema: spec-driven
+schema: wimm
 
 context: |
   wimm is a personal-finance ledger. Go services under apps/, importable Go
@@ -55,3 +55,22 @@ context: |
 #     archive:
 #       guidance:
 #         - Summarize the archive outcome before finishing
+
+rules:
+  canvas:
+    - Journey flow goes in a journey .pen; product-ui.lib.pen holds reusable mechanics only.
+    - Record the frame IDs. The .pen does not diff, so canvas.md is the only thing a reviewer can read.
+    - Do not claim a frame exists until the file has changed on disk. A pencil edit lives in the open document until a person saves.
+  tasks:
+    - A missing component is built in packages/ui before the screen that uses it, never in the same task.
+    - Every task verifies with `just check <dir>` or a named observable result.
+
+operations:
+  apply:
+    guidance:
+      - Build library components before the screen that instances them.
+      - tokens.css is generated. Change design/tokens.json and run `just gen`; never edit the output.
+      - A canvas frame is intent, not behaviour. Focus order, announcements and routing are written in code and verified there.
+  archive:
+    guidance:
+      - Confirm the journey .pen is saved and committed before archiving a change whose canvas.md names frames.
