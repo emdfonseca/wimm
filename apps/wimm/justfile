@@ -1,0 +1,37 @@
+# apps/wimm — the wimm service (wimmd) and the operator CLI (wimmctl).
+# One module, two binaries: the admin contract between them is a compile-time
+# agreement with no version skew (ADR 0016).
+set shell := ["bash", "-uc"]
+
+default:
+    @just --list
+
+build:
+    go build -o dist/wimmd ./cmd/wimmd
+    go build -o dist/wimmctl ./cmd/wimmctl
+
+# Store tests run against their own database on the local cluster. They never
+# skip when it is absent: a store test that passes because nothing was
+# reachable cannot fail. And they never run against the development database,
+# because the suite truncates every table it finds.
+test:
+    WIMM_TEST_DATABASE_URL="${WIMM_TEST_DATABASE_URL:-$(../../bin/db test-url)}" go test -race ./...
+
+lint:
+    golangci-lint run
+
+fmt:
+    gofmt -w .
+
+check: lint test
+
+# Run the service against the local database. `just db-up` first.
+dev:
+    go run ./cmd/wimmd
+
+gen:
+    @echo "nothing generated here: contracts live in packages/contracts"
+
+clean:
+    go clean
+    rm -rf dist

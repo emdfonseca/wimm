@@ -1,0 +1,57 @@
+# Root configuration, inherited by every Go module in the repo.
+version: "2"
+
+linters:
+  default: standard
+  enable:
+    - bodyclose
+    - copyloopvar
+    - errorlint
+    - forbidigo
+    - gocritic
+    - goconst
+    - misspell
+    - nilerr
+    - revive
+    - unconvert
+    - usetesting
+  settings:
+    errcheck:
+      # Writing to a terminal that has gone away is not a condition a command
+      # can act on, and checking it at every call obscures the ones that matter.
+      exclude-functions:
+        - fmt.Fprint
+        - fmt.Fprintf
+        - fmt.Fprintln
+    forbidigo:
+      # Unstructured logging. Logs go through log/slog (.claude/rules/go.md).
+      forbid:
+        - pattern: ^fmt\.Print.*$
+        - pattern: ^log\.(Print|Fatal|Panic).*$
+        # Every lifetime in wimm is compared against database time (ADR 0016).
+        # A skewed process clock must not be able to extend a link or a
+        # session, and the way that stays true is by there being no process
+        # clock to read.
+        - pattern: ^time\.Now$
+          msg: compute lifetimes in SQL with now(), not from the process clock
+      exclude-godoc-examples: true
+    revive:
+      rules:
+        - name: package-comments
+          disabled: true
+  exclusions:
+    rules:
+      # A command's own stdout is its interface, not a log line.
+      - path: cmd/wimmctl/
+        linters: [forbidigo]
+      # Tests read the clock to measure themselves, which is not a lifetime.
+      - path: _test\.go
+        linters: [forbidigo]
+      # A repeated literal in a fixture is the fixture being readable, not a
+      # constant waiting to be extracted.
+      - path: (_test\.go|test/)
+        linters: [goconst]
+
+formatters:
+  enable:
+    - gofmt
