@@ -141,3 +141,25 @@ The hero gradient does not follow the brand all the way. `#0E6E4F` rather than
 `#12805C`, because at the lighter value no secondary tone clears 4.5 against it:
 the lightest candidate reached 4.44. The gradient is still far more saturated
 than it was — 78% against 51% — at about the same lightness.
+
+## 0007 · OpenSpec for change proposals — Accepted
+
+OpenSpec holds change proposals and living specs. ADRs keep their role: a
+decision record says what was chosen and why, a proposal says what is about to
+be built. They are not substitutes.
+
+The CLI is pinned in the root justfile and invoked through pnpm, which devbox
+does own:
+
+```just
+openspec_version := "1.13.0"
+
+openspec *args:
+    @pnpm dlx @fission-ai/openspec@{{openspec_version}} {{args}}
+```
+
+`just openspec <command>` is the only supported shape. There is no root
+`package.json`: a single dev CLI does not justify introducing an npm manifest to
+a repo whose one Node package has no dependencies.
+
+Claude Code is the only configured tool integration.
