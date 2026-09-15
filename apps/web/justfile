@@ -1,0 +1,32 @@
+# apps/web — the SvelteKit app. Imports @wimm/ui for the token contract and the
+# components its screens instance.
+set shell := ["bash", "-uc"]
+
+default:
+    @just --list
+
+build:
+    pnpm build
+
+# The dev server proxies /api to wimmd so the browser sees one origin.
+dev:
+    pnpm dev
+
+test:
+    pnpm vitest run --passWithNoTests
+
+lint:
+    pnpm -w eslint apps/web
+
+fmt:
+    pnpm -w prettier --write apps/web
+
+check: lint
+    pnpm check
+    just test
+
+gen:
+    @echo "nothing generated here: contracts live in packages/contracts"
+
+clean:
+    rm -rf dist .svelte-kit build

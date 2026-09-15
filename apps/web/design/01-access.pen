@@ -508,6 +508,12 @@
                                         "ui:R0Clx": {
                                           "content": "A wimm account has been set up for you. Create a passkey and you are in. There is no password to choose. From now on you sign in with your fingerprint, face or device PIN."
                                         },
+                                        "ui:ft9RY": {
+                                          "enabled": false
+                                        },
+                                        "ui:d9yZil": {
+                                          "enabled": false
+                                        },
                                         "ui:KAxgT": {
                                           "fill": "$ui:color-action-primary"
                                         },
@@ -623,7 +629,8 @@
                                         "ui:v0qiu": {
                                           "fill": "$ui:color-feedback-error-bg",
                                           "stroke": "$ui:color-feedback-error",
-                                          "strokeWidth": 1
+                                          "strokeWidth": 1,
+                                          "enabled": false
                                         },
                                         "ui:v0qiu/ui:Z5ONBF": {
                                           "content": "Your device did not save the passkey"
@@ -642,6 +649,27 @@
                                         },
                                         "ui:R0Clx": {
                                           "content": "A wimm account has been set up for you. Create a passkey and you are in. There is no password to choose. From now on you sign in with your fingerprint, face or device PIN."
+                                        },
+                                        "ui:ft9RY": {
+                                          "enabled": true
+                                        },
+                                        "ui:d9yZil": {
+                                          "fill": "$ui:color-feedback-error-bg",
+                                          "stroke": "$ui:color-feedback-error",
+                                          "strokeWidth": 1,
+                                          "enabled": true
+                                        },
+                                        "ui:d9yZil/ui:Z5ONBF": {
+                                          "content": "Your device did not save the passkey"
+                                        },
+                                        "ui:d9yZil/ui:NAIMe": {
+                                          "content": "wimm needs a passkey your device can offer you next time. Try again, or open this link on a phone or with a password manager that saves passkeys."
+                                        },
+                                        "ui:d9yZil/ui:gofcu": {
+                                          "enabled": false
+                                        },
+                                        "ui:d9yZil/ui:A4SKK": {
+                                          "enabled": false
                                         },
                                         "ui:KAxgT": {
                                           "fill": "$ui:color-action-primary"
@@ -758,7 +786,8 @@
                                         "ui:v0qiu": {
                                           "fill": "$ui:color-feedback-info-bg",
                                           "stroke": "$ui:color-feedback-info",
-                                          "strokeWidth": 1
+                                          "strokeWidth": 1,
+                                          "enabled": false
                                         },
                                         "ui:v0qiu/ui:Z5ONBF": {
                                           "content": "Nothing was created"
@@ -777,6 +806,27 @@
                                         },
                                         "ui:R0Clx": {
                                           "content": "A wimm account has been set up for you. Create a passkey and you are in. There is no password to choose. From now on you sign in with your fingerprint, face or device PIN."
+                                        },
+                                        "ui:ft9RY": {
+                                          "enabled": true
+                                        },
+                                        "ui:d9yZil": {
+                                          "fill": "$ui:color-feedback-info-bg",
+                                          "stroke": "$ui:color-feedback-info",
+                                          "strokeWidth": 1,
+                                          "enabled": true
+                                        },
+                                        "ui:d9yZil/ui:Z5ONBF": {
+                                          "content": "Nothing was created"
+                                        },
+                                        "ui:d9yZil/ui:NAIMe": {
+                                          "content": "You closed the passkey prompt. Your link still works. Try again when you are ready."
+                                        },
+                                        "ui:d9yZil/ui:gofcu": {
+                                          "enabled": false
+                                        },
+                                        "ui:d9yZil/ui:A4SKK": {
+                                          "enabled": false
                                         },
                                         "ui:KAxgT": {
                                           "fill": "$ui:color-action-primary"
@@ -978,6 +1028,12 @@
                                         },
                                         "ui:R0Clx": {
                                           "content": "A wimm account has been set up for you. Create a passkey and you are in. There is no password to choose. From now on you sign in with your fingerprint, face or device PIN."
+                                        },
+                                        "ui:ft9RY": {
+                                          "enabled": false
+                                        },
+                                        "ui:d9yZil": {
+                                          "enabled": false
                                         },
                                         "ui:KAxgT": {
                                           "fill": "$ui:color-bg-disabled"
@@ -1339,6 +1395,12 @@
                                         },
                                         "ui:g5His": {
                                           "content": "A wimm account has been set up for you. Create a passkey and you are in. There is no password to choose. From now on you sign in with your fingerprint, face or device PIN."
+                                        },
+                                        "ui:n7iV7P": {
+                                          "enabled": false
+                                        },
+                                        "ui:Y9Crx": {
+                                          "enabled": false
                                         },
                                         "ui:ypzq3": {
                                           "fill": "$ui:color-action-primary"
@@ -1901,6 +1963,12 @@
                                         "ui:R0Clx": {
                                           "content": "Sign in with the passkey you saved. Your browser will offer it. There is nothing to type."
                                         },
+                                        "ui:ft9RY": {
+                                          "enabled": false
+                                        },
+                                        "ui:d9yZil": {
+                                          "enabled": false
+                                        },
                                         "ui:KAxgT": {
                                           "fill": "$ui:color-action-primary"
                                         },
@@ -2016,7 +2084,8 @@
                                         "ui:v0qiu": {
                                           "fill": "$ui:color-feedback-info-bg",
                                           "stroke": "$ui:color-feedback-info",
-                                          "strokeWidth": 1
+                                          "strokeWidth": 1,
+                                          "enabled": false
                                         },
                                         "ui:v0qiu/ui:Z5ONBF": {
                                           "content": "Nothing happened"
@@ -2035,6 +2104,27 @@
                                         },
                                         "ui:R0Clx": {
                                           "content": "Sign in with the passkey you saved. Your browser will offer it. There is nothing to type."
+                                        },
+                                        "ui:ft9RY": {
+                                          "enabled": true
+                                        },
+                                        "ui:d9yZil": {
+                                          "fill": "$ui:color-feedback-info-bg",
+                                          "stroke": "$ui:color-feedback-info",
+                                          "strokeWidth": 1,
+                                          "enabled": true
+                                        },
+                                        "ui:d9yZil/ui:Z5ONBF": {
+                                          "content": "Nothing happened"
+                                        },
+                                        "ui:d9yZil/ui:NAIMe": {
+                                          "content": "You closed the passkey prompt. Try again when you are ready."
+                                        },
+                                        "ui:d9yZil/ui:gofcu": {
+                                          "enabled": false
+                                        },
+                                        "ui:d9yZil/ui:A4SKK": {
+                                          "enabled": false
                                         },
                                         "ui:KAxgT": {
                                           "fill": "$ui:color-action-primary"
@@ -2170,6 +2260,12 @@
                                         },
                                         "ui:R0Clx": {
                                           "content": "Sign in with the passkey you saved. Your browser will offer it. There is nothing to type."
+                                        },
+                                        "ui:ft9RY": {
+                                          "enabled": false
+                                        },
+                                        "ui:d9yZil": {
+                                          "enabled": false
                                         },
                                         "ui:KAxgT": {
                                           "fill": "$ui:color-action-primary"
@@ -2531,6 +2627,12 @@
                                         },
                                         "ui:g5His": {
                                           "content": "Sign in with the passkey you saved. Your browser will offer it. There is nothing to type."
+                                        },
+                                        "ui:n7iV7P": {
+                                          "enabled": false
+                                        },
+                                        "ui:Y9Crx": {
+                                          "enabled": false
                                         },
                                         "ui:ypzq3": {
                                           "fill": "$ui:color-action-primary"
@@ -2949,7 +3051,8 @@
                                         "ui:v0qiu": {
                                           "fill": "$ui:color-feedback-error-bg",
                                           "stroke": "$ui:color-feedback-error",
-                                          "strokeWidth": 1
+                                          "strokeWidth": 1,
+                                          "enabled": false
                                         },
                                         "ui:v0qiu/ui:Z5ONBF": {
                                           "content": "That passkey is not recognised"
@@ -2968,6 +3071,27 @@
                                         },
                                         "ui:R0Clx": {
                                           "content": "Sign in with the passkey you saved. Your browser will offer it. There is nothing to type."
+                                        },
+                                        "ui:ft9RY": {
+                                          "enabled": true
+                                        },
+                                        "ui:d9yZil": {
+                                          "fill": "$ui:color-feedback-error-bg",
+                                          "stroke": "$ui:color-feedback-error",
+                                          "strokeWidth": 1,
+                                          "enabled": true
+                                        },
+                                        "ui:d9yZil/ui:Z5ONBF": {
+                                          "content": "That passkey is not recognised"
+                                        },
+                                        "ui:d9yZil/ui:NAIMe": {
+                                          "content": "wimm has no record of it. Ask whoever set up your account for an enrolment link."
+                                        },
+                                        "ui:d9yZil/ui:gofcu": {
+                                          "enabled": false
+                                        },
+                                        "ui:d9yZil/ui:A4SKK": {
+                                          "enabled": false
                                         },
                                         "ui:KAxgT": {
                                           "fill": "$ui:color-action-primary"
@@ -3158,6 +3282,12 @@
                                         },
                                         "ui:g5His": {
                                           "content": "Sign in with the passkey you saved. Your browser will offer it. There is nothing to type."
+                                        },
+                                        "ui:n7iV7P": {
+                                          "enabled": false
+                                        },
+                                        "ui:Y9Crx": {
+                                          "enabled": false
                                         },
                                         "ui:ypzq3": {
                                           "fill": "$ui:color-action-primary"
@@ -3375,6 +3505,12 @@
                                         "ui:R0Clx": {
                                           "content": "It may have expired, already been used, or been replaced by a newer one. Ask whoever set up your account for a new link."
                                         },
+                                        "ui:ft9RY": {
+                                          "enabled": false
+                                        },
+                                        "ui:d9yZil": {
+                                          "enabled": false
+                                        },
                                         "ui:KAxgT": {
                                           "enabled": false
                                         },
@@ -3546,6 +3682,12 @@
                                         },
                                         "ui:g5His": {
                                           "content": "It may have expired, already been used, or been replaced by a newer one. Ask whoever set up your account for a new link."
+                                        },
+                                        "ui:n7iV7P": {
+                                          "enabled": false
+                                        },
+                                        "ui:Y9Crx": {
+                                          "enabled": false
                                         },
                                         "ui:ypzq3": {
                                           "enabled": false
@@ -3901,6 +4043,12 @@
                     "ui:R0Clx": {
                       "content": "A wimm account has been set up for you. Create a passkey and you are in. There is no password to choose. From now on you sign in with your fingerprint, face or device PIN."
                     },
+                    "ui:ft9RY": {
+                      "enabled": false
+                    },
+                    "ui:d9yZil": {
+                      "enabled": false
+                    },
                     "ui:KAxgT": {
                       "fill": "$ui:color-action-primary"
                     },
@@ -4039,6 +4187,12 @@
                     },
                     "ui:R0Clx": {
                       "content": "A wimm account has been set up for you. Create a passkey and you are in. There is no password to choose. From now on you sign in with your fingerprint, face or device PIN."
+                    },
+                    "ui:ft9RY": {
+                      "enabled": false
+                    },
+                    "ui:d9yZil": {
+                      "enabled": false
                     },
                     "ui:KAxgT": {
                       "fill": "$ui:color-action-primary"
@@ -4274,6 +4428,12 @@
                     "ui:R0Clx": {
                       "content": "It may have expired, already been used, or been replaced by a newer one. Ask whoever set up your account for a new link."
                     },
+                    "ui:ft9RY": {
+                      "enabled": false
+                    },
+                    "ui:d9yZil": {
+                      "enabled": false
+                    },
                     "ui:KAxgT": {
                       "enabled": false
                     },
@@ -4408,6 +4568,12 @@
                     },
                     "ui:R0Clx": {
                       "content": "Sign in with the passkey you saved. Your browser will offer it. There is nothing to type."
+                    },
+                    "ui:ft9RY": {
+                      "enabled": false
+                    },
+                    "ui:d9yZil": {
+                      "enabled": false
                     },
                     "ui:KAxgT": {
                       "fill": "$ui:color-action-primary"
