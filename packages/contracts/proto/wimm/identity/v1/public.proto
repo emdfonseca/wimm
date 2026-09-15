@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package wimm.identity.v1;
+
+import "buf/validate/validate.proto";
+import "wimm/identity/v1/identity.proto";
+
+// The surface the browser reaches. Served under /api, which the web app
+// proxies so there is one origin (ADR 0016).
+//
+// Separate from OperatorService because the two are separately exposed: the
+// distinction is which port answers at all, not which method is guarded.
+service PublicService {
+  // Exchange an enrolment link for a ticket, so the value stops travelling in
+  // the URL. Deadline: 5s.
+  rpc RedeemEnrolmentLink(RedeemEnrolmentLinkRequest) returns (RedeemEnrolmentLinkResponse);
+
+  // Start the WebAuthn registration ceremony. Deadline: 5s.
+  rpc BeginEnrolment(BeginEnrolmentRequest) returns (BeginEnrolmentResponse);
+
+  // Finish it, recording the passkey and signing the member in. Deadline: 10s.
+  rpc FinishEnrolment(FinishEnrolmentRequest) returns (FinishEnrolmentResponse);
+
+  // Start the WebAuthn authentication ceremony. No identifier is supplied:
+  // the credential is discoverable, so the browser offers it. Deadline: 5s.
+  rpc BeginSignIn(BeginSignInRequest) returns (BeginSignInResponse);
+
+  // Finish it, creating the session. Deadline: 10s.
+  rpc FinishSignIn(FinishSignInRequest) returns (FinishSignInResponse);
+
+  // End the session on this browser. Deadline: 5s.
+  rpc SignOut(SignOutRequest) returns (SignOutResponse);
+
+  // Who the session belongs to, for the app shell. Deadline: 5s.
+  rpc GetCurrentMember(GetCurrentMemberRequest) returns (GetCurrentMemberResponse);
+}
+
+message RedeemEnrolmentLinkRequest {
+  // The value from the enrolment URL's path.
+  string link_value = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message RedeemEnrolmentLinkResponse {
+  // Opaque, short-lived, and carried in an HttpOnly cookie rather than a URL.
+  string enrolment_ticket = 1;
+  // Shown before the member is asked to create anything, so they can see who
+  // the link is for.
+  Member member = 2;
+}
+
+message BeginEnrolmentRequest {
+  string enrolment_ticket = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message BeginEnrolmentResponse {
+  // Shown before the member is asked to create anything, so the page can say
+  // who the link is for without redeeming it a second time.
+  Member member = 3;
+  // Names the challenge row. Challenges live in Postgres with a lifetime in
+  // seconds and are deleted on use, so no instance holds ceremony state.
+  string ceremony_id = 1;
+  // PublicKeyCredentialCreationOptions as JSON, ready for
+  // PublicKeyCredential.parseCreationOptionsFromJSON. Passed through rather
+  // than modelled: the browser needs this shape exactly.
+  string creation_options_json = 2;
+}
+
+message FinishEnrolmentRequest {
+  string ceremony_id = 1 [(buf.validate.field).string.min_len = 1];
+  // RegistrationResponseJSON from the authenticator.
+  string credential_json = 2 [(buf.validate.field).string.min_len = 1];
+}
+
+message FinishEnrolmentResponse {
+  Member member = 1;
+}
+
+message BeginSignInRequest {
+  // Where the member was heading when they were sent to sign in. Held
+  // server-side against the attempt; a path supplied by the client is ignored.
+  string intended_path = 1;
+}
+
+message BeginSignInResponse {
+  string ceremony_id = 1;
+  // PublicKeyCredentialRequestOptions as JSON.
+  string request_options_json = 2;
+}
+
+message FinishSignInRequest {
+  string ceremony_id = 1 [(buf.validate.field).string.min_len = 1];
+  // AuthenticationResponseJSON from the authenticator.
+  string credential_json = 2 [(buf.validate.field).string.min_len = 1];
+}
+
+message FinishSignInResponse {
+  Member member = 1;
+  // An in-app path. Anything unrecognised falls back to the landing page.
+  string return_path = 2;
+}
+
+message SignOutRequest {}
+
+message SignOutResponse {}
+
+message GetCurrentMemberRequest {}
+
+message GetCurrentMemberResponse {
+  Member member = 1;
+}
