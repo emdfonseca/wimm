@@ -43,9 +43,10 @@ Each builds the origin in `product-ui.lib.pen` and the Svelte component in `pack
 
 - [ ] 7.1 Build `/enrol/<link>` with its Default, Passkey not saved and Prompt dismissed states, composing instances of 6.1–6.4; verify `just check apps/web` passes and each state is reachable by setting props. Story S2.
 - [ ] 7.2 Build the unusable-link dead end with no path forward and the instruction to ask the operator; verify `just check apps/web` passes and the page offers no enrolment control. Story S2.
-- [ ] 7.3 Build `/signin` with its Default, Prompt dismissed, Passkey not recognised and Session expired states; verify `just check apps/web` passes and each state is reachable by setting props. Story S3.
-- [ ] 7.4 Build the signed-in landing inside the app shell, showing the member's name; verify `just check apps/web` passes. Stories S2, S3.
-- [ ] 7.5 Implement focus and announcement as recorded in canvas.md — focus to the card heading on load, assertive error notices, polite info notices, neither moving focus; verify a test drives each state and asserts the focus target and the live-region politeness. Stories S2, S3.
+- [ ] 7.3 Build `/signin` with its Default, Prompt dismissed and Session expired states; verify `just check apps/web` passes and each state is reachable by setting props. Story S3.
+- [ ] 7.4 Build the unrecognised-passkey dead end (J02.B): the member offered a credential this instance has no record of, nothing on the page recovers it, and the only way forward is an enrolment link from the operator; verify `just check apps/web` passes and the page offers no route back into the product. Story S3.
+- [ ] 7.5 Build the signed-in landing: `Sidebar nav / in shell` with Overview current and every other destination absent, the member's name in the sidebar footer, and an empty body. No page header: it has no breadcrumbs, tabs or action to carry, and the sidebar already marks the location; verify `just check apps/web` passes. Stories S2, S3.
+- [ ] 7.6 Implement focus and announcement as recorded in canvas.md — focus to the card heading on load, assertive error notices, polite info notices, neither moving focus; verify a test drives each state and asserts the focus target and the live-region politeness. Stories S2, S3.
 
 ## 8. End-to-end verification
 
