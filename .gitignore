@@ -10,3 +10,6 @@
 node_modules/
 dist/
 __pycache__/
+
+# Review reports and evidence. Machine-written, never an input to a build.
+.artifacts/
