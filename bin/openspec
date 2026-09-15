@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Pinned OpenSpec CLI. The generated opsx commands and openspec-* skills invoke
+# a bare `openspec` ~100 times; without this shim that resolves to whatever the
+# machine has installed globally. devbox puts this directory first on PATH.
+set -euo pipefail
+
+version="1.13.0"
+
+exec pnpm dlx "@fission-ai/openspec@${version}" "$@"

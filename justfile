@@ -1,8 +1,6 @@
 # Root justfile — delegation only. Build logic lives in package justfiles.
 set shell := ["bash", "-uc"]
 
-openspec_version := "1.13.0"
-
 # Every apps/* and packages/* directory that has a justfile
 pkgs := `ls -d apps/*/justfile packages/*/justfile 2>/dev/null | sed 's|/justfile$||' | tr '\n' ' '`
 
@@ -43,6 +41,6 @@ adr-index-check:
 # What CI runs
 ci: adr-index-check (all "check")
 
-# OpenSpec CLI, version-pinned. `just openspec list`, `just openspec validate`.
+# OpenSpec CLI. The pin lives in bin/openspec, which devbox puts on PATH.
 openspec *args:
-    @pnpm dlx @fission-ai/openspec@{{openspec_version}} {{args}}
+    @bin/openspec {{args}}

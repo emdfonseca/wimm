@@ -148,18 +148,19 @@ OpenSpec holds change proposals and living specs. ADRs keep their role: a
 decision record says what was chosen and why, a proposal says what is about to
 be built. They are not substitutes.
 
-The CLI is pinned in the root justfile and invoked through pnpm, which devbox
-does own:
+The CLI is pinned in `bin/openspec`, a shim that execs `pnpm dlx` at an exact
+version. devbox prepends `$DEVBOX_PROJECT_ROOT/bin` to `PATH`, so inside the
+project shell a bare `openspec` is the pinned one.
 
-```just
-openspec_version := "1.13.0"
+The pin has to live on `PATH` rather than only in a just recipe. OpenSpec
+generates its own instruction files — six `opsx` commands and six `openspec-*`
+skills — and they invoke a bare `openspec` around a hundred times. A recipe
+would leave every one of those calls resolving to whatever the machine happens
+to have installed globally.
 
-openspec *args:
-    @pnpm dlx @fission-ai/openspec@{{openspec_version}} {{args}}
-```
-
-`just openspec <command>` is the only supported shape. There is no root
-`package.json`: a single dev CLI does not justify introducing an npm manifest to
-a repo whose one Node package has no dependencies.
+`just openspec <command>` delegates to the same shim, so the version is stated
+once. There is no root `package.json`: a single dev CLI does not justify
+introducing an npm manifest to a repo whose one Node package has no
+dependencies.
 
 Claude Code is the only configured tool integration.
