@@ -1,6 +1,11 @@
 ---
 name: storybook
 paths:
+  # Component paths come first on purpose. A trigger that only fires on
+  # *.stories.svelte can never remind anyone to write a story they are not
+  # already writing, which is exactly how a component ships without one.
+  - "packages/ui/src/**/*.svelte"
+  - "apps/*/src/lib/screens/**/*.svelte"
   - "**/*.stories.svelte"
   - "**/.storybook/**"
   - "**/src/**/*.mdx"

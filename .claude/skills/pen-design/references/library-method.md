@@ -14,6 +14,47 @@ rework; none of them are stylistic.
 - 10.7. Verify, then report
 
 
+### 10.0. The library is additive. Read it before you add to it.
+
+Everything already in `.lib.pen` is content somebody made. A change to it is a
+change to their work.
+
+A `.pen` is **pretty-printed JSON, not an encrypted blob** - read it with `jq`
+or `python -m json.tool` when you want to understand its shape, which is far
+cheaper and more reliable than round-tripping through `pen-exec`. It therefore
+does diff; but three thousand nodes of it bury a one-line rename, which is why
+the manifest below exists.
+
+**Never rename, retype, reparent or delete an existing node as a side effect of
+adding something.** Not to make a name read better beside the thing you added,
+not to make two siblings symmetrical, not to match a convention you have just
+inferred. If an existing name is wrong, that is its own change, proposed on its
+own and agreed before it is made. Adding is additive; tidying is not.
+
+`just pen-manifest verify` enforces this. It holds every node's id, type, parent
+and name in `packages/ui/design/library-manifest.tsv`; new nodes pass, and
+anything that already existed and moved, changed type, changed parent or changed
+name fails. Run `just pen-manifest write` only when the change to an existing
+node is the thing you actually set out to do.
+
+**Read the local pattern before inventing one.** Two conventions live in this
+library and they are not interchangeable:
+
+```text
+specimen cell      a frame named "Slot" holding one instance, in a state matrix
+                   documentation scaffolding - see 10.2
+
+composition slot   a region a screen fills. Page scaffolds name them
+                   "FILTER BAR SLOT", "LIST REGION SLOT", "SUMMARY SLOT" and
+                   carry a "Label" and a "Note" placeholder text.
+                   The auth shells instead name them "Feedback slot" and hold a
+                   disabled component instance.
+```
+
+Both are correct where they are. Open the component you are extending and copy
+*its* pattern; a convention read off a different zone is how a shell ends up
+with a region nothing else in the file resembles.
+
 ### 10.1. One table per component
 
 **Variants are rows. Interaction states are columns.** The `rest` column *is* the
