@@ -1,0 +1,57 @@
+/* The two typefaces the design system names, self-hosted (ADR 0002).
+ *
+ * tokens.css names them; nothing loaded them until this file existed, so every
+ * screen rendered in system-ui and looked nothing like the canvas.
+ *
+ * Latin subset only: this is one household's ledger, and the other subsets
+ * Google publishes are bytes for glyphs nothing renders. Schibsted Grotesk is
+ * the variable face, so one file covers 400 through 900 — including the 600 at
+ * -2% tracking that ADR 0002 calls display.
+ *
+ * font-display: swap. A blocking font on the enrolment page would hold up the
+ * one screen a member sees before they can do anything.
+ */
+
+@font-face {
+	font-family: 'Schibsted Grotesk';
+	font-style: normal;
+	font-weight: 400 900;
+	font-display: swap;
+	src: url('./fonts/schibsted-grotesk-400-900.woff2') format('woff2');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: 'IBM Plex Mono';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('./fonts/ibm-plex-mono-400.woff2') format('woff2');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: 'IBM Plex Mono';
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url('./fonts/ibm-plex-mono-500.woff2') format('woff2');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: 'IBM Plex Mono';
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src: url('./fonts/ibm-plex-mono-600.woff2') format('woff2');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}

@@ -1,0 +1,13 @@
+packages:
+  - apps/*
+  - packages/*
+
+# esbuild ships a platform binary its install script places. Allowed by name
+# rather than by blanket approval of every postinstall in the tree.
+allowBuilds:
+  esbuild: true
+
+# @types/node is pinned to the line that matches Node 26 and TypeScript 6
+# (dist-tag ts6.0), which is newer than pnpm's release-age floor.
+minimumReleaseAgeExclude:
+  - '@types/node@26.6.1'

@@ -1,0 +1,44 @@
+/* The design system's single stylesheet entry: the typefaces, the token
+ * contract, and the few element defaults every screen depends on.
+ *
+ * Import this, not tokens.css directly. A screen that gets the tokens without
+ * the reset below lays out wrongly in a way that looks like a spacing bug.
+ */
+
+@import './fonts.css';
+@import './tokens.css';
+
+/* Every measurement in this design system is a border-box measurement.
+ *
+ * The canvas says the auth card is 480 and the brand panel 560; those are the
+ * whole element, the way pen measures a frame. Under the browser default of
+ * content-box the same declarations produce 546 and 688, because each element
+ * silently adds its own padding and border on top. Nothing looks broken - it
+ * just does not match the drawing, and every attempt to reconcile the two ends
+ * up adjusting a number that was already right. */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+/* The page's own ground, so a screen is never composited over white. */
+html {
+	background: var(--color-bg-canvas);
+	color: var(--color-text-primary);
+	font-family: var(--type-family-body);
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	margin: 0;
+}
+
+/* A heading that takes focus on load does so to place a screen reader, not to
+ * show a keyboard user where they are: it is not in the tab order and nobody
+ * navigated to it. Drawing a ring around it is a ring nobody asked for, and
+ * the canvas draws none. Controls keep theirs. */
+[tabindex='-1']:focus,
+[tabindex='-1']:focus-visible {
+	outline: none;
+}

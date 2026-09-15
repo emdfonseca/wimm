@@ -1,0 +1,10 @@
+.pgdata
+.devbox
+.venv
+node_modules
+dist
+.svelte-kit
+pnpm-lock.yaml
+packages/ui/src/tokens.css
+**/gen/
+**/build/
