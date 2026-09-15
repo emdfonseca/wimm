@@ -251,7 +251,10 @@ action; blue (`#1F5FF0`) is the highlight for links, selection and focus;
 neutrals are tinted green-grey. Revised in ADR 0006 — see it for the values, the
 alternatives, and the reasoning; they are not repeated here.
 
-Green and red are reserved for money direction and feedback, never for branding.
+Red is reserved for money direction and feedback, never for branding. Green
+carries both jobs and they are kept apart by role: `color-action-primary` is the
+brand, `color-amount-positive` is income, and neither is ever used for the
+other's purpose.
 
 **The two greens are separated by hue, not by lightness.** Brand green sits at
 hue 161/159 and income green at 139/135, a gap of 22° and 24°. By lightness they
