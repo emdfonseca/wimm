@@ -243,3 +243,31 @@ document-level mutator beyond `SetVariables`, and `Update(document, …)` report
 lines; the command exists to make the edit checked and idempotent rather than
 hand-made. It refuses an alias already bound elsewhere, a library outside the
 journey's directory, and a non-kebab alias.
+
+## 0011 · Draw headless, not through the MCP — Accepted
+
+Journeys are drawn headless. `just pen-exec <file.pen>` pipes an execute snippet
+into `pen interactive --in X --out X`, which opens X, resolves its imports, saves,
+and exits.
+
+```text
+just pen-import   create the journey and bind the library
+just pen-exec     draw, and verify in a second call
+Export + read     look at the result
+```
+
+The MCP keeps one job: the document a person is actually looking at. `just
+pen-save` keeps one job with it — flushing that document, which stays in the
+app's memory until something saves it.
+
+**`pen-exec` fails closed.** A snippet that errors exits non-zero and leaves the
+file byte-identical; both are asserted, because a tool that writes garbage and
+then exits non-zero has still corrupted the artifact.
+
+**Headless saves only because it is told to.** `pen interactive` does not save on
+exit. A pipe without `save()` reports every id it created and writes none of
+them — the failure looks exactly like success.
+
+This supersedes the workflow in ADR 0009. The reason that ADR exists — an edit
+sitting unsaved in the app with nothing reporting it — is unchanged and still
+applies to MCP work.

@@ -52,3 +52,7 @@ pen-save file:
 # Bind a .pen library into a journey file. Refs then read <alias>:<nodeId>.
 pen-import journey alias library:
     @bin/pen-import {{journey}} {{alias}} {{library}}
+
+# Run an execute snippet against a .pen file, headless. Snippet on stdin.
+pen-exec file snippet="":
+    @bin/pen-exec {{file}} {{snippet}}

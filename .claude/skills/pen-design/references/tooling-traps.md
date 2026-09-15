@@ -6,12 +6,33 @@ Read this before the first `execute` call of a session.
 
 **In this file:**
 
+- 9.0. The MCP ignores its filePath
 - 9.1. Silent property drops
 - 9.2. Reading results
 - 9.3. Visitor and query traps
 - 9.4. Component and instance traps
 - 9.5. Layout traps
 
+
+### 9.0. The MCP ignores its filePath
+
+**`mcp__pencil__execute` acts on whatever document Pen.app has open, whatever
+path you pass it.** Point it at a journey file and ask for the root children and
+it returns the library's zones. No error, no warning, no mismatch reported — the
+argument is accepted and disregarded.
+
+This is not a cosmetic problem. An edit meant for a journey lands in the library,
+and a library component instanced by every screen is the worst place for a stray
+frame. The only reason it has not happened here is that `ui:` refs do not resolve
+in the library, so the block failed and rolled back.
+
+Draw with `just pen-exec <file.pen>` instead: `pen interactive --in X --out X`
+genuinely opens X and resolves its imports. Keep the MCP for the one document a
+person is looking at, and never point it anywhere else.
+
+And **headless does not save on exit.** `pen-exec` sends `save()` for you; a
+hand-rolled `pen interactive` pipe that omits it reports every id it created and
+writes none of them.
 
 ### 9.1. Silent property drops
 

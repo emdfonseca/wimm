@@ -208,9 +208,10 @@ artifacts:
       the skill sets out (00 overview, 10 primary success, 20 alternative paths,
       30 state index, 40 theme and accessibility QA, 90 notes).
 
-      Pass an explicit in-repo `filePath` on every pencil call. Never rely on
-      whichever document the editor has open, and never Read or Grep a `.pen` -
-      they are encrypted.
+      Draw with `just pen-exec <journey.pen>`, which pipes the snippet into a
+      headless `pen interactive` that really opens the file. The pencil MCP
+      ignores its filePath and edits whatever Pen.app has open, so an MCP call
+      aimed at a journey silently edits the library instead.
 
       Bind the library before drawing: `just pen-import <journey.pen> ui
       packages/ui/design/product-ui.lib.pen`. It creates the journey file if it
@@ -230,17 +231,17 @@ artifacts:
       check the existing journey files and every archived canvas.md before
       taking one.
 
-      Mutate in one `execute` call and verify in a separate one - bounds,
+      Mutate in one `pen-exec` call and verify in a separate one - bounds,
       `ctx.problems` and screenshots all return the pre-layout frame inside the
-      call that changed it. Every number written into Contracts for
-      implementation must have been measured, not recalled.
+      call that changed it. To look at what you drew, `Export` the frame to PNG
+      and read the file. Every number written into Contracts for implementation
+      must have been measured, not recalled.
 
-      **A pencil edit is not on disk until it is saved, and the MCP cannot save.**
-      It mutates the document Pen.app has open; the file keeps its mtime and git
-      reports nothing. Run `just pen-save <file.pen>` when the drawing is done,
-      then confirm `git status` shows the file, then fill in Saved to disk. A
-      canvas.md claiming frames that exist only in an editor is worse than no
-      canvas.md.
+      `pen-exec` saves, and refuses to write anything if the snippet errored, so
+      a clean run is on disk. Confirm `git status` shows the file before filling
+      in Saved to disk - a canvas.md claiming frames nobody can see is worse than
+      no canvas.md. Only library work done through the MCP, on the document a
+      person has open, needs `just pen-save`.
 
       The `.pen` is a 1.5 MB encrypted blob: it does not diff, so no reviewer
       can see what changed by reading the commit. This document is the review

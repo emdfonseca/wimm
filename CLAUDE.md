@@ -7,4 +7,4 @@
 - Work that is about to be built goes through OpenSpec: `just openspec` runs the pinned CLI, `/opsx:propose` writes the proposal, spec deltas and canvas record under `openspec/`. A proposal says what is about to be built; an ADR records what was chosen and why. A change needing an ADR needs both.
 - Anything with a user-facing surface is drawn on the canvas before tasks are written, and the components it needs are built before the screen that instances them. See ADR 0008.
 - Never hand-edit `gen/` output; regenerate with `just gen`.
-- This repo is self-contained. Never read or write outside its root, whatever a tool reports as reachable or already open — including other repos on this machine. Pass an explicit in-repo `filePath` to every pencil MCP tool; never rely on the active editor.
+- This repo is self-contained. Never read or write outside its root, whatever a tool reports as reachable or already open — including other repos on this machine. Draw on the canvas with `just pen-exec <file.pen>`: the pencil MCP ignores its `filePath` and edits whatever Pen.app has open.

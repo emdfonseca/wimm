@@ -143,13 +143,19 @@ beyond `SetVariables`, and `Update(document, …)` reports `Node 'document' not
 found`. `just pen-import <journey.pen> <alias> <library.pen>` writes it, and
 creates the journey file if it does not exist.
 
-**Edits do not reach disk on their own.** The MCP mutates the document Pen.app
-has open; the file keeps its mtime and git reports nothing. Run
-`just pen-save <file.pen>` after a change and before reporting the work done.
-It pipes `save()` into the pen CLI's interactive shell — the shell has that
-command, the MCP does not — and fails if the file did not move. A save with no
-pending edits rewrites the same bytes, so an unnecessary one costs nothing and
-shows no diff.
+**Draw headless; the MCP cannot target a file.** `just pen-exec <file.pen>` pipes
+an execute snippet into `pen interactive --in X --out X`, which really opens X,
+resolves its imports, saves, and fails without writing if the snippet errored.
+That is how journeys are drawn.
+
+`mcp__pencil__execute` ignores its `filePath` and acts on whatever Pen.app has
+open — silently, so an edit aimed at a journey lands in the library. Use it only
+for the document a person is actually looking at. When you do, the edit stays in
+the app's memory until `just pen-save <file.pen>` flushes it; the file keeps its
+mtime and git reports nothing until then.
+
+Never headless-write a file the app is holding: the app's copy is stale and its
+next save wins.
 
 If the pencil MCP's own `get_guidelines` conflicts with this standard, pen.dev's documentation wins on **mechanics** (what the tool can actually do) and this standard wins on **organization** (how we choose to arrange work). Say out loud when the two disagree rather than silently picking one.
 

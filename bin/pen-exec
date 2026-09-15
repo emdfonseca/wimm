@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Run an execute snippet against a .pen file, headless: bin/pen-exec <file.pen> [snippet-file]
+# Reads the snippet from stdin when no file is given.
+#
+# Headless is the way journeys are drawn. `pen interactive --in X --out X` really
+# opens X, resolves its imports, and writes it on exit — no app, no person.
+#
+# The pencil MCP cannot do this. It ignores its filePath argument and acts on
+# whatever document Pen.app has open, silently, so an MCP edit aimed at a journey
+# lands in the library instead. Use the MCP only for the document a person is
+# looking at, and never on a file this script owns.
+set -euo pipefail
+
+file="${1:-}"
+if [ -z "$file" ]; then
+  echo "usage: bin/pen-exec <file.pen> [snippet-file]" >&2
+  exit 2
+fi
+if [ ! -f "$file" ]; then
+  echo "pen-exec: no such file: $file (create it with bin/pen-import)" >&2
+  exit 1
+fi
+
+snippet="$(cat "${2:-/dev/stdin}")"
+if [ -z "${snippet//[[:space:]]/}" ]; then
+  echo "pen-exec: empty snippet" >&2
+  exit 2
+fi
+
+out="$(printf '%s\n' "$snippet" \
+  | python3 -c 'import json,sys; print("execute({ input: " + json.dumps(sys.stdin.read()) + " })"); print("save()"); print("exit()")' \
+  | npm exec -y --package="@pen.dev/cli@0.3.7" -- pen interactive --in "$file" --out "$file" 2>&1)"
+
+printf '%s\n' "$out" | grep -vE '^[[:space:]]*$|Interactive Shell|Type tool calls|Type save\(\)|Goodbye|^\[INFO\]|^[[:space:]]+at |node_modules/@pen\.dev'
+
+if printf '%s' "$out" | grep -qiE 'failed to execute operation|Errors in the input code|Invalid properties'; then
+  echo "pen-exec: execute reported errors; nothing was written" >&2
+  exit 1
+fi
