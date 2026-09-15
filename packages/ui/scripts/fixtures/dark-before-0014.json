@@ -37,7 +37,7 @@
       "type": "color",
       "color": {
         "light": "#E6EEFE",
-        "dark": "#17263F"
+        "dark": "#0E1E3D"
       },
       "unit": null
     },
@@ -77,7 +77,7 @@
       "type": "color",
       "color": {
         "light": "#FFFFFF",
-        "dark": "#0A0B0C"
+        "dark": "#07120D"
       },
       "unit": null
     },
@@ -85,7 +85,7 @@
       "type": "color",
       "color": {
         "light": "#0C7A57",
-        "dark": "#38B48C"
+        "dark": "#5FE7B8"
       },
       "unit": null
     },
@@ -93,7 +93,7 @@
       "type": "color",
       "color": {
         "light": "#085C41",
-        "dark": "#32A882"
+        "dark": "#4CDCA9"
       },
       "unit": null
     },
@@ -101,7 +101,7 @@
       "type": "color",
       "color": {
         "light": "#0A6B4C",
-        "dark": "#3FBF95"
+        "dark": "#7DEDC7"
       },
       "unit": null
     },
@@ -109,7 +109,7 @@
       "type": "color",
       "color": {
         "light": "#FFFFFF",
-        "dark": "#1A1C1F"
+        "dark": "#1B3126"
       },
       "unit": null
     },
@@ -117,7 +117,7 @@
       "type": "color",
       "color": {
         "light": "#D6E3DA",
-        "dark": "#2A2E33"
+        "dark": "#2A4937"
       },
       "unit": null
     },
@@ -125,7 +125,7 @@
       "type": "color",
       "color": {
         "light": "#E7EFE9",
-        "dark": "#222529"
+        "dark": "#223D2F"
       },
       "unit": null
     },
@@ -141,7 +141,7 @@
       "type": "color",
       "color": {
         "light": "#101C16",
-        "dark": "#E9EBEE"
+        "dark": "#E6F0EA"
       },
       "unit": null
     },
@@ -157,7 +157,7 @@
       "type": "color",
       "color": {
         "light": "#D6E3DA",
-        "dark": "#2A2E33"
+        "dark": "#2A4937"
       },
       "unit": null
     },
@@ -165,7 +165,7 @@
       "type": "color",
       "color": {
         "light": "#E7EFE9",
-        "dark": "#0F1011"
+        "dark": "#0A1410"
       },
       "unit": null
     },
@@ -173,7 +173,7 @@
       "type": "color",
       "color": {
         "light": "#F4F7F5",
-        "dark": "#0A0B0C"
+        "dark": "#07120D"
       },
       "unit": null
     },
@@ -181,7 +181,7 @@
       "type": "color",
       "color": {
         "light": "#E7EFE9",
-        "dark": "#0F1011"
+        "dark": "#0A1410"
       },
       "unit": null
     },
@@ -189,7 +189,7 @@
       "type": "color",
       "color": {
         "light": "#FFFFFF",
-        "dark": "#1E2124"
+        "dark": "#1F3A2C"
       },
       "unit": null
     },
@@ -197,7 +197,7 @@
       "type": "color",
       "color": {
         "light": "#E0EAE3",
-        "dark": "#222529"
+        "dark": "#223D2F"
       },
       "unit": null
     },
@@ -205,7 +205,7 @@
       "type": "color",
       "color": {
         "light": "#101C16",
-        "dark": "#E9EBEE"
+        "dark": "#E6F0EA"
       },
       "unit": null
     },
@@ -213,7 +213,7 @@
       "type": "color",
       "color": {
         "light": "#E7EFE9",
-        "dark": "#1A1C1F"
+        "dark": "#1B3126"
       },
       "unit": null
     },
@@ -221,7 +221,7 @@
       "type": "color",
       "color": {
         "light": "#FFFFFF",
-        "dark": "#141618"
+        "dark": "#0F1D17"
       },
       "unit": null
     },
@@ -229,7 +229,7 @@
       "type": "color",
       "color": {
         "light": "#D7E2DA",
-        "dark": "#2E3338"
+        "dark": "#2C4C39"
       },
       "unit": null
     },
@@ -237,7 +237,7 @@
       "type": "color",
       "color": {
         "light": "#DFE8E2",
-        "dark": "#1A1C1F"
+        "dark": "#1B3126"
       },
       "unit": null
     },
@@ -245,7 +245,7 @@
       "type": "color",
       "color": {
         "light": "#8CA096",
-        "dark": "#4E555E"
+        "dark": "#4A7359"
       },
       "unit": null
     },
@@ -253,7 +253,7 @@
       "type": "color",
       "color": {
         "light": "#ABBCB2",
-        "dark": "#414750"
+        "dark": "#3E6349"
       },
       "unit": null
     },
@@ -261,7 +261,7 @@
       "type": "color",
       "color": {
         "light": "#E8EFEA",
-        "dark": "#1E2124"
+        "dark": "#1E3529"
       },
       "unit": null
     },
@@ -269,7 +269,7 @@
       "type": "color",
       "color": {
         "light": "#0C7A57",
-        "dark": "#38B48C"
+        "dark": "#5FE7B8"
       },
       "unit": null
     },
@@ -317,7 +317,7 @@
       "type": "color",
       "color": {
         "light": "#748A7E",
-        "dark": "#5C646D"
+        "dark": "#567763"
       },
       "unit": null
     },
@@ -325,7 +325,7 @@
       "type": "color",
       "color": {
         "light": "#5A7064",
-        "dark": "#6E767F"
+        "dark": "#688C74"
       },
       "unit": null
     },
@@ -341,7 +341,7 @@
       "type": "color",
       "color": {
         "light": "#FDF0EE",
-        "dark": "#3A1A16"
+        "dark": "#3A100C"
       },
       "unit": null
     },
@@ -357,7 +357,7 @@
       "type": "color",
       "color": {
         "light": "#E6EEFE",
-        "dark": "#17263F"
+        "dark": "#0E1E3D"
       },
       "unit": null
     },
@@ -373,7 +373,7 @@
       "type": "color",
       "color": {
         "light": "#E9F5EC",
-        "dark": "#12301B"
+        "dark": "#07270F"
       },
       "unit": null
     },
@@ -389,7 +389,7 @@
       "type": "color",
       "color": {
         "light": "#FBF6E8",
-        "dark": "#35280F"
+        "dark": "#38230A"
       },
       "unit": null
     },
@@ -397,7 +397,7 @@
       "type": "color",
       "color": {
         "light": "#98A9A0",
-        "dark": "#5E666E"
+        "dark": "#566B60"
       },
       "unit": null
     },
@@ -405,7 +405,7 @@
       "type": "color",
       "color": {
         "light": "#FFFFFF",
-        "dark": "#0A0B0C"
+        "dark": "#07120D"
       },
       "unit": null
     },
@@ -429,7 +429,7 @@
       "type": "color",
       "color": {
         "light": "#4F625A",
-        "dark": "#9BA3AB"
+        "dark": "#93AFA2"
       },
       "unit": null
     },
@@ -437,7 +437,7 @@
       "type": "color",
       "color": {
         "light": "#101C16",
-        "dark": "#E9EBEE"
+        "dark": "#E6F0EA"
       },
       "unit": null
     },
@@ -445,7 +445,7 @@
       "type": "color",
       "color": {
         "light": "#4F625A",
-        "dark": "#9BA3AB"
+        "dark": "#93AFA2"
       },
       "unit": null
     },
@@ -571,7 +571,7 @@
       "type": "color",
       "color": {
         "light": "#0E6E4F",
-        "dark": "#1A5540"
+        "dark": "#164534"
       },
       "unit": null
     },
@@ -579,7 +579,7 @@
       "type": "color",
       "color": {
         "light": "#084A34",
-        "dark": "#0C2E22"
+        "dark": "#07120D"
       },
       "unit": null
     },

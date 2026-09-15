@@ -22,6 +22,8 @@ lint:
 test:
     @python3 scripts/check-tokens.py
     @python3 scripts/test-tokens.py
+    @python3 scripts/check-palette.py
+    @python3 scripts/test-palette.py
 
 check: lint test
 

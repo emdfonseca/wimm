@@ -334,3 +334,66 @@ implementation note.
 under its header. `**Key**: value` is the one pattern the parser recognises: it is
 excluded from the requirement body when other text is present, and survives
 archive verbatim. Free prose would not.
+
+## 0014 · A neutral dark palette, and a check that can see it — Accepted
+
+**Dark is neutral. Green and blue are highlights on it, not the ground it is made
+of.** Surfaces run from `#0A0B0C` to `#2A2E33` as a near-black grey ramp, and the
+only saturated areas on a dark screen are the ones carrying meaning: the brand
+panel's gradient, the primary action, the selected row, links, amounts and charts.
+
+```text
+bg-canvas       #07120D → #0A0B0C
+bg-surface      #0F1D17 → #141618      1.10 → 1.30 against the canvas
+bg-subtle       #16281F → #1A1C1F
+bg-elevated     #16281F → #1E2124
+border-default  #1E3529 → #2E3338      1.27 → 1.62 against the surface
+text-primary    #E6F0EA → #E9EBEE
+text-secondary  #93AFA2 → #9BA3AB
+accent-subtle   #0E1E3D → #17263F      1.01 → 1.29 against the surface
+action-primary  #5FE7B8 → #38B48C      12.36 → 6.57 against the canvas
+gradient-to     #07120D → #0C2E22      1.00 → 3.05 against the canvas
+```
+
+Hover, active, secondary, disabled, control and feedback-background derivatives
+follow their families. `color-chart-1` follows the brand, so dark carries one
+green rather than two.
+
+**The brand gradient stays green.** It is the one branded surface in the product
+and the only large area of colour on a dark screen, which is what makes it read
+as branding rather than as decoration.
+
+**The inverted button stays, and it is not a preference.** It is tempting to give
+dark the same treatment as light — white label on a deep green fill — and it
+cannot be done. A green dark enough to carry white text at 4.5 tops out around
+`#12805C`, which measures 3.88 against the dark canvas: dimmer than light's own
+button at 4.95, on a page where dimmer means invisible. In dark the fill has to be
+light, and a light fill demands a dark label. The remedy for a button that shouts
+is a quieter mint, not a return to white on green.
+
+**A fill has a ceiling as well as a floor.** `color-action-primary` must clear 3.0
+against the canvas so it reads as an action, and must not exceed 9.5, beyond which
+it stops reading as a control and starts reading as a light source. This is the
+first threshold in the system with a maximum, and it is the one that would have
+caught what shipped.
+
+**Separation is satisfied by fill or by border, not by both.** A card in light is
+`#FFFFFF` on `#F4F7F5` — a ratio of 1.08 — and is perfectly legible because its
+border does the work. The same rule applied to dark, where luminance does the
+work, would fail light for doing it the other way round. Each separation rule
+names the candidates that could carry it and requires that one of them does.
+
+**`packages/ui/scripts/check-palette.py` asserts all of this, in every theme the
+document declares**, and runs inside `just check packages/ui`: eighteen contrast
+pairs, seven separation rules and one loudness ceiling, 52 relationships across
+light and dark.
+
+**Its fixture is the palette that shipped.**
+`scripts/fixtures/dark-before-0014.json` holds the dark values as they were, and
+`scripts/test-palette.py` asserts they are rejected, alongside five constructed
+failures. Checking that the current document passes proves nothing about the
+checker, because the current document is valid.
+
+This supersedes the dark half of ADR 0006's palette. The light values, the
+fill-only / text-only rule, and the reasoning about hue separation under
+deuteranopia are unchanged.
