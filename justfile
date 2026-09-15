@@ -48,3 +48,7 @@ openspec *args:
 # Flush a .pen document from the running Pen.app to disk.
 pen-save file:
     @bin/pen-save {{file}}
+
+# Bind a .pen library into a journey file. Refs then read <alias>:<nodeId>.
+pen-import journey alias library:
+    @bin/pen-import {{journey}} {{alias}} {{library}}

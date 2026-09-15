@@ -221,3 +221,25 @@ reason is a defect in the package rather than a preference.
 
 This supersedes the save consequence in ADR 0008. The canvas artifact itself is
 unchanged.
+
+## 0010 · Journeys import the library — Accepted
+
+A journey file imports the library. `just pen-import <journey.pen> <alias>
+<library.pen>` writes the `imports` key and creates the journey file if it does
+not exist.
+
+```text
+imports     { "ui": "product-ui.lib.pen" }
+components  ref: "ui:W2gOKx"
+variables   "$ui:color-bg-canvas"
+```
+
+The alias qualifies everything. A bare id is a non-existent node, and a slash is
+rejected — `ref` may not contain one.
+
+**It writes JSON directly, because nothing else can.** `execute` has no
+document-level mutator beyond `SetVariables`, and `Update(document, …)` reports
+`Node 'document' not found`. A `.pen` is pretty-printed JSON, so the key is three
+lines; the command exists to make the edit checked and idempotent rather than
+hand-made. It refuses an alias already bound elsewhere, a library outside the
+journey's directory, and a non-kebab alias.

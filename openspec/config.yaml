@@ -58,7 +58,8 @@ context: |
 
 rules:
   canvas:
-    - Journey flow goes in a journey .pen; product-ui.lib.pen holds reusable mechanics only.
+    - Journey flow goes in a journey .pen that imports the library; product-ui.lib.pen holds reusable mechanics only.
+    - Address the library through its alias: ref "ui:<id>", tokens "$ui:<name>". A bare id does not resolve.
     - Record the frame IDs. The .pen does not diff, so canvas.md is the only thing a reviewer can read.
     - Do not claim a frame exists until the file has changed on disk. Run `just pen-save <file.pen>`; the MCP cannot save.
   tasks:

@@ -117,7 +117,31 @@ configuration of it, not a new component. Build a preset that wraps an instance.
 
 ## Working with .pen files
 
-`.pen` files are encrypted. Use the pencil MCP tools only — never Read or Grep them. Call `get_editor_state(include_schema: true)` before any other pencil tool if the schema is not already in context.
+A `.pen` file is pretty-printed JSON. Use the pencil MCP tools to read and edit
+the design — a whole-document Read is thousands of lines and tells you less than
+one `Get` visitor — but the top-level keys (`version`, `imports`, `themes`,
+`variables`) are ordinary JSON and are edited as such. Call
+`get_editor_state(include_schema: true)` before any other pencil tool if the
+schema is not already in context.
+
+**A journey imports the library; it never copies it.** `imports` maps an alias to
+a relative path, and everything in the library is then addressed through it:
+
+```text
+imports     { "ui": "product-ui.lib.pen" }      ← set by `just pen-import`
+components  ref: "ui:W2gOKx"
+variables   "$ui:color-bg-canvas"
+```
+
+The colon is load-bearing. A bare `W2gOKx` is a non-existent node and `ui/W2gOKx`
+is rejected outright — `ref` may not contain a slash. Imported components resolve
+their own tokens against the library's variables, but a node **you** draw in the
+journey file must alias-qualify every token or it silently falls back to black.
+
+No MCP or CLI call can write `imports`: `execute` has no document-level mutator
+beyond `SetVariables`, and `Update(document, …)` reports `Node 'document' not
+found`. `just pen-import <journey.pen> <alias> <library.pen>` writes it, and
+creates the journey file if it does not exist.
 
 **Edits do not reach disk on their own.** The MCP mutates the document Pen.app
 has open; the file keeps its mtime and git reports nothing. Run

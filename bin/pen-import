@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Bind a .pen library into a journey file: bin/pen-import <journey.pen> <alias> <library.pen>
+#
+# `imports` is a document-level key the format supports and the app honours, but
+# no MCP or CLI call can write it — execute has no document-level mutator beyond
+# SetVariables, and Update(document, …) reports "Node 'document' not found". A
+# .pen is plain JSON, so this writes the key directly.
+#
+# Once bound, the journey addresses the library through the alias:
+#   components  ref: "<alias>:<nodeId>"
+#   variables   "$<alias>:<variable-name>"
+# A bare id or a slash does not resolve.
+set -euo pipefail
+
+journey="${1:-}"; alias="${2:-}"; library="${3:-}"
+if [ -z "$journey" ] || [ -z "$alias" ] || [ -z "$library" ]; then
+  echo "usage: bin/pen-import <journey.pen> <alias> <library.pen>" >&2
+  exit 2
+fi
+
+python3 - "$journey" "$alias" "$library" <<'PY'
+import json, os, re, sys
+
+journey, alias, library = sys.argv[1:4]
+
+if not re.fullmatch(r"[a-z][a-z0-9-]*", alias):
+    sys.exit(f"pen-import: alias must be kebab-case: {alias!r}")
+if not os.path.isfile(library):
+    sys.exit(f"pen-import: no such library: {library}")
+
+rel = os.path.relpath(os.path.abspath(library), os.path.dirname(os.path.abspath(journey)))
+if rel.startswith(os.pardir + os.sep):
+    sys.exit(f"pen-import: library must sit beside the journey, got {rel}")
+
+if os.path.exists(journey):
+    doc = json.load(open(journey))
+    created = False
+else:
+    doc = {"version": "2.17", "children": []}
+    created = True
+
+imports = doc.setdefault("imports", {})
+bound = imports.get(alias)
+if bound not in (None, rel):
+    sys.exit(f"pen-import: alias {alias!r} already bound to {bound!r}")
+if bound == rel and not created:
+    print(f"pen-import: {journey} already imports {rel} as {alias}")
+    sys.exit(0)
+
+imports[alias] = rel
+with open(journey, "w") as f:
+    json.dump(doc, f, indent=2)
+    f.write("\n")
+print(f"pen-import: {'created' if created else 'updated'} {journey}: {alias} -> {rel}")
+PY

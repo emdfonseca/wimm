@@ -212,6 +212,15 @@ artifacts:
       whichever document the editor has open, and never Read or Grep a `.pen` -
       they are encrypted.
 
+      Bind the library before drawing: `just pen-import <journey.pen> ui
+      packages/ui/design/product-ui.lib.pen`. It creates the journey file if it
+      does not exist and writes the `imports` key, which no MCP or CLI call can
+      write. Everything in the library is then addressed through the alias -
+      `ref: "ui:W2gOKx"` for a component, `"$ui:color-bg-canvas"` for a token.
+      The colon is load-bearing: a bare id does not resolve and a slash is
+      rejected. A node you draw yourself must alias-qualify every token or it
+      falls back to black without complaining.
+
       Compose from library components. Instance what exists; do not redraw a
       control's chrome. Anything the journey needs that the library lacks goes
       under Components missing and becomes a task - build it in the library
