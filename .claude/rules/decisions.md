@@ -303,3 +303,29 @@ missing or the requirement is.
 
 **It is conditional**, like design and canvas. Tooling, refactors and internal
 migrations record a one-line skip rather than inventing a user.
+
+## 0013 · Acceptance criteria are scenarios — Accepted
+
+The spec's scenarios are the acceptance criteria. There is no second list.
+
+The line between the two artifacts is **lifetime**, not audience:
+
+```text
+openspec/specs/<cap>/spec.md   living. Accumulates across changes.
+stories.md                     change-scoped. Archives with the change.
+```
+
+A requirement is a persistent behaviour contract; a story is a unit of work.
+INVEST asks whether the work item is Independent, Estimable, Small — questions
+with no meaning about a permanent capability.
+
+So `stories.md` keeps only what a spec cannot hold: the actor, the value, the
+INVEST answer, and `Satisfied by`. The user-testable bar moves onto the scenarios
+themselves — a scenario for a user-facing capability must be observable by a
+person, and one naming a function, table, endpoint or component is an
+implementation note.
+
+**The link is a metadata line.** Every requirement carries `**Story**: S<n>`
+under its header. `**Key**: value` is the one pattern the parser recognises: it is
+excluded from the requirement body when other text is present, and survives
+archive verbatim. Free prose would not.

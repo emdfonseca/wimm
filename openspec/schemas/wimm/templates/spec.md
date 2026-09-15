@@ -4,8 +4,9 @@
 ## ADDED Requirements
 
 ### Requirement: <!-- requirement name -->
-<!-- requirement text -->
+**Story**: <!-- S1, matching stories.md. Repeat this line in a MODIFIED block or it is silently lost. -->
+<!-- requirement text, using SHALL or MUST -->
 
 #### Scenario: <!-- scenario name -->
 - **WHEN** <!-- condition -->
-- **THEN** <!-- expected outcome -->
+- **THEN** <!-- expected outcome, observable by a person for a user-facing capability -->

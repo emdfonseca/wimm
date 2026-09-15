@@ -59,9 +59,13 @@ context: |
 rules:
   stories:
     - Name the user by role. "As a developer" or "as the user" means the story has no real actor.
-    - Acceptance criteria are checked by using the product. A criterion naming a function, table, endpoint or component is an implementation note.
-    - Cover the unhappy path the user can actually reach, not only the happy one.
+    - No acceptance criteria here. The spec's scenarios are the criteria; name the requirements under Satisfied by.
     - Record the INVEST answer honestly; a failed letter with a stated reason beats six unconsidered ticks.
+  specs:
+    - The scenarios are the acceptance criteria. A scenario for a user-facing capability is observable by a person, not only by a test.
+    - A scenario naming a function, table, endpoint or component is an implementation note; it belongs in design or tasks.
+    - Cover the unhappy path the user can actually reach, not only the happy one.
+    - Every requirement carries `**Story**: S<n>`. Repeat it in a MODIFIED block — a dropped metadata line is not caught.
   canvas:
     - Journey flow goes in a journey .pen that imports the library; product-ui.lib.pen holds reusable mechanics only.
     - Address the library through its alias: ref "ui:<id>", tokens "$ui:<name>". A bare id does not resolve.

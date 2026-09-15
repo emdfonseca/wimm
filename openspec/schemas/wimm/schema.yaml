@@ -68,15 +68,12 @@ artifacts:
       is. If the change serves more than one kind of person, that is usually
       more than one story.
 
-      **Acceptance criteria are user-testable.** Someone with the product in
-      front of them checks each one without reading code. A criterion that names
-      a function, a table, an endpoint, a component or a token is not a
-      criterion - it is an implementation note, and it belongs in design.md or
-      tasks.md. Write what the person sees, does, or is told.
-
-      Cover the unhappy path the user can actually reach: the empty case, the
-      one they get wrong, the one that fails on them. A story with only the
-      happy path ships a screen that breaks the first time reality touches it.
+      **A story states who and why; the spec states what.** Do not write
+      acceptance criteria here. A scenario in the spec is an acceptance
+      criterion, and writing the behaviour in both places gives you two versions
+      of it that drift - the one that drifts is always the one nobody runs.
+      Under Satisfied by, name the requirements that deliver the story once the
+      specs exist.
 
       **Apply INVEST honestly and record the answer.** The six lines are a
       self-check, not a ritual:
@@ -86,7 +83,7 @@ artifacts:
       - Valuable - can you name what the user can now do that they could not?
       - Estimable - is it understood well enough to size?
       - Small - one story, or several wearing one title?
-      - Testable - could someone else confirm it without asking you what you meant?
+      - Testable - do the requirements under Satisfied by actually prove it?
 
       A story that fails one of these is not automatically wrong. Say which,
       say why it is accepted, and move on. A page of six green ticks that nobody
@@ -94,8 +91,9 @@ artifacts:
       screens; splitting them would ship a half-usable ledger".
 
       **Each story names its capabilities**, matching the proposal's Capabilities
-      section. Every requirement written in the specs traces back to a story
-      here; if one does not, either the story is missing or the requirement is.
+      section. Every requirement written in the specs carries a `**Story**:` line
+      pointing back here; if one does not, either the story is missing or the
+      requirement is.
 
       Number stories S1, S2, ... The canvas and tasks refer to them by number.
     requires:
@@ -125,12 +123,26 @@ artifacts:
       Quick test: if the implementation can change without changing externally
       visible behavior, it likely does not belong in the spec.
 
-      Every requirement traces back to a story in stories.md. If one does not,
-      either the story is missing or the requirement is - resolve that before
-      writing it. Keep the levels apart: a story's acceptance criteria say what
-      a person can do and are checked by using the product; a scenario here is
-      normative system behaviour and is checked by a test. Do not restate one as
-      the other.
+      **The scenarios here are the acceptance criteria.** There is no second list
+      anywhere; stories.md carries the user and the value, and this file carries
+      the behaviour that proves it.
+
+      So a scenario for a user-facing capability must be observable by a person,
+      not only by a test. Write what someone sees, does, or is told. A scenario
+      naming a function, a table, an endpoint, a component or a token is an
+      implementation note and belongs in design.md or tasks.md.
+
+      Cover the unhappy path the user can actually reach: the empty case, the one
+      they get wrong, the one that fails on them. Requirements with only a happy
+      path ship a screen that breaks the first time reality touches it.
+
+      **Every requirement carries a `**Story**: S<n>` line** directly under its
+      header, matching stories.md. If a requirement has no story, either the
+      story is missing or the requirement is - resolve that before writing it.
+
+      **Repeat that line when writing a MODIFIED requirement.** A MODIFIED block
+      replaces the whole existing block. A dropped scenario is caught as an
+      error; a dropped `**Story**:` line is not caught at all.
 
       Create one spec file per capability listed in the proposal's Capabilities section.
       `<capability-path>` is the spec directory relative to `specs/` (for example,
