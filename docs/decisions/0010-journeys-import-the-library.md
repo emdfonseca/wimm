@@ -36,7 +36,9 @@ document-level mutator beyond `SetVariables`, and `Update(document, …)` report
 `Node 'document' not found`. A `.pen` is pretty-printed JSON, so the key is three
 lines; the command exists to make the edit checked and idempotent rather than
 hand-made. It refuses an alias already bound elsewhere, a library outside the
-journey's directory, and a non-kebab alias.
+repository, and a non-kebab alias. The library does not sit beside the journey:
+journeys live under `apps/web/design/` and the library under
+`packages/ui/design/`, so the written path traverses upward, which pen resolves.
 
 ## Consequences
 

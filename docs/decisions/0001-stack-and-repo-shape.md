@@ -13,8 +13,10 @@ exists so nothing is retrofitted later.
 ## Decision
 
 - Go for services and workers under `apps/`, importable code under `packages/`.
-- SvelteKit with Svelte 5 for the UI, in `packages/ui`. Python only where a
-  library forces it.
+- SvelteKit with Svelte 5 for the UI. The app is deployable, so it lives under
+  `apps/` like any other service; `packages/ui` is the design system it imports —
+  the token contract and the Svelte components screens instance. Python only
+  where a library forces it.
 - Connect over protobuf between our own callers; REST with OpenAPI 3.1 only for
   third parties.
 - Postgres with goose migrations owned by the service that owns the database.

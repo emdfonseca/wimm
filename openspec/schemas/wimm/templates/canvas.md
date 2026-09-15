@@ -4,11 +4,11 @@
 
 ## File
 
-<!-- Path to the journey .pen, e.g. packages/ui/design/categorise.pen. Never product-ui.lib.pen: that file holds reusable mechanics only -->
+<!-- Path to the journey .pen, e.g. apps/web/design/categorise.pen. Never packages/ui/design/product-ui.lib.pen: that file holds reusable mechanics only -->
 
 ## Saved to disk
 
-<!-- Run `just pen-save <file.pen>`, then confirm git sees the file. State the commit-ready mtime or say NOT SAVED -->
+<!-- `just pen-exec` saves on a clean run; `just pen-save` is only for MCP edits to the document a person has open. Confirm git sees the file, then state the mtime or say NOT SAVED -->
 
 ## Frames
 
@@ -28,7 +28,7 @@
 
 ## Components missing
 
-<!-- Anything the journey needs that the library does not have. Each becomes a task. Name what it is a configuration of, if it is one -->
+<!-- Anything the journey needs that the library does not have. Each becomes a task. Name what it is a configuration of, if it is one. Each entry MUST name the existing components you opened and read, and why each cannot carry this - searching by the data it holds, not by the shape you had in mind. Without that line it is a guess, and the usual result is two components owning one job. -->
 
 ## States drawn
 

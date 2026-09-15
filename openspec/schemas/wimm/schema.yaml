@@ -235,6 +235,7 @@ artifacts:
 
       Sections:
       - **Context**: Only the current state and constraints needed to explain the approach. Reference the proposal for motivation instead of restating it (e.g., "See proposal.md - Why").
+      - **Language**: The nouns this change introduces or settles. One line each: the word, what it names, and what it is never called. Omit the section only if the change introduces no new domain vocabulary.
       - **Goals / Non-Goals**: What this design achieves and explicitly excludes. Don't restate the proposal's scope - add only design-level boundaries.
       - **Decisions**: Key technical choices with rationale (why X over Y?). Include alternatives considered for each decision.
       - **Risks / Trade-offs**: Known limitations, things that could go wrong. Format: [Risk] → Mitigation
@@ -250,6 +251,14 @@ artifacts:
       The proposal covers why and what; design covers how. Reference the
       proposal for motivation and, once written, the specs for requirements -
       if a section would only restate them, point to them instead.
+
+      **The Language section is binding, not descriptive.** The specs, the
+      interface copy and the code identifiers use the same nouns for the same
+      things. A design that names a thing here and a screen that calls it
+      something else have already forked the model, and nothing downstream
+      catches it. Where the code wants a different word, that is a signal the
+      model is wrong rather than that the code needs a synonym - say so here and
+      pick one word.
 
       Good design docs explain the "why" behind technical decisions.
     requires:
@@ -275,10 +284,10 @@ artifacts:
       binding, not background.
 
       Two files, two owners. Journey flow - routes, content, decisions, states -
-      goes in a journey `.pen` under `packages/ui/design/`, one file per journey
-      family or product area. Reusable mechanics go in
-      `packages/ui/design/product-ui.lib.pen`. Never add journey frames to the
-      library. If the journey file does not exist yet, create it with the zoning
+      goes in a journey `.pen` under `apps/web/design/`, one file per journey
+      family or product area - a journey is the app's flow and the app owns it.
+      Reusable mechanics go in `packages/ui/design/product-ui.lib.pen`. Never add
+      journey frames to the library. If the journey file does not exist yet, create it with the zoning
       the skill sets out (00 overview, 10 primary success, 20 alternative paths,
       30 state index, 40 theme and accessibility QA, 90 notes).
 
@@ -287,8 +296,8 @@ artifacts:
       ignores its filePath and edits whatever Pen.app has open, so an MCP call
       aimed at a journey silently edits the library instead.
 
-      Bind the library before drawing: `just pen-import <journey.pen> ui
-      packages/ui/design/product-ui.lib.pen`. It creates the journey file if it
+      Bind the library before drawing: `just pen-import apps/web/design/<journey>.pen
+      ui packages/ui/design/product-ui.lib.pen`. It creates the journey file if it
       does not exist and writes the `imports` key, which no MCP or CLI call can
       write. Everything in the library is then addressed through the alias -
       `ref: "ui:W2gOKx"` for a component, `"$ui:color-bg-canvas"` for a token.
@@ -296,10 +305,42 @@ artifacts:
       rejected. A node you draw yourself must alias-qualify every token or it
       falls back to black without complaining.
 
+      **Interface copy carries no em dashes and no marketing voice.** No em or en
+      dash anywhere a person reads in the product; use a full stop or a comma and
+      write the shorter sentence. No "seamless", "effortless", "elevate", "unlock
+      the power", "dive in", "robust". A screen reads like a person wrote it for
+      one other person, or it reads like filler. This applies to the drawn copy
+      too: a canvas is where the words are decided, and copy nobody edited on the
+      canvas is copy nobody edits later.
+
+      **Draw what exists now, never what is planned.** The canvas describes the
+      product as it will be after this change ships and nothing further. A shell
+      carrying navigation to screens that do not exist, an empty state promising a
+      feature, a tab strip for one tab - each draws a product nobody agreed to
+      build, and someone has to unbuild it later having assumed the drawing was a
+      decision. The pull is strongest where the library already has a richer
+      component, because instancing the full app shell is less work than drawing
+      the one header that exists today. Take the extra work: if the journey needs
+      less than the library offers, it needs a smaller component, and that is a
+      finding worth recording under Components missing.
+
       Compose from library components. Instance what exists; do not redraw a
       control's chrome. Anything the journey needs that the library lacks goes
       under Components missing and becomes a task - build it in the library
       during apply, not here.
+
+      **Before declaring anything missing, find where the library already puts
+      that content.** Search by the data, not by the shape you have in mind: ask
+      "where does this design system show a signed-in person?", not "is there a
+      top bar?". A component list gives names and ids and tells you nothing about
+      what a component contains, so open the two or three that could plausibly own
+      it and read their children. This is how a duplicate gets built: you picture
+      a shape, fail to find that shape, and add it - while the system was holding
+      the same content somewhere else, and now two components own one job.
+
+      Every entry under Components missing names the existing components that were
+      opened and read, and why each cannot carry it. An entry without that line is
+      not a finding, it is a guess.
 
       Draw every state the stories' acceptance criteria name, including the
       unhappy ones. A criterion nobody can see on the canvas is a screen that

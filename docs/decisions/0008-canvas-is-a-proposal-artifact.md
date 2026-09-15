@@ -28,8 +28,9 @@ proposal → specs → design → canvas → tasks
 ```
 
 **`canvas` draws the journey and records what was drawn.** The drawing goes in a
-journey `.pen` under `packages/ui/design/`; `product-ui.lib.pen` keeps holding
-reusable mechanics only. `canvas.md` records the journey ID, the frame IDs, the
+journey `.pen` under `apps/web/design/`, because a journey is the app's flow and
+the app owns it; `packages/ui/design/product-ui.lib.pen` keeps holding reusable
+mechanics only. `canvas.md` records the journey ID, the frame IDs, the
 task surfaces, the library components instanced, the components the library is
 missing, the states drawn, and the behavioural contracts the canvas cannot
 execute.

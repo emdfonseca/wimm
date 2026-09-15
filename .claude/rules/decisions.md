@@ -5,8 +5,10 @@ Generated from `docs/decisions/` by `just adr-index`. Never edit; write an ADR.
 ## 0001 · Stack and repo shape — Accepted
 
 - Go for services and workers under `apps/`, importable code under `packages/`.
-- SvelteKit with Svelte 5 for the UI, in `packages/ui`. Python only where a
-  library forces it.
+- SvelteKit with Svelte 5 for the UI. The app is deployable, so it lives under
+  `apps/` like any other service; `packages/ui` is the design system it imports —
+  the token contract and the Svelte components screens instance. Python only
+  where a library forces it.
 - Connect over protobuf between our own callers; REST with OpenAPI 3.1 only for
   third parties.
 - Postgres with goose migrations owned by the service that owns the database.
@@ -178,8 +180,9 @@ proposal → specs → design → canvas → tasks
 ```
 
 **`canvas` draws the journey and records what was drawn.** The drawing goes in a
-journey `.pen` under `packages/ui/design/`; `product-ui.lib.pen` keeps holding
-reusable mechanics only. `canvas.md` records the journey ID, the frame IDs, the
+journey `.pen` under `apps/web/design/`, because a journey is the app's flow and
+the app owns it; `packages/ui/design/product-ui.lib.pen` keeps holding reusable
+mechanics only. `canvas.md` records the journey ID, the frame IDs, the
 task surfaces, the library components instanced, the components the library is
 missing, the states drawn, and the behavioural contracts the canvas cannot
 execute.
@@ -242,7 +245,9 @@ document-level mutator beyond `SetVariables`, and `Update(document, …)` report
 `Node 'document' not found`. A `.pen` is pretty-printed JSON, so the key is three
 lines; the command exists to make the edit checked and idempotent rather than
 hand-made. It refuses an alias already bound elsewhere, a library outside the
-journey's directory, and a non-kebab alias.
+repository, and a non-kebab alias. The library does not sit beside the journey:
+journeys live under `apps/web/design/` and the library under
+`packages/ui/design/`, so the written path traverses upward, which pen resolves.
 
 ## 0011 · Draw headless, not through the MCP — Accepted
 
