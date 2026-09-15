@@ -1,5 +1,30 @@
 schema: spec-driven
 
+context: |
+  wimm is a personal-finance ledger. Go services under apps/, importable Go
+  packages under packages/. The UI is SvelteKit with Svelte 5 in packages/ui.
+  Python only where a library forces it.
+
+  Connect over protobuf between our own callers. REST with OpenAPI 3.1 only for
+  third parties. Postgres with goose migrations, owned by the service that owns
+  the database. OpenTelemetry over OTLP for traces, metrics and logs; services
+  never know which backend receives them.
+
+  devbox owns the toolchain and just owns every task entry point. `just check
+  <dir>` is the only test, lint and typecheck command — if it fails, the work is
+  not done. CI runs `devbox run -- just ci` and nothing else. Files under gen/
+  are regenerated with `just gen`, never hand-edited.
+
+  Decisions already made live in docs/decisions/NNNN-title.md and are indexed in
+  .claude/rules/decisions.md. Read them before proposing something they already
+  settle. A proposal and an ADR are different artifacts: the proposal says what
+  is about to be built, the ADR records what was chosen and why. A change that
+  adds a dependency, a service, a public contract or a schema needs an ADR in
+  the same commit as the code.
+
+  Repo standards are Claude skills in .claude/skills/; language conventions are
+  in .claude/rules/. Both are binding on generated work.
+
 # Project context (optional)
 # This is shown to AI when creating artifacts.
 # Add your tech stack, conventions, style guides, domain knowledge, etc.
