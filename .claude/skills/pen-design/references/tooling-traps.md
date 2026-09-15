@@ -55,6 +55,19 @@ failures and, worse, clean passes over broken layout.
 A screenshot taken in step 1 will show blank cards and missing rows that are
 present and correct. Do not chase them.
 
+**And nothing you did is on disk until something saves it.** The MCP writes to
+the document Pen.app has open. The file keeps its mtime, `git status` stays
+empty, and every read — MCP or CLI — agrees with you, because they are all
+reading the same unsaved document. There is no signal anywhere that the work
+is not persisted.
+
+```text
+4. just pen-save <file.pen>  — flush, then confirm git sees it
+```
+
+`save()` is a command of the pen CLI's interactive shell, not an MCP tool, which
+is why the step needs a shell at all.
+
 ### 9.3. Visitor and query traps
 
 | Trap | What happens |

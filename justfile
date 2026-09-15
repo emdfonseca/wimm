@@ -44,3 +44,7 @@ ci: adr-index-check (all "check")
 # OpenSpec CLI. The pin lives in bin/openspec, which devbox puts on PATH.
 openspec *args:
     @bin/openspec {{args}}
+
+# Flush a .pen document from the running Pen.app to disk.
+pen-save file:
+    @bin/pen-save {{file}}

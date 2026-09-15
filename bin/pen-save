@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Flush a .pen document from the running Pen.app to disk.
+#
+# The pencil MCP mutates the document the app has open; nothing reaches the file
+# until something calls save(). That is the interactive shell's command, not an
+# MCP tool, so this shim pipes it in. Without this a canvas edit is invisible to
+# git and cannot be committed.
+#
+# Pinned like bin/openspec, but via npm rather than pnpm: @pen.dev/cli imports
+# css-tree without declaring it, which pnpm's strict linking refuses to resolve.
+set -euo pipefail
+
+version="0.3.7"
+
+file="${1:-}"
+if [ -z "$file" ]; then
+  echo "usage: bin/pen-save <file.pen>" >&2
+  exit 2
+fi
+if [ ! -f "$file" ]; then
+  echo "pen-save: no such file: $file" >&2
+  exit 1
+fi
+
+abs="$(cd "$(dirname "$file")" && pwd)/$(basename "$file")"
+
+# devbox puts GNU coreutils ahead of the BSD stat macOS ships.
+mtime() { stat -f %m "$1" 2>/dev/null || stat -c %Y "$1"; }
+
+before="$(mtime "$abs")"
+
+printf 'save()\nexit()\n' \
+  | npm exec -y --package="@pen.dev/cli@${version}" -- pen interactive --app desktop --in "$abs" \
+  | grep -iE 'saved|error' || true
+
+after="$(mtime "$abs")"
+if [ "$before" = "$after" ]; then
+  echo "pen-save: $file was not written. Is Pen.app running with this file open?" >&2
+  exit 1
+fi
+echo "pen-save: wrote $file"

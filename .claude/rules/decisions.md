@@ -193,3 +193,31 @@ for a conditional artifact.
 missing becomes one task covering both the origin in `product-ui.lib.pen` and the
 Svelte component in `packages/ui/src`. The screen composes instances and cannot
 share a task with the components it instances.
+
+## 0009 · The canvas saves without a person — Accepted
+
+`bin/pen-save <file.pen>` pipes `save()` into the pinned CLI attached to the
+running app, and `just pen-save <file.pen>` is the shape everything uses.
+
+```text
+1. execute   — mutate through the MCP
+2. execute   — verify in a separate call
+3. pen-save  — flush, and confirm git sees the file
+```
+
+The MCP stays the way edits are made. It is precise and deterministic: the
+alternative the CLI offers is `pen --in … --out … --prompt …`, which runs a
+second AI agent against the file and is neither. The CLI is used for the one
+thing the MCP cannot do.
+
+**The shim verifies rather than trusts.** It records the file's mtime, runs the
+save, and fails if the file did not move — so "Is Pen.app running?" surfaces as
+an error rather than as a canvas.md describing frames nobody can see.
+
+**It runs through npm, not pnpm.** `@pen.dev/cli` imports `css-tree` without
+declaring it, which resolves under npm's flat layout and fails under pnpm's
+strict linking. This is the one place in the repo that reaches for npm, and the
+reason is a defect in the package rather than a preference.
+
+This supersedes the save consequence in ADR 0008. The canvas artifact itself is
+unchanged.

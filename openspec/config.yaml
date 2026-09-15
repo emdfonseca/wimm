@@ -60,7 +60,7 @@ rules:
   canvas:
     - Journey flow goes in a journey .pen; product-ui.lib.pen holds reusable mechanics only.
     - Record the frame IDs. The .pen does not diff, so canvas.md is the only thing a reviewer can read.
-    - Do not claim a frame exists until the file has changed on disk. A pencil edit lives in the open document until a person saves.
+    - Do not claim a frame exists until the file has changed on disk. Run `just pen-save <file.pen>`; the MCP cannot save.
   tasks:
     - A missing component is built in packages/ui before the screen that uses it, never in the same task.
     - Every task verifies with `just check <dir>` or a named observable result.

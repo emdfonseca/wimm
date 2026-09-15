@@ -226,11 +226,12 @@ artifacts:
       call that changed it. Every number written into Contracts for
       implementation must have been measured, not recalled.
 
-      **A pencil edit is not on disk until a person saves it.** The MCP mutates
-      the open document; the file keeps its old mtime and git reports nothing.
-      Ask the user to save in pen.dev, confirm the file changed on disk, and
-      only then fill in Saved to disk. A canvas.md claiming frames that exist
-      only in someone's editor is worse than no canvas.md.
+      **A pencil edit is not on disk until it is saved, and the MCP cannot save.**
+      It mutates the document Pen.app has open; the file keeps its mtime and git
+      reports nothing. Run `just pen-save <file.pen>` when the drawing is done,
+      then confirm `git status` shows the file, then fill in Saved to disk. A
+      canvas.md claiming frames that exist only in an editor is worse than no
+      canvas.md.
 
       The `.pen` is a 1.5 MB encrypted blob: it does not diff, so no reviewer
       can see what changed by reading the commit. This document is the review

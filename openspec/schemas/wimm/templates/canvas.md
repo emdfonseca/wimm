@@ -8,7 +8,7 @@
 
 ## Saved to disk
 
-<!-- Pencil MCP edits live in the open document until a person saves. State the commit-ready mtime or say NOT SAVED -->
+<!-- Run `just pen-save <file.pen>`, then confirm git sees the file. State the commit-ready mtime or say NOT SAVED -->
 
 ## Frames
 

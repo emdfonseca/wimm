@@ -119,6 +119,14 @@ configuration of it, not a new component. Build a preset that wraps an instance.
 
 `.pen` files are encrypted. Use the pencil MCP tools only — never Read or Grep them. Call `get_editor_state(include_schema: true)` before any other pencil tool if the schema is not already in context.
 
+**Edits do not reach disk on their own.** The MCP mutates the document Pen.app
+has open; the file keeps its mtime and git reports nothing. Run
+`just pen-save <file.pen>` after a change and before reporting the work done.
+It pipes `save()` into the pen CLI's interactive shell — the shell has that
+command, the MCP does not — and fails if the file did not move. A save with no
+pending edits rewrites the same bytes, so an unnecessary one costs nothing and
+shows no diff.
+
 If the pencil MCP's own `get_guidelines` conflicts with this standard, pen.dev's documentation wins on **mechanics** (what the tool can actually do) and this standard wins on **organization** (how we choose to arrange work). Say out loud when the two disagree rather than silently picking one.
 
 The canvas represents intent; it does not execute it. Arrows, state frames, and annotations establish no routing, focus management, or announcements. Anything behavioral has to be written as a contract for implementation and verified in code.
