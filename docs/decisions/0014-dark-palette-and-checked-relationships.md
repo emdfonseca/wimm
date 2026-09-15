@@ -33,22 +33,26 @@ checked either.
 
 ## Decision
 
-**Dark is neutral. Green and blue are highlights on it, not the ground it is made
-of.** Surfaces run from `#0A0B0C` to `#2A2E33` as a near-black grey ramp, and the
+**Dark is a cool near-black. Green and blue are highlights on it, not the ground
+it is made of.** Surfaces run from `#0A0C11` to `#2A3240` as a slate ramp, and the
 only saturated areas on a dark screen are the ones carrying meaning: the brand
 panel's gradient, the primary action, the selected row, links, amounts and charts.
 
+The ramp is slightly blue rather than neutral grey, because a neutral one reads as
+the absence of a colour decision rather than as a colour. The cast is far below
+the chroma of anything it carries, so nothing on it competes with the accent.
+
 ```text
-bg-canvas       #07120D → #0A0B0C
-bg-surface      #0F1D17 → #141618      1.10 → 1.30 against the canvas
-bg-subtle       #16281F → #1A1C1F
-bg-elevated     #16281F → #1E2124
-border-default  #1E3529 → #2E3338      1.27 → 1.62 against the surface
-text-primary    #E6F0EA → #E9EBEE
-text-secondary  #93AFA2 → #9BA3AB
-accent-subtle   #0E1E3D → #17263F      1.01 → 1.29 against the surface
-action-primary  #5FE7B8 → #38B48C      12.36 → 6.57 against the canvas
-gradient-to     #07120D → #0C2E22      1.00 → 3.05 against the canvas
+bg-canvas       #07120D → #0A0C11
+bg-surface      #0F1D17 → #141821      1.10 → 1.31 against the canvas
+bg-subtle       #16281F → #1A1F29
+bg-elevated     #16281F → #1E242F
+border-default  #1E3529 → #2E3644      1.27 → 1.63 against the surface
+text-primary    #E6F0EA → #E9ECF1
+text-secondary  #93AFA2 → #9AA3B2
+accent-subtle   #0E1E3D → #17263F      1.01 → 1.27 against the surface
+action-primary  #5FE7B8 → #38B48C      12.36 → 6.44 against the canvas
+gradient-to     #07120D → #0C2E22      1.00 → 2.98 against the canvas
 ```
 
 Hover, active, secondary, disabled, control and feedback-background derivatives
