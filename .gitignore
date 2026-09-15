@@ -13,3 +13,9 @@ __pycache__/
 
 # Review reports and evidence. Machine-written, never an input to a build.
 .artifacts/
+
+# process-compose state. The database lives under .devbox/, already ignored.
+.process-compose.pid
+
+.svelte-kit/
+build/

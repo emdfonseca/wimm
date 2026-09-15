@@ -9,8 +9,33 @@ Generated from `docs/decisions/` by `just adr-index`. Never edit; write an ADR.
   `apps/` like any other service; `packages/ui` is the design system it imports —
   the token contract and the Svelte components screens instance. Python only
   where a library forces it.
-- Connect over protobuf between our own callers; REST with OpenAPI 3.1 only for
-  third parties.
+- **Three API surfaces, and each has exactly one job.**
+
+  ```text
+  our own services, server to server   Connect over protobuf
+  our own web client, browser to app   REST over HTTP and JSON, in SvelteKit
+  third parties and webhooks           REST with OpenAPI 3.1, RFC 9457 errors
+  ```
+
+  **The browser speaks REST, never Connect.** SvelteKit server routes are the
+  web client's API: load functions and form actions for anything the framework
+  already models, and JSON endpoints under `/api` for what it does not, such as
+  handing an authenticator's response back. They hold the session cookie and
+  call Connect from the server.
+
+  Shipping a protobuf runtime to the browser costs 15-25 kB gzipped and buys
+  little: the payloads that are actually error-prone, such as a WebAuthn
+  credential, are JSON shapes the browser defines, so the schema would describe
+  an envelope around an opaque string. It also cannot express a redirect, which
+  any link-exchange flow needs. Server to server, the generated contract keeps
+  its whole value: a Go CLI and a Go service cannot skew.
+
+  **The web client's REST is not documented and not versioned**, which is what
+  separates it from the third-party surface. Its only consumer ships in the same
+  deploy, so a change is one commit rather than a negotiation, and `PageData`
+  flowing from a load function into its page is stronger typing than a schema
+  would give. The moment a second consumer appears it stops being this and
+  becomes the third row, OpenAPI and all.
 - Postgres with goose migrations owned by the service that owns the database.
 - OpenTelemetry over OTLP for traces, metrics, and logs. The backend stays
   undecided; services never know it.
@@ -410,3 +435,102 @@ checker, because the current document is valid.
 This supersedes the dark half of ADR 0006's palette. The light values, the
 fill-only / text-only rule, and the reasoning about hue separation under
 deuteranopia are unchanged.
+
+## 0015 · The toolchain tracks the latest stable release — Accepted
+
+Every package in `devbox.json` is pinned to the highest **stable** major
+available from the devbox search index, and every one of them carries a major
+pin — `postgresql@18`, never `postgresql` and never `postgresql@18.6`.
+
+Stable excludes anything carrying `rc`, `beta`, `alpha` or a `-pre` suffix.
+Python is the case that makes the word do work: `3.15.0rc1` is published and
+`3.14` is the pin.
+
+Bumping is part of any change that touches `devbox.json`. A change adding a
+package checks every other pin in the same edit, so drift is caught by the work
+already in flight rather than by a scheduled sweep nobody runs.
+
+## 0016 · Passkey identity and enrolment links — Accepted
+
+**Registration and enrolment are separate operations.** Registering creates the
+member; enrolling creates a credential for them. The first enrolment link is
+issued at registration, and the same mechanism issues a further one later, which
+is what makes adding a device and replacing a lost one fall out of the design
+rather than arrive as a feature.
+
+**The enrolment link is a bearer credential, stored hashed.** 256 bits from a
+cryptographic source, rendered in the URL path, with only its hash in the
+database. Single-use; issuing a new link to a member invalidates any outstanding
+one, so a member has at most one live link. Default lifetime 24 hours,
+configurable.
+
+Single-use and replacement-on-issue carry most of the security; the lifetime is
+the weakest of the three. A shorter one is safer and worse — the operator sends
+the link over chat and the member opens it in the morning, and every expiry is
+another round-trip through a person.
+
+The value reaches browser history and anything that records paths, so it is
+exchanged server-side on first load and replaced by a redirect to a path that
+does not contain it. Logs never record the enrolment path with its value.
+
+*Alternative:* a signed self-contained token with no stored row. Rejected —
+single-use and invalidation both need server-side state, so the row exists
+anyway, and a token that cannot be revoked is the opposite of what this wants.
+
+**Sessions are opaque identifiers backed by a row.** `HttpOnly`, `SameSite=Lax`,
+`Secure` wherever the origin is HTTPS, naming a row that carries the member, an
+absolute expiry and a last-seen time. Every lifetime is evaluated against
+database time, so a skewed clock on one instance cannot extend a session.
+
+*Alternative:* a signed self-contained cookie, which avoids a read per request
+and cannot be revoked before it expires. In a product whose entire recovery story
+is that the operator can cut a session off, that trade is the wrong way round.
+The read is a primary-key lookup on a table with one row per browser.
+
+**Enrolment signs the member in.** The ceremony just performed user verification;
+a second one seconds later re-proves the same fact and costs a prompt. The
+session's authority derives from the link, and anyone holding the link could sign
+in immediately afterwards regardless, so nothing is conceded.
+
+**The relying-party identifier is configuration and a one-way door.** It and the
+list of expected origins are read at startup. Changing the identifier invalidates
+every passkey ever registered against it with no migration path, so it must never
+be a value compiled in and adjusted later. Choose the broadest domain the product
+will ever need: a parent domain covers subdomains later, a subdomain locks the
+product to it forever.
+
+**Enrolment requires a discoverable credential.** `residentKey` and user
+verification are both required, and a registration is rejected unless the
+authenticator confirms it created a discoverable one. This is what makes sign-in
+username-less, and what stops a member enrolling a credential they can never be
+offered — whose only recovery would be another operator link.
+
+*Alternative:* accept non-discoverable credentials and ask for an email address
+at sign-in. Rejected: it trades a failure the system detects once, at enrolment,
+with the link still usable, for a worse experience on every future sign-in.
+
+**All ceremony state lives in Postgres.** A challenge is a row with a lifetime in
+seconds, deleted when consumed. The obvious alternative, an in-memory map, works
+on one instance and fails intermittently on two — a defect found in production
+rather than in tests. With challenges, links and sessions all in the database,
+`wimmd` holds no request-spanning state and needs no sticky routing.
+
+**The operator surface is a separate service on a separate listener.** Two Connect
+service definitions, two ports. The operator listener binds to loopback by default
+and requires a bearer credential from configuration, compared in constant time.
+`wimmd` refuses to start if that listener is enabled with no credential set.
+
+Separate definitions rather than one service with a guarded method: the
+distinction is which port answers at all, and a method-level check is one
+forgotten annotation away from being public. *Alternative:* mTLS, which is right
+once there is more than one operator and disproportionate for one.
+
+**Failures reveal nothing, except to the operator.** Expired, spent, replaced and
+never-issued links produce one identical response in body, status and timing. A
+sign-in with an unknown passkey does not say whether the passkey, the member or
+neither is the problem. Registering an already-registered email *does* say so
+plainly: the operator is trusted and has to act on it.
+
+**Dependencies.** A Go WebAuthn library, a Postgres driver, and Connect. Each is
+new to the repo and each is load-bearing: the ceremony, the storage and the
+contract respectively.
