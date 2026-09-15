@@ -1,6 +1,6 @@
 name: wimm
 version: 1
-description: wimm workflow - proposal → specs → design → canvas → tasks. The canvas step draws the journey in pen.dev before any task is written.
+description: wimm workflow - proposal → stories → specs → design → canvas → tasks. Stories carry the user and the value; specs carry the contract; the canvas is drawn before any task is written.
 artifacts:
   - id: proposal
     generates: proposal.md
@@ -47,6 +47,60 @@ artifacts:
       This is the foundation - specs, design, and tasks all build on this.
     requires: []
 
+  - id: stories
+    generates: stories.md
+    description: INVEST user stories with user-testable acceptance criteria
+    template: stories.md
+    instruction: |
+      Write the change as user stories before deciding what the system must do.
+
+      A story states a real user, a capability, and the value delivered. The
+      spec that follows states what the system SHALL do. Both are needed and
+      neither replaces the other: a requirement without a story is work nobody
+      asked for, and a story without a requirement is a wish.
+
+      Create this artifact only if the change delivers something a person can
+      use. Tooling, refactors, dependency bumps and internal migrations record a
+      deliberate skip in one line - inventing a story for them produces the
+      "As a developer I want..." shape, which is the tell that there is no user.
+
+      **Name the user, never "the user".** Who they are decides what the value
+      is. If the change serves more than one kind of person, that is usually
+      more than one story.
+
+      **Acceptance criteria are user-testable.** Someone with the product in
+      front of them checks each one without reading code. A criterion that names
+      a function, a table, an endpoint, a component or a token is not a
+      criterion - it is an implementation note, and it belongs in design.md or
+      tasks.md. Write what the person sees, does, or is told.
+
+      Cover the unhappy path the user can actually reach: the empty case, the
+      one they get wrong, the one that fails on them. A story with only the
+      happy path ships a screen that breaks the first time reality touches it.
+
+      **Apply INVEST honestly and record the answer.** The six lines are a
+      self-check, not a ritual:
+
+      - Independent - can this ship without another story in the same change?
+      - Negotiable - does it state the need rather than dictate a solution?
+      - Valuable - can you name what the user can now do that they could not?
+      - Estimable - is it understood well enough to size?
+      - Small - one story, or several wearing one title?
+      - Testable - could someone else confirm it without asking you what you meant?
+
+      A story that fails one of these is not automatically wrong. Say which,
+      say why it is accepted, and move on. A page of six green ticks that nobody
+      thought about is worth less than one honest "Small - no, this covers three
+      screens; splitting them would ship a half-usable ledger".
+
+      **Each story names its capabilities**, matching the proposal's Capabilities
+      section. Every requirement written in the specs traces back to a story
+      here; if one does not, either the story is missing or the requirement is.
+
+      Number stories S1, S2, ... The canvas and tasks refer to them by number.
+    requires:
+      - proposal
+
   - id: specs
     generates: "specs/**/*.md"
     description: Detailed specifications for the change
@@ -70,6 +124,13 @@ artifacts:
 
       Quick test: if the implementation can change without changing externally
       visible behavior, it likely does not belong in the spec.
+
+      Every requirement traces back to a story in stories.md. If one does not,
+      either the story is missing or the requirement is - resolve that before
+      writing it. Keep the levels apart: a story's acceptance criteria say what
+      a person can do and are checked by using the product; a scenario here is
+      normative system behaviour and is checked by a test. Do not restate one as
+      the other.
 
       Create one spec file per capability listed in the proposal's Capabilities section.
       `<capability-path>` is the spec directory relative to `specs/` (for example,
@@ -145,6 +206,7 @@ artifacts:
       Specs should be testable - each scenario is a potential test case.
     requires:
       - proposal
+      - stories
 
   - id: design
     generates: design.md
@@ -226,6 +288,10 @@ artifacts:
       control's chrome. Anything the journey needs that the library lacks goes
       under Components missing and becomes a task - build it in the library
       during apply, not here.
+
+      Draw every state the stories' acceptance criteria name, including the
+      unhappy ones. A criterion nobody can see on the canvas is a screen that
+      does not exist yet.
 
       Assign the journey ID before drawing. IDs are stable and never reused:
       check the existing journey files and every archived canvas.md before

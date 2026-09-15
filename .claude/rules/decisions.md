@@ -271,3 +271,35 @@ them — the failure looks exactly like success.
 This supersedes the workflow in ADR 0009. The reason that ADR exists — an edit
 sitting unsaved in the app with nothing reporting it — is unchanged and still
 applies to MCP work.
+
+## 0012 · Stories carry the user, specs carry the contract — Accepted
+
+A `stories` artifact sits between proposal and specs. `specs` requires it.
+
+```text
+proposal → stories → specs → design → canvas → tasks
+```
+
+The two levels split by audience, and the split is the point:
+
+```text
+story criterion   what a person can do, checked by using the product
+spec scenario     normative system behaviour, checked by a test
+```
+
+A criterion naming a function, table, endpoint or component is not a criterion —
+it is an implementation note, and it belongs in design or tasks.
+
+**Stories name a real user by role.** "As a developer" and "as the user" are the
+tell that there is no actor, and without an actor there is no value to state.
+
+**INVEST is recorded, not performed.** Six lines, each answered. A story that
+fails one is not automatically wrong: name the letter, say why shipping it anyway
+is right. An honest "Small — no, this covers three screens, and splitting them
+would ship a half-usable ledger" is worth more than six unconsidered ticks.
+
+**Every requirement traces to a story.** If one does not, either the story is
+missing or the requirement is.
+
+**It is conditional**, like design and canvas. Tooling, refactors and internal
+migrations record a one-line skip rather than inventing a user.
