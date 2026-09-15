@@ -34,8 +34,8 @@
 
 Each builds the origin in `product-ui.lib.pen` and the Svelte component in `packages/ui/src` together. All three precede section 7, which only composes instances.
 
-- [ ] 6.1 Build the Svelte **Auth shell** in `packages/ui/src` matching origin `f3lBG` — centred single-card page, brand lockup at the card head, 480 at Wide and 342 at Compact, slots for feedback, heading, body, action and footnote; verify `just check packages/ui` passes and each slot is settable by prop. The pen origin already exists.
-- [ ] 6.2 Build the Svelte **Signed-in landing** matching origin `X87eg` — header carrying the member's name, empty body. No navigation: there is nowhere to navigate yet; verify `just check packages/ui` passes.
+- [ ] 6.1 Build the Svelte **Auth shell** in `packages/ui/src` matching origins `kJkV1` and `tqiBA` — centred single-card page, brand lockup at the card head, 480 at Wide and 342 at Compact, slots for feedback, heading, body, action and footnote; verify `just check packages/ui` passes and each slot is settable by prop. The pen origin already exists.
+- [ ] 6.2 Build the Svelte **Signed-in landing** matching origins `IGbQe` and `pu6qZ` — header carrying the member's name, empty body. No navigation: there is nowhere to navigate yet; verify `just check packages/ui` passes.
 - [ ] 6.3 Build the **Button · pending preset** wrapping a Button instance: non-interactive, own label, accessible status announced when it becomes active and when it resolves; verify `just check packages/ui` passes and the preset redraws none of Button's own chrome.
 - [ ] 6.4 Build the **Notice · tone presets** for info and error, wrapping a Notice instance against `color-feedback-*`; verify `just check packages/ui` passes, including the lint that refuses a raw hex outside `tokens.css`.
 

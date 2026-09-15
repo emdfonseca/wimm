@@ -34,28 +34,29 @@ error.
 
 | Frame | ID | Zone |
 | --- | --- | --- |
-| J01.A / 01 · Enrolment invitation / Wide / Default | `L1yso6` | 10 |
-| J01.A / 01 · Enrolment invitation / Wide / Passkey not saved | `RTYq9` | 10 |
-| J01.A / 01 · Enrolment invitation / Wide / Prompt dismissed | `I2C4c` | 10 |
-| J01.A / 01 · Enrolment invitation / Compact / Default | `RaIKp` | 10 |
-| J01.A / 02 · Creating passkey / Wide / Waiting | `hHmNg` | 10 |
-| J01.A / 03 · Signed in / Wide / Default | `Qa69g` | 10 |
-| J01.A / 03 · Signed in / Compact / Default | `xIz0F` | 10 |
-| J01.A / 03 · Signed in / Ultra / Default | `vod9j` | 10 |
-| J02.A / 01 · Sign in / Wide / Default | `Qppcc` | 10 |
-| J02.A / 01 · Sign in / Wide / Prompt dismissed | `q57qQ` | 10 |
-| J02.A / 01 · Sign in / Wide / Passkey not recognised | `TBjBM` | 10 |
-| J02.A / 01 · Sign in / Wide / Session expired | `i1s5X` | 10 |
-| J02.A / 01 · Sign in / Compact / Default | `gfAtZ` | 10 |
-| J02.A / 02 · Signed in / Wide / Default | `AsGze` | 10 |
-| J02.A / 02 · Signed in / Compact / Default | `MTZyj` | 10 |
-| J01.B / 01 · Link unusable / Wide / Default | `eZrRE` | 20 |
-| J01.B / 01 · Link unusable / Compact / Default | `x3e5k` | 20 |
-| J01.A / 01 · Enrolment invitation / Wide / Default [QA · Dark] | `izAc1` | 40 |
-| J01.A / 01 · Enrolment invitation / Wide / Passkey not saved [QA · Dark] | `d2Wdr` | 40 |
-| J01.A / 03 · Signed in / Wide / Default [QA · Dark] | `E2tv9h` | 40 |
-| J01.B / 01 · Link unusable / Wide / Default [QA · Dark] | `bZoeK` | 40 |
-| J02.A / 01 · Sign in / Wide / Session expired [QA · Dark] | `Cr1eq` | 40 |
+| J01.A / 01 · Enrolment invitation / Compact / Default   | `nycwW` | 10 |
+| J01.A / 01 · Enrolment invitation / Wide / Default   | `IC4AQ` | 10 |
+| J01.A / 01 · Enrolment invitation / Wide / Passkey not saved   | `hOVdC` | 10 |
+| J01.A / 01 · Enrolment invitation / Wide / Prompt dismissed   | `h1NPCE` | 10 |
+| J01.A / 02 · Creating passkey / Wide / Waiting   | `UWQr3` | 10 |
+| J01.A / 03 · Signed in / Compact / Default   | `v8bd7N` | 10 |
+| J01.A / 03 · Signed in / Ultra / Default   | `On6yE` | 10 |
+| J01.A / 03 · Signed in / Wide / Default   | `c3N3z` | 10 |
+| J02.A / 01 · Sign in / Compact / Default   | `kX5Hn` | 10 |
+| J02.A / 01 · Sign in / Wide / Default   | `h79SR` | 10 |
+| J02.A / 01 · Sign in / Wide / Prompt dismissed   | `xd2g8` | 10 |
+| J02.A / 01 · Sign in / Wide / Session expired   | `hsnpo` | 10 |
+| J02.A / 02 · Signed in / Compact / Default   | `uQFxV` | 10 |
+| J02.A / 02 · Signed in / Wide / Default   | `CErpj` | 10 |
+| J01.B / 01 · Link unusable / Compact / Default   | `CRAE1` | 20 |
+| J01.B / 01 · Link unusable / Wide / Default   | `d4i2f` | 20 |
+| J02.B / 01 · Passkey not recognised / Compact / Default   | `I9oOq6` | 20 |
+| J02.B / 01 · Passkey not recognised / Wide / Default   | `lthfY` | 20 |
+| J01.A / 01 · Enrolment invitation / Wide / Default [QA · Dark]   | `GNXrg` | 40 |
+| J01.A / 01 · Enrolment invitation / Wide / Passkey not saved [QA · Dark]   | `s3ejQ` | 40 |
+| J01.A / 03 · Signed in / Wide / Default [QA · Dark]   | `PfG8y` | 40 |
+| J01.B / 01 · Link unusable / Wide / Default [QA · Dark]   | `mKm0m` | 40 |
+| J02.B / 01 · Passkey not recognised / Wide / Default [QA · Dark] | `mhr0E` | 40 |
 Every screen is an instance of a library origin inside an identical **plate**:
 
 ```text
@@ -188,7 +189,7 @@ Svelte component in `packages/ui/src`.
 1. **Button · pending preset** — a wrapper around a Button instance for "an action
    is underway and the browser has taken over": non-interactive, its own label,
    and an accessible status. It redraws none of Button's chrome, so it is a
-   preset, not a component. Faked on `hHmNg` today with a disabled fill and a
+   preset, not a component. Faked on `UWQr3` today with a disabled fill and a
    substituted label, which is a look without a behaviour.
 2. **Notice · tone presets (info, error)** — Notice carries no tonal variant, so
    every use here overrides `fill` and `stroke` inline against `color-feedback-*`.
