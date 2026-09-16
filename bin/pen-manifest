@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# Write or verify the library manifest: every node id in product-ui.lib.pen with
+# its name, type and parent.
+#
+#   bin/pen-manifest write    regenerate the manifest
+#   bin/pen-manifest verify   fail if any existing id was renamed, retyped or removed
+#
+# The .pen is an encrypted blob, so git cannot show a reviewer what a canvas
+# commit changed. The manifest is the reviewable half: an addition shows up as
+# added lines, and a rename or a deletion shows up as a failure.
+#
+# Additive changes pass. Renaming, retyping, reparenting or deleting a node that
+# already existed does not - not because it is always wrong, but because it is
+# never accidental, and this file is where it has to be justified.
+set -euo pipefail
+
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+library="$root/packages/ui/design/product-ui.lib.pen"
+manifest="$root/packages/ui/design/library-manifest.tsv"
+mode="${1:-verify}"
+
+snippet="$(mktemp)"
+trap 'rm -f "$snippet" "$snippet.out"' EXIT
+
+cat > "$snippet" <<'JS'
+Get((n, c) => Print([n.id, n.type, c.parentCtx ? c.parentCtx.node.id : "-", n.name || ""].join("\t")));
+JS
+
+"$root/bin/pen-exec" "$library" "$snippet" \
+  | sed -n '/## Print output/,$p' \
+  | grep -E $'^[A-Za-z0-9_]+\t' \
+  | sed 's/[[:space:]]*$//' \
+  | LC_ALL=C sort > "$snippet.out"
+
+if [ ! -s "$snippet.out" ]; then
+  echo "pen-manifest: read nothing from the library" >&2
+  exit 1
+fi
+
+case "$mode" in
+  write)
+    mv "$snippet.out" "$manifest"
+    echo "wrote $(wc -l < "$manifest" | tr -d ' ') nodes to ${manifest#"$root"/}"
+    ;;
+  verify)
+    [ -f "$manifest" ] || { echo "pen-manifest: no manifest yet; run 'just pen-manifest write'" >&2; exit 1; }
+
+    # Anything present before and now missing or altered. Additions are fine.
+    if changed="$(LC_ALL=C comm -23 "$manifest" "$snippet.out")" && [ -n "$changed" ]; then
+      echo "pen-manifest: these nodes existed and are no longer as recorded." >&2
+      echo "A rename, a retype, a reparent or a delete is never accidental:" >&2
+      echo "if it is intended, run 'just pen-manifest write' and say why in the commit." >&2
+      echo >&2
+      printf '%s\n' "$changed" | head -40 >&2
+      exit 1
+    fi
+
+    added="$(LC_ALL=C comm -13 "$manifest" "$snippet.out" | wc -l | tr -d ' ')"
+    echo "library manifest ok: nothing renamed or removed, $added node(s) added"
+    ;;
+  *)
+    echo "usage: bin/pen-manifest {write|verify}" >&2
+    exit 2
+    ;;
+esac
