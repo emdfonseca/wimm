@@ -1,0 +1,30 @@
+version: v2
+managed:
+  enabled: true
+  # protovalidate publishes its own generated Go; ours must import that, not a
+  # path under this repo that nothing generates.
+  disable:
+    - file_option: go_package
+      module: buf.build/bufbuild/protovalidate
+  override:
+    - file_option: go_package_prefix
+      value: github.com/xuuid/wimm/packages/contracts/gen/go
+# Local plugins, all three. Remote plugins put a rate-limited network service
+# between `just check` and a green build: two invocations of `just gen` in one
+# check is enough to be refused by the BSR. devbox pins these the way it pins
+# every other tool.
+plugins:
+  - local: protoc-gen-go
+    out: gen/go
+    opt: paths=source_relative
+  - local: protoc-gen-connect-go
+    out: gen/go
+    opt: paths=source_relative
+  - local: protoc-gen-es
+    out: gen/ts
+    # The generated TypeScript imports protovalidate's own descriptors, and
+    # nothing else generates them for this target.
+    include_imports: true
+    opt:
+      - target=ts
+      - import_extension=js

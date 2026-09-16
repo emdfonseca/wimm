@@ -1,0 +1,78 @@
+# packages/contracts — the protobuf definitions and everything generated from
+# them. gen/ is never hand-edited (.claude/rules/generated-artifacts.md).
+set shell := ["bash", "-uc"]
+
+# protoc-gen-es is an npm dependency of this package, not a devbox one.
+export PATH := justfile_directory() / "node_modules/.bin:" + env_var("PATH")
+
+default:
+    @just --list
+
+# gen/go carries its own go.mod, so the generated tree is cleared by path
+# rather than by buf's own clean, which would take the module file with it.
+gen:
+    @rm -rf gen/ts gen/go/wimm
+    buf generate
+
+build: gen
+
+fmt:
+    buf format -w
+
+lint:
+    buf lint
+    @just breaking
+
+# Additive only within a major. The git source is the repository root, not this
+# package, so it is reached by path with a subdir.
+breaking:
+    @if git cat-file -e main:packages/contracts/buf.yaml 2>/dev/null; then \
+        buf breaking --against '../../.git#branch=main,subdir=packages/contracts'; \
+    else \
+        echo "packages/contracts is not on main yet: nothing to compare against"; \
+    fi
+
+test:
+    @echo "nothing to test: this package is a contract and its generated output"
+
+check: lint
+    @just verify-clean
+    @just test-verify-clean
+
+# The generated tree must already match the protos.
+#
+# Asserted by hashing gen/ either side of a regeneration rather than by asking
+# git: git cannot tell a stale file from one that is merely unstaged, and a
+# brand-new generated file is invisible to `git diff` altogether.
+verify-clean:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    fingerprint() { find gen -type f -exec shasum -a 256 {} + | sort | shasum -a 256; }
+    before="$(fingerprint)"
+    just gen >/dev/null
+    after="$(fingerprint)"
+    if [ "$before" != "$after" ]; then
+        echo "gen/ does not match the protos — run 'just gen packages/contracts' and commit the result" >&2
+        exit 1
+    fi
+    echo "gen/ matches the protos"
+
+# The check above is only worth having if it still fails. This edits a
+# generated file and asserts the run refuses it.
+test-verify-clean:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    target=gen/go/wimm/identity/v1/identity.pb.go
+    # The backup lives outside gen/, which `just gen` clears wholesale.
+    backup="$(mktemp)"
+    cp "$target" "$backup"
+    trap 'mkdir -p "$(dirname "$target")"; mv -f "$backup" "$target"' EXIT
+    echo '// edited by hand' >> "$target"
+    if just verify-clean >/dev/null 2>&1; then
+        echo "verify-clean accepted a hand-edited generated file" >&2
+        exit 1
+    fi
+    echo "verify-clean refuses a hand-edited generated file"
+
+clean:
+    rm -rf gen

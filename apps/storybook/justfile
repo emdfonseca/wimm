@@ -1,0 +1,36 @@
+# apps/storybook — the design system in isolation.
+#
+# It globs packages/ui only: reaching into apps/web would be apps → apps, which
+# the monorepo standard bans. The pure screens live in packages/ui/src/pages/.
+set shell := ["bash", "-uc"]
+
+default:
+    @just --list
+
+dev:
+    pnpm dev
+
+build:
+    pnpm build
+
+# Stories run as tests: the play functions are the component assertions
+# (.claude/rules/typescript.md).
+test:
+    pnpm test
+
+lint:
+    pnpm -w eslint apps/storybook
+
+fmt:
+    pnpm -w prettier --write apps/storybook
+
+typecheck:
+    pnpm svelte-kit sync && pnpm svelte-check --tsconfig ./tsconfig.json
+
+check: lint typecheck test
+
+gen:
+    @echo "nothing generated here"
+
+clean:
+    rm -rf dist .svelte-kit storybook-static

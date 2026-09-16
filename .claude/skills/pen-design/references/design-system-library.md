@@ -25,21 +25,33 @@ The library is where reusable mechanics belong (app shell, breadcrumbs, tabs, di
 
 40 · ORGANISMS
 
-50 · TEMPLATES       App Shell / Compact · App Shell / Medium (only if structurally distinct) · App Shell / Wide
-                     page scaffolds (list, detail, settings)
+50 · TEMPLATES       complete screens only: App Shell / Compact · App Shell / Medium
+                     (only if structurally distinct) · App Shell / Wide, and the
+                     auth and landing shells. Nothing that is a region rather
+                     than a screen - a content scaffold is an organism.
 
 90 · QA / STRESS TESTS
 ```
 
 Components are added when a journey needs them. Classify by composition, responsibility, and reuse scope, then stay consistent; do not move an element between levels because its implementation grew.
 
+**The test for 50 is "is this a whole screen".** Not "is it page-level", not "does it have slots" - a scaffold drawn at 1176 is the Main column of a 1440 shell, so it is a region and belongs in 40. Everything in 50 is a frame someone could screenshot and call a screen.
+
+**A frame in 50 carries the zone's chrome**, so the whole set reads as one board:
+`fill $color-bg-canvas`, `cornerRadius $radius-lg`, `stroke $color-border-default`,
+`strokeWidth 1`, `strokeAlignment inner`, `clip true`, and a `theme` binding whose
+`device` matches its width - compact 390, medium 1024, wide 1440, ultra 1920. The
+theme binding is not decoration: without it the frame resolves every device-axis
+token at the wrong regime, and a sidebar comes out the wrong width inside a
+correct-looking frame.
+
 | Layer | Definition | Typical examples | Lives where? |
 |---|---|---|---|
 | **Foundations** | Tokens, constraints, and principles used by every layer | color, type, spacing, focus, motion | `.lib.pen` |
 | **Atom** | Smallest reusable UI unit with a meaningful contract | Button, Checkbox, Input Control, Badge | `.lib.pen` |
 | **Molecule** | Small composition of Atoms with one focused purpose | Form Field, Search Field, Breadcrumbs | `.lib.pen` |
-| **Organism** | Larger reusable section or interaction | Navigation, Table region, Drawer, Form | `.lib.pen` |
-| **Template** | Page-level scaffold with regions/slots and no business content | App Shell, List/Detail/Settings scaffold | `.lib.pen` |
+| **Organism** | Larger reusable section or interaction, including a scaffold that fills one region of a screen rather than being one | Navigation, Table region, Drawer, Form, List/Detail scaffold | `.lib.pen` |
+| **Template** | A **complete screen** at real size: the whole frame a person would see, with regions/slots and no business content | App Shell, Auth shell, Signed-in landing | `.lib.pen` |
 | **Page** | A Template/Organisms populated with real product content, state, and navigation context | Checkout review, Project detail | journey `.pen` |
 | **Journey** | A goal over time sequencing Pages, overlays, states, failures, and recovery | Create account, Invite teammate | journey `.pen` |
 

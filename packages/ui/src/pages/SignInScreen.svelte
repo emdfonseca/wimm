@@ -1,0 +1,66 @@
+<script lang="ts" module>
+	/**
+	 * J02.A / 01 · Sign in, and J02.B, which is this same card carrying a
+	 * notice rather than a page of its own.
+	 *
+	 * "Passkey not recognised" leaves the member here with the control still
+	 * live, because offering the wrong passkey is recoverable by offering
+	 * another one. It is a dead end only if they have none.
+	 */
+	export type SignInState = 'default' | 'signing-in' | 'dismissed' | 'expired' | 'not-recognised';
+</script>
+
+<script lang="ts">
+	import AuthShell from '../templates/AuthShell.svelte';
+	import PendingButton from '../molecules/PendingButton.svelte';
+	import ErrorNotice from '../molecules/ErrorNotice.svelte';
+	import InfoNotice from '../molecules/InfoNotice.svelte';
+
+	interface Props {
+		state?: SignInState;
+		onsignin?: () => void;
+	}
+
+	let { state = 'default', onsignin }: Props = $props();
+
+	const label = $derived(
+		state === 'not-recognised' ? 'Try another passkey' : 'Sign in with a passkey'
+	);
+
+	// An expired session is the page's own subject, so the heading says it. A
+	// notice above a "Welcome back" greeting made the card commiserate and
+	// welcome in the same breath, and restated what the heading was for.
+	const heading = $derived(state === 'expired' ? 'Your session ended' : 'Welcome back');
+
+	const bodyText = $derived(
+		state === 'expired'
+			? 'Sign in with the passkey you saved and you will go back to where you were. There is nothing to type.'
+			: 'Sign in with the passkey you saved. Your browser will offer it. There is nothing to type.'
+	);
+</script>
+
+<AuthShell {heading}>
+	{#snippet body()}{bodyText}{/snippet}
+
+	<!-- Results of the last attempt, directly above the action. -->
+	{#snippet result()}
+		{#if state === 'not-recognised'}
+			<ErrorNotice title="That passkey is not recognised">
+				wimm has no record of it. Ask whoever set up your account for an enrolment link.
+			</ErrorNotice>
+		{:else if state === 'dismissed'}
+			<InfoNotice title="Nothing happened">
+				You closed the passkey prompt. Try again when you are ready.
+			</InfoNotice>
+		{/if}
+	{/snippet}
+
+	{#snippet action()}
+		<PendingButton
+			{label}
+			pendingLabel="Waiting for your device…"
+			pending={state === 'signing-in'}
+			onclick={onsignin}
+		/>
+	{/snippet}
+</AuthShell>

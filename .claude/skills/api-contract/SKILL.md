@@ -10,7 +10,15 @@ paths:
 
 # API contract
 
-Our callers → Connect over protobuf. Third parties and webhooks → REST + OpenAPI 3.1, JSON, RFC 9457 errors. No third kind.
+Three surfaces, and no fourth (ADR 0001):
+
+```text
+our own services, server to server   Connect over protobuf
+our own web client, browser to app   REST over HTTP and JSON, in the app's own server routes
+third parties and webhooks           REST + OpenAPI 3.1, JSON, RFC 9457 errors
+```
+
+The browser never speaks Connect. The web client's REST is undocumented and unversioned on purpose — its only consumer ships in the same deploy — so rules 3 to 6 below apply to the first and third rows, not to it. A second consumer moves it to the third row, OpenAPI and all.
 
 ## Rules
 

@@ -24,11 +24,15 @@ import is `../../../packages/ui/design/product-ui.lib.pen`, which pen resolves.
 
 ## Saved to disk
 
-Saved. `git status` reports `?? apps/web/design/01-access.pen` (203648 bytes, mtime
-2026-09-15 18:41:45) and ` M packages/ui/design/product-ui.lib.pen`, which carries the four page
-shells, the two shell presets and the header-height fix. Every mutation ran
-through `just pen-exec`, which saves on a clean run and writes nothing on an
-error.
+Saved. `apps/web/design/01-access.pen` (217600 bytes) and
+`packages/ui/design/product-ui.lib.pen`, which carries the four page shells, the
+two shell presets and the header-height fix. Every mutation ran through `just
+pen-exec`, which saves on a clean run and writes nothing on an error.
+
+No source frame changed during implementation, so the zone 40 dark fixtures were
+not re-exported. All 23 frame IDs and all 6 zone IDs in this document were
+resolved against the journey file after the work, so the table above still
+points at something.
 
 ## Frames
 
@@ -122,6 +126,63 @@ measure to protect (ADR 0005).
 change**, under `50 · TEMPLATES · Page shells`. The journey instances them; it
 draws no page chrome of its own.
 
+**The card has two feedback slots, and which one a message uses is a question
+about the message, not about the screen.**
+
+```text
+Feedback slot  LqoqA (Wide), Szvqr (Compact), above the heading. Unchanged.
+               Why the member is here this time: "You were signed out"
+
+Result slot    ft9RY (Wide), n7iV7P (Compact), between the body and the action
+               What happened when they last pressed it: "Your device did not
+               save the passkey", "Nothing was created", "Nothing happened",
+               "That passkey is not recognised"
+```
+
+`Feedback slot` keeps its name. Renaming it to match its narrower job would
+have been tidying an existing node while adding a new one, which
+`just pen-manifest verify` now refuses.
+
+**`50 · TEMPLATES` holds complete screens and nothing else.** The test is "could
+someone screenshot this and call it a screen", not "is it page-level". Three
+kinds of thing were in there that failed it, and all three moved to
+`40 · ORGANISMS`: the two shell presets, and the `List` and `Detail` scaffolds,
+which are drawn at 1176 - the Main column of a 1440 shell, so a region rather
+than a screen. `design-system-library.md` said scaffolds belonged in 50 and has
+been corrected.
+
+**The four new shells were missing the zone's chrome entirely**: no
+`cornerRadius`, no `stroke`, no `strokeWidth`, no `strokeAlignment`, and - the
+one that mattered - no `theme` binding. Every other frame in 50 carries
+`theme: {device}` matching its width, and without it a shell resolves every
+device-axis token at the wrong regime, so `layout-sidebar-width` and its
+neighbours are wrong inside a frame that looks correct. They now carry
+`wide` at 1440 and `compact` at 390.
+
+**The two shell presets moved out of `50 · TEMPLATES` into `40 · ORGANISMS`.**
+`Sidebar nav / in shell` and `App header / in shell` are presets of organisms,
+and the zoning the library follows gives TEMPLATES the app shell and the page
+scaffolds only. They now sit in their own components' specimen blocks, where
+library-method puts a preset. The `Shell presets` wrapper that held them under
+TEMPLATES is gone, and `50 · TEMPLATES · Page shells` holds the four page
+shells and nothing else.
+
+A single slot above the heading was the first drawing, and it was wrong for
+three of the four messages. A result belongs beside the control that produced
+it: the member pressed a button at the foot of the card, and answering at the
+head of it means scrolling past two paragraphs they have already read. It also
+displaced the heading, which is the identity check
+`identity/passkey-enrolment` requires them to see *before* being asked to
+create anything - so the one state where something had gone wrong was the one
+state that hid who the link was for.
+
+The error-summary pattern that does sit above the heading exists for forms with
+many fields, where the summary links to each failure. This card has no fields
+and one control.
+
+Announcement is unchanged by the move: errors assertive, info polite, neither
+taking focus, because the member is returning from a native prompt.
+
 **The auth shell is a split page, not a card on empty canvas.** A brand panel of
 560 carries the lockup, the one-line reason a passkey replaces a password, three
 supporting points and a footer, on the `gradient-brand-from → gradient-brand-to`
@@ -183,8 +244,12 @@ navigate to.
 
 ## Components missing
 
-Each becomes one task covering both the origin in `product-ui.lib.pen` and the
-Svelte component in `packages/ui/src`.
+Each is three deliverables: the origin in `product-ui.lib.pen`, the Svelte
+component under `packages/ui/src/<layer>/`, and its `.stories.svelte` beside it.
+A component with no story cannot be seen in isolation, in either theme, at any
+viewport, and its behavioural contract is asserted nowhere. `just check
+packages/ui` refuses a component that has no story, and the schema now says the
+same so it is planned rather than remembered.
 
 1. **Button · pending preset** — a wrapper around a Button instance for "an action
    is underway and the browser has taken over": non-interactive, its own label,
@@ -270,6 +335,52 @@ This matters because `descendants` overrides on an imported component are droppe
 every segment of a nested path. A dropped map produces a plausible-looking frame
 carrying the library's sample copy, with no error anywhere.
 
+**The brand mark is `ttoEX`'s own two paths.** `Get` elides path data by
+default and returns `"..."`, which reads like an empty node rather than a
+withheld one; `includePathGeometry: true` returns it. Rebuilding the mark from
+its bounding box instead produced a passable likeness that was visibly not the
+logo. Both paths share a scale of 9.80035 against the 16 frame.
+
+**An expired session is the page's own subject, so the heading carries it.**
+The first drawing put "You were signed out" in a notice above a "Welcome back"
+heading, which made the card commiserate and welcome in the same breath and
+restated what the heading was for. `hsnpo` now reads "Your session ended" with
+the return promise in the body and no notice at all. The two remaining sign-in
+notices are results of an attempt, which is why they sit in the Result slot.
+
+**The Compact landing had no brand and no account, and that was a defect the
+drawing hid.** At Wide the sidebar carries both; Compact drops the sidebar and
+the first version dropped both with it, leaving a member on a phone with a
+centred empty state and no way to tell which app they were in or who they were
+signed in as. The caption even described it as a virtue - "the body takes the
+whole frame".
+
+`App bar / compact` (`EpRPP`, in `40 · ORGANISMS`) carries them: the lockup on
+the left, the account on the right, 56 high. It is not a page header - no title,
+no breadcrumbs, no tabs - so the reasoning that deleted `App header / plain`
+still holds: at Wide the sidebar owns this content and the bar is hidden, so
+neither is ever a duplicate of the other.
+
+**A ticket is only as good as the link behind it.** The exchange gives the
+browser a ticket with its own 30-minute lifetime, and the first version checked
+only that lifetime. So a member who had just enrolled still held a usable
+ticket, and could enrol a second passkey through a link the operator had been
+told was single use — the link was correctly refused, and the cookie in the
+browser was not. `EnrolmentTicketByHash` now joins the link and requires it
+unspent, unreplaced and unexpired, and finishing an enrolment deletes every
+ticket that link produced, including on another device it was opened on.
+
+**Sign-out is the footer's icon button, not a text link.** The canvas draws the
+sidebar footer as `Account trigger` + an `Icon button` instance — 36 square, no
+fill, no border, a 16 glyph in `color-text-secondary` — and that instance was
+Collapse. Collapsing a sidebar with one destination does nothing, and
+`identity/passkey-sign-in` requires signing out, so that slot carries `log-out`
+instead. The compact bar carries the same control beside the account.
+
+The first attempt put a text link there. It matched nothing in the library: an
+icon button is what the design system already uses for a control in that
+position, and inventing a second shape for it was a shape nobody had agreed to.
+
 **Two tooling traps found here are not yet in the skill.**
 `.claude/skills/pen-design/` is not writable from this environment, so they are
 recorded here instead: the silent `descendants` drop above, and the fontless
@@ -278,6 +389,19 @@ measurement. Both belong in `references/tooling-traps.md`.
 ## Library findings
 
 All three were raised by this change and all three are fixed in the same commit.
+
+A fourth was raised during implementation and is fixed there rather than in the
+library: the canvas records `page padding 24`, which is true at Compact and wrong
+at Wide. `kJkV1`'s card area and brand panel both carry `padding: 64`, and the
+signed-in landing uses neither value — `IGbQe` is `$space-8` and `pu6qZ` is
+`$space-4`. The built components follow the file. Card padding is `$space-8` and
+card gap `$space-6` in both auth shells; the only card geometry that differs
+between Wide and Compact is the 480/342 measure.
+
+Two other numbers in Contracts for implementation needed the same correction.
+The card heading is `$type-size-heading-lg`, not heading-md. The action instances
+in both shells override Button's 36 to **44**, so the drawn control is the large
+step rather than the origin's medium one.
 
 1. **`layout-header-height` had no consumer.** The token reached `tokens.css`
    (56 Compact, 64 elsewhere) and no component referenced it: `App header` hugged

@@ -1,0 +1,48 @@
+version: "3"
+
+# The whole stack, run by process-compose through `devbox services up`.
+#
+# Postgres listens on a Unix socket under .devbox/virtenv/postgresql and claims
+# no TCP port, so it cannot collide with a system-wide install or with another
+# checkout. The two HTTP listeners and the dev server take a port block this
+# project owns, set in devbox.json.
+#
+# The browser-facing origin stays on localhost deliberately: WebAuthn requires
+# the relying-party identifier to be a domain, and an IP is not one (ADR 0016).
+
+processes:
+  postgresql:
+    command: 'bin/db up'
+    # bin/db starts the cluster with pg_ctl and returns; process-compose would
+    # otherwise treat that as the process exiting.
+    is_daemon: true
+    shutdown:
+      command: 'bin/db down'
+    readiness_probe:
+      exec:
+        command: 'pg_isready -h "$PGHOST" -p "${PGPORT:-5432}"'
+      initial_delay_seconds: 1
+      period_seconds: 2
+
+  wimmd:
+    command: 'go run ./cmd/wimmd'
+    working_dir: 'apps/wimm'
+    depends_on:
+      postgresql:
+        condition: process_healthy
+    availability:
+      restart: on_failure
+      backoff_seconds: 2
+
+  web:
+    command: 'pnpm dev --port "$WIMM_WEB_PORT" --strictPort'
+    working_dir: 'apps/web'
+    depends_on:
+      wimmd:
+        condition: process_started
+
+  # The design system in isolation, beside the app that instances it. It needs
+  # neither the database nor wimmd: every story is a pure component.
+  storybook:
+    command: 'pnpm dev --port "$WIMM_STORYBOOK_PORT"'
+    working_dir: 'apps/storybook'

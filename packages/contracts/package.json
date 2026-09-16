@@ -1,0 +1,21 @@
+{
+  "name": "@wimm/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "wimm service contracts: protobuf definitions and the clients generated from them",
+  "exports": {
+    "./identity": "./src/identity.ts"
+  },
+  "files": [
+    "gen/ts",
+    "src"
+  ],
+  "dependencies": {
+    "@bufbuild/protobuf": "2.15.0",
+    "@connectrpc/connect": "2.2.0"
+  },
+  "devDependencies": {
+    "@bufbuild/protoc-gen-es": "2.15.0"
+  }
+}

@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# The local PostgreSQL cluster for this checkout.
+#
+# It listens on a Unix socket only — no TCP port — so it cannot collide with a
+# system-wide Postgres or with another project's. The socket directory and the
+# data directory both come from devbox's postgresql plugin, which puts them
+# under .devbox/virtenv/postgresql.
+#
+#   bin/db up        initialise, start, create both databases, migrate to head
+#   bin/db down      stop the cluster
+#   bin/db reset     drop the development database, recreate it, migrate
+#   bin/db psql      open a shell on the development database
+#   bin/db url       print the development connection string
+#   bin/db test-url  print the test connection string
+#
+# Two databases on one cluster. The suite truncates every table it finds, so
+# pointing it at the development database means `just check` silently deletes
+# whatever you were working with.
+set -euo pipefail
+
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+: "${PGDATA:?PGDATA is unset: run this inside the devbox shell}"
+: "${PGHOST:?PGHOST is unset: run this inside the devbox shell}"
+port="${PGPORT:-5432}"
+dbname="${WIMM_DB_NAME:-wimm}"
+testdb="${dbname}_test"
+super="$(id -un)"
+migrations="$root/apps/wimm/internal/store/migrations"
+
+# A socket-only connection: the host is a directory, so no port is claimed.
+url() { echo "postgres:///$dbname?host=$PGHOST&port=$port&sslmode=disable"; }
+test_url() { echo "postgres:///$testdb?host=$PGHOST&port=$port&sslmode=disable"; }
+
+running() { pg_ctl -D "$PGDATA" status >/dev/null 2>&1; }
+
+start() {
+  mkdir -p "$PGHOST"
+  # The devbox plugin creates PGDATA empty, so its existence proves nothing.
+  [ -f "$PGDATA/PG_VERSION" ] || {
+    echo "initdb $PGDATA"
+    initdb --username="$super" --auth=trust --encoding=UTF8 --locale=C -D "$PGDATA" >/dev/null
+  }
+  running || {
+    echo "starting postgres on $PGHOST (socket only)"
+    # listen_addresses='' is what keeps this off TCP entirely.
+    pg_ctl -D "$PGDATA" -l "$PGDATA/server.log" \
+      -o "-k '$PGHOST' -p $port -c listen_addresses=''" -w start >/dev/null
+  }
+}
+
+psql_() { psql -h "$PGHOST" -p "$port" -U "$super" "$@"; }
+
+createdb_if_missing() {
+  local name="$1"
+  psql_ -d postgres -tAc "select 1 from pg_database where datname = '$name'" | grep -q 1 || {
+    echo "creating database $name"
+    createdb -h "$PGHOST" -p "$port" -U "$super" "$name"
+  }
+}
+
+migrate() {
+  [ -d "$migrations" ] || { echo "no migrations yet at ${migrations#"$root"/}"; return 0; }
+  GOOSE_DRIVER=postgres GOOSE_DBSTRING="$1" goose -dir "$migrations" up
+}
+
+case "${1:-}" in
+  up)
+    start
+    createdb_if_missing "$dbname"
+    createdb_if_missing "$testdb"
+    migrate "$(url)"
+    migrate "$(test_url)" >/dev/null
+    echo "database ready: $(url)"
+    echo "tests use:      $(test_url)"
+    ;;
+  down)
+    if running; then pg_ctl -D "$PGDATA" -w stop >/dev/null && echo "stopped"; else echo "not running"; fi
+    ;;
+  reset)
+    start
+    # --force disconnects whatever is still attached. Without it a reset fails
+    # whenever wimmd is running, which is almost always when you want one.
+    dropdb -h "$PGHOST" -p "$port" -U "$super" --if-exists --force "$dbname"
+    createdb -h "$PGHOST" -p "$port" -U "$super" "$dbname"
+    migrate "$(url)"
+    echo "database reset: $(url)"
+    ;;
+  psql)     exec psql "$(url)" ;;
+  url)      url ;;
+  test-url) test_url ;;
+  *)
+    echo "usage: bin/db {up|down|reset|psql|url|test-url}" >&2
+    exit 2
+    ;;
+esac

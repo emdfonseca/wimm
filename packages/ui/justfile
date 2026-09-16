@@ -12,20 +12,46 @@ gen:
 build: gen
 
 fmt:
-    @echo "nothing to format: tokens.css is generated"
+    pnpm -w prettier --write packages/ui/src
 
-# a raw hex colour outside tokens.css means a value escaped the contract
+# A raw hex colour outside tokens.css means a value escaped the contract.
+#
+# The run length is pinned to the four legal ones and must end at a non-word
+# character. A loose {3,8} also matches Svelte's own block syntax — `#each`
+# begins with three hex digits — and reported every template as a violation.
+hex := '#([0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{4}|[0-9a-fA-F]{3})([^0-9a-zA-Z]|$)'
+
 lint:
-    @! grep -rInE '#[0-9a-fA-F]{3,8}' --include='*.css' --include='*.ts' --include='*.js' --include='*.svelte' src | grep -v '^src/tokens.css:' || { echo "raw hex outside tokens.css — reference a token instead"; exit 1; }
+    @! grep -rInE {{quote(hex)}} --include='*.css' --include='*.ts' --include='*.js' --include='*.svelte' src | grep -v '^src/tokens.css:' || { echo "raw hex outside tokens.css — reference a token instead"; exit 1; }
     @echo "no raw hex outside tokens.css"
+
+# The check above is only worth having if it still fails. This feeds it a
+# colour and asserts it is refused.
+test-lint:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    trap 'rm -f src/.hex-fixture.css' EXIT
+    echo '.x { color: #0C7A57; }' > src/.hex-fixture.css
+    if just lint >/dev/null 2>&1; then
+        echo "the hex lint accepted a raw colour" >&2
+        exit 1
+    fi
+    echo "the hex lint refuses a raw colour"
 
 test:
     @python3 scripts/check-tokens.py
     @python3 scripts/test-tokens.py
     @python3 scripts/check-palette.py
     @python3 scripts/test-palette.py
+    @python3 scripts/check-geometry.py src
+    @python3 scripts/check-stories.py src
+    @python3 scripts/test-stories.py
+    @echo "component behaviour runs as stories: just test apps/storybook"
 
-check: lint test
+typecheck:
+    pnpm svelte-check --tsconfig ./tsconfig.json
+
+check: lint test-lint typecheck test
 
 clean:
     @rm -f src/tokens.css

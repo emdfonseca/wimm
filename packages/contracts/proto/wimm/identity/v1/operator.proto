@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package wimm.identity.v1;
+
+import "buf/validate/validate.proto";
+import "wimm/identity/v1/identity.proto";
+
+// The surface wimmctl reaches. Served on its own listener, bound to loopback
+// by default, behind the operator credential from configuration. wimmd refuses
+// to start with this listener reachable and no credential set (ADR 0016).
+service OperatorService {
+  // Register a person and mint their first enrolment link. Deadline: 10s.
+  rpc RegisterMember(RegisterMemberRequest) returns (RegisterMemberResponse);
+
+  // Issue a further link to someone already registered, for a new device or a
+  // lost one. Invalidates any outstanding link; leaves enrolled passkeys
+  // working. Deadline: 10s.
+  rpc IssueEnrolmentLink(IssueEnrolmentLinkRequest) returns (IssueEnrolmentLinkResponse);
+}
+
+message RegisterMemberRequest {
+  EmailAddress email = 1 [(buf.validate.field).required = true];
+  string first_name = 2 [(buf.validate.field).string.min_len = 1];
+  string last_name = 3 [(buf.validate.field).string.min_len = 1];
+}
+
+message RegisterMemberResponse {
+  Member member = 1;
+  EnrolmentLink enrolment_link = 2;
+}
+
+message IssueEnrolmentLinkRequest {
+  EmailAddress email = 1 [(buf.validate.field).required = true];
+}
+
+message IssueEnrolmentLinkResponse {
+  Member member = 1;
+  EnrolmentLink enrolment_link = 2;
+}

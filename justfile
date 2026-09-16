@@ -38,8 +38,42 @@ adr-index:
 adr-index-check:
     @python3 .claude/skills/adr/assets/adr-index.py --check
 
-# What CI runs
-ci: adr-index-check (all "check")
+# What CI runs. The database is started first: store tests refuse to run
+# without one rather than skipping.
+ci: adr-index-check db-up (all "check")
+
+# The whole stack under process-compose: postgres, wimmd, the web app, Storybook.
+up *args:
+    @devbox services up {{args}}
+
+# Stop it.
+down:
+    @devbox services stop || true
+    @bin/db down
+
+# What is running.
+ps:
+    @devbox services ls
+
+# Local PostgreSQL: start the cluster, create the database, migrate to head.
+db-up:
+    @bin/db up
+
+# Stop the local cluster.
+db-down:
+    @bin/db down
+
+# Drop the database, recreate it, migrate to head. Empty of data, schema at head.
+db-reset:
+    @bin/db reset
+
+# Connection string for the local database.
+db-url:
+    @bin/db url
+
+# A psql shell on the local database.
+db-psql:
+    @bin/db psql
 
 # OpenSpec CLI. The pin lives in bin/openspec, which devbox puts on PATH.
 openspec *args:
@@ -56,6 +90,11 @@ pen-import journey alias library:
 # Run an execute snippet against a .pen file, headless. Snippet on stdin.
 pen-exec file snippet="":
     @bin/pen-exec {{file}} {{snippet}}
+
+# Write or verify the library manifest. `verify` fails if a node that already
+# existed was renamed, retyped, reparented or deleted.
+pen-manifest mode="verify":
+    @bin/pen-manifest {{mode}}
 
 # Assert the pen library's variables match design/tokens.json.
 pen-verify-tokens library="":

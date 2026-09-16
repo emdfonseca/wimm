@@ -29790,6 +29790,39 @@
                   "fontFamily": "$type-family-mono",
                   "fontSize": 10,
                   "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "s2VNo8",
+                  "name": "App header / in shell",
+                  "reusable": true,
+                  "width": 1176,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "id": "UCVHe",
+                      "type": "ref",
+                      "ref": "uC4nV",
+                      "name": "App header",
+                      "width": "fill_container",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "cornerRadius": 0
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "apQff",
+                  "name": "Caption",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "in shell · bottom edge only",
+                  "fontFamily": "$type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
                 }
               ]
             }
@@ -30531,6 +30564,48 @@
                           "type": "ref",
                           "ref": "k8vDz",
                           "name": "Account trigger"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ZA4B8",
+                  "name": "In shell",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rn18v",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "content": "in shell · right edge only · 264",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q7dY7c",
+                      "name": "Sidebar nav / in shell",
+                      "reusable": true,
+                      "width": 264,
+                      "height": 640,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "id": "W4cIE8",
+                          "type": "ref",
+                          "ref": "fwKnX",
+                          "name": "Sidebar nav",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "strokeWidth": {
+                            "right": 1
+                          },
+                          "cornerRadius": 0
                         }
                       ]
                     }
@@ -35820,6 +35895,488 @@
               ]
             }
           ]
+        },
+        {
+          "type": "frame",
+          "id": "Eelod",
+          "name": "List scaffold",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "CgwUL",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "N2kSrT",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "List scaffold",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "b86jLx",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "What fills a shell's content slot in a list area. Drawn at 1176, the Main column of Transactions / Wide, so it is a region rather than a whole screen. The count and the pagination belong to the table region's own toolbar and footer, not to this scaffold.",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "XdHk1",
+              "name": "Specimens",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "eykQg",
+                  "name": "List scaffold / Wide",
+                  "theme": {
+                    "device": "wide"
+                  },
+                  "clip": true,
+                  "width": 1176,
+                  "height": 440,
+                  "fill": "$color-bg-canvas",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "i0PVTt",
+                      "name": "Body",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": "$density-stack-gap",
+                      "padding": "$layout-page-gutter",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "LNxG0",
+                          "name": "FILTER BAR SLOT",
+                          "width": "fill_container",
+                          "height": 64,
+                          "fill": "$color-bg-subtle",
+                          "cornerRadius": "$radius-md",
+                          "stroke": "$color-border-strong",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 5,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "mSybg",
+                              "name": "Label",
+                              "fill": "$color-text-secondary",
+                              "content": "FILTER BAR SLOT",
+                              "textAlign": "center",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "fCQ0p",
+                              "name": "Note",
+                              "fill": "$color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "removable chips naming each active filter. A filtered view carries chips and no breadcrumb — a filter is not containment.",
+                              "lineHeight": 1.45,
+                              "textAlign": "center",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Yz20X",
+                          "name": "LIST REGION SLOT",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "$color-bg-subtle",
+                          "cornerRadius": "$radius-md",
+                          "stroke": "$color-border-strong",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 5,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "B1Tqg",
+                              "name": "Label",
+                              "fill": "$color-text-secondary",
+                              "content": "LIST REGION SLOT",
+                              "textAlign": "center",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Em3Uc",
+                              "name": "Note",
+                              "fill": "$color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "40 · ORGANISMS / Table region at pointer widths; stacked two-line rows at Compact. Empty, loading and filtered-to-nothing replace this region only — the shell and the filter bar stay.",
+                              "lineHeight": 1.45,
+                              "textAlign": "center",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "oNyVa",
+          "name": "Detail scaffold",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "mxZqy",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "pLCxI",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Detail scaffold",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "g3sKkm",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The same page header organism with breadcrumbs enabled, which is the only place they appear: a detail record that failed the one-home test is genuinely nested. Summary first, then the record's peer views as tabs.",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "VYkEX",
+              "name": "Specimens",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "LHBGo",
+                  "name": "Detail scaffold / Wide",
+                  "theme": {
+                    "device": "wide"
+                  },
+                  "clip": true,
+                  "width": 1176,
+                  "height": 560,
+                  "fill": "$color-bg-canvas",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "id": "o6lsh",
+                      "type": "ref",
+                      "ref": "s2VNo8",
+                      "name": "Page header",
+                      "width": "fill_container",
+                      "descendants": {
+                        "UCVHe/mEaUK/Enur3": {
+                          "enabled": false
+                        },
+                        "UCVHe/DaJIq/Enur3": {
+                          "enabled": false
+                        },
+                        "UCVHe/xfNuS/Enur3": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BQVOZ",
+                      "name": "Body",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": "$density-stack-gap",
+                      "padding": "$layout-page-gutter",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "pV01n",
+                          "name": "SUMMARY SLOT",
+                          "width": "fill_container",
+                          "height": 128,
+                          "fill": "$color-bg-subtle",
+                          "cornerRadius": "$radius-md",
+                          "stroke": "$color-border-strong",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 5,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "psg4q",
+                              "name": "Label",
+                              "fill": "$color-text-secondary",
+                              "content": "SUMMARY SLOT",
+                              "textAlign": "center",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "WzujU",
+                              "name": "Note",
+                              "fill": "$color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "metric tiles or a balance card — the few numbers that answer the question the record was opened to answer",
+                              "lineHeight": 1.45,
+                              "textAlign": "center",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "BmXJJ",
+                          "name": "SECTION SLOT",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "$color-bg-subtle",
+                          "cornerRadius": "$radius-md",
+                          "stroke": "$color-border-strong",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 5,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "sobrc",
+                              "name": "Label",
+                              "fill": "$color-text-secondary",
+                              "content": "SECTION SLOT",
+                              "textAlign": "center",
+                              "fontFamily": "$type-family-mono",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "EEqqR",
+                              "name": "Note",
+                              "fill": "$color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "the tab the header selected. One tab is current at all times; there is no untabbed state underneath.",
+                              "lineHeight": 1.45,
+                              "textAlign": "center",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Fj8vC",
+          "name": "App bar / compact",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "TuK25",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Fmygl",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "App bar / compact",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "xrluv",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "At Compact there is no sidebar, so the brand and the signed-in member have nowhere to live. This bar carries them: the lockup on the left says which app this is, the account on the right says who you are. It is not a page header - no title, no breadcrumbs, no tabs - so it does not return when a page gains those.",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "rOJmK",
+              "name": "Specimens",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "EpRPP",
+                  "name": "App bar / compact",
+                  "reusable": true,
+                  "width": 390,
+                  "height": 56,
+                  "fill": "$color-bg-surface",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "gap": 12,
+                  "padding": [
+                    0,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "bhLwF",
+                      "type": "ref",
+                      "ref": "vGjfy",
+                      "name": "Brand"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BBPNC",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "id": "Qy6xc",
+                      "type": "ref",
+                      "ref": "QETwn",
+                      "name": "Account",
+                      "width": 46,
+                      "descendants": {
+                        "ldSnK": {
+                          "enabled": false
+                        },
+                        "vS0wl": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "p1UFI",
+                      "type": "ref",
+                      "ref": "mRsB3",
+                      "name": "Sign out",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "#FFFFFF00",
+                      "stroke": "#FFFFFF00",
+                      "descendants": {
+                        "heS79": {
+                          "icon": "log-out",
+                          "fill": "$color-text-secondary",
+                          "width": 16,
+                          "height": 16
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -37577,125 +38134,335 @@
         },
         {
           "type": "text",
-          "id": "gUCE2",
+          "id": "O4zXR",
           "name": "Caption",
           "fill": "$color-text-secondary",
           "textGrowth": "fixed-width",
           "width": "fill_container",
-          "content": "List scaffold / Wide — what fills the shell's CONTENT SLOT in a list area. Drawn at 1176, the Main column of Transactions / Wide. The count and the pagination belong to the table region's own toolbar and footer, not to this scaffold.",
+          "content": "Auth shell — the split page every unauthenticated screen sits in. A 560 brand panel beside a 480 card. Two feedback regions: Feedback slot above the heading for why the member is here, Result slot above the action for what their last attempt did.",
           "fontFamily": "$type-family-mono",
           "fontSize": 11,
           "fontWeight": "normal"
         },
         {
           "type": "frame",
-          "id": "eykQg",
-          "name": "List scaffold / Wide",
+          "id": "kJkV1",
+          "name": "Auth shell",
           "theme": {
             "device": "wide"
           },
+          "reusable": true,
           "clip": true,
-          "width": 1176,
-          "height": 440,
+          "width": 1440,
+          "height": 900,
           "fill": "$color-bg-canvas",
           "cornerRadius": "$radius-lg",
           "stroke": "$color-border-default",
           "strokeWidth": 1,
           "strokeAlignment": "inner",
-          "layout": "vertical",
           "children": [
             {
               "type": "frame",
-              "id": "i0PVTt",
-              "name": "Body",
-              "width": "fill_container",
+              "id": "n4QxIB",
+              "name": "Brand panel",
+              "width": 560,
               "height": "fill_container",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 160,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "$gradient-brand-from",
+                    "position": 0
+                  },
+                  {
+                    "color": "$gradient-brand-to",
+                    "position": 1
+                  }
+                ]
+              },
               "layout": "vertical",
-              "gap": "$density-stack-gap",
-              "padding": "$layout-page-gutter",
+              "gap": "$space-6",
+              "padding": 64,
               "children": [
                 {
+                  "id": "f3r0d",
+                  "type": "ref",
+                  "ref": "vGjfy",
+                  "name": "Brand",
+                  "descendants": {
+                    "eSujL": {
+                      "fill": "$color-text-on-brand"
+                    },
+                    "eSujL/cyMbd": {
+                      "fill": "$color-action-primary"
+                    },
+                    "eSujL/oaTkM": {
+                      "fill": "$color-action-primary"
+                    },
+                    "bwH8r": {
+                      "fill": "$color-text-on-brand"
+                    }
+                  }
+                },
+                {
                   "type": "frame",
-                  "id": "LNxG0",
-                  "name": "FILTER BAR SLOT",
+                  "id": "gkJWK",
+                  "name": "Panel spacer",
                   "width": "fill_container",
-                  "height": 64,
-                  "fill": "$color-bg-subtle",
-                  "cornerRadius": "$radius-md",
-                  "stroke": "$color-border-strong",
-                  "strokeWidth": 1,
-                  "strokeAlignment": "inner",
+                  "height": "fill_container"
+                },
+                {
+                  "type": "text",
+                  "id": "VASPn",
+                  "name": "Panel headline",
+                  "fill": "$color-text-on-brand",
+                  "textGrowth": "fixed-width",
+                  "width": 432,
+                  "content": "Sign in with your fingerprint, not a password.",
+                  "fontFamily": "$type-family-display",
+                  "fontSize": "$type-size-page-title",
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "frame",
+                  "id": "tPOOT",
+                  "name": "Points",
+                  "width": "fill_container",
                   "layout": "vertical",
-                  "gap": 5,
-                  "justifyContent": "center",
-                  "alignItems": "center",
+                  "gap": "$space-4",
                   "children": [
                     {
-                      "type": "text",
-                      "id": "mSybg",
-                      "name": "Label",
-                      "fill": "$color-text-secondary",
-                      "content": "FILTER BAR SLOT",
-                      "textAlign": "center",
-                      "fontFamily": "$type-family-mono",
-                      "fontSize": 12,
-                      "fontWeight": "600"
+                      "type": "frame",
+                      "id": "Nq1uL",
+                      "name": "Point",
+                      "width": "fill_container",
+                      "gap": "$space-3",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "nUzUB",
+                          "name": "Icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "fingerprint",
+                          "library": "lucide",
+                          "fill": "$color-text-on-brand-secondary"
+                        },
+                        {
+                          "type": "text",
+                          "id": "SNhr7",
+                          "name": "Text",
+                          "fill": "$color-text-on-brand-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": 400,
+                          "content": "Your device is the key. Nothing to choose, nothing to remember.",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": "$type-size-body-md",
+                          "fontWeight": "normal"
+                        }
+                      ]
                     },
                     {
-                      "type": "text",
-                      "id": "fCQ0p",
-                      "name": "Note",
-                      "fill": "$color-text-secondary",
-                      "textGrowth": "fixed-width",
+                      "type": "frame",
+                      "id": "vJC8m",
+                      "name": "Point",
                       "width": "fill_container",
-                      "content": "removable chips naming each active filter. A filtered view carries chips and no breadcrumb — a filter is not containment.",
-                      "lineHeight": 1.45,
-                      "textAlign": "center",
-                      "fontFamily": "$type-family-body",
-                      "fontSize": 11,
-                      "fontWeight": "normal"
+                      "gap": "$space-3",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "pBDFZ",
+                          "name": "Icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "shield-check",
+                          "library": "lucide",
+                          "fill": "$color-text-on-brand-secondary"
+                        },
+                        {
+                          "type": "text",
+                          "id": "rlh6y",
+                          "name": "Text",
+                          "fill": "$color-text-on-brand-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": 400,
+                          "content": "The passkey stays on your device and cannot be phished.",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": "$type-size-body-md",
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "lx4SQ",
+                      "name": "Point",
+                      "width": "fill_container",
+                      "gap": "$space-3",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "C2J39U",
+                          "name": "Icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "smartphone",
+                          "library": "lucide",
+                          "fill": "$color-text-on-brand-secondary"
+                        },
+                        {
+                          "type": "text",
+                          "id": "l5sRqJ",
+                          "name": "Text",
+                          "fill": "$color-text-on-brand-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": 400,
+                          "content": "Works on the phone or laptop you already unlock every day.",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": "$type-size-body-md",
+                          "fontWeight": "normal"
+                        }
+                      ]
                     }
                   ]
                 },
                 {
                   "type": "frame",
-                  "id": "Yz20X",
-                  "name": "LIST REGION SLOT",
+                  "id": "THRZB",
+                  "name": "Panel spacer 2",
                   "width": "fill_container",
-                  "height": "fill_container",
-                  "fill": "$color-bg-subtle",
-                  "cornerRadius": "$radius-md",
-                  "stroke": "$color-border-strong",
+                  "height": "fill_container"
+                },
+                {
+                  "type": "text",
+                  "id": "wSR92",
+                  "name": "Panel footer",
+                  "fill": "$color-text-on-brand-secondary",
+                  "content": "A household ledger",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "mK77g",
+              "name": "Card area",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "$color-bg-canvas",
+              "layout": "vertical",
+              "padding": 64,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "w8Iaf",
+                  "name": "Card",
+                  "width": 480,
+                  "fill": "$color-bg-surface",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$color-border-default",
                   "strokeWidth": 1,
-                  "strokeAlignment": "inner",
                   "layout": "vertical",
-                  "gap": 5,
-                  "justifyContent": "center",
-                  "alignItems": "center",
+                  "gap": "$space-6",
+                  "padding": "$space-8",
                   "children": [
                     {
-                      "type": "text",
-                      "id": "B1Tqg",
-                      "name": "Label",
-                      "fill": "$color-text-secondary",
-                      "content": "LIST REGION SLOT",
-                      "textAlign": "center",
-                      "fontFamily": "$type-family-mono",
-                      "fontSize": 12,
-                      "fontWeight": "600"
+                      "type": "frame",
+                      "id": "LqoqA",
+                      "name": "Feedback slot",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": "$space-3",
+                      "children": [
+                        {
+                          "id": "v0qiu",
+                          "type": "ref",
+                          "ref": "WFSg5",
+                          "name": "Notice",
+                          "width": "fill_container"
+                        }
+                      ]
                     },
                     {
                       "type": "text",
-                      "id": "Em3Uc",
-                      "name": "Note",
+                      "id": "BTV7m",
+                      "name": "Heading",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Heading",
+                      "fontFamily": "$type-family-display",
+                      "fontSize": "$type-size-heading-lg",
+                      "fontWeight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "id": "R0Clx",
+                      "name": "Body",
                       "fill": "$color-text-secondary",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "40 · ORGANISMS / Table region at pointer widths; stacked two-line rows at Compact. Empty, loading and filtered-to-nothing replace this region only — the shell and the filter bar stay.",
-                      "lineHeight": 1.45,
-                      "textAlign": "center",
+                      "content": "Body copy explaining what happens next.",
                       "fontFamily": "$type-family-body",
-                      "fontSize": 11,
+                      "fontSize": "$type-size-body-md",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ft9RY",
+                      "name": "Result slot",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": "$space-3",
+                      "children": [
+                        {
+                          "id": "d9yZil",
+                          "type": "ref",
+                          "ref": "WFSg5",
+                          "name": "Notice",
+                          "width": "fill_container",
+                          "enabled": true
+                        }
+                      ]
+                    },
+                    {
+                      "id": "KAxgT",
+                      "type": "ref",
+                      "ref": "W2gOKx",
+                      "name": "Action",
+                      "width": "fill_container",
+                      "height": 44,
+                      "fill": "$color-action-primary",
+                      "descendants": {
+                        "uXXoN": {
+                          "enabled": false
+                        },
+                        "iYHDG": {
+                          "content": "Primary action",
+                          "fill": "$color-action-on-primary"
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "q6eeKu",
+                      "name": "Footnote",
+                      "fill": "$color-text-placeholder",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Supporting note.",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
                       "fontWeight": "normal"
                     }
                   ]
@@ -37706,26 +38473,27 @@
         },
         {
           "type": "text",
-          "id": "KnWcx",
+          "id": "wjaoE",
           "name": "Caption",
           "fill": "$color-text-secondary",
           "textGrowth": "fixed-width",
           "width": "fill_container",
-          "content": "Detail scaffold / Wide — the same page header organism with breadcrumbs enabled, which is the only place they appear: a detail record that failed the one-home test is genuinely nested. Summary first, then the record's peer views as tabs.",
+          "content": "Auth shell / compact — the same card at 342, with the brand panel reduced to a 200 band above it. That band is the only structural difference; the card's five regions are identical in name and order.",
           "fontFamily": "$type-family-mono",
           "fontSize": 11,
           "fontWeight": "normal"
         },
         {
           "type": "frame",
-          "id": "LHBGo",
-          "name": "Detail scaffold / Wide",
+          "id": "tqiBA",
+          "name": "Auth shell / compact",
           "theme": {
-            "device": "wide"
+            "device": "compact"
           },
+          "reusable": true,
           "clip": true,
-          "width": 1176,
-          "height": 560,
+          "width": 390,
+          "height": 844,
           "fill": "$color-bg-canvas",
           "cornerRadius": "$radius-lg",
           "stroke": "$color-border-default",
@@ -37734,118 +38502,404 @@
           "layout": "vertical",
           "children": [
             {
-              "id": "o6lsh",
-              "type": "ref",
-              "ref": "s2VNo8",
-              "name": "Page header",
+              "type": "frame",
+              "id": "hrb5G",
+              "name": "Brand band",
               "width": "fill_container",
+              "height": 200,
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 160,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "$gradient-brand-from",
+                    "position": 0
+                  },
+                  {
+                    "color": "$gradient-brand-to",
+                    "position": 1
+                  }
+                ]
+              },
+              "layout": "vertical",
+              "gap": "$space-3",
+              "padding": 24,
+              "justifyContent": "end",
+              "children": [
+                {
+                  "id": "B55QIL",
+                  "type": "ref",
+                  "ref": "vGjfy",
+                  "name": "Brand",
+                  "descendants": {
+                    "eSujL": {
+                      "fill": "$color-text-on-brand"
+                    },
+                    "eSujL/cyMbd": {
+                      "fill": "$color-action-primary"
+                    },
+                    "eSujL/oaTkM": {
+                      "fill": "$color-action-primary"
+                    },
+                    "bwH8r": {
+                      "fill": "$color-text-on-brand"
+                    }
+                  }
+                },
+                {
+                  "type": "text",
+                  "id": "lcQYG",
+                  "name": "Panel headline",
+                  "fill": "$color-text-on-brand",
+                  "textGrowth": "fixed-width",
+                  "width": 330,
+                  "content": "Sign in with your fingerprint, not a password.",
+                  "fontFamily": "$type-family-display",
+                  "fontSize": "$type-size-heading-md",
+                  "fontWeight": "bold"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "X9DF7",
+              "name": "Card area",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "$color-bg-canvas",
+              "layout": "vertical",
+              "padding": 24,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "jyhhb",
+                  "name": "Card",
+                  "width": 342,
+                  "fill": "$color-bg-surface",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$color-border-default",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": "$space-6",
+                  "padding": "$space-8",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Szvqr",
+                      "name": "Feedback slot",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": "$space-3",
+                      "children": [
+                        {
+                          "id": "AQOmz",
+                          "type": "ref",
+                          "ref": "WFSg5",
+                          "name": "Notice",
+                          "width": "fill_container"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "rtQKe",
+                      "name": "Heading",
+                      "fill": "$color-text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Heading",
+                      "fontFamily": "$type-family-display",
+                      "fontSize": "$type-size-heading-lg",
+                      "fontWeight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "id": "g5His",
+                      "name": "Body",
+                      "fill": "$color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Body copy explaining what happens next.",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-md",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "n7iV7P",
+                      "name": "Result slot",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": "$space-3",
+                      "children": [
+                        {
+                          "id": "Y9Crx",
+                          "type": "ref",
+                          "ref": "WFSg5",
+                          "name": "Notice",
+                          "width": "fill_container",
+                          "enabled": true
+                        }
+                      ]
+                    },
+                    {
+                      "id": "ypzq3",
+                      "type": "ref",
+                      "ref": "W2gOKx",
+                      "name": "Action",
+                      "width": "fill_container",
+                      "height": 44,
+                      "fill": "$color-action-primary",
+                      "descendants": {
+                        "uXXoN": {
+                          "enabled": false
+                        },
+                        "iYHDG": {
+                          "content": "Primary action",
+                          "fill": "$color-action-on-primary"
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "ATWCR",
+                      "name": "Footnote",
+                      "fill": "$color-text-placeholder",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Supporting note.",
+                      "fontFamily": "$type-family-body",
+                      "fontSize": "$type-size-body-sm",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "nxasX",
+          "name": "Caption",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Signed-in landing — the shell after sign-in. Sidebar nav / in shell at 264 and a Main column. No page header: this page has no breadcrumbs, tabs or action to carry, and the sidebar already marks the location.",
+          "fontFamily": "$type-family-mono",
+          "fontSize": 11,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "IGbQe",
+          "name": "Signed-in landing",
+          "theme": {
+            "device": "wide"
+          },
+          "reusable": true,
+          "clip": true,
+          "width": 1440,
+          "height": 900,
+          "fill": "$color-bg-canvas",
+          "cornerRadius": "$radius-lg",
+          "stroke": "$color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "children": [
+            {
+              "id": "D83An",
+              "type": "ref",
+              "ref": "q7dY7c",
+              "name": "Sidebar",
+              "width": 264,
+              "height": "fill_container",
               "descendants": {
-                "UCVHe/mEaUK/Enur3": {
+                "W4cIE8/PwD8Z": {
+                  "fill": "$color-accent-subtle"
+                },
+                "W4cIE8/PwD8Z/TVqlB": {
+                  "fill": "$color-accent"
+                },
+                "W4cIE8/PwD8Z/KfRDI": {
+                  "fill": "$color-accent",
+                  "fontWeight": "600"
+                },
+                "W4cIE8/Nc5C5": {
                   "enabled": false
                 },
-                "UCVHe/DaJIq/Enur3": {
+                "W4cIE8/u5RU0": {
                   "enabled": false
                 },
-                "UCVHe/xfNuS/Enur3": {
+                "W4cIE8/l4tOM": {
                   "enabled": false
+                },
+                "W4cIE8/e9JS0V": {
+                  "enabled": false
+                },
+                "W4cIE8/B8M5f": {
+                  "enabled": false
+                },
+                "W4cIE8/A0RiHq": {
+                  "enabled": false
+                },
+                "W4cIE8/N6xsc": {
+                  "enabled": false
+                },
+                "W4cIE8/zVJvb": {
+                  "enabled": false
+                },
+                "W4cIE8/FJLeG/zeY31/rv5n0": {
+                  "content": "AR"
+                },
+                "W4cIE8/FJLeG/X91ry": {
+                  "content": "Ana Reis"
+                },
+                "W4cIE8/FJLeG/vS0wl": {
+                  "enabled": false
+                },
+                "W4cIE8/ZpGH4": {
+                  "name": "Sign out"
+                },
+                "W4cIE8/ZpGH4/heS79": {
+                  "icon": "log-out",
+                  "fill": "$color-text-secondary",
+                  "width": 16,
+                  "height": 16
                 }
               }
             },
             {
               "type": "frame",
-              "id": "BQVOZ",
+              "id": "bmf3i",
+              "name": "Main",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "$color-bg-canvas",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "xNVFG",
+                  "name": "Body",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "padding": "$space-8",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "E8SQN",
+                      "type": "ref",
+                      "ref": "w5ZouR",
+                      "name": "Empty state",
+                      "fill": "$color-bg-elevated",
+                      "stroke": "$color-border-default",
+                      "strokeWidth": 1,
+                      "descendants": {
+                        "e0t45q": {
+                          "icon": "user-round-check"
+                        },
+                        "WIXtr": {
+                          "content": "Signed in as Ana Reis"
+                        },
+                        "HViAc": {
+                          "content": "There is nothing here yet."
+                        },
+                        "MkvyB": {
+                          "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "A9mZPR",
+          "name": "Caption",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Signed-in landing / compact — no sidebar: a 390 viewport has no room for a 264 column beside anything. The brand and the signed-in member move into App bar / compact, because a screen that shows neither does not tell a member which app they are in or who they are signed in as.",
+          "fontFamily": "$type-family-mono",
+          "fontSize": 11,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "pu6qZ",
+          "name": "Signed-in landing / compact",
+          "theme": {
+            "device": "compact"
+          },
+          "reusable": true,
+          "clip": true,
+          "width": 390,
+          "height": 844,
+          "fill": "$color-bg-canvas",
+          "cornerRadius": "$radius-lg",
+          "stroke": "$color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "Wt0cD",
+              "type": "ref",
+              "ref": "EpRPP",
+              "name": "App bar",
+              "width": "fill_container",
+              "descendants": {
+                "Qy6xc/zeY31/rv5n0": {
+                  "content": "AR"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "A2bVbC",
               "name": "Body",
               "width": "fill_container",
               "height": "fill_container",
               "layout": "vertical",
-              "gap": "$density-stack-gap",
-              "padding": "$layout-page-gutter",
+              "padding": "$space-4",
+              "justifyContent": "center",
+              "alignItems": "center",
               "children": [
                 {
-                  "type": "frame",
-                  "id": "pV01n",
-                  "name": "SUMMARY SLOT",
-                  "width": "fill_container",
-                  "height": 128,
-                  "fill": "$color-bg-subtle",
-                  "cornerRadius": "$radius-md",
-                  "stroke": "$color-border-strong",
+                  "id": "nVYwf",
+                  "type": "ref",
+                  "ref": "w5ZouR",
+                  "name": "Empty state",
+                  "fill": "$color-bg-elevated",
+                  "stroke": "$color-border-default",
                   "strokeWidth": 1,
-                  "strokeAlignment": "inner",
-                  "layout": "vertical",
-                  "gap": 5,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "psg4q",
-                      "name": "Label",
-                      "fill": "$color-text-secondary",
-                      "content": "SUMMARY SLOT",
-                      "textAlign": "center",
-                      "fontFamily": "$type-family-mono",
-                      "fontSize": 12,
-                      "fontWeight": "600"
+                  "descendants": {
+                    "e0t45q": {
+                      "icon": "user-round-check"
                     },
-                    {
-                      "type": "text",
-                      "id": "WzujU",
-                      "name": "Note",
-                      "fill": "$color-text-secondary",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "metric tiles or a balance card — the few numbers that answer the question the record was opened to answer",
-                      "lineHeight": 1.45,
-                      "textAlign": "center",
-                      "fontFamily": "$type-family-body",
-                      "fontSize": 11,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "BmXJJ",
-                  "name": "SECTION SLOT",
-                  "width": "fill_container",
-                  "height": "fill_container",
-                  "fill": "$color-bg-subtle",
-                  "cornerRadius": "$radius-md",
-                  "stroke": "$color-border-strong",
-                  "strokeWidth": 1,
-                  "strokeAlignment": "inner",
-                  "layout": "vertical",
-                  "gap": 5,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "sobrc",
-                      "name": "Label",
-                      "fill": "$color-text-secondary",
-                      "content": "SECTION SLOT",
-                      "textAlign": "center",
-                      "fontFamily": "$type-family-mono",
-                      "fontSize": 12,
-                      "fontWeight": "600"
+                    "WIXtr": {
+                      "content": "Signed in as Ana Reis"
                     },
-                    {
-                      "type": "text",
-                      "id": "EEqqR",
-                      "name": "Note",
-                      "fill": "$color-text-secondary",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "the tab the header selected. One tab is current at all times; there is no untabbed state underneath.",
-                      "lineHeight": 1.45,
-                      "textAlign": "center",
-                      "fontFamily": "$type-family-body",
-                      "fontSize": 11,
-                      "fontWeight": "normal"
+                    "HViAc": {
+                      "content": "There is nothing here yet."
+                    },
+                    "MkvyB": {
+                      "enabled": false
                     }
-                  ]
+                  }
                 }
               ]
             }
@@ -38142,734 +39196,6 @@
               "fontFamily": "$type-family-body",
               "fontSize": 11,
               "fontWeight": "normal"
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "cnHjD",
-          "name": "Page shells",
-          "width": "fill_container",
-          "layout": "vertical",
-          "gap": 24,
-          "children": [
-            {
-              "type": "text",
-              "id": "VJf0r",
-              "name": "Caption",
-              "fill": "$color-text-secondary",
-              "textGrowth": "fixed-width",
-              "width": 2000,
-              "content": "Reusable page shells. Chrome repeats; content enters through named slots. Instance these — do not redraw them on a journey.",
-              "fontFamily": "$type-family-body",
-              "fontSize": "$type-size-body-md",
-              "fontWeight": "normal"
-            },
-            {
-              "type": "frame",
-              "id": "kJkV1",
-              "name": "Auth shell",
-              "reusable": true,
-              "clip": true,
-              "width": 1440,
-              "height": 900,
-              "fill": "$color-bg-canvas",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "n4QxIB",
-                  "name": "Brand panel",
-                  "width": 560,
-                  "height": "fill_container",
-                  "fill": {
-                    "type": "gradient",
-                    "gradientType": "linear",
-                    "enabled": true,
-                    "rotation": 160,
-                    "size": {
-                      "height": 1
-                    },
-                    "colors": [
-                      {
-                        "color": "$gradient-brand-from",
-                        "position": 0
-                      },
-                      {
-                        "color": "$gradient-brand-to",
-                        "position": 1
-                      }
-                    ]
-                  },
-                  "layout": "vertical",
-                  "gap": "$space-6",
-                  "padding": 64,
-                  "children": [
-                    {
-                      "id": "f3r0d",
-                      "type": "ref",
-                      "ref": "vGjfy",
-                      "name": "Brand",
-                      "descendants": {
-                        "eSujL": {
-                          "fill": "$color-text-on-brand"
-                        },
-                        "eSujL/cyMbd": {
-                          "fill": "$color-action-primary"
-                        },
-                        "eSujL/oaTkM": {
-                          "fill": "$color-action-primary"
-                        },
-                        "bwH8r": {
-                          "fill": "$color-text-on-brand"
-                        }
-                      }
-                    },
-                    {
-                      "type": "frame",
-                      "id": "gkJWK",
-                      "name": "Panel spacer",
-                      "width": "fill_container",
-                      "height": "fill_container"
-                    },
-                    {
-                      "type": "text",
-                      "id": "VASPn",
-                      "name": "Panel headline",
-                      "fill": "$color-text-on-brand",
-                      "textGrowth": "fixed-width",
-                      "width": 432,
-                      "content": "Sign in with your fingerprint, not a password.",
-                      "fontFamily": "$type-family-display",
-                      "fontSize": "$type-size-page-title",
-                      "fontWeight": "bold"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "tPOOT",
-                      "name": "Points",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": "$space-4",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "Nq1uL",
-                          "name": "Point",
-                          "width": "fill_container",
-                          "gap": "$space-3",
-                          "children": [
-                            {
-                              "type": "icon",
-                              "id": "nUzUB",
-                              "name": "Icon",
-                              "width": 20,
-                              "height": 20,
-                              "icon": "fingerprint",
-                              "library": "lucide",
-                              "fill": "$color-text-on-brand-secondary"
-                            },
-                            {
-                              "type": "text",
-                              "id": "SNhr7",
-                              "name": "Text",
-                              "fill": "$color-text-on-brand-secondary",
-                              "textGrowth": "fixed-width",
-                              "width": 400,
-                              "content": "Your device is the key. Nothing to choose, nothing to remember.",
-                              "fontFamily": "$type-family-body",
-                              "fontSize": "$type-size-body-md",
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "vJC8m",
-                          "name": "Point",
-                          "width": "fill_container",
-                          "gap": "$space-3",
-                          "children": [
-                            {
-                              "type": "icon",
-                              "id": "pBDFZ",
-                              "name": "Icon",
-                              "width": 20,
-                              "height": 20,
-                              "icon": "shield-check",
-                              "library": "lucide",
-                              "fill": "$color-text-on-brand-secondary"
-                            },
-                            {
-                              "type": "text",
-                              "id": "rlh6y",
-                              "name": "Text",
-                              "fill": "$color-text-on-brand-secondary",
-                              "textGrowth": "fixed-width",
-                              "width": 400,
-                              "content": "The passkey stays on your device and cannot be phished.",
-                              "fontFamily": "$type-family-body",
-                              "fontSize": "$type-size-body-md",
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "lx4SQ",
-                          "name": "Point",
-                          "width": "fill_container",
-                          "gap": "$space-3",
-                          "children": [
-                            {
-                              "type": "icon",
-                              "id": "C2J39U",
-                              "name": "Icon",
-                              "width": 20,
-                              "height": 20,
-                              "icon": "smartphone",
-                              "library": "lucide",
-                              "fill": "$color-text-on-brand-secondary"
-                            },
-                            {
-                              "type": "text",
-                              "id": "l5sRqJ",
-                              "name": "Text",
-                              "fill": "$color-text-on-brand-secondary",
-                              "textGrowth": "fixed-width",
-                              "width": 400,
-                              "content": "Works on the phone or laptop you already unlock every day.",
-                              "fontFamily": "$type-family-body",
-                              "fontSize": "$type-size-body-md",
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "THRZB",
-                      "name": "Panel spacer 2",
-                      "width": "fill_container",
-                      "height": "fill_container"
-                    },
-                    {
-                      "type": "text",
-                      "id": "wSR92",
-                      "name": "Panel footer",
-                      "fill": "$color-text-on-brand-secondary",
-                      "content": "A household ledger",
-                      "fontFamily": "$type-family-body",
-                      "fontSize": "$type-size-body-sm",
-                      "fontWeight": "normal"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "mK77g",
-                  "name": "Card area",
-                  "width": "fill_container",
-                  "height": "fill_container",
-                  "fill": "$color-bg-canvas",
-                  "layout": "vertical",
-                  "padding": 64,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "w8Iaf",
-                      "name": "Card",
-                      "width": 480,
-                      "fill": "$color-bg-surface",
-                      "cornerRadius": "$radius-lg",
-                      "stroke": "$color-border-default",
-                      "strokeWidth": 1,
-                      "layout": "vertical",
-                      "gap": "$space-6",
-                      "padding": "$space-8",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "LqoqA",
-                          "name": "Feedback slot",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": "$space-3",
-                          "children": [
-                            {
-                              "id": "v0qiu",
-                              "type": "ref",
-                              "ref": "WFSg5",
-                              "name": "Notice",
-                              "width": "fill_container"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "text",
-                          "id": "BTV7m",
-                          "name": "Heading",
-                          "fill": "$color-text-primary",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Heading",
-                          "fontFamily": "$type-family-display",
-                          "fontSize": "$type-size-heading-lg",
-                          "fontWeight": "bold"
-                        },
-                        {
-                          "type": "text",
-                          "id": "R0Clx",
-                          "name": "Body",
-                          "fill": "$color-text-secondary",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Body copy explaining what happens next.",
-                          "fontFamily": "$type-family-body",
-                          "fontSize": "$type-size-body-md",
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "id": "KAxgT",
-                          "type": "ref",
-                          "ref": "W2gOKx",
-                          "name": "Action",
-                          "width": "fill_container",
-                          "height": 44,
-                          "fill": "$color-action-primary",
-                          "descendants": {
-                            "uXXoN": {
-                              "enabled": false
-                            },
-                            "iYHDG": {
-                              "content": "Primary action",
-                              "fill": "$color-action-on-primary"
-                            }
-                          }
-                        },
-                        {
-                          "type": "text",
-                          "id": "q6eeKu",
-                          "name": "Footnote",
-                          "fill": "$color-text-placeholder",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Supporting note.",
-                          "fontFamily": "$type-family-body",
-                          "fontSize": "$type-size-body-sm",
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "tqiBA",
-              "name": "Auth shell / compact",
-              "reusable": true,
-              "clip": true,
-              "width": 390,
-              "height": 844,
-              "fill": "$color-bg-canvas",
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "hrb5G",
-                  "name": "Brand band",
-                  "width": "fill_container",
-                  "height": 200,
-                  "fill": {
-                    "type": "gradient",
-                    "gradientType": "linear",
-                    "enabled": true,
-                    "rotation": 160,
-                    "size": {
-                      "height": 1
-                    },
-                    "colors": [
-                      {
-                        "color": "$gradient-brand-from",
-                        "position": 0
-                      },
-                      {
-                        "color": "$gradient-brand-to",
-                        "position": 1
-                      }
-                    ]
-                  },
-                  "layout": "vertical",
-                  "gap": "$space-3",
-                  "padding": 24,
-                  "justifyContent": "end",
-                  "children": [
-                    {
-                      "id": "B55QIL",
-                      "type": "ref",
-                      "ref": "vGjfy",
-                      "name": "Brand",
-                      "descendants": {
-                        "eSujL": {
-                          "fill": "$color-text-on-brand"
-                        },
-                        "eSujL/cyMbd": {
-                          "fill": "$color-action-primary"
-                        },
-                        "eSujL/oaTkM": {
-                          "fill": "$color-action-primary"
-                        },
-                        "bwH8r": {
-                          "fill": "$color-text-on-brand"
-                        }
-                      }
-                    },
-                    {
-                      "type": "text",
-                      "id": "lcQYG",
-                      "name": "Panel headline",
-                      "fill": "$color-text-on-brand",
-                      "textGrowth": "fixed-width",
-                      "width": 330,
-                      "content": "Sign in with your fingerprint, not a password.",
-                      "fontFamily": "$type-family-display",
-                      "fontSize": "$type-size-heading-md",
-                      "fontWeight": "bold"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "X9DF7",
-                  "name": "Card area",
-                  "width": "fill_container",
-                  "height": "fill_container",
-                  "fill": "$color-bg-canvas",
-                  "layout": "vertical",
-                  "padding": 24,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "jyhhb",
-                      "name": "Card",
-                      "width": 342,
-                      "fill": "$color-bg-surface",
-                      "cornerRadius": "$radius-lg",
-                      "stroke": "$color-border-default",
-                      "strokeWidth": 1,
-                      "layout": "vertical",
-                      "gap": "$space-6",
-                      "padding": "$space-8",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "Szvqr",
-                          "name": "Feedback slot",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": "$space-3",
-                          "children": [
-                            {
-                              "id": "AQOmz",
-                              "type": "ref",
-                              "ref": "WFSg5",
-                              "name": "Notice",
-                              "width": "fill_container"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "text",
-                          "id": "rtQKe",
-                          "name": "Heading",
-                          "fill": "$color-text-primary",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Heading",
-                          "fontFamily": "$type-family-display",
-                          "fontSize": "$type-size-heading-lg",
-                          "fontWeight": "bold"
-                        },
-                        {
-                          "type": "text",
-                          "id": "g5His",
-                          "name": "Body",
-                          "fill": "$color-text-secondary",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Body copy explaining what happens next.",
-                          "fontFamily": "$type-family-body",
-                          "fontSize": "$type-size-body-md",
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "id": "ypzq3",
-                          "type": "ref",
-                          "ref": "W2gOKx",
-                          "name": "Action",
-                          "width": "fill_container",
-                          "height": 44,
-                          "fill": "$color-action-primary",
-                          "descendants": {
-                            "uXXoN": {
-                              "enabled": false
-                            },
-                            "iYHDG": {
-                              "content": "Primary action",
-                              "fill": "$color-action-on-primary"
-                            }
-                          }
-                        },
-                        {
-                          "type": "text",
-                          "id": "ATWCR",
-                          "name": "Footnote",
-                          "fill": "$color-text-placeholder",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Supporting note.",
-                          "fontFamily": "$type-family-body",
-                          "fontSize": "$type-size-body-sm",
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "IGbQe",
-              "name": "Signed-in landing",
-              "reusable": true,
-              "clip": true,
-              "width": 1440,
-              "height": 900,
-              "fill": "$color-bg-canvas",
-              "children": [
-                {
-                  "id": "D83An",
-                  "type": "ref",
-                  "ref": "q7dY7c",
-                  "name": "Sidebar",
-                  "width": 264,
-                  "height": "fill_container",
-                  "descendants": {
-                    "W4cIE8/PwD8Z": {
-                      "fill": "$color-accent-subtle"
-                    },
-                    "W4cIE8/PwD8Z/TVqlB": {
-                      "fill": "$color-accent"
-                    },
-                    "W4cIE8/PwD8Z/KfRDI": {
-                      "fill": "$color-accent",
-                      "fontWeight": "600"
-                    },
-                    "W4cIE8/Nc5C5": {
-                      "enabled": false
-                    },
-                    "W4cIE8/u5RU0": {
-                      "enabled": false
-                    },
-                    "W4cIE8/l4tOM": {
-                      "enabled": false
-                    },
-                    "W4cIE8/e9JS0V": {
-                      "enabled": false
-                    },
-                    "W4cIE8/B8M5f": {
-                      "enabled": false
-                    },
-                    "W4cIE8/A0RiHq": {
-                      "enabled": false
-                    },
-                    "W4cIE8/N6xsc": {
-                      "enabled": false
-                    },
-                    "W4cIE8/zVJvb": {
-                      "enabled": false
-                    },
-                    "W4cIE8/FJLeG/zeY31/rv5n0": {
-                      "content": "AR"
-                    },
-                    "W4cIE8/FJLeG/X91ry": {
-                      "content": "Ana Reis"
-                    },
-                    "W4cIE8/FJLeG/vS0wl": {
-                      "enabled": false
-                    }
-                  }
-                },
-                {
-                  "type": "frame",
-                  "id": "bmf3i",
-                  "name": "Main",
-                  "width": "fill_container",
-                  "height": "fill_container",
-                  "fill": "$color-bg-canvas",
-                  "layout": "vertical",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "xNVFG",
-                      "name": "Body",
-                      "width": "fill_container",
-                      "height": "fill_container",
-                      "layout": "vertical",
-                      "padding": "$space-8",
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "id": "E8SQN",
-                          "type": "ref",
-                          "ref": "w5ZouR",
-                          "name": "Empty state",
-                          "fill": "$color-bg-elevated",
-                          "stroke": "$color-border-default",
-                          "strokeWidth": 1,
-                          "descendants": {
-                            "e0t45q": {
-                              "icon": "user-round-check"
-                            },
-                            "WIXtr": {
-                              "content": "Signed in as Ana Reis"
-                            },
-                            "HViAc": {
-                              "content": "There is nothing here yet."
-                            },
-                            "MkvyB": {
-                              "enabled": false
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "pu6qZ",
-              "name": "Signed-in landing / compact",
-              "reusable": true,
-              "clip": true,
-              "width": 390,
-              "height": 844,
-              "fill": "$color-bg-canvas",
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "A2bVbC",
-                  "name": "Body",
-                  "width": "fill_container",
-                  "height": "fill_container",
-                  "layout": "vertical",
-                  "padding": "$space-4",
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "id": "nVYwf",
-                      "type": "ref",
-                      "ref": "w5ZouR",
-                      "name": "Empty state",
-                      "fill": "$color-bg-elevated",
-                      "stroke": "$color-border-default",
-                      "strokeWidth": 1,
-                      "descendants": {
-                        "e0t45q": {
-                          "icon": "user-round-check"
-                        },
-                        "WIXtr": {
-                          "content": "Signed in as Ana Reis"
-                        },
-                        "HViAc": {
-                          "content": "There is nothing here yet."
-                        },
-                        "MkvyB": {
-                          "enabled": false
-                        }
-                      }
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "xvPf9",
-              "name": "Shell presets",
-              "width": "fill_container",
-              "layout": "vertical",
-              "gap": 12,
-              "children": [
-                {
-                  "type": "text",
-                  "id": "J2CD38",
-                  "name": "Caption",
-                  "fill": "$color-text-secondary",
-                  "textGrowth": "fixed-width",
-                  "width": 1100,
-                  "content": "Shell presets. Sidebar nav and App header each carry a full border and a corner radius, which is right on the tile they are displayed on and wrong against another shell part. These wrap an instance and trade that card chrome for the single edge a shell needs. Compose shells from these, never from the base component plus two overrides.",
-                  "fontFamily": "$type-family-body",
-                  "fontSize": "$type-size-body-md",
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "frame",
-                  "id": "q7dY7c",
-                  "name": "Sidebar nav / in shell",
-                  "reusable": true,
-                  "width": 264,
-                  "height": 640,
-                  "layout": "vertical",
-                  "children": [
-                    {
-                      "id": "W4cIE8",
-                      "type": "ref",
-                      "ref": "fwKnX",
-                      "name": "Sidebar nav",
-                      "width": "fill_container",
-                      "height": "fill_container",
-                      "strokeWidth": {
-                        "right": 1
-                      },
-                      "cornerRadius": 0
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "s2VNo8",
-                  "name": "App header / in shell",
-                  "reusable": true,
-                  "width": 1176,
-                  "layout": "vertical",
-                  "children": [
-                    {
-                      "id": "UCVHe",
-                      "type": "ref",
-                      "ref": "uC4nV",
-                      "name": "App header",
-                      "width": "fill_container",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "cornerRadius": 0
-                    }
-                  ]
-                }
-              ]
             }
           ]
         }

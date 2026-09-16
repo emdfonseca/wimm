@@ -5,10 +5,17 @@ context: |
   packages under packages/. The UI is SvelteKit with Svelte 5 in packages/ui.
   Python only where a library forces it.
 
-  Connect over protobuf between our own callers. REST with OpenAPI 3.1 only for
-  third parties. Postgres with goose migrations, owned by the service that owns
-  the database. OpenTelemetry over OTLP for traces, metrics and logs; services
-  never know which backend receives them.
+  Three API surfaces and no fourth (ADR 0001). Connect over protobuf runs server
+  to server between our own services. Our own web client speaks REST over HTTP
+  and JSON through the app's own SvelteKit server routes, never Connect, and
+  that surface is undocumented and unversioned because its only consumer ships
+  in the same deploy. Third parties and webhooks get REST with OpenAPI 3.1 and
+  RFC 9457 errors.
+
+  Postgres with goose migrations, owned by the service that owns the database.
+  Every lifetime is compared against database time, never a process clock.
+  OpenTelemetry over OTLP for traces, metrics and logs; services never know
+  which backend receives them.
 
   devbox owns the toolchain and just owns every task entry point. `just check
   <dir>` is the only test, lint and typecheck command — if it fails, the work is
@@ -24,6 +31,12 @@ context: |
 
   Repo standards are Claude skills in .claude/skills/; language conventions are
   in .claude/rules/. Both are binding on generated work.
+
+  .pen files are pretty-printed JSON, not encrypted: read them with jq or Python
+  when you need their shape, and write them through `just pen-exec`. The design
+  library is additive - never rename, retype, reparent or delete a node that
+  already exists as a side effect of adding one. `just pen-manifest verify`
+  enforces that.
 
 # Project context (optional)
 # This is shown to AI when creating artifacts.
