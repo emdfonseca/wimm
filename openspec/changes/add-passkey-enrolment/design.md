@@ -91,8 +91,17 @@ opposite of what this design wants.
 
 **The value appears in the URL**, so it reaches browser history, and any
 referrer or log that records paths. Mitigated by exchanging it server-side on
-first load and redirecting to a path that does not contain it, so what lingers
-in history is spent. Logs must not record the enrolment path with its value.
+first load for a ticket in an `HttpOnly` cookie and redirecting to a path that
+does not contain it, so the value stops travelling after the first request.
+Logs must not record the enrolment path with its value.
+
+**A link closes on enrolment, not on being opened.** Single-use means one
+passkey, not one page load: a member whose device will not save a discoverable
+credential, or who dismisses the prompt, must be able to open the same link on
+another device. Closing it at first load would turn every abandoned attempt into
+another round-trip through the operator. The residual exposure is that a link
+copied out of history still works until a passkey is saved, which the 24-hour
+lifetime and reissue-invalidation bound.
 
 ### WebAuthn parameters are policy, and the relying-party identifier is a one-way door
 

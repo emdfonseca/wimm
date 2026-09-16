@@ -324,10 +324,35 @@ artifacts:
       less than the library offers, it needs a smaller component, and that is a
       finding worth recording under Components missing.
 
+      **The library is additive.** Never rename, retype, reparent or delete a
+      node that already exists as a side effect of adding one - not to make a
+      name read better beside your addition, not to make siblings symmetrical.
+      A `.pen` is pretty-printed JSON, so read it with `jq` when you want its
+      shape, and it does diff - but a three-thousand-node diff buries a one-line
+      rename. `just pen-manifest verify` fails on any such change; `just pen-manifest write`
+      is for when changing an existing node is the thing you set out to do.
+      Read the component you are extending and copy its own pattern rather than
+      one inferred from another zone.
+
       Compose from library components. Instance what exists; do not redraw a
       control's chrome. Anything the journey needs that the library lacks goes
       under Components missing and becomes a task - build it in the library
       during apply, not here.
+
+      **Every entry under Components missing is three deliverables, not two:**
+      the origin in `product-ui.lib.pen`, the Svelte component in
+      `packages/ui/src/<layer>/`, and its `.stories.svelte` beside it. A
+      component with no story is a component nobody can see in isolation, in
+      either theme, at any viewport, and its behavioural contract - focus, live
+      regions, disabled states - is asserted nowhere. Name all three in the
+      task, so none of them is remembered rather than planned. `.claude/skills/
+      storybook/SKILL.md` gives the layer, the title and the play functions;
+      `just check packages/ui` refuses a component that has no story.
+
+      **Layers are atomic design and the story title mirrors them.**
+      `atoms/ molecules/ organisms/ templates/ pages/` under `packages/ui/src/`,
+      matching the library's own zoning. A template and a page are components:
+      they get stories like anything else.
 
       **Before declaring anything missing, find where the library already puts
       that content.** Search by the data, not by the shape you have in mind: ask
@@ -362,9 +387,11 @@ artifacts:
       no canvas.md. Only library work done through the MCP, on the document a
       person has open, needs `just pen-save`.
 
-      The `.pen` is a 1.5 MB encrypted blob: it does not diff, so no reviewer
-      can see what changed by reading the commit. This document is the review
-      artifact. Frame IDs, surface decisions and contracts belong here in full.
+      The `.pen` is 1.5 MB of pretty-printed JSON. It is not encrypted - the
+      pencil MCP's own blurb says otherwise and is wrong, and `bin/pen-import`
+      has always relied on it being JSON. It diffs, but a three-thousand-node
+      diff buries a one-line change, so this document is the review artifact for
+      intent and `library-manifest.tsv` is the one for damage. Frame IDs, surface decisions and contracts belong here in full.
     requires:
       - specs
 
