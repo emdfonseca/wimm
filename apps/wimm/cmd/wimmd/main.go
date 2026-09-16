@@ -71,7 +71,13 @@ func run() int {
 	log.InfoContext(ctx, "starting",
 		"relying_party_id", cfg.RelyingPartyID,
 		"origins", cfg.Origins,
-		"operator_listener", cfg.OperatorEnabled)
+		"operator_listener", cfg.OperatorEnabled,
+		"sweep_interval", cfg.SweepInterval)
+
+	// One goroutine beside the listeners, sharing their signal context so it
+	// stops when they do. Nothing waits for it on the way out: an interrupted
+	// sweep leaves rows that the next one removes.
+	go identity.NewSweeper(db, log, cfg).Run(ctx)
 
 	if err := server.Run(ctx, log, 10*time.Second, listeners...); err != nil {
 		log.ErrorContext(ctx, "serving", "error", err)

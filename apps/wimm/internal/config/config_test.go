@@ -123,3 +123,58 @@ func TestParsesOverrides(t *testing.T) {
 		t.Errorf("SessionLifetime = %s", c.SessionLifetime)
 	}
 }
+
+// The sweep runs on an instance nobody administers, so its two durations have
+// to be right without being set. A default that is zero or missing turns the
+// ticker into a busy loop or the retention window into an immediate delete.
+func TestSweepDefaults(t *testing.T) {
+	c, err := config.Load(env(valid()))
+	if err != nil {
+		t.Fatalf("valid configuration was refused: %v", err)
+	}
+
+	if c.SweepInterval != config.DefaultSweepInterval {
+		t.Errorf("SweepInterval = %s, want %s", c.SweepInterval, config.DefaultSweepInterval)
+	}
+	if c.RevokedSessionRetention != config.DefaultRevokedSessionRetention {
+		t.Errorf("RevokedSessionRetention = %s, want %s",
+			c.RevokedSessionRetention, config.DefaultRevokedSessionRetention)
+	}
+}
+
+func TestParsesSweepOverrides(t *testing.T) {
+	e := valid()
+	e["WIMM_SWEEP_INTERVAL"] = "15m"
+	e["WIMM_REVOKED_SESSION_RETENTION"] = "48h"
+
+	c, err := config.Load(env(e))
+	if err != nil {
+		t.Fatalf("valid overrides were refused: %v", err)
+	}
+	if c.SweepInterval != 15*time.Minute {
+		t.Errorf("SweepInterval = %s, want 15m", c.SweepInterval)
+	}
+	if c.RevokedSessionRetention != 48*time.Hour {
+		t.Errorf("RevokedSessionRetention = %s, want 48h", c.RevokedSessionRetention)
+	}
+}
+
+// A zero interval is a ticker that panics and a retention window that deletes
+// a session the instant it is revoked. Both are refusals at startup, the way
+// every other lifetime already is.
+func TestRejectsNonPositiveSweepDurations(t *testing.T) {
+	for _, key := range []string{"WIMM_SWEEP_INTERVAL", "WIMM_REVOKED_SESSION_RETENTION"} {
+		t.Run(key, func(t *testing.T) {
+			e := valid()
+			e[key] = "0s"
+
+			_, err := config.Load(env(e))
+			if err == nil {
+				t.Fatalf("a zero %s was accepted", key)
+			}
+			if !strings.Contains(err.Error(), key) {
+				t.Errorf("the refusal does not name %s: %v", key, err)
+			}
+		})
+	}
+}

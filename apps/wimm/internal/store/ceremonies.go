@@ -68,12 +68,3 @@ func (db *DB) ConsumeCeremony(ctx context.Context, id string, kind CeremonyKind)
 	c.Kind = CeremonyKind(kindText)
 	return c, nil
 }
-
-// DeleteExpiredCeremonies clears challenges nobody answered.
-func (db *DB) DeleteExpiredCeremonies(ctx context.Context) (int64, error) {
-	tag, err := db.pool.Exec(ctx, `delete from ceremony_challenges where expires_at <= now()`)
-	if err != nil {
-		return 0, fmt.Errorf("clearing expired ceremony challenges: %w", err)
-	}
-	return tag.RowsAffected(), nil
-}

@@ -44,6 +44,16 @@ type Config struct {
 	// CeremonyLifetime is how long a WebAuthn challenge stays valid.
 	CeremonyLifetime time.Duration
 
+	// SweepInterval is how often wimmd removes identity rows that can no
+	// longer be used. Nothing depends on it being short: an expired row is
+	// already refused by the check that reads it, so a slow sweep costs
+	// storage and nothing else.
+	SweepInterval time.Duration
+	// RevokedSessionRetention is how long a revoked session is kept after
+	// revocation, so that "was this session actually cut off" has an answer.
+	// It is not an audit trail, and the default is short for that reason.
+	RevokedSessionRetention time.Duration
+
 	// BaseURL is the origin enrolment links are built against.
 	BaseURL string
 
@@ -67,6 +77,13 @@ const (
 	DefaultEnrolmentLinkLifetime = 24 * time.Hour
 	DefaultSessionLifetime       = 14 * 24 * time.Hour
 	DefaultCeremonyLifetime      = 5 * time.Minute
+
+	// Hourly is often enough that a household instance never notices the
+	// backlog, and rare enough that the deletes never compete with a request.
+	DefaultSweepInterval = time.Hour
+	// A week covers the span in which anyone asks whether a device was cut
+	// off. Past that the row answers a question nobody is still asking.
+	DefaultRevokedSessionRetention = 7 * 24 * time.Hour
 )
 
 // Load reads the environment and validates it. It returns every problem it
@@ -83,6 +100,9 @@ func Load(env func(string) string) (Config, error) {
 		EnrolmentLinkLifetime: DefaultEnrolmentLinkLifetime,
 		SessionLifetime:       DefaultSessionLifetime,
 		CeremonyLifetime:      DefaultCeremonyLifetime,
+
+		SweepInterval:           DefaultSweepInterval,
+		RevokedSessionRetention: DefaultRevokedSessionRetention,
 	}
 
 	var problems []error
@@ -100,6 +120,8 @@ func Load(env func(string) string) (Config, error) {
 		{"WIMM_ENROLMENT_LINK_LIFETIME", &c.EnrolmentLinkLifetime},
 		{"WIMM_SESSION_LIFETIME", &c.SessionLifetime},
 		{"WIMM_CEREMONY_LIFETIME", &c.CeremonyLifetime},
+		{"WIMM_SWEEP_INTERVAL", &c.SweepInterval},
+		{"WIMM_REVOKED_SESSION_RETENTION", &c.RevokedSessionRetention},
 	} {
 		if raw := env(d.key); raw != "" {
 			v, err := time.ParseDuration(raw)

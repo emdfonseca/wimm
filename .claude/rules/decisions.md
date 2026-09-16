@@ -534,3 +534,29 @@ plainly: the operator is trusted and has to act on it.
 **Dependencies.** A Go WebAuthn library, a Postgres driver, and Connect. Each is
 new to the repo and each is load-bearing: the ceremony, the storage and the
 contract respectively.
+
+## 0017 · Sweeping expired identity rows — Accepted
+
+`wimmd` sweeps on a ticker from one goroutine started beside the listeners,
+sharing their signal context. One pass is three independent statements, one per
+table, each reporting its own count and its own error; a failure in one does not
+skip the others, because no invariant spans them. Each delete runs in bounded
+batches of `store.DeleteBatchSize`, repeating until a batch comes back short, so
+the lock is a function of the batch rather than of the backlog. Every comparison
+is `now()` in SQL, enforced by `forbidigo` banning `time.Now` outside tests; the
+interval between sweeps is a Go ticker, which is not a lifetime.
+
+An expired session is removed at once. A revoked one is kept for
+`WIMM_REVOKED_SESSION_RETENTION` after `revoked_at`, because revocation is the
+whole recovery story for a lost device and a row deleted on revocation cannot
+answer "was this actually cut off". Both that window and `WIMM_SWEEP_INTERVAL`
+are configuration with defaults a household instance never sets, refused at
+startup when non-positive like every other lifetime.
+
+Each sweep logs one line carrying a count per kind, including when every count
+is zero, and nothing else: no row identifier, and nothing that is stored hashed.
+
+Sessions and enrolment tickets gain indexes on the columns the sweep scans —
+`expires_at` on both, and a partial index on `sessions.revoked_at` for the
+branch that reads it — built `CONCURRENTLY` in a `NO TRANSACTION` migration.
+`ceremony_challenges` already had its own.

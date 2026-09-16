@@ -2,6 +2,7 @@ package store_test
 
 import (
 	"context"
+	"slices"
 	"testing"
 	"time"
 
@@ -126,4 +127,74 @@ func TestSessionExpiryIsMeasuredAgainstDatabaseTime(t *testing.T) {
 	if diff := got - lifetime; diff > 5*time.Second || diff < -5*time.Second {
 		t.Errorf("the session lasts %s by the database's own clock, want %s", got, lifetime)
 	}
+}
+
+// The sweep's indexes are the first migration to land on a schema that already
+// has rows in it, so its rollback has to put the schema back rather than
+// approximately back. Rolling forward again has to restore it exactly.
+func TestSweepIndexesRoundTripToThePreviousSchema(t *testing.T) {
+	// Its own database: this test migrates backwards, and the rest of the
+	// suite is running against the shared one at the same time.
+	url := storetest.Scratch(t, "sweep_indexes")
+
+	if err := store.MigrateUp(url); err != nil {
+		t.Fatalf("migrating up: %v", err)
+	}
+
+	ctx := context.Background()
+	pool, err := pgxpool.New(ctx, url)
+	if err != nil {
+		t.Fatalf("connecting: %v", err)
+	}
+	defer pool.Close()
+
+	atHead := indexes(t, ctx, pool)
+	sweepIndexes := []string{
+		"enrolment_tickets_expires_at_idx",
+		"sessions_expires_at_idx",
+		"sessions_revoked_at_idx",
+	}
+	for _, name := range sweepIndexes {
+		if !slices.Contains(atHead, name) {
+			t.Fatalf("after migrating up %s is missing; head has %v", name, atHead)
+		}
+	}
+
+	const identityOnly = 1
+	if err := store.MigrateDownTo(url, identityOnly); err != nil {
+		t.Fatalf("rolling the sweep indexes back: %v", err)
+	}
+
+	rolledBack := indexes(t, ctx, pool)
+	for _, name := range sweepIndexes {
+		if slices.Contains(rolledBack, name) {
+			t.Errorf("%s survived the rollback", name)
+		}
+	}
+	// Everything the identity migration created is still there: the rollback
+	// removed what it added and nothing else.
+	want := slices.DeleteFunc(slices.Clone(atHead), func(name string) bool {
+		return slices.Contains(sweepIndexes, name)
+	})
+	if !slices.Equal(rolledBack, want) {
+		t.Errorf("after the rollback the schema has %v, want %v", rolledBack, want)
+	}
+	if got := tables(t, ctx, pool); len(got) == 0 {
+		t.Error("the rollback took the identity tables with it")
+	}
+
+	if err := store.MigrateUp(url); err != nil {
+		t.Fatalf("migrating up again: %v", err)
+	}
+	if got := indexes(t, ctx, pool); !slices.Equal(got, atHead) {
+		t.Errorf("after rolling forward again the schema has %v, want %v", got, atHead)
+	}
+}
+
+func indexes(t *testing.T, ctx context.Context, pool *pgxpool.Pool) []string {
+	t.Helper()
+	return strings(t, ctx, pool, `
+		select indexname from pg_indexes
+		where schemaname = 'public' and tablename <> 'goose_db_version'
+		order by 1`)
 }
