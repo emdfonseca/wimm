@@ -8,6 +8,11 @@
 
 .devbox/
 node_modules/
+
+# Per-machine environment, read by devbox via env_from. Holds paths to key
+# files and one gateway application id — no key material, and still not
+# something to commit.
+local.env
 dist/
 __pycache__/
 

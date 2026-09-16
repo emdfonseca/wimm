@@ -222,6 +222,54 @@
         }
       }
     },
+    "mkcert@1.4": {
+      "last_modified": "2026-08-27T07:16:00Z",
+      "resolved": "github:NixOS/nixpkgs/c27cdad491a991b11ed731760aa2ef8db0cb0410#mkcert",
+      "source": "devbox-search",
+      "version": "1.4.4",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/5c4xv93h1ylawqqyzv6c5h4qis8fx69y-mkcert-1.4.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/5c4xv93h1ylawqqyzv6c5h4qis8fx69y-mkcert-1.4.4"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/xar772xyk4q9l2dsy7hi6k7w55a7zx99-mkcert-1.4.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/xar772xyk4q9l2dsy7hi6k7w55a7zx99-mkcert-1.4.4"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/slavppbap2pj7a3pbvrji4845ldx5fjh-mkcert-1.4.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/slavppbap2pj7a3pbvrji4845ldx5fjh-mkcert-1.4.4"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/1cyi4mfm3jn7iimh9al1cwiq62vgjlzw-mkcert-1.4.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/1cyi4mfm3jn7iimh9al1cwiq62vgjlzw-mkcert-1.4.4"
+        }
+      }
+    },
     "nodejs@26": {
       "last_modified": "2026-08-27T23:47:58Z",
       "plugin_version": "0.0.4",
@@ -445,7 +493,7 @@
         }
       }
     },
-    "protoc-gen-connect-go@1.20.0": {
+    "protoc-gen-connect-go@1.20": {
       "last_modified": "2026-08-27T07:16:00Z",
       "resolved": "github:NixOS/nixpkgs/c27cdad491a991b11ed731760aa2ef8db0cb0410#protoc-gen-connect-go",
       "source": "devbox-search",
@@ -493,7 +541,7 @@
         }
       }
     },
-    "protoc-gen-go@1.36.12": {
+    "protoc-gen-go@1.36": {
       "last_modified": "2026-08-27T07:16:00Z",
       "resolved": "github:NixOS/nixpkgs/c27cdad491a991b11ed731760aa2ef8db0cb0410#protoc-gen-go",
       "source": "devbox-search",
