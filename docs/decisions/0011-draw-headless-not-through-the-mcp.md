@@ -36,9 +36,18 @@ The MCP keeps one job: the document a person is actually looking at. `just
 pen-save` keeps one job with it — flushing that document, which stays in the
 app's memory until something saves it.
 
-**`pen-exec` fails closed.** A snippet that errors exits non-zero and leaves the
-file byte-identical; both are asserted, because a tool that writes garbage and
-then exits non-zero has still corrupted the artifact.
+**`pen-exec` fails closed, by restoring rather than by abstaining.** A snippet
+that errors exits non-zero and leaves the file byte-identical; both are
+asserted, because a tool that writes garbage and then exits non-zero has still
+corrupted the artifact.
+
+The shim has to *make* that true rather than report it. `pen interactive`
+applies operations one at a time and the `save()` piped after them writes
+whatever succeeded before the error, so a snippet failing part way through
+leaves the file partly rewritten. So the shim snapshots the file first and
+restores it when the output carries an error — and `bin/test-pen-exec` feeds it
+a stub that writes and then fails, asserting both that the run failed and that
+the file did not move. Reverting the restore turns three of its five cases red.
 
 **Headless saves only because it is told to.** `pen interactive` does not save on
 exit. A pipe without `save()` reports every id it created and writes none of

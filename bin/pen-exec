@@ -34,14 +34,40 @@ fi
 export NODE_USE_ENV_PROXY=1
 [ -n "${NIX_SSL_CERT_FILE:-}" ] && export NODE_EXTRA_CA_CERTS="${NODE_EXTRA_CA_CERTS:-$NIX_SSL_CERT_FILE}"
 
+# A snapshot to restore from. `pen interactive` applies operations one at a
+# time and the piped `save()` runs whatever happened before an error, so a
+# snippet that fails part way through leaves the file partly rewritten. The
+# guarantee ADR 0011 states — a failed snippet leaves the file byte-identical —
+# is this backup, not something the CLI does.
+backup="$(mktemp "${TMPDIR:-/tmp}/pen-exec.XXXXXX")"
+cp "$file" "$backup"
+trap 'rm -f "$backup"' EXIT
+
+# The command that actually drives pen. Overridable so the shim's own failure
+# handling can be tested against a stub that writes and then errors, which is
+# the case that matters and the one the real CLI is slow and online to produce.
+# Nothing but the test sets it.
+runner=(npm exec -y --package="@pen.dev/cli@0.3.7" -- pen interactive --in "$file" --out "$file")
+if [ -n "${PEN_EXEC_RUNNER:-}" ]; then
+  runner=("$PEN_EXEC_RUNNER" "$file")
+fi
+
 out="$(printf '%s\n' "$snippet" \
   | python3 -c 'import json,sys; print("execute({ input: " + json.dumps(sys.stdin.read()) + " })"); print("save()"); print("exit()")' \
-  | npm exec -y --package="@pen.dev/cli@0.3.7" -- pen interactive --in "$file" --out "$file" 2>&1)"
+  | "${runner[@]}" 2>&1)"
 
 printf '%s\n' "$out" | grep -vE '^[[:space:]]*$|Interactive Shell|Type tool calls|Type save\(\)|Goodbye|^\[INFO\]|^[[:space:]]+at |node_modules/@pen\.dev'
 
 if printf '%s' "$out" | grep -qiE 'failed to execute operation|Errors in the input code|Invalid properties'; then
-  echo "pen-exec: execute reported errors; nothing was written" >&2
+  # Restore rather than assert: the operations before the failure have already
+  # been written and saved. A tool that writes garbage and then exits non-zero
+  # has still corrupted the artifact.
+  if ! cmp -s "$file" "$backup"; then
+    cp "$backup" "$file"
+    echo "pen-exec: execute reported errors; the file was partly rewritten and has been restored" >&2
+  else
+    echo "pen-exec: execute reported errors; nothing was written" >&2
+  fi
   exit 1
 fi
 
