@@ -8,6 +8,7 @@ default:
 # Regenerate tokens.css from tokens.json. Refuses to write an invalid document.
 gen:
     @python3 scripts/gen-tokens.py
+    @python3 scripts/gen-canvas-contract.py
 
 build: gen
 
@@ -44,6 +45,9 @@ test:
     @python3 scripts/check-palette.py
     @python3 scripts/test-palette.py
     @python3 scripts/check-geometry.py src
+    @python3 scripts/check-canvas.py
+    @python3 scripts/test-contract.py
+    @python3 scripts/test-canvas.py
     @python3 scripts/check-stories.py src
     @python3 scripts/test-stories.py
     @echo "component behaviour runs as stories: just test apps/storybook"

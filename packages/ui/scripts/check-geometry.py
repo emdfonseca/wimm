@@ -34,7 +34,32 @@ def check(src: Path) -> list[str]:
         ("templates/AuthShell.svelte", ".card", "max-inline-size", "480px"),
         ("templates/AuthShell.svelte", ".panel", "flex", "0 0 560px"),
         ("organisms/SidebarNav.svelte", ".sidebar", "inline-size", "264px"),
+        # Slot `xNVFG` in the signed-in shell. It was --space-4, and the slot
+        # says --space-8, so every screen sat closer to the chrome than it was
+        # drawn — the kind of single wrong token that makes a whole page look
+        # unlike its frame while every component in it is correct.
+        ("templates/SignedInLanding.svelte", ".body", "padding", "var(--space-8)"),
     ]
+
+    # A screen of content fills its slot and packs to the top, which is how
+    # every frame's Page is drawn: height fill_container with a trailing
+    # spacer. The slot centres on both axes, so a screen that does not fill
+    # floats into the middle of the page — which is what happened to all four
+    # of these at once, and what no measurement above would have caught.
+    for screen in sorted((src / "pages").glob("*.svelte")):
+        if screen.name.endswith(".stories.svelte"):
+            continue
+        body = screen.read_text(encoding="utf-8")
+        if ".screen {" not in body:
+            continue
+        rule = body[body.index(".screen {"):]
+        rule = rule[: rule.index("}")]
+        if "flex: 1" not in rule:
+            problems.append(
+                f"pages/{screen.name}: .screen does not declare flex: 1, so the "
+                "shell's slot will centre it instead of the frame's own Page "
+                "filling and packing content to the top."
+            )
 
     for filename, selector, prop, want in expected:
         path = src / filename

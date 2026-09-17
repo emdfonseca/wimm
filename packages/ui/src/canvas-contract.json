@@ -1,0 +1,87 @@
+{
+  "J03.A / 04 · Choose accounts / Compact / As it opens": [
+    "Who sees these accounts?",
+    "These accounts are yours. Choose who else sees each one, and how much of it — nobody sees anything until you say so.",
+    "Leaving everything as it is keeps these accounts to yourself. You can change any of this later."
+  ],
+  "J03.A / 04 · Choose accounts / Compact / Levels stacked": [
+    "Who sees these accounts?",
+    "These accounts are yours. Choose who else sees each one, and how much of it — nobody sees anything until you say so.",
+    "Grace sees the balance; Alan sees it in full."
+  ],
+  "J03.A / 04 · Choose accounts / Wide / As it opens": [
+    "Who sees these accounts?",
+    "These accounts are yours. Choose who else sees each one, and how much of it — nobody sees anything until you say so.",
+    "Leaving everything as it is keeps these accounts to yourself. You can change any of this later."
+  ],
+  "J03.A / 04 · Choose accounts / Wide / One disowned, one granted": [
+    "Who sees these accounts?",
+    "These accounts are yours. Choose who else sees each one, and how much of it — nobody sees anything until you say so.",
+    "Grace sees the balance of the joint account. The personal one is nobody's, and no balance will be read for it."
+  ],
+  "J03.B / 01 · Overview / Access not granted": [
+    "{bank} was not connected",
+    "Access was not granted at {bank}, so nothing was added to the household. You can try {bank} again, or pick a different bank.",
+    "No banks connected",
+    "Connect a bank and wimm shows the household's accounts and balances here.",
+    "Connect a bank"
+  ],
+  "J03.C / 01 · Overview / Bank could not be reached": [
+    "{bank} could not be reached",
+    "wimm could not finish connecting, so nothing was added. This is not something you did. Try again in a few minutes.",
+    "No banks connected",
+    "Connect a bank and wimm shows the household's accounts and balances here.",
+    "Connect a bank"
+  ],
+  "J03.D / 01 · Overview / No accounts came back": [
+    "No accounts came back from {bank}",
+    "{bank} granted access but offered no accounts wimm can read. The bank was not connected. If you hold accounts at {bank}, check whether they are covered by the access you granted.",
+    "No banks connected",
+    "Connect a bank and wimm shows the household's accounts and balances here.",
+    "Connect a bank"
+  ],
+  "J04.B / 01 · Overview / Refresh refused": [
+    "Overview",
+    "Refresh balances",
+    "Balances cannot be refreshed yet",
+    "{bank} limits how often wimm may read balances. The next refresh is possible after {time}. The balances below are the ones already read, at the times shown.",
+    "Household total",
+    "Disconnect"
+  ],
+  "J05.A / 01 · Overview / Disconnect confirmation": [
+    "Overview",
+    "Refresh balances",
+    "Household total",
+    "Disconnect"
+  ],
+  "J05.A / 02 · Overview / Disconnected": [
+    "{bank} was disconnected",
+    "Its {count} accounts are no longer shown to anyone in the household. If {bank} still lists wimm among the apps it shares data with, remove it there as well.",
+    "No banks connected",
+    "Connect a bank and wimm shows the household's accounts and balances here.",
+    "Connect a bank"
+  ],
+  "J06.A / 01 · Overview / Access has run out": [
+    "Overview",
+    "Refresh balances",
+    "{bank} has stopped updating",
+    "The access {member} granted ran out on {date}, so these balances are the last ones read. Restoring takes a moment at {bank} and keeps the accounts the household is already sharing.",
+    "Restore access",
+    "Household total",
+    "Restore access",
+    "Disconnect"
+  ],
+  "J06.A / 02 · Choose accounts / Something new to choose": [
+    "Who sees these accounts?",
+    "Your bank offered an account it had not before. It is yours until you say otherwise, and nobody else sees it yet.",
+    "The accounts you already chose kept their owners and levels."
+  ],
+  "J06.A / 03 · Overview / Access restored": [
+    "Overview",
+    "Refresh balances",
+    "{bank} is updating again",
+    "Access runs until {date}. wimm will say so here again when it is close to running out.",
+    "Household total",
+    "Disconnect"
+  ]
+}

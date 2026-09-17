@@ -1,0 +1,161 @@
+#!/usr/bin/env python3
+"""Every screen says what its frames say.
+
+The gap this closes: four components were built from their origins and every
+screen was composed from a task description instead, so the built screens
+diverged from the drawings and nothing failed. check-geometry.py asserts four
+measurements on atoms and templates; no screen was checked against any frame.
+
+So: canvas-contract.json holds the static copy of each drawn screen state, and
+this asserts the screen that implements those frames contains it.
+
+It checks copy, not layout. A screen can satisfy this and still be arranged
+wrongly — but the drift that actually happened was copy and structure ("Your
+money" for "Overview", "Refresh" for "Refresh balances", an invented bank row),
+and copy is the half a script can hold.
+
+An intentional difference goes in ACCEPTED with a reason. An unexplained one
+fails.
+"""
+
+import json
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+SRC = Path(__file__).resolve().parents[1] / "src"
+CONTRACT = SRC / "canvas-contract.json"
+
+# Which screens implement which frames. A frame prefix maps to every file that
+# together renders it: Overview's disconnect confirmation is the screen plus
+# the dialog it opens.
+IMPLEMENTS = {
+    "J03.A / 04 · Choose accounts": ["pages/ChooseAccountsScreen.svelte"],
+    "J06.A / 02 · Choose accounts": ["pages/ChooseAccountsScreen.svelte"],
+    "J03.B / 01 · Overview": ["pages/AccountsOverview.svelte"],
+    "J03.C / 01 · Overview": ["pages/AccountsOverview.svelte"],
+    "J03.D / 01 · Overview": ["pages/AccountsOverview.svelte"],
+    "J04.B / 01 · Overview": ["pages/AccountsOverview.svelte", "molecules/AccountRow.svelte"],
+    "J05.A / 01 · Overview": [
+        "pages/AccountsOverview.svelte",
+        "molecules/AccountRow.svelte",
+        "molecules/DisconnectBankDialog.svelte",
+    ],
+    "J05.A / 02 · Overview": ["pages/AccountsOverview.svelte"],
+    "J06.A / 01 · Overview": ["pages/AccountsOverview.svelte", "molecules/AccountRow.svelte"],
+    "J06.A / 03 · Overview": ["pages/AccountsOverview.svelte", "molecules/AccountRow.svelte"],
+}
+
+# Copy a screen deliberately does not carry, and why. Each entry is a promise
+# that the difference was decided rather than overlooked.
+ACCEPTED = {
+    # Fixture narration, not template copy. These name the frame's own two
+    # members and its own two accounts, so a screen reproducing them literally
+    # would say "Grace sees the balance of the joint account" to a household
+    # with neither — which is what this check briefly talked me into writing.
+    # The screen computes the equivalent sentence from what is actually there.
+    "Grace sees the balance; Alan sees it in full.": "names the frame's fixture members",
+    "Grace sees the balance of the joint account. The personal one is nobody's, "
+    "and no balance will be read for it.": "names the frame's fixture members",
+}
+
+
+# Comments are stripped before matching. Every one of these files explains
+# itself at length, and the canvas's own wording tends to appear in the
+# explanation — so matching raw source lets a screen satisfy this check by
+# talking about the copy instead of rendering it.
+# The line alternative matches [^\n]* rather than .*: DOTALL applies to the
+# whole pattern, so `.*$` ran past every newline and one `//` comment ate the
+# rest of the file. That failed loudly here, and it would have passed silently
+# in a checker that asserted absence.
+COMMENTS = re.compile(
+    r"<!--.*?-->"                  # markup
+    r"|/\*.*?\*/"                  # block
+    r"|^[ \t]*(?://|\*)[^\n]*",    # line, and jsdoc continuation
+    re.DOTALL | re.MULTILINE,
+)
+
+
+def rendered(source: str) -> str:
+    """The part of a file a member could actually see."""
+    return COMMENTS.sub(" ", source)
+
+
+# A frame's fixture name becomes a placeholder in the contract, and the screen
+# interpolates a variable there. Both sides collapse to the same token so the
+# sentence around it is what gets compared.
+INTERPOLATION = re.compile(r"\{bank\}|\{member\}|\{[A-Za-z?.()\[\]'\" ]+\}")
+
+
+def shape(text: str) -> str:
+    """The sentence with whatever fills its holes reduced to one token."""
+    return INTERPOLATION.sub("\u2022", text)
+
+
+def normalise(text: str) -> str:
+    """Curly quotes and dashes differ between a canvas and a source file."""
+    for fancy, plain in (("’", "'"), ("‘", "'"), ("“", '"'),
+                         ("”", '"'), ("—", "-"), ("–", "-")):
+        text = text.replace(fancy, plain)
+    return " ".join(text.split())
+
+
+def check(contract, src, implements, accepted):
+    """Every problem with these screens, and how many strings were compared.
+
+    Takes its inputs rather than reading the module's own constants, so the
+    check can be fed the shapes that must fail. Asserting that the current
+    tree passes proves nothing about the check: the current tree is valid.
+    """
+    sources = {}
+    problems = []
+    checked = 0
+
+    for frame, lines in sorted(contract.items()):
+        files = next((f for prefix, f in implements.items() if frame.startswith(prefix)), None)
+        if files is None:
+            problems.append(
+                f"{frame}: no screen is recorded as implementing this frame. "
+                f"Add it to IMPLEMENTS in {Path(__file__).name}, or the frame is drawn and unbuilt."
+            )
+            continue
+
+        haystack = ""
+        for name in files:
+            if name not in sources:
+                sources[name] = shape(normalise(rendered((src / name).read_text())))
+            haystack += sources[name]
+
+        for line in lines:
+            wanted = shape(normalise(line))
+            checked += 1
+            if wanted in haystack:
+                continue
+            if line in accepted:
+                continue
+            problems.append(
+                f"{frame}: the canvas says {line!r}\n"
+                f"      and {', '.join(files)} does not. Match the drawing, or record the "
+                f"difference in ACCEPTED with a reason."
+            )
+
+    return problems, checked
+
+
+def main() -> int:
+    contract = json.loads(CONTRACT.read_text())
+    problems, checked = check(contract, SRC, IMPLEMENTS, ACCEPTED)
+
+    if problems:
+        print(f"{len(problems)} screen(s) diverge from the canvas:\n", file=sys.stderr)
+        for problem in problems:
+            print(f"  - {problem}", file=sys.stderr)
+        return 1
+
+    print(f"screens match the canvas ({checked} strings across {len(contract)} frames)")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
