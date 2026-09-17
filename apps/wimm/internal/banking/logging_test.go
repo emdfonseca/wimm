@@ -40,7 +40,7 @@ func TestNoLogLineCarriesAnythingThatCouldReachABank(t *testing.T) {
 	// Debug: the most verbose level anything in this change writes at.
 	svc := banking.NewService(st, gw, keys,
 		slog.New(slog.NewJSONHandler(&logged, &slog.HandlerOptions{Level: slog.LevelDebug})),
-		"https://localhost:8765/psd2/callback", 24*time.Hour)
+		"https://localhost:8765/psd2/callback", 24*time.Hour, testLedgerOptions())
 
 	gw.AddBank(montepio(),
 		banking.Account{Ref: "hash-1", Name: "Joint", Currency: "EUR"},

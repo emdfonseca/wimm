@@ -204,7 +204,7 @@ func (db *DB) CreateBankConnection(
 	}
 	out.GatewayRef = c.GatewayRef
 
-	stored, err := insertAccounts(ctx, tx, out.ID, accounts, owner)
+	stored, err := insertAccounts(ctx, tx, out.ID, out.BankID, accounts, owner)
 	if err != nil {
 		return BankConnection{}, nil, err
 	}
@@ -214,18 +214,25 @@ func (db *DB) CreateBankConnection(
 	return out, stored, nil
 }
 
+// insertAccounts writes what a bank returned, and is also the re-attach: an
+// account is identified by its bank and the gateway's cross-session hash for as
+// long as it exists, so a row that survived a disconnection is found and
+// re-pointed at the new connection rather than created a second time beside it
+// (ADR 0021). Its owners, grants and transactions come with it, because nothing
+// about the row changes except which connection reads it.
 func insertAccounts(
-	ctx context.Context, tx pgx.Tx, connectionID string, accounts []Account, owner string,
+	ctx context.Context, tx pgx.Tx, connectionID, bankID string, accounts []Account, owner string,
 ) ([]Account, error) {
 	const insertAccount = `
 		insert into accounts
-			(source, connection_id, gateway_ref, gateway_uid_sealed, key_id, name,
+			(source, connection_id, bank_id, gateway_ref, gateway_uid_sealed, key_id, name,
 			 number_suffix, account_type, holder_name, currency)
-		values ('gateway', $1, $2, $3, $4, $5, $6, $7, $8, $9)
-		-- The predicate is repeated because the index is partial: an account
-		-- with no connection has no gateway reference to be unique about.
-		on conflict (connection_id, gateway_ref) where connection_id is not null
+		values ('gateway', $1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		-- The predicate is repeated because the index is partial: an account no
+		-- gateway sources has no reference to be unique about.
+		on conflict (bank_id, gateway_ref) where gateway_ref is not null
 		do update set
+			connection_id      = excluded.connection_id,
 			gateway_uid_sealed = excluded.gateway_uid_sealed,
 			key_id             = excluded.key_id,
 			name               = excluded.name,
@@ -245,7 +252,8 @@ func insertAccounts(
 	for _, a := range accounts {
 		var out Account
 		err := tx.QueryRow(ctx, insertAccount,
-			connectionID, a.GatewayRef, nullBytes(a.GatewayUID.Ciphertext), nullString(a.GatewayUID.KeyID),
+			connectionID, bankID, a.GatewayRef,
+			nullBytes(a.GatewayUID.Ciphertext), nullString(a.GatewayUID.KeyID),
 			a.Name, a.NumberSuffix, a.AccountType, a.HolderName, a.Currency,
 		).Scan(&out.ID, &out.Source, &out.ConnectionID, &out.GatewayRef, &out.Name, &out.NumberSuffix,
 			&out.AccountType, &out.HolderName, &out.Currency, &out.BalanceMinor, &out.BalanceReadAt)
@@ -349,9 +357,17 @@ func (db *DB) MarkBankConnectionExpired(ctx context.Context, id string) error {
 	return nil
 }
 
-// DisconnectBankConnection removes a bank. The connection row stays so the
-// audit question has an answer; its accounts go with it by cascade, and every
-// sealed value on it is destroyed.
+// DisconnectBankConnection ends wimm's access to a bank. The connection row
+// stays so the audit question has an answer, and every sealed value — on the
+// connection and on each of its accounts — is destroyed, so nothing that
+// remains can open a bank.
+//
+// The accounts themselves stay. Ending access and destroying the record of what
+// that access read are different decisions, and only the first is being made
+// here (ADR 0021): no bank hands history back indefinitely, so a ledger a button
+// can erase is a ledger that is gone. They stop being shown and stop counting
+// exactly as before, by the disconnected_at filter already in
+// visibleAccountsQuery.
 func (db *DB) DisconnectBankConnection(ctx context.Context, id string) error {
 	tx, err := db.pool.Begin(ctx)
 	if err != nil {
@@ -372,8 +388,11 @@ func (db *DB) DisconnectBankConnection(ctx context.Context, id string) error {
 		return ErrNotFound
 	}
 
-	if _, err := tx.Exec(ctx, `delete from accounts where connection_id = $1`, id); err != nil {
-		return fmt.Errorf("removing accounts: %w", err)
+	const disarm = `
+		update accounts set gateway_uid_sealed = null, key_id = null
+		where connection_id = $1`
+	if _, err := tx.Exec(ctx, disarm, id); err != nil {
+		return fmt.Errorf("ending access to accounts: %w", err)
 	}
 	if err := tx.Commit(ctx); err != nil {
 		return fmt.Errorf("disconnecting: %w", err)

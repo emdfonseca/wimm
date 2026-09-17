@@ -131,7 +131,13 @@ func bankingRoute(
 	}
 
 	bankingSvc := banking.NewService(db, gateway, keys, log,
-		cfg.EnableBankingRedirectURL, cfg.BalanceStaleAfter)
+		cfg.EnableBankingRedirectURL, cfg.BalanceStaleAfter,
+		banking.LedgerOptions{
+			Overlap:      cfg.TransactionOverlap,
+			SyncInterval: cfg.TransactionSyncInterval,
+			MaxPages:     cfg.TransactionMaxPages,
+			PageSize:     cfg.TransactionPageSize,
+		})
 
 	path, handler := rpc.BankingHandler(log, rpc.NewBankingServer(bankingSvc, svc))
 	return server.Route{Pattern: path, Handler: handler}, nil

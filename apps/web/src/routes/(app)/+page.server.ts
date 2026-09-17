@@ -63,7 +63,11 @@ function bankOf(connection: Connection, owned: boolean) {
  * Overview's own data. Who the member is comes from the layout; this load is
  * the accounts they may see.
  */
-export const load: ServerLoad = async ({ cookies, url }) => {
+export const load: ServerLoad = async ({ cookies, depends, url }) => {
+	// Named so the page can re-read the accounts alone once the arrival's
+	// balance read lands, without re-running the layout's session check.
+	depends('wimm:accounts');
+
 	const view = await accounts(cookies);
 
 	// What the last hand-off produced, if the member has just come back from
@@ -124,10 +128,17 @@ export type Outcome =
  * Banking is optional: an instance with no gateway configured answers
  * Unimplemented, and the screen shows its empty state rather than an error —
  * which is what lets this deploy before anyone holds gateway credentials.
+ *
+ * **It never asks a bank.** A load function blocks navigation until it returns,
+ * and reading balances is a round trip per account — so reading here means
+ * clicking Overview and watching the previous page until every bank has
+ * answered. The figures already held render with the time they were read, which
+ * is the contract the spec actually makes, and the page reads behind that
+ * arrival.
  */
 async function accounts(cookies: Cookies) {
 	try {
-		const view = await call(cookies, (options) => banking.listAccounts({ skipRead: false }, options));
+		const view = await call(cookies, (options) => banking.listAccounts({ skipRead: true }, options));
 
 		return {
 			accounts: view.accounts.map((account) => ({

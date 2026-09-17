@@ -286,11 +286,13 @@ func (c *Client) BeginConnection(ctx context.Context, req banking.BeginRequest) 
 
 	body := map[string]any{
 		"access": map[string]any{
-			// Only what wimm reads. Transactions are change 2, and asking for
-			// a scope now would widen the consent a member grants today for a
-			// feature that does not exist.
-			"balances":    true,
-			"valid_until": req.ValidUntil.UTC().Format(time.RFC3339),
+			// Both, and only these. Transactions are a separate scope at the
+			// bank, so a connection granted before this asked for balances
+			// alone and no reading of it produces transactions — widening is a
+			// member confirming again (ADR 0021).
+			"balances":     true,
+			"transactions": true,
+			"valid_until":  req.ValidUntil.UTC().Format(time.RFC3339),
 		},
 		"aspsp":        map[string]string{"name": name, "country": country},
 		"state":        req.State,
@@ -453,6 +455,174 @@ func (c *Client) Balances(
 		return nil, fmt.Errorf("enablebanking: the bank returned no balance for account %s: %w", account.Ref, banking.ErrBankUnavailable)
 	}
 	return balances, nil
+}
+
+// transactionsResponse is one page as the gateway returns it. The fields not
+// read are still named, because a reader comparing this against a live response
+// needs to see that they were looked at and skipped.
+type transactionsResponse struct {
+	Transactions []struct {
+		EntryReference    string `json:"entry_reference"`
+		TransactionID     string `json:"transaction_id"`
+		TransactionAmount struct {
+			Amount   string `json:"amount"`
+			Currency string `json:"currency"`
+		} `json:"transaction_amount"`
+		CreditDebitIndicator  string   `json:"credit_debit_indicator"`
+		Status                string   `json:"status"`
+		BookingDate           string   `json:"booking_date"`
+		ValueDate             string   `json:"value_date"`
+		TransactionDate       string   `json:"transaction_date"`
+		Creditor              party    `json:"creditor"`
+		Debtor                party    `json:"debtor"`
+		RemittanceInformation []string `json:"remittance_information"`
+		BankTransactionCode   struct {
+			Description string `json:"description"`
+		} `json:"bank_transaction_code"`
+	} `json:"transactions"`
+	ContinuationKey string `json:"continuation_key"`
+}
+
+type party struct {
+	Name string `json:"name"`
+}
+
+// Transactions reads one page of one account's transactions, always as a
+// member-present call.
+//
+// The two strategies are the reason this is one method and not two. A zero From
+// means "as far back as this bank goes", which is strategy=longest: the gateway
+// finds the earliest transaction available and fetches forward from it, and
+// date_to is ignored. A set From is strategy=default with a date_from, which is
+// what the changelog recommends for updating a feed already fetched — and which
+// answers WRONG_TRANSACTIONS_PERIOD when the window is unavailable.
+func (c *Client) Transactions(
+	ctx context.Context, conn banking.Connection, account banking.Account, req banking.TransactionsRequest,
+) (banking.TransactionsPage, error) {
+	page, err := c.transactionsPage(ctx, account, req)
+	if err == nil || req.From.IsZero() || !wrongTransactionsPeriod(err) {
+		return page, err
+	}
+
+	// Retried once, here, with the widest strategy the gateway has — and only
+	// from a dated request, because retrying longest with longest asks the same
+	// question twice. A member cannot act on "the window you asked for is
+	// unavailable", so it never becomes one of their failures and the taxonomy
+	// does not grow; a second refusal surfaces mapped like any other.
+	return c.transactionsPage(ctx, account, banking.TransactionsRequest{Cursor: req.Cursor})
+}
+
+func (c *Client) transactionsPage(
+	ctx context.Context, account banking.Account, req banking.TransactionsRequest,
+) (banking.TransactionsPage, error) {
+	query := url.Values{}
+	if req.From.IsZero() {
+		query.Set("strategy", "longest")
+	} else {
+		query.Set("strategy", "default")
+		query.Set("date_from", req.From.UTC().Format(time.DateOnly))
+	}
+	if req.Cursor != "" {
+		query.Set("continuation_key", req.Cursor)
+	}
+
+	path := "/accounts/" + url.PathEscape(account.GatewayUID) + "/transactions?" + query.Encode()
+
+	var response transactionsResponse
+	if err := c.request(ctx, http.MethodGet, path, nil, &response, true); err != nil {
+		return banking.TransactionsPage{}, err
+	}
+
+	out := make([]banking.Transaction, 0, len(response.Transactions))
+	for _, t := range response.Transactions {
+		money, err := parseAmount(t.TransactionAmount.Amount, cmpOr(t.TransactionAmount.Currency, account.Currency))
+		if err != nil {
+			// An amount wimm cannot represent exactly is not stored as an
+			// approximation, for the reason a balance is not.
+			return banking.TransactionsPage{}, fmt.Errorf(
+				"enablebanking: transaction on account %s: %w", account.Ref, err)
+		}
+		if debit(t.CreditDebitIndicator) {
+			money.Minor = -abs(money.Minor)
+		} else {
+			money.Minor = abs(money.Minor)
+		}
+
+		out = append(out, banking.Transaction{
+			Ref:    t.EntryReference,
+			Status: transactionStatus(t.Status),
+			Amount: money,
+			// Booking is what the ledger orders and groups by; the other two
+			// are kept because they are what a member sometimes means by
+			// "when". A date the bank omitted stays zero rather than becoming
+			// today.
+			BookingDate:     parseDate(t.BookingDate),
+			ValueDate:       parseDate(t.ValueDate),
+			TransactionDate: parseDate(t.TransactionDate),
+			// The other party is whichever end wimm's account is not, and the
+			// indicator is what says which. Where the bank names neither, the
+			// field stays empty and the screen shows what it did give.
+			CounterpartyName: counterparty(t.CreditDebitIndicator, t.Creditor.Name, t.Debtor.Name),
+			Remittance: cmpOr(
+				strings.TrimSpace(strings.Join(t.RemittanceInformation, " ")),
+				t.BankTransactionCode.Description),
+		})
+	}
+
+	return banking.TransactionsPage{Transactions: out, NextCursor: response.ContinuationKey}, nil
+}
+
+// wrongTransactionsPeriod reports the one gateway code this adapter handles
+// itself. It is matched on the error's own text because mapFailure puts the
+// code there and maps the taxonomy member separately: a code with no taxonomy
+// meaning would otherwise be indistinguishable from any other 4xx.
+func wrongTransactionsPeriod(err error) bool {
+	return strings.Contains(err.Error(), "WRONG_TRANSACTIONS_PERIOD")
+}
+
+// BOOK is settled, PEND is not — PEND, not PDNG. OTHR is filed as booked,
+// because a transaction wimm cannot classify has already moved money and hiding
+// it is worse than filing it (ADR 0021).
+func transactionStatus(s string) banking.TransactionStatus {
+	if strings.EqualFold(strings.TrimSpace(s), "PEND") {
+		return banking.StatusPending
+	}
+	return banking.StatusBooked
+}
+
+func debit(indicator string) bool {
+	return strings.EqualFold(strings.TrimSpace(indicator), "DBIT")
+}
+
+func counterparty(indicator, creditor, debtor string) string {
+	if debit(indicator) {
+		return cmpOr(creditor, debtor)
+	}
+	return cmpOr(debtor, creditor)
+}
+
+func abs(n int64) int64 {
+	if n < 0 {
+		return -n
+	}
+	return n
+}
+
+// parseDate reads a gateway date. A date the bank omitted or malformed stays
+// the zero time: inventing today would put a transaction on the wrong day, and
+// the day is what the ledger groups by.
+func parseDate(s string) time.Time {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return time.Time{}
+	}
+	if d, err := time.Parse(time.DateOnly, s); err == nil {
+		return d
+	}
+	if d, err := time.Parse(time.RFC3339, s); err == nil {
+		return d.UTC().Truncate(24 * time.Hour)
+	}
+	return time.Time{}
 }
 
 // EndConnection tells the bank wimm is done.

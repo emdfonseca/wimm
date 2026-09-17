@@ -94,3 +94,16 @@
 />
 
 <Story name="Closed" args={{ open: false }} />
+
+<!-- Ending wimm's access and destroying the record of what it read are
+     different decisions. The confirmation says which one it is, because that is
+     what a member is weighing. -->
+<Story
+	name="TheRecordIsKept"
+	args={{ open: true }}
+	play={async ({ canvasElement }) => {
+		await expect(
+			within(canvasElement).getByText(/transactions already read stay under Transactions/)
+		).toBeInTheDocument();
+	}}
+/>

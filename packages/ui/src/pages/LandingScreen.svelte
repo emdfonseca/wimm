@@ -1,5 +1,6 @@
 <script lang="ts">
 	import SignedInLanding from '../templates/SignedInLanding.svelte';
+	import { destinations } from '../destinations.js';
 	import EmptyState from '../molecules/EmptyState.svelte';
 	import Icon from '../atoms/Icon.svelte';
 
@@ -8,10 +9,11 @@
 	 * journeys arrive at the same place, and a second copy would be a second
 	 * thing to keep in step.
 	 *
-	 * Overview is the only destination that exists, so it is the only one
-	 * enabled, and it is marked current. The body is empty because there is no
-	 * data behind it yet; a skeleton here would draw a promise this change does
-	 * not make.
+	 * This screen is Overview, so it says so: the shell marks nothing unless it
+	 * is told which page it is on, and a nav that navigates correctly while
+	 * marking the wrong item is worse than one marking nothing. The body is
+	 * empty because there is no data behind it yet; a skeleton here would draw
+	 * a promise this change does not make.
 	 */
 	interface Props {
 		firstName: string;
@@ -24,7 +26,7 @@
 	const fullName = $derived(`${firstName} ${lastName}`);
 </script>
 
-<SignedInLanding memberName={fullName} {onsignout}>
+<SignedInLanding memberName={fullName} destinations={destinations('/')} {onsignout}>
 	<EmptyState title="Signed in as {fullName}" elevated>
 		{#snippet icon()}
 			<Icon name="user-round-check" size={24} />

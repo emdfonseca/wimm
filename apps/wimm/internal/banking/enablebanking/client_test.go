@@ -142,10 +142,10 @@ func TestABusinessOnlyBankIsNotOffered(t *testing.T) {
 	}
 }
 
-// 4.3: the scope asked for is balances, and never transactions. Asking now
-// would widen the consent a member grants today for a feature that does not
-// exist until change 2.
-func TestBeginConnectionNeverAsksForTransactions(t *testing.T) {
+// The hand-off carries the bank, the scope and the date the consent will run
+// out. What the scope now contains is asserted in transactions_test.go, beside
+// the read it exists for.
+func TestBeginConnectionSendsTheBankTheScopeAndTheDate(t *testing.T) {
 	s, c := newServer(t)
 	s.on("POST /auth", http.StatusOK, `{"url":"https://bank.example/c","authorization_id":"auth-1"}`)
 
@@ -164,9 +164,6 @@ func TestBeginConnectionNeverAsksForTransactions(t *testing.T) {
 
 	body := s.last().Body
 	encoded, _ := json.Marshal(body)
-	if strings.Contains(strings.ToLower(string(encoded)), "transaction") {
-		t.Errorf("the request asks for transactions: %s", encoded)
-	}
 
 	access, ok := body["access"].(map[string]any)
 	if !ok {

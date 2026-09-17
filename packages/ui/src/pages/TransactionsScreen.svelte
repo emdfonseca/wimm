@@ -1,0 +1,549 @@
+<script lang="ts" module>
+	/**
+	 * J07 · See where the money went. The ledger, and every state it can be in.
+	 *
+	 * Everything here is **that member's own view**: the transactions of the
+	 * accounts they own, and no others. A member granted *balance* or *details*
+	 * on an account they do not own sees none of its transactions and is not
+	 * told how many there are — seeing a balance and seeing what was spent are
+	 * different sentences, and only the first was agreed to (ADR 0021).
+	 */
+	export interface LedgerEntry {
+		id: string;
+		/** The day this row is filed under, already grouped by the caller. */
+		description: string;
+		/** The account and its bank: `Current account · Monzo`. */
+		account: string;
+		amount: string;
+		/** Short: `17 Sep`. */
+		date: string;
+		negative?: boolean;
+		unsettled?: boolean;
+		initials?: string;
+	}
+
+	/** One day's transactions under the heading that names it. */
+	export interface LedgerDay {
+		/** The day itself, as `YYYY-MM-DD`. The heading's words are this
+		 *  screen's, not the caller's, so "Today" cannot mean two things in two
+		 *  places. A day straddling a page boundary is named again at the top of
+		 *  the next page — the same heading, not a new one. */
+		date: string;
+		entries: LedgerEntry[];
+	}
+
+	/** The words above a day's transactions. */
+	export function dayLabel(date: string, today = new Date()): string {
+		const iso = (d: Date) =>
+			`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+		if (date === iso(today)) return 'Today';
+
+		const yesterday = new Date(today);
+		yesterday.setDate(yesterday.getDate() - 1);
+		if (date === iso(yesterday)) return 'Yesterday';
+
+		const [year, month, day] = date.split('-').map(Number);
+		if (!year || !month || !day) return date;
+		return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString(undefined, {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric',
+			timeZone: 'UTC'
+		});
+	}
+
+	/** A bank connected before wimm could read transactions. */
+	export interface NarrowBank {
+		connectionId: string;
+		bankName: string;
+		/** Where widening starts. */
+		widenHref: string;
+	}
+
+	/** A bank that is not contributing to the list, and why. */
+	export interface LedgerProblem {
+		connectionId: string;
+		bankName: string;
+		kind: 'unreachable' | 'rate-limited' | 'access-ended' | 'disconnected' | 'first-read' | 'widened';
+		/** Only for rate-limited, and only when the bank said. */
+		retryAfter?: string;
+		/** Only for unreachable: when that bank's rows were last read. */
+		lastReadAt?: string;
+		/** Where restoring starts, for access-ended. */
+		restoreHref?: string;
+		/** Where asking again goes, for unreachable. */
+		retryHref?: string;
+	}
+</script>
+
+<script lang="ts">
+	import Button from '../atoms/Button.svelte';
+	import EmptyState from '../molecules/EmptyState.svelte';
+	import ErrorNotice from '../molecules/ErrorNotice.svelte';
+	import InfoNotice from '../molecules/InfoNotice.svelte';
+	import LedgerRow from '../molecules/LedgerRow.svelte';
+	import SeekPager from '../molecules/SeekPager.svelte';
+
+	interface Props {
+		days?: LedgerDay[];
+		/** How many transactions this member may see. A count of what they may
+		 *  see, not a page count: it survives paging unchanged. */
+		count?: number;
+		/** `Updated at 09:14. Reaching back to 4 June 2026.` Absent before the
+		 *  first read: wimm states what it reached rather than promising a
+		 *  period no bank commits to in advance. */
+		freshness?: string;
+		/** The dates on this page. */
+		span?: string;
+		olderHref?: string;
+		newerHref?: string;
+		/** The oldest page has been reached, so the screen says there is nothing
+		 *  older rather than offering a control that would do nothing. */
+		atOldest?: boolean;
+
+		/** The account the list is narrowed to, named on screen. */
+		filterAccount?: string;
+		/** Where removing the narrowing goes. */
+		showAllHref?: string;
+
+		narrow?: NarrowBank[];
+		problems?: LedgerProblem[];
+
+		/** No bank connected at all. */
+		noBank?: boolean;
+		/** This member owns no account, whatever they were granted on others. */
+		ownsNothing?: boolean;
+		/** Where connecting a first bank starts. */
+		connectHref?: string;
+
+		refreshing?: boolean;
+		onrefresh?: () => void;
+		/** Compact stacks each row into two lines. */
+		compact?: boolean;
+	}
+
+	let {
+		days = [],
+		count = 0,
+		freshness,
+		span,
+		olderHref,
+		newerHref,
+		atOldest = false,
+		filterAccount,
+		showAllHref = '/transactions',
+		narrow = [],
+		problems = [],
+		noBank = false,
+		ownsNothing = false,
+		connectHref = '/connect',
+		refreshing = false,
+		onrefresh,
+		compact = false
+	}: Props = $props();
+
+	const hasRows = $derived(days.some((day) => day.entries.length > 0));
+
+	/** The reasons for having nothing differ and must not be collapsed into one
+	 *  empty list: each says which thing the member can do about it. */
+	const emptyReason = $derived.by(() => {
+		if (noBank) return 'no-bank' as const;
+		if (ownsNothing) return 'owns-nothing' as const;
+		if (narrow.length > 0) return 'narrow' as const;
+		// A sync running with nothing stored is the first read. The member is
+		// told the list fills as the bank answers rather than being shown an
+		// empty list that looks settled.
+		if (refreshing || problems.some((p) => p.kind === 'first-read')) return 'first-read' as const;
+		return 'nothing-read' as const;
+	});
+
+	const heading = $derived(
+		filterAccount ? 'Newest first.' : 'Every account you own, newest first.'
+	);
+
+	/** The bank whose transactions are not being read yet, for the empty state
+	 *  that names it. */
+	const narrowBank = $derived(narrow[0]?.bankName ?? '');
+
+	const nothingOlder = $derived(
+		atOldest ? 'Nothing older. This is as far back as the bank would go.' : undefined
+	);
+
+	let listHeading = $state<HTMLElement | null>(null);
+
+	/**
+	 * A member who asked to refresh gets no visual cue if nothing changed, so
+	 * what happened is announced rather than only drawn. The canvas cannot draw
+	 * a live region; it is a contract it states.
+	 */
+	const refreshOutcome = $derived.by(() => {
+		if (refreshing) return 'Bringing transactions up to date';
+		if (problems.length === 0) return '';
+
+		const limited = problems.find((p) => p.kind === 'rate-limited');
+		if (limited) {
+			return limited.retryAfter
+				? `${limited.bankName} has been asked too often. ${limited.bankName} will accept another request after ${limited.retryAfter}. What is below was already read, and it has not changed.`
+				: `${limited.bankName} has been asked too often. What is below was already read, and it has not changed.`;
+		}
+
+		const unreachable = problems.filter((p) => p.kind === 'unreachable').map((p) => p.bankName);
+		if (unreachable.length > 0) {
+			return `${unreachable.join(', ')} did not answer. Everything else is up to date.`;
+		}
+		return '';
+	});
+</script>
+
+{#snippet problemNotice(problem: LedgerProblem)}
+	{#if problem.kind === 'rate-limited'}
+		<ErrorNotice title="{problem.bankName} has been asked too often" live="polite">
+			{problem.bankName} will accept another request after {problem.retryAfter}. What is below was
+			already read, and it has not changed.
+		</ErrorNotice>
+	{:else if problem.kind === 'unreachable'}
+		<ErrorNotice title="{problem.bankName} did not answer" live="polite">
+			Everything else is up to date. {problem.bankName}'s transactions are the ones last read at {problem.lastReadAt}.
+			<a class="inline-action" href={problem.retryHref ?? '/transactions?refresh=1'}>Try again</a>
+		</ErrorNotice>
+	{:else if problem.kind === 'access-ended'}
+		<ErrorNotice title="{problem.bankName} has stopped sending transactions" live="polite">
+			The access you gave {problem.bankName} has run out. What is below stays here, and nothing new
+			arrives until you confirm again at the bank.
+			<a class="inline-action" href={problem.restoreHref ?? '/'}>Restore {problem.bankName}</a>
+		</ErrorNotice>
+	{:else if problem.kind === 'disconnected'}
+		<InfoNotice title="{problem.bankName} is no longer connected">
+			Its accounts have left Overview and its balances are gone. The transactions already read are
+			still here, and they stay whether or not you connect {problem.bankName} again.
+		</InfoNotice>
+	{:else if problem.kind === 'first-read'}
+		<InfoNotice title="Reading your transactions">
+			{problem.bankName} is sending them now. This is the first time, so it can take a moment. How
+			far back they reach is whatever {problem.bankName} gives.
+		</InfoNotice>
+	{:else if problem.kind === 'widened'}
+		<InfoNotice title="{problem.bankName} is sending transactions now">
+			This is the first read, so it goes back as far as {problem.bankName} will give. Nothing about
+			who owns these accounts has changed.
+		</InfoNotice>
+	{/if}
+{/snippet}
+
+<main class="screen" class:compact>
+	<header class="head">
+		<div class="heading">
+			<h1 tabindex="-1">Transactions</h1>
+			<p class="lede">{hasRows ? heading : 'Nothing to show yet.'}</p>
+			{#if compact && freshness}
+				<p class="helper">{freshness}</p>
+			{/if}
+		</div>
+		{#if hasRows || problems.length > 0 || refreshing}
+			<Button onclick={onrefresh} disabled={refreshing}>
+				{refreshing ? 'Refreshing…' : 'Refresh'}
+			</Button>
+		{/if}
+	</header>
+
+	{#if filterAccount}
+		<!-- A filter is not containment: the account is named, there is no
+		     breadcrumb, and removing it widens the same list. -->
+		<div class="filter">
+			<span class="filter-label">Showing one account</span>
+			<span class="chip">{filterAccount}</span>
+			<a class="show-all" href={showAllHref} onclick={() => listHeading?.focus()}>
+				Show all accounts
+			</a>
+		</div>
+	{/if}
+
+	<!-- A bank that cannot be read for transactions is an alert on that bank,
+	     never a page banner: a household with one narrow bank and two current
+	     ones would otherwise be warned about the whole product, daily. -->
+	{#each narrow as bank (bank.connectionId)}
+		<InfoNotice title="{bank.bankName} is not sending transactions yet">
+			This bank was connected before wimm could read transactions. Confirm once more at {bank.bankName}
+			and they will start arriving. Your balances are unaffected.
+			<a class="inline-action" href={bank.widenHref}>Widen at {bank.bankName}</a>
+		</InfoNotice>
+	{/each}
+
+	{#each problems as problem (problem.connectionId)}
+		{@render problemNotice(problem)}
+	{/each}
+
+	<p class="sr-only" role="status" aria-live="polite">{refreshOutcome}</p>
+
+	{#if !hasRows}
+		{#if emptyReason === 'no-bank'}
+			<EmptyState title="No transactions yet" elevated>
+				Connect a bank and wimm will read what happens on your accounts. Nobody else in the
+				household sees any of it until you say so.
+				{#snippet action()}
+					<a class="inline-action" href={connectHref}>Connect a bank</a>
+				{/snippet}
+			</EmptyState>
+		{:else if emptyReason === 'owns-nothing'}
+			<EmptyState title="You do not own any accounts" elevated>
+				Transactions are shown for accounts that are yours. Ask whoever connected the bank to make
+				you an owner of one.
+			</EmptyState>
+		{:else if emptyReason === 'narrow'}
+			<EmptyState title="Nothing read from {narrowBank}" elevated>
+				There is nothing to show until the bank starts sending transactions.
+			</EmptyState>
+		{:else if emptyReason === 'first-read'}
+			<EmptyState title="Nothing read yet" elevated>The list fills as the bank answers.</EmptyState>
+		{:else}
+			<EmptyState title="Nothing read yet" elevated>The list fills as the bank answers.</EmptyState>
+		{/if}
+	{:else}
+		<section class="ledger" aria-labelledby="ledger-heading">
+			<div class="toolbar">
+				<h2 id="ledger-heading" class="count" tabindex="-1" bind:this={listHeading}>
+					{count} transactions
+				</h2>
+				{#if !compact && freshness}
+					<p class="helper">{freshness}</p>
+				{/if}
+			</div>
+
+			{#if !compact}
+				<div class="columns" aria-hidden="true">
+					<span class="col-gap"></span>
+					<span class="col-description">Description</span>
+					<span class="col-account">Account</span>
+					<span class="col-status"></span>
+					<span class="col-date">Date</span>
+					<span class="col-amount">Amount</span>
+				</div>
+			{/if}
+
+			{#each days as day (day.date + day.entries[0]?.id)}
+				<h3 class="day">{dayLabel(day.date)}</h3>
+				{#each day.entries as entry (entry.id)}
+					<LedgerRow
+						description={entry.description}
+						account={entry.account}
+						amount={entry.amount}
+						date={entry.date}
+						negative={entry.negative}
+						unsettled={entry.unsettled}
+						initials={entry.initials}
+						{compact}
+					/>
+				{/each}
+			{/each}
+
+			{#if span && (olderHref || newerHref)}
+				<SeekPager {span} {olderHref} {newerHref} {nothingOlder} />
+			{/if}
+		</section>
+	{/if}
+</main>
+
+<style>
+	/* Fills the slot and packs content to the top, as the frame's Page does.
+	   A screen that does not fill gets centred by the slot instead. */
+	.screen {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		gap: var(--space-6);
+		inline-size: 100%;
+		font-family: var(--type-family-body);
+	}
+
+	.compact {
+		gap: var(--space-4);
+	}
+
+	.head {
+		display: flex;
+		align-items: center;
+		gap: var(--space-4);
+		inline-size: 100%;
+	}
+
+	.compact .head {
+		flex-direction: column;
+		align-items: stretch;
+		gap: var(--space-3);
+	}
+
+	.heading {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		flex: 1 1 auto;
+		min-inline-size: 0;
+	}
+
+	h1 {
+		margin: 0;
+		color: var(--color-text-primary);
+		font-size: var(--type-size-page-title);
+		font-weight: 700;
+	}
+
+	.compact h1 {
+		font-size: var(--type-size-heading-lg);
+	}
+
+	h1:focus-visible {
+		outline: var(--focus-ring-width) solid var(--color-focus-ring);
+		outline-offset: var(--focus-ring-offset);
+	}
+
+	.lede {
+		margin: 0;
+		color: var(--color-text-secondary);
+		font-size: var(--type-size-body-md);
+	}
+
+	.compact .lede {
+		font-size: var(--type-size-body-sm);
+	}
+
+	.helper {
+		margin: 0;
+		color: var(--color-text-secondary);
+		font-size: var(--type-size-body-sm);
+	}
+
+	.filter {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		inline-size: 100%;
+		flex-wrap: wrap;
+	}
+
+	.filter-label {
+		color: var(--color-text-secondary);
+		font-size: var(--type-size-body-sm);
+	}
+
+	/* The chip names the account and is not itself interactive. */
+	.chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		block-size: 26px;
+		padding-inline: 12px;
+		border-radius: var(--radius-pill);
+		background: var(--color-bg-subtle);
+		color: var(--color-text-primary);
+		font-size: 12px;
+		font-weight: 500;
+	}
+
+	.show-all,
+	.inline-action {
+		color: var(--color-accent);
+		font-size: var(--type-size-body-sm);
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.show-all:focus-visible,
+	.inline-action:focus-visible {
+		outline: var(--focus-ring-width) solid var(--color-focus-ring);
+		outline-offset: var(--focus-ring-offset);
+	}
+
+	.ledger {
+		display: flex;
+		flex-direction: column;
+		inline-size: 100%;
+		border: 1px solid var(--color-border-default);
+		border-radius: var(--radius-lg);
+		background: var(--color-bg-elevated);
+		overflow: hidden;
+	}
+
+	.toolbar {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		block-size: 48px;
+		padding-inline: var(--density-cell-padding-x);
+	}
+
+	.count {
+		flex: 1 1 auto;
+		margin: 0;
+		color: var(--color-text-primary);
+		font-size: 13px;
+		font-weight: 500;
+	}
+
+	.count:focus-visible {
+		outline: var(--focus-ring-width) solid var(--color-focus-ring);
+		outline-offset: var(--focus-ring-offset);
+	}
+
+	.columns {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		block-size: 38px;
+		padding-inline: var(--density-cell-padding-x);
+		background: var(--color-bg-surface);
+		color: var(--color-text-secondary);
+		font-size: 11px;
+		font-weight: 600;
+	}
+
+	.col-gap {
+		inline-size: 28px;
+	}
+
+	.col-description {
+		flex: 1 1 auto;
+	}
+
+	.col-account {
+		inline-size: 220px;
+	}
+
+	.col-status {
+		inline-size: 92px;
+	}
+
+	.col-date {
+		inline-size: 52px;
+		text-align: end;
+	}
+
+	.col-amount {
+		inline-size: 112px;
+		text-align: end;
+	}
+
+	/* A day repeated at the top of a page is the same heading, not a new one. */
+	.day {
+		display: flex;
+		align-items: center;
+		margin: 0;
+		block-size: 32px;
+		padding-inline: var(--density-cell-padding-x);
+		background: var(--color-bg-subtle);
+		color: var(--color-text-secondary);
+		font-size: 11px;
+		font-weight: 600;
+	}
+
+	.sr-only {
+		position: absolute;
+		inline-size: 1px;
+		block-size: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+</style>

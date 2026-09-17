@@ -34,7 +34,7 @@ func newService(t *testing.T) (*banking.Service, *bankingtest.Gateway, *memStore
 	st := newMemStore()
 
 	svc := banking.NewService(st, gw, keys, slog.New(slog.NewTextHandler(io.Discard, nil)),
-		"https://localhost:8765/psd2/callback", 24*time.Hour)
+		"https://localhost:8765/psd2/callback", 24*time.Hour, testLedgerOptions())
 	return svc, gw, st
 }
 

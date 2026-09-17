@@ -48,6 +48,38 @@ type Store interface {
 
 	SetConnectionSecret(ctx context.Context, connectionID string, sealed store.Sealed) error
 	SetAccountSecret(ctx context.Context, accountID string, sealed store.Sealed) error
+
+	// The ledger. Reads are scoped to ownership and syncs to live connections
+	// whose consent covers transactions; neither scope is the caller's to
+	// decide.
+	Ledger(ctx context.Context, q store.LedgerQuery) (store.LedgerPage, error)
+	CountLedger(ctx context.Context, memberID, accountID string) (int, error)
+	LedgerState(ctx context.Context, memberID, accountID string) (store.LedgerState, error)
+	SyncableAccounts(ctx context.Context, memberID string) ([]store.SyncableAccount, error)
+	WriteAccountTransactions(ctx context.Context, accountID string, txs []store.Transaction, syncedThrough time.Time) (store.SyncResult, error)
+	NarrowConnections(ctx context.Context, memberID string) ([]store.NarrowConnection, error)
+	OwnedAccountLabels(ctx context.Context, memberID string) (map[string]store.AccountLabel, error)
+	SetConnectionScope(ctx context.Context, connectionID string, scope store.ConnectionScope) error
+	BankConnectionScope(ctx context.Context, connectionID string) (store.ConnectionScope, error)
+}
+
+// LedgerOptions bounds the ledger. Every one of them is configuration with a
+// default a household instance never sets, and each is refused at startup when
+// non-positive: a sync bounded by zero pages reads nothing and reports success.
+type LedgerOptions struct {
+	// Overlap is how far back before the synced-through date an incremental
+	// sync re-reads, because a bank can book a transaction with a booking date
+	// earlier than the day wimm last synced.
+	Overlap time.Duration
+	// SyncInterval is the least time between two syncs of one account on
+	// arrival. Refresh is the member asking in as many words and is not bound
+	// by it.
+	SyncInterval time.Duration
+	// MaxPages bounds one account's sync, because a first fill at a bank that
+	// keeps years of history is otherwise unbounded.
+	MaxPages int
+	// PageSize is how many transactions one screen of the ledger holds.
+	PageSize int
 }
 
 // ErrNotOwner refuses a member changing an account that is not theirs. Any
@@ -75,11 +107,26 @@ type Service struct {
 	// staleAfter is how old a reading may be before it is shown as stale. It
 	// never hides a reading.
 	staleAfter time.Duration
+
+	overlap      time.Duration
+	syncInterval time.Duration
+	maxPages     int
+	pageSize     int
 }
 
 // NewService wires the domain.
-func NewService(s Store, g Gateway, keys *Keyring, log *slog.Logger, redirectURL string, staleAfter time.Duration) *Service {
-	return &Service{store: s, gateway: g, keys: keys, log: log, redirectURL: redirectURL, staleAfter: staleAfter}
+func NewService(
+	s Store, g Gateway, keys *Keyring, log *slog.Logger,
+	redirectURL string, staleAfter time.Duration, ledger LedgerOptions,
+) *Service {
+	return &Service{
+		store: s, gateway: g, keys: keys, log: log,
+		redirectURL: redirectURL, staleAfter: staleAfter,
+		overlap:      ledger.Overlap,
+		syncInterval: ledger.SyncInterval,
+		maxPages:     ledger.MaxPages,
+		pageSize:     ledger.PageSize,
+	}
 }
 
 // Banks lists what can be connected.
@@ -213,6 +260,13 @@ func (s *Service) completeFirst(
 		return Completed{}, err
 	}
 
+	// What the member just granted at their bank. A connection made after this
+	// change asks for both, so a household connecting its first bank never sees
+	// the narrow state (ADR 0021).
+	if err := s.store.SetConnectionScope(ctx, stored.ID, store.ScopeBalancesAndTransactions); err != nil {
+		return Completed{}, err
+	}
+
 	visible, err := s.store.VisibleAccounts(ctx, memberID, stored.ID)
 	if err != nil {
 		return Completed{}, err
@@ -266,6 +320,13 @@ func (s *Service) completeRestore(
 	// resealed — against the same rows, which is why the owners and levels on
 	// them are untouched.
 	if err := s.sealInto(ctx, connectionID, conn.GatewayRef, stored, accounts); err != nil {
+		return Completed{}, err
+	}
+
+	// A restore is also how a narrow connection is widened: the member has just
+	// confirmed at the bank against a request that asked for both, so the row
+	// now says so. Widening and restoring are one journey with one reason each.
+	if err := s.store.SetConnectionScope(ctx, connectionID, store.ScopeBalancesAndTransactions); err != nil {
 		return Completed{}, err
 	}
 

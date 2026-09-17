@@ -46,6 +46,14 @@ service BankingService {
 
   // Remove a bank. Deadline: 15s.
   rpc DisconnectBank(DisconnectBankRequest) returns (DisconnectBankResponse);
+
+  // One page of the transactions the calling member may see, newest first.
+  // Deadline: 30s — it brings the member's accounts up to date first.
+  rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse);
+
+  // Bring the transactions up to date again, because the member asked.
+  // Deadline: 30s.
+  rpc RefreshTransactions(RefreshTransactionsRequest) returns (RefreshTransactionsResponse);
 }
 
 // What one member may see of one account they do not own.
@@ -303,6 +311,10 @@ message RefreshBalancesResponse {
 
 message RestoreConnectionRequest {
   string connection_id = 1 [(buf.validate.field).string.min_len = 1];
+  // Why. The flow is the same either way — back to the bank, no picker, owners
+  // and levels carried forward — and the reason is what the screen said before
+  // sending them.
+  RestoreReason reason = 2;
 }
 
 message RestoreConnectionResponse {
@@ -315,3 +327,134 @@ message DisconnectBankRequest {
 }
 
 message DisconnectBankResponse {}
+
+// Why a connection is being handed back to the bank. The bank and the accounts
+// are already known in every case, so the picker is skipped and every account
+// keeps the owners and the levels it had.
+enum RestoreReason {
+  RESTORE_REASON_UNSPECIFIED = 0;
+  // Access has run out, at the date the bank set or early. A member
+  // experiences both identically.
+  RESTORE_REASON_ACCESS_ENDED = 1;
+  // The connection is live and its consent covers balances but not
+  // transactions. It is working, and it is reading everything it was ever
+  // granted — so it is never presented as broken, expired or failing.
+  RESTORE_REASON_WIDEN_SCOPE = 2;
+}
+
+// Whether the bank has settled a transaction.
+enum TransactionStatus {
+  TRANSACTION_STATUS_UNSPECIFIED = 0;
+  TRANSACTION_STATUS_BOOKED = 1;
+  // Money that has moved as far as the member is concerned. Shown alongside
+  // settled transactions and marked, never hidden.
+  TRANSACTION_STATUS_PENDING = 2;
+}
+
+// One entry on one account.
+//
+// Transactions reach only the owners of the account they are on. A member
+// granted a level on an account they do not own receives none of these and no
+// count of them (ADR 0021).
+message Transaction {
+  string id = 1;
+  string account_id = 2;
+  // The account's name and its bank, carried on the row because the list is
+  // every account the member owns and a row has to say which one it came from.
+  string account_name = 3;
+  string bank_name = 4;
+
+  TransactionStatus status = 5;
+  // Signed minor units with its currency. The sign carries direction, so
+  // nothing depends on colour alone.
+  Money amount = 6;
+  // The day it is filed under, which the list orders and groups by.
+  google.protobuf.Timestamp booking_date = 7;
+  // Who it was with, where the bank named them. Empty where it did not: wimm
+  // shows what the bank gave and never invents a name.
+  string counterparty_name = 8;
+  // The description the bank carried.
+  string remittance = 9;
+}
+
+// Where a page starts. It is the sort key itself rather than an offset, because
+// a sync inserts at the newest end while a member is reading: with an offset the
+// rows under them shift and they silently re-read some and skip others.
+//
+// It is opaque to the browser. A member is never shown a page number; where they
+// are is a span of dates.
+message LedgerCursor {
+  google.protobuf.Timestamp booking_date = 1;
+  string transaction_id = 2;
+}
+
+// A bank connected before wimm could read transactions, with the way to widen
+// it. It is an inline alert on that bank, never a page banner: a household with
+// one narrow bank and two wide ones must not be warned about the whole product.
+message NarrowConnection {
+  string connection_id = 1;
+  string bank_name = 2;
+}
+
+message ListTransactionsRequest {
+  // Narrow to one account the member owns. Empty is every account they own —
+  // the same list filtered, not a different screen.
+  string account_id = 1;
+  // Where to read from. Absent is the newest page.
+  LedgerCursor cursor = 2;
+  // Read away from today. False with a cursor reads back towards it.
+  bool older = 3;
+  // Return what is stored without asking any bank. The page a member paged to
+  // uses it: a sync would insert at the newest end while they are reading
+  // somewhere else.
+  bool skip_sync = 4;
+}
+
+message RefreshTransactionsRequest {
+  string account_id = 1;
+}
+
+message ListTransactionsResponse {
+  Ledger ledger = 1;
+}
+
+message RefreshTransactionsResponse {
+  Ledger ledger = 1;
+}
+
+// One page of the ledger and everything the screen says about it. Both reads
+// return the same thing, because a refresh is the same screen re-read rather
+// than a different answer.
+message Ledger {
+  repeated Transaction transactions = 1;
+  // The span of dates on this page, which is what the member is told instead of
+  // a page number.
+  google.protobuf.Timestamp oldest_on_page = 2;
+  google.protobuf.Timestamp newest_on_page = 3;
+  // Which controls to offer. On the oldest page the screen says there is
+  // nothing older rather than greying a control.
+  bool has_older = 4;
+  bool has_newer = 5;
+
+  // How many transactions this member may see. A count of what they may see and
+  // not a page count: it survives paging unchanged.
+  int32 total_count = 6;
+  // When any of their accounts was last brought up to date. Absent means
+  // nothing has ever been read, which the screen states rather than implying
+  // with an empty list.
+  google.protobuf.Timestamp synced_at = 7;
+  // The date the list actually reaches back to. Absent before the first read:
+  // no bank says in advance how much history it will hand over, so wimm states
+  // what it reached rather than promising a period.
+  google.protobuf.Timestamp reaches_back_to = 8;
+
+  // Banks connected before wimm could read transactions.
+  repeated NarrowConnection narrow_connections = 9;
+  // Banks that did not answer this time. The transactions already on screen
+  // stay with their original time.
+  repeated BankFailure failures = 10;
+  // True when the member owns no account at all, whatever they have been
+  // granted on others. A different empty state from an account read and found
+  // empty, and the two are never collapsed into one.
+  bool owns_no_account = 11;
+}

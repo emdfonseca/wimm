@@ -35,8 +35,11 @@
 	<ul class="scope">
 		<li><strong>Your accounts and their balances.</strong> Names, numbers and amounts.</li>
 		<li>
-			<strong>Nothing else.</strong> Not your transactions, and nothing that could move money. wimm
-			cannot make a payment.
+			<strong>Their transactions.</strong> What happened on the accounts you own. Nobody else in the
+			household sees them unless you make them an owner.
+		</li>
+		<li>
+			<strong>Nothing that could move money.</strong> wimm cannot make a payment.
 		</li>
 		<li>
 			<strong>Not your banking password.</strong> You confirm at {bankName}. wimm never sees it.

@@ -882,3 +882,61 @@ literally and it is the obvious next step. It is not this decision because a
 diff across two renderers needs a tolerance, and a tolerance loose enough to
 pass two different text engines is loose enough to miss the divergences listed
 above. Copy and structure caught all of them.
+
+## 0021 · A stored ledger, and the consent that fills it — Accepted
+
+**The consent widens, and every existing connection needs a member to act.**
+`bank_connections.scope` is `balances` or `balances_and_transactions`, text with
+a check rather than a Postgres enum so a later value needs no `ALTER TYPE`.
+Every row that exists reads as `balances` and is correct. New connections ask
+the bank for both. Widening is the restore flow with a third reason — the
+connection is live and its consent is narrow, which is neither working nor
+expired — re-entering at the hand-off, skipping the picker and carrying owners
+forward. A narrow connection is described as connected before wimm could read
+transactions, never as broken, and the state is an inline alert on that bank
+rather than a page banner: a household with one narrow bank and two wide ones
+must not be warned about the whole product.
+
+**The ledger is keyset-paged, because a sync inserts at the newest end.** The
+list orders by `(booking_date desc, id desc)` and seeks on that key in both
+directions; the routes are `?before=<cursor>` and `?after=<cursor>`. With offset
+paging, a member reading a page while twelve transactions arrive re-reads some
+rows and skips others with nothing telling them. That is not an edge case here,
+it is what every visit does. The price is that there is no page number and no
+"41 to 60 of 1,284", because a seek knows neither without a count that would be
+wrong by the time it rendered. What replaces it is the span of dates on screen,
+which is what a person scanning backwards wants. A day that straddles a page
+boundary is named again at the top of the next page.
+
+**Pending is a replaceable set; booked is append-only.** Each sync deletes an
+account's pending rows and writes the ones the bank just returned; booked rows
+are only inserted or left alone. This deletes the hardest problem in bank data
+rather than solving it — matching a pending row to the booked row it becomes is
+guesswork that is wrong in exactly the cases a household argues about. A booked
+row is identified by the bank's `entry_reference`, or by a digest over booking
+date, amount, currency, counterparty and remittance where the bank gives none,
+plus an occurrence index assigned by counting how many rows with that key a sync
+returned against how many are stored. Two identical coffees are two rows; one
+transaction read by two overlapping syncs is one.
+
+**An account outlives its connection.** Disconnecting nulls each account's
+sealed per-session identifier instead of deleting the row, so access ends
+exactly as ADR 0018 requires while the record stays. `bank_id` moves onto
+`accounts`, because which bank an account is at is permanent and the account is
+now the permanent thing, and a unique index on `(bank_id, gateway_ref)` where
+`gateway_ref` is not null makes a second copy of an account unrepresentable
+rather than merely checked. Re-attach then has nothing to disambiguate: there is
+at most one row to find. Ending wimm's access to a bank and destroying the record
+of what it read are different decisions, and disconnection makes only the first.
+
+**Transactions are owner-only.** An account's transactions are visible to its
+owners and to nobody else; a member granted *balance* or *details* sees none and
+is not told how many there are. Riding transactions on *details* would widen a
+grant a person already made, silently, in a deploy.
+
+**The screen states its own freshness rather than waiting for it.** Stored rows
+render immediately with the date they are synced through, and the sync runs
+behind the arrival. This is a weaker promise than the one balances make, and the
+weakening is survivable only because it is written on the screen: ADR 0018's rule
+that a stale figure presented as live is worse than no figure is satisfied by the
+statement, not by the freshness.

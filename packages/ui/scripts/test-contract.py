@@ -41,6 +41,10 @@ LIBRARY = {
         {"id": "egfCw", "name": "Name"},
         {"id": "kELqu", "name": "Meta"},
         {"id": "JEiqn", "name": "Balance"},
+        {"id": "WIXtr", "name": "Title"},
+        {"id": "HViAc", "name": "Body"},
+        {"id": "A4SKK", "name": "Action"},
+        {"id": "iYHDG", "name": "Label"},
     ]
 }
 
@@ -105,6 +109,25 @@ def main() -> int:
             "nothing from an amount sitting in an unnamed override",
             {"ui:unknown": {"content": "€6,111.02"}},
             [],
+        ),
+        # The ledger's frames carry both of their reasons this way: a notice
+        # explaining why a bank is not contributing, and an empty state saying
+        # why there is nothing to show. Both are id-keyed overrides with no
+        # name of their own, which is exactly what the generator once dropped —
+        # and dropping them here would leave every reason a member is given
+        # unasserted, in the one screen whose whole job is to give reasons.
+        (
+            "an empty state's title and body on a ledger frame",
+            {"ui:WIXtr": {"content": "Nothing read from Monzo"},
+             "ui:HViAc": {"content": "There is nothing to show until the bank "
+                                     "starts sending transactions."}},
+            ["Nothing read from {bank}",
+             "There is nothing to show until the bank starts sending transactions."],
+        ),
+        (
+            "a notice action's label, nested a level deeper",
+            {"ui:A4SKK/ui:iYHDG": {"content": "Widen at Monzo"}},
+            ["Widen at {bank}"],
         ),
     ]
 

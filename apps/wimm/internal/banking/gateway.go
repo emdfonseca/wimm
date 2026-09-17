@@ -43,9 +43,75 @@ type Gateway interface {
 	// are the adapter's business, not the caller's.
 	Balances(ctx context.Context, conn Connection, account Account) ([]Balance, error)
 
+	// Transactions reads one page of one account's transactions. PSU headers
+	// indicating the member is present are the adapter's business, as they are
+	// for Balances.
+	//
+	// It is one page rather than a slice of everything because a first fill at
+	// a bank that keeps years of history is unbounded, and the caller decides
+	// when to stop.
+	Transactions(ctx context.Context, conn Connection, account Account, req TransactionsRequest) (TransactionsPage, error)
+
 	// EndConnection tells the bank wimm is done. A gateway that cannot be told
 	// is not a failure to disconnect: wimm forgets either way.
 	EndConnection(ctx context.Context, conn Connection) error
+}
+
+// TransactionsRequest asks for one page.
+type TransactionsRequest struct {
+	// From is where to start. A zero From means "as far back as this bank
+	// goes", which Enable Banking expresses as strategy=longest and a gateway
+	// with no such parameter clamps to its own per-institution limit. Neither
+	// shape reaches the caller, which is the test ADR 0018 set for this port.
+	From time.Time
+	// Cursor is the gateway's own page handle, opaque above the adapter and
+	// never stored. It is not the synced-through date and the two are never
+	// called the same thing.
+	Cursor string
+}
+
+// TransactionsPage is what one read returned.
+type TransactionsPage struct {
+	Transactions []Transaction
+	// NextCursor is empty once the last page has been returned.
+	NextCursor string
+}
+
+// TransactionStatus is whether the bank has settled a transaction.
+type TransactionStatus string
+
+const (
+	// StatusBooked is settled at the bank. Booked rows are append-only.
+	StatusBooked TransactionStatus = "booked"
+	// StatusPending is not settled. Pending rows are a replaceable set: each
+	// sync discards an account's and writes what the bank just returned,
+	// because a pending entry becomes a booked one under a different
+	// reference, amount and date (ADR 0021).
+	StatusPending TransactionStatus = "pending"
+)
+
+// Transaction is one entry on one account, in wimm's vocabulary rather than
+// any gateway's. Never "entry", "movement", "item" or "payment".
+type Transaction struct {
+	// Ref is the bank's own entry reference, where it gives one. It is
+	// optional in the standard, and wimm falls back to a digest when it is
+	// absent rather than trusting a per-session identifier.
+	Ref    string
+	Status TransactionStatus
+	// Amount is signed minor units with its currency: a debit is negative, so
+	// direction never depends on a separate field agreeing with the sign.
+	Amount Money
+	// BookingDate is the day the bank filed it, and the day the ledger orders
+	// and groups by. The other two are kept because they are what a member
+	// sometimes means by "when".
+	BookingDate     time.Time
+	ValueDate       time.Time
+	TransactionDate time.Time
+	// CounterpartyName is who it was with, where the bank names them. wimm
+	// shows what the bank gave and never invents one.
+	CounterpartyName string
+	// Remittance is the description the bank carried.
+	Remittance string
 }
 
 // Bank is one connectable institution.

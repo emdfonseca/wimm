@@ -254,6 +254,9 @@ func (s *BankingServer) RestoreConnection(
 		return nil, toConnectError(err)
 	}
 
+	// The reason is what the screen said before sending the member; the flow
+	// itself is identical, which is the point of threading it rather than
+	// building a second one.
 	handoff, err := s.banking.RestoreConnection(ctx, m.ID, req.Msg.GetConnectionId())
 	if err != nil {
 		return nil, toConnectError(err)
@@ -276,6 +279,115 @@ func (s *BankingServer) DisconnectBank(
 		return nil, toConnectError(err)
 	}
 	return connect.NewResponse(&bankingv1.DisconnectBankResponse{}), nil
+}
+
+// ListTransactions returns one page of the ledger, having first brought the
+// member's accounts up to date.
+func (s *BankingServer) ListTransactions(
+	ctx context.Context, req *connect.Request[bankingv1.ListTransactionsRequest],
+) (*connect.Response[bankingv1.ListTransactionsResponse], error) {
+	m, err := s.member(ctx, req.Header())
+	if err != nil {
+		return nil, toConnectError(err)
+	}
+
+	ledger, err := s.banking.Transactions(ctx, banking.LedgerRequest{
+		MemberID:  m.ID,
+		AccountID: req.Msg.GetAccountId(),
+		Cursor:    fromProtoCursor(req.Msg.GetCursor()),
+		Older:     req.Msg.GetOlder(),
+		SkipSync:  req.Msg.GetSkipSync(),
+	})
+	if err != nil {
+		return nil, toConnectError(err)
+	}
+	return connect.NewResponse(&bankingv1.ListTransactionsResponse{Ledger: toProtoLedger(ledger)}), nil
+}
+
+// RefreshTransactions asks the banks again because the member asked.
+func (s *BankingServer) RefreshTransactions(
+	ctx context.Context, req *connect.Request[bankingv1.RefreshTransactionsRequest],
+) (*connect.Response[bankingv1.RefreshTransactionsResponse], error) {
+	m, err := s.member(ctx, req.Header())
+	if err != nil {
+		return nil, toConnectError(err)
+	}
+
+	// A refresh always returns the newest page. A member asking for the list to
+	// be brought up to date is asking to see what just arrived, and what just
+	// arrived is at the newest end.
+	ledger, err := s.banking.Transactions(ctx, banking.LedgerRequest{
+		MemberID: m.ID, AccountID: req.Msg.GetAccountId(), Refresh: true,
+	})
+	if err != nil {
+		return nil, toConnectError(err)
+	}
+	return connect.NewResponse(&bankingv1.RefreshTransactionsResponse{Ledger: toProtoLedger(ledger)}), nil
+}
+
+func fromProtoCursor(c *bankingv1.LedgerCursor) store.Cursor {
+	if c == nil || c.GetTransactionId() == "" {
+		return store.Cursor{}
+	}
+	return store.Cursor{BookingDate: c.GetBookingDate().AsTime(), ID: c.GetTransactionId()}
+}
+
+// toProtoLedger renders one page. The account's name and its bank travel on
+// every row, because the list is every account the member owns and a row has to
+// say which one it came from.
+func toProtoLedger(l banking.Ledger) *bankingv1.Ledger {
+	out := &bankingv1.Ledger{
+		TotalCount:        int32(l.Count),
+		HasOlder:          l.Page.HasOlder,
+		HasNewer:          l.Page.HasNewer,
+		OwnsNoAccount:     l.OwnsNothing,
+		Failures:          toProtoFailures(l.Failures),
+		NarrowConnections: toProtoNarrow(l.Narrow),
+	}
+
+	for _, t := range l.Page.Transactions {
+		label := l.Accounts[t.AccountID]
+		out.Transactions = append(out.Transactions, &bankingv1.Transaction{
+			Id:               t.ID,
+			AccountId:        t.AccountID,
+			AccountName:      label.Name,
+			BankName:         label.BankName,
+			Status:           toProtoTransactionStatus(t.Status),
+			Amount:           &bankingv1.Money{Minor: t.AmountMinor, Currency: t.Currency},
+			BookingDate:      timestamppb.New(t.BookingDate),
+			CounterpartyName: t.CounterpartyName,
+			Remittance:       t.Remittance,
+		})
+	}
+
+	// A span with no transactions in it is no span. Left absent rather than
+	// rendered as the zero time, which would date an empty page to year one.
+	if len(l.Page.Transactions) > 0 {
+		out.OldestOnPage = timestamppb.New(l.Page.Oldest)
+		out.NewestOnPage = timestamppb.New(l.Page.Newest)
+	}
+	if l.SyncedAt != nil {
+		out.SyncedAt = timestamppb.New(*l.SyncedAt)
+	}
+	if l.ReachesBack != nil {
+		out.ReachesBackTo = timestamppb.New(*l.ReachesBack)
+	}
+	return out
+}
+
+func toProtoNarrow(narrow []store.NarrowConnection) []*bankingv1.NarrowConnection {
+	out := make([]*bankingv1.NarrowConnection, 0, len(narrow))
+	for _, n := range narrow {
+		out = append(out, &bankingv1.NarrowConnection{ConnectionId: n.ConnectionID, BankName: n.BankName})
+	}
+	return out
+}
+
+func toProtoTransactionStatus(s store.TransactionStatus) bankingv1.TransactionStatus {
+	if s == store.StatusPending {
+		return bankingv1.TransactionStatus_TRANSACTION_STATUS_PENDING
+	}
+	return bankingv1.TransactionStatus_TRANSACTION_STATUS_BOOKED
 }
 
 // names maps member ids to something a person reads. Without it connected_by

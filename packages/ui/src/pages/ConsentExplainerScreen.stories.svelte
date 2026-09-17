@@ -51,13 +51,14 @@
 	}}
 />
 
-<!-- Transactions are out of scope in this change, and the consent asked for
-     says so rather than quietly requesting them for later. -->
+<!-- The consent asks for account names, balances and transactions, and the
+     screen says all three before the member can no longer change it here. What
+     is not granted is stated in the same breath. -->
 <Story
-	name="It states what is not shared"
+	name="It states what is and is not shared"
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getByText(/Not your transactions/)).toBeInTheDocument();
+		await expect(canvas.getByText(/Their transactions/)).toBeInTheDocument();
 		await expect(canvas.getByText(/cannot make a payment/)).toBeInTheDocument();
 		await expect(canvas.getByText(/never sees it/)).toBeInTheDocument();
 	}}

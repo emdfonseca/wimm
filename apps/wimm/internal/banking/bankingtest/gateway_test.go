@@ -253,3 +253,144 @@ func TestAccountsReadRecordsOnlyBalanceReads(t *testing.T) {
 		t.Errorf("AccountsRead = %v, want [acct-6580]", read)
 	}
 }
+
+func tx(ref string, day int, minor int64, status banking.TransactionStatus) banking.Transaction {
+	return banking.Transaction{
+		Ref:         ref,
+		Status:      status,
+		Amount:      banking.Money{Minor: minor, Currency: "EUR"},
+		BookingDate: time.Date(2026, time.March, day, 0, 0, 0, 0, time.UTC),
+	}
+}
+
+// A first fill is unbounded pages, so the fake has to page or nothing that
+// consumes it is testing what it will actually meet.
+func TestTransactionsPageToExhaustion(t *testing.T) {
+	g := bankingtest.New()
+	g.PageSize = 2
+	g.AddBank(montepio(), account("acct-6580", "Conta à Ordem"))
+	g.SetTransactions("montepio", "acct-6580",
+		tx("ref-1", 5, -450, banking.StatusBooked),
+		tx("ref-2", 4, -1190, banking.StatusBooked),
+		tx("ref-3", 3, 240_000, banking.StatusBooked),
+		tx("ref-4", 2, -2500, banking.StatusBooked),
+		tx("ref-5", 1, -700, banking.StatusPending),
+	)
+
+	conn, accounts := connect(t, g, montepio())
+
+	var read []string
+	var pages int
+	cursor := ""
+	for {
+		page, err := g.Transactions(context.Background(), conn, accounts[0],
+			banking.TransactionsRequest{Cursor: cursor})
+		if err != nil {
+			t.Fatalf("Transactions: %v", err)
+		}
+		pages++
+		for _, transaction := range page.Transactions {
+			read = append(read, transaction.Ref)
+		}
+		if page.NextCursor == "" {
+			break
+		}
+		cursor = page.NextCursor
+		if pages > 10 {
+			t.Fatal("paging did not terminate")
+		}
+	}
+
+	if pages != 3 {
+		t.Errorf("read %d pages of 2 over 5 transactions, want 3", pages)
+	}
+	want := []string{"ref-1", "ref-2", "ref-3", "ref-4", "ref-5"}
+	if len(read) != len(want) {
+		t.Fatalf("read %v, want %v", read, want)
+	}
+	for i := range want {
+		if read[i] != want[i] {
+			t.Fatalf("read %v, want %v — nothing repeated and nothing skipped", read, want)
+		}
+	}
+}
+
+// A zero From is "as far back as this bank goes"; a set From is the incremental
+// read, and the overlap window depends on it filtering by booking date.
+func TestASetFromNarrowsToWhatWasBookedOnOrAfterIt(t *testing.T) {
+	g := bankingtest.New()
+	g.AddBank(montepio(), account("acct-6580", "Conta à Ordem"))
+	g.SetTransactions("montepio", "acct-6580",
+		tx("ref-1", 5, -450, banking.StatusBooked),
+		tx("ref-2", 3, -1190, banking.StatusBooked),
+		tx("ref-3", 1, 240_000, banking.StatusBooked),
+	)
+
+	conn, accounts := connect(t, g, montepio())
+
+	all, err := g.Transactions(context.Background(), conn, accounts[0], banking.TransactionsRequest{})
+	if err != nil {
+		t.Fatalf("Transactions: %v", err)
+	}
+	if len(all.Transactions) != 3 {
+		t.Errorf("a zero From read %d transactions, want every one of them", len(all.Transactions))
+	}
+
+	since := banking.TransactionsRequest{From: time.Date(2026, time.March, 3, 0, 0, 0, 0, time.UTC)}
+	page, err := g.Transactions(context.Background(), conn, accounts[0], since)
+	if err != nil {
+		t.Fatalf("Transactions: %v", err)
+	}
+	if len(page.Transactions) != 2 {
+		t.Fatalf("read %d transactions from the 3rd, want 2 — the boundary day is included", len(page.Transactions))
+	}
+	if page.Transactions[1].Ref != "ref-2" {
+		t.Errorf("the boundary day was dropped: got %v", page.Transactions)
+	}
+}
+
+// A sync that fails part way through a fill must be expressible, because
+// leaving the stored rows and their time untouched is the behaviour that then
+// has to be asserted.
+func TestASyncCanFailMidPage(t *testing.T) {
+	g := bankingtest.New()
+	g.PageSize = 1
+	g.AddBank(montepio(), account("acct-6580", "Conta à Ordem"))
+	g.SetTransactions("montepio", "acct-6580",
+		tx("ref-1", 5, -450, banking.StatusBooked),
+		tx("ref-2", 4, -1190, banking.StatusBooked),
+	)
+
+	conn, accounts := connect(t, g, montepio())
+
+	first, err := g.Transactions(context.Background(), conn, accounts[0], banking.TransactionsRequest{})
+	if err != nil {
+		t.Fatalf("first page: %v", err)
+	}
+	if first.NextCursor == "" {
+		t.Fatal("the fake did not offer a second page")
+	}
+
+	g.Fail("Transactions", banking.ErrBankUnavailable)
+	_, err = g.Transactions(context.Background(), conn, accounts[0],
+		banking.TransactionsRequest{Cursor: first.NextCursor})
+	if !errors.Is(err, banking.ErrBankUnavailable) {
+		t.Errorf("got %v, want the scripted failure", err)
+	}
+}
+
+// Reading transactions on a connection the bank has cut off is consent expired,
+// exactly as reading a balance on one is: the member's experience of both is
+// that their bank stopped updating.
+func TestSyncingAnExpiredConnectionSaysConsentExpired(t *testing.T) {
+	g := bankingtest.New()
+	g.AddBank(montepio(), account("acct-6580", "Conta à Ordem"))
+	g.SetTransactions("montepio", "acct-6580", tx("ref-1", 5, -450, banking.StatusBooked))
+
+	conn, accounts := connect(t, g, montepio())
+	g.Expire(conn)
+
+	if _, err := g.Transactions(context.Background(), conn, accounts[0], banking.TransactionsRequest{}); !errors.Is(err, banking.ErrConsentExpired) {
+		t.Errorf("got %v, want ErrConsentExpired", err)
+	}
+}

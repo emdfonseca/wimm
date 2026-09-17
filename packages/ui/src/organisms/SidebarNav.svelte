@@ -49,7 +49,9 @@
 					href={destination.href}
 					aria-current={destination.current ? 'page' : undefined}
 				>
-					<span class="item-icon"><Icon name="layout-dashboard" size={16} /></span>
+					<span class="item-icon">
+						<Icon name={destination.icon ?? 'layout-dashboard'} size={16} />
+					</span>
 					<span class="item-label">{destination.label}</span>
 				</a>
 			</li>
@@ -74,6 +76,8 @@
 		flex-direction: column;
 		gap: 2px;
 		inline-size: 264px;
+		/* Fills whatever the shell gives it, which at Wide is one viewport. */
+		block-size: 100%;
 		padding: 12px;
 		background: var(--color-bg-surface);
 		/* The preset's whole purpose: one edge, no radius. */
@@ -94,6 +98,10 @@
 		flex-direction: column;
 		gap: 2px;
 		flex: 1;
+		min-block-size: 0;
+		/* Scrolls within the column rather than pushing the footer off the
+		   bottom, for the day this list is longer than a short screen. */
+		overflow-y: auto;
 		margin: 0;
 		padding: 0;
 		list-style: none;

@@ -23160,6 +23160,203 @@
         },
         {
           "type": "frame",
+          "id": "wUSMd",
+          "name": "Seek pager",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "CSIlr",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "YFWtK",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "content": "Seek pager",
+                  "fontFamily": "Inter",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "yThTp",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "content": "Pagination for a list that seeks on its sort key rather than counting an offset. There is no page number and no range of row numbers, because a seek knows neither without a second count that would be stale before it rendered. Where you are is a span of dates. At the oldest end it says there is nothing older rather than greying a control, so nothing is offered that does nothing.",
+                  "fontFamily": "Inter",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bY2qv",
+              "name": "Specimens",
+              "width": "fill_container",
+              "fill": "$color-bg-surface",
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "MiZAZ",
+                  "name": "Slot",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Hxmzc",
+                      "name": "Seek pager",
+                      "reusable": true,
+                      "width": "fill_container",
+                      "height": 56,
+                      "fill": "$color-bg-surface",
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        "$density-cell-padding-x"
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "gxil3",
+                          "name": "Span",
+                          "fill": "$color-text-secondary",
+                          "content": "17 September to 15 September 2026",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "IAEse",
+                          "x": 0,
+                          "y": 0,
+                          "name": "End",
+                          "enabled": false,
+                          "fill": "$color-text-secondary",
+                          "content": "Nothing older. This is as far back as the bank would go.",
+                          "fontFamily": "Inter",
+                          "fontSize": "$type-size-body-sm",
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "HodlM",
+                          "name": "Paging",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "Wrr9y",
+                              "type": "ref",
+                              "ref": "W2gOKx",
+                              "name": "Newer",
+                              "enabled": false,
+                              "height": 32,
+                              "fill": "$color-action-secondary",
+                              "descendants": {
+                                "iYHDG": {
+                                  "content": "Newer",
+                                  "fill": "$color-text-primary",
+                                  "fontSize": 13
+                                }
+                              }
+                            },
+                            {
+                              "id": "he437",
+                              "type": "ref",
+                              "ref": "W2gOKx",
+                              "name": "Older",
+                              "height": 32,
+                              "fill": "$color-action-secondary",
+                              "descendants": {
+                                "iYHDG": {
+                                  "content": "Older",
+                                  "fill": "$color-text-primary",
+                                  "fontSize": 13
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "S0uP5",
+                  "name": "States",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "id": "rpHQK",
+                      "type": "ref",
+                      "ref": "Hxmzc",
+                      "name": "A middle page",
+                      "width": "fill_container",
+                      "descendants": {
+                        "gxil3": {
+                          "content": "4 August to 31 July 2026"
+                        },
+                        "Wrr9y": {
+                          "enabled": true
+                        }
+                      }
+                    },
+                    {
+                      "id": "r2Oakp",
+                      "type": "ref",
+                      "ref": "Hxmzc",
+                      "name": "The oldest page",
+                      "width": "fill_container",
+                      "descendants": {
+                        "gxil3": {
+                          "content": "4 June 2026"
+                        },
+                        "IAEse": {
+                          "enabled": true
+                        },
+                        "Wrr9y": {
+                          "enabled": true
+                        },
+                        "he437": {
+                          "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "qGjuI",
+                  "name": "Note",
+                  "fill": "$color-text-secondary",
+                  "content": "Above: the newest page, where only Older is offered; then a middle page with both; then the oldest, where Older is gone and a sentence says why rather than a control saying nothing.",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
           "id": "IF1EM",
           "name": "Account menu",
           "width": "fill_container",
@@ -26003,6 +26200,245 @@
                       "fontWeight": "normal"
                     }
                   ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "yBRDP",
+          "name": "Ledger row",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "EAKJN",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "YJhKZ",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "content": "Ledger row",
+                  "fontFamily": "Inter",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "t9j2TA",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "content": "A transaction as the ledger shows it: what it was, which of your accounts it came from, whether the bank has settled it, when, and how much. No category and no selection control - this list is read, not worked. Direction is carried by the sign on the amount, never by colour alone. The word is Description, not Merchant: a salary and a transfer between accounts have no merchant.",
+                  "fontFamily": "Inter",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "gZzJS",
+              "name": "Specimens",
+              "width": "fill_container",
+              "fill": "$color-bg-surface",
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "C9PreI",
+                  "name": "Slot",
+                  "width": "fill_container",
+                  "fill": "$color-bg-elevated",
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "VE2z9",
+                      "name": "Ledger row",
+                      "reusable": true,
+                      "width": "fill_container",
+                      "height": 56,
+                      "fill": "$color-bg-elevated",
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        "$density-cell-padding-x"
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "PkVlf",
+                          "type": "ref",
+                          "ref": "Z2oYAy",
+                          "name": "Mark",
+                          "width": 28,
+                          "height": 28,
+                          "descendants": {
+                            "rv5n0": {
+                              "content": "PD",
+                              "fontSize": 11
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "m5IlD",
+                          "name": "Description",
+                          "fill": "$color-text-primary",
+                          "content": "Pingo Doce",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Ceimo",
+                          "name": "Account",
+                          "fill": "$color-text-secondary",
+                          "content": "Current account · Monzo",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CwLeL",
+                          "name": "Status",
+                          "width": 92,
+                          "height": 22,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "M6pnlB",
+                              "type": "ref",
+                              "ref": "iyeM0",
+                              "name": "Unsettled",
+                              "enabled": false,
+                              "descendants": {
+                                "HnFBv": {
+                                  "content": "Not settled"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "JiKky",
+                          "name": "Date",
+                          "fill": "$color-text-secondary",
+                          "content": "17 Sep",
+                          "textAlign": "right",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "zynUV",
+                          "name": "Amount",
+                          "fill": "$color-amount-negative",
+                          "content": "−€42.18",
+                          "textAlign": "right",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "V3OGqk",
+                  "name": "States",
+                  "width": "fill_container",
+                  "fill": "$color-bg-elevated",
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "id": "iJGlX",
+                      "type": "ref",
+                      "ref": "VE2z9",
+                      "name": "Money arriving",
+                      "width": "fill_container",
+                      "descendants": {
+                        "PkVlf/rv5n0": {
+                          "content": "SA"
+                        },
+                        "m5IlD": {
+                          "content": "Salary"
+                        },
+                        "zynUV": {
+                          "content": "+€2,180.00",
+                          "fill": "$color-amount-positive"
+                        }
+                      }
+                    },
+                    {
+                      "id": "s2cbK",
+                      "type": "ref",
+                      "ref": "VE2z9",
+                      "name": "Not settled",
+                      "width": "fill_container",
+                      "descendants": {
+                        "PkVlf/rv5n0": {
+                          "content": "AR"
+                        },
+                        "m5IlD": {
+                          "content": "Transfer to Ana Reis"
+                        },
+                        "Ceimo": {
+                          "content": "Joint savings · Montepio"
+                        },
+                        "M6pnlB": {
+                          "enabled": true
+                        },
+                        "zynUV": {
+                          "content": "−€60.00"
+                        }
+                      }
+                    },
+                    {
+                      "id": "bG14N",
+                      "type": "ref",
+                      "ref": "VE2z9",
+                      "name": "The bank named nobody",
+                      "width": "fill_container",
+                      "descendants": {
+                        "PkVlf/rv5n0": {
+                          "content": "—"
+                        },
+                        "m5IlD": {
+                          "content": "Card payment",
+                          "fill": "$color-text-secondary"
+                        },
+                        "zynUV": {
+                          "content": "−€4.50"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "GATbz",
+                  "name": "Note",
+                  "fill": "$color-text-secondary",
+                  "content": "Money leaving, money arriving, a transaction the bank has not settled, and one it named nobody for. Every amount carries its sign, so the two directions are told apart without the red and green pair.",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
                 }
               ]
             }
@@ -31626,6 +32062,199 @@
                       ]
                     }
                   ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "X77fCK",
+          "name": "Bottom nav",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "K8RxA",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "R8QZCx",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "content": "Bottom nav",
+                  "fontFamily": "Inter",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "TEgln",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "content": "Primary navigation where there is no column for a sidebar. The same destinations, the same Nav item, laid out horizontally and centred. It is a sibling below the scrolling region rather than an overlay, so nothing is obscured and the list needs no bottom padding to clear it, and it never hides on scroll. Current is marked three ways and only one of them is colour: an accent top edge, an accent icon and an accent label at 600.",
+                  "fontFamily": "Inter",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "XvVUr",
+              "name": "Specimens",
+              "width": "fill_container",
+              "fill": "$color-bg-surface",
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "NKnsy",
+                  "name": "Slot",
+                  "width": 390,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "b3MTx",
+                      "name": "Bottom nav",
+                      "reusable": true,
+                      "width": "fill_container",
+                      "height": 60,
+                      "fill": "$color-bg-surface",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "tovKh",
+                          "name": "Tab",
+                          "width": "fill_container",
+                          "height": 60,
+                          "layout": "vertical",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "lZnGT",
+                              "type": "ref",
+                              "ref": "rEOk1",
+                              "name": "Overview",
+                              "layout": "vertical",
+                              "gap": 3,
+                              "padding": [
+                                0,
+                                4
+                              ],
+                              "width": "fill_container",
+                              "height": 52,
+                              "fill": "#FFFFFF00",
+                              "alignItems": "center",
+                              "justifyContent": "center",
+                              "descendants": {
+                                "TVqlB": {
+                                  "icon": "layout-dashboard",
+                                  "width": 20,
+                                  "height": 20,
+                                  "fill": "$color-text-secondary"
+                                },
+                                "KfRDI": {
+                                  "content": "Overview",
+                                  "textGrowth": "auto",
+                                  "textAlign": "center",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal",
+                                  "fill": "$color-text-secondary"
+                                },
+                                "dcsRs": {
+                                  "enabled": false
+                                },
+                                "SZZfP": {
+                                  "enabled": false
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "cfkK0",
+                          "name": "Tab",
+                          "width": "fill_container",
+                          "height": 60,
+                          "layout": "vertical",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "ysgF3",
+                              "name": "Current edge",
+                              "fill": "$color-accent",
+                              "width": "fill_container",
+                              "height": 2
+                            },
+                            {
+                              "id": "IvOch",
+                              "type": "ref",
+                              "ref": "rEOk1",
+                              "name": "Transactions",
+                              "layout": "vertical",
+                              "gap": 3,
+                              "padding": [
+                                0,
+                                4
+                              ],
+                              "width": "fill_container",
+                              "height": 52,
+                              "fill": "#FFFFFF00",
+                              "alignItems": "center",
+                              "justifyContent": "center",
+                              "descendants": {
+                                "TVqlB": {
+                                  "icon": "arrow-left-right",
+                                  "width": 20,
+                                  "height": 20,
+                                  "fill": "$color-accent"
+                                },
+                                "KfRDI": {
+                                  "content": "Transactions",
+                                  "textGrowth": "auto",
+                                  "textAlign": "center",
+                                  "fontSize": 11,
+                                  "fontWeight": "600",
+                                  "fill": "$color-accent"
+                                },
+                                "dcsRs": {
+                                  "enabled": false
+                                },
+                                "SZZfP": {
+                                  "enabled": false
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "OuyVa",
+                  "name": "Note",
+                  "fill": "$color-text-secondary",
+                  "content": "Two destinations, the second current. Each target measures 195 by 60 at this width, well clear of any target-size floor, and a third or fourth destination divides the same bar rather than changing it.",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
                 }
               ]
             }
@@ -39755,7 +40384,7 @@
                   "enabled": false
                 },
                 "W4cIE8/l4tOM": {
-                  "enabled": false
+                  "enabled": true
                 },
                 "W4cIE8/e9JS0V": {
                   "enabled": false
@@ -39918,6 +40547,13 @@
                   }
                 }
               ]
+            },
+            {
+              "id": "kqffI",
+              "type": "ref",
+              "ref": "b3MTx",
+              "name": "Bottom nav",
+              "width": "fill_container"
             }
           ]
         },

@@ -2,6 +2,7 @@
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import { expect, fn, userEvent, within } from 'storybook/test';
 	import SidebarNav from './SidebarNav.svelte';
+	import { destinations } from '../destinations.js';
 
 	const { Story } = defineMeta({
 		title: 'Organisms/SidebarNav',

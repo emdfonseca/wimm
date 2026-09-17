@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file wimm/banking/v1/banking.proto.
  */
 export const file_wimm_banking_v1_banking: GenFile = /*@__PURE__*/
-  fileDesc("Ch13aW1tL2JhbmtpbmcvdjEvYmFua2luZy5wcm90bxIPd2ltbS5iYW5raW5nLnYxIjIKBU1vbmV5Eg0KBW1pbm9yGAEgASgDEhoKCGN1cnJlbmN5GAIgASgJQgi6SAVyA5gBAyJgCgRCYW5rEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHY291bnRyeRgDIAEoCRIQCghsb2dvX3VybBgEIAEoCRIbChNtYXhfY29uc2VudF9zZWNvbmRzGAUgASgDIioKBk1lbWJlchIKCgJpZBgBIAEoCRIUCgxkaXNwbGF5X25hbWUYAiABKAkibAoHQmFsYW5jZRIlCgVtb25leRgBIAEoCzIWLndpbW0uYmFua2luZy52MS5Nb25leRIrCgdyZWFkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBINCgVzdGFsZRgDIAEoCCLQAgoHQWNjb3VudBIKCgJpZBgBIAEoCRIuCgZzb3VyY2UYAiABKA4yHi53aW1tLmJhbmtpbmcudjEuQWNjb3VudFNvdXJjZRIlCgVsZXZlbBgDIAEoDjIWLndpbW0uYmFua2luZy52MS5MZXZlbBINCgVvd25lZBgEIAEoCBInCgZvd25lcnMYBSADKAsyFy53aW1tLmJhbmtpbmcudjEuTWVtYmVyEgwKBG5hbWUYBiABKAkSKQoHYmFsYW5jZRgHIAEoCzIYLndpbW0uYmFua2luZy52MS5CYWxhbmNlEhUKDW51bWJlcl9zdWZmaXgYCCABKAkSFAoMYWNjb3VudF90eXBlGAkgASgJEhMKC2hvbGRlcl9uYW1lGAogASgJEi8KCmNvbm5lY3Rpb24YCyABKAsyGy53aW1tLmJhbmtpbmcudjEuQ29ubmVjdGlvbiLIAQoKQ29ubmVjdGlvbhIKCgJpZBgBIAEoCRIPCgdiYW5rX2lkGAIgASgJEhEKCWJhbmtfbmFtZRgDIAEoCRIVCg1iYW5rX2xvZ29fdXJsGAQgASgJEi0KDGNvbm5lY3RlZF9ieRgFIAEoCzIXLndpbW0uYmFua2luZy52MS5NZW1iZXISNgoSY29uc2VudF9leHBpcmVzX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIMCgRsaXZlGAcgASgIIk0KDUN1cnJlbmN5VG90YWwSJQoFdG90YWwYASABKAsyFi53aW1tLmJhbmtpbmcudjEuTW9uZXkSFQoNYWNjb3VudF9jb3VudBgCIAEoBSJ/CgtCYW5rRmFpbHVyZRIVCg1jb25uZWN0aW9uX2lkGAEgASgJEhEKCWJhbmtfbmFtZRgCIAEoCRIpCgdmYWlsdXJlGAMgASgOMhgud2ltbS5iYW5raW5nLnYxLkZhaWx1cmUSGwoTcmV0cnlfYWZ0ZXJfc2Vjb25kcxgEIAEoAyItChBMaXN0QmFua3NSZXF1ZXN0EhkKB2NvdW50cnkYASABKAlCCLpIBXIDmAECIjkKEUxpc3RCYW5rc1Jlc3BvbnNlEiQKBWJhbmtzGAEgAygLMhUud2ltbS5iYW5raW5nLnYxLkJhbmsiMgoWQmVnaW5Db25uZWN0aW9uUmVxdWVzdBIYCgdiYW5rX2lkGAEgASgJQge6SARyAhABImYKF0JlZ2luQ29ubmVjdGlvblJlc3BvbnNlEhMKC2hhbmRvZmZfdXJsGAEgASgJEjYKEmNvbnNlbnRfZXhwaXJlc19hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiUAoZQ29tcGxldGVDb25uZWN0aW9uUmVxdWVzdBIWCgVzdGF0ZRgBIAEoCUIHukgEcgIQARIMCgRjb2RlGAIgASgJEg0KBWVycm9yGAMgASgJIpoBChpDb21wbGV0ZUNvbm5lY3Rpb25SZXNwb25zZRIvCgpjb25uZWN0aW9uGAEgASgLMhsud2ltbS5iYW5raW5nLnYxLkNvbm5lY3Rpb24SKgoIYWNjb3VudHMYAiADKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudBIfChd3aXRoZHJhd25fYWNjb3VudF9uYW1lcxgDIAMoCSI/Ch1MaXN0Q29ubmVjdGlvbkFjY291bnRzUmVxdWVzdBIeCg1jb25uZWN0aW9uX2lkGAEgASgJQge6SARyAhABIqUBCh5MaXN0Q29ubmVjdGlvbkFjY291bnRzUmVzcG9uc2USKgoIYWNjb3VudHMYASADKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudBIoCgdtZW1iZXJzGAIgAygLMhcud2ltbS5iYW5raW5nLnYxLk1lbWJlchItCgZncmFudHMYAyADKAsyHS53aW1tLmJhbmtpbmcudjEuQWNjb3VudEdyYW50IlwKDEFjY291bnRHcmFudBISCgphY2NvdW50X2lkGAEgASgJEhEKCW1lbWJlcl9pZBgCIAEoCRIlCgVsZXZlbBgDIAEoDjIWLndpbW0uYmFua2luZy52MS5MZXZlbCJKChdTZXRBY2NvdW50T3duZXJzUmVxdWVzdBIbCgphY2NvdW50X2lkGAEgASgJQge6SARyAhABEhIKCm1lbWJlcl9pZHMYAiADKAkiRQoYU2V0QWNjb3VudE93bmVyc1Jlc3BvbnNlEikKB2FjY291bnQYASABKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudCJ4ChZTZXRBY2NvdW50TGV2ZWxSZXF1ZXN0EhsKCmFjY291bnRfaWQYASABKAlCB7pIBHICEAESGgoJbWVtYmVyX2lkGAIgASgJQge6SARyAhABEiUKBWxldmVsGAMgASgOMhYud2ltbS5iYW5raW5nLnYxLkxldmVsIkQKF1NldEFjY291bnRMZXZlbFJlc3BvbnNlEikKB2FjY291bnQYASABKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudCIoChNMaXN0QWNjb3VudHNSZXF1ZXN0EhEKCXNraXBfcmVhZBgBIAEoCCKiAQoUTGlzdEFjY291bnRzUmVzcG9uc2USKgoIYWNjb3VudHMYASADKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudBIuCgZ0b3RhbHMYAiADKAsyHi53aW1tLmJhbmtpbmcudjEuQ3VycmVuY3lUb3RhbBIuCghmYWlsdXJlcxgDIAMoCzIcLndpbW0uYmFua2luZy52MS5CYW5rRmFpbHVyZSIYChZSZWZyZXNoQmFsYW5jZXNSZXF1ZXN0IqUBChdSZWZyZXNoQmFsYW5jZXNSZXNwb25zZRIqCghhY2NvdW50cxgBIAMoCzIYLndpbW0uYmFua2luZy52MS5BY2NvdW50Ei4KBnRvdGFscxgCIAMoCzIeLndpbW0uYmFua2luZy52MS5DdXJyZW5jeVRvdGFsEi4KCGZhaWx1cmVzGAMgAygLMhwud2ltbS5iYW5raW5nLnYxLkJhbmtGYWlsdXJlIjoKGFJlc3RvcmVDb25uZWN0aW9uUmVxdWVzdBIeCg1jb25uZWN0aW9uX2lkGAEgASgJQge6SARyAhABImgKGVJlc3RvcmVDb25uZWN0aW9uUmVzcG9uc2USEwoLaGFuZG9mZl91cmwYASABKAkSNgoSY29uc2VudF9leHBpcmVzX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCI3ChVEaXNjb25uZWN0QmFua1JlcXVlc3QSHgoNY29ubmVjdGlvbl9pZBgBIAEoCUIHukgEcgIQASIYChZEaXNjb25uZWN0QmFua1Jlc3BvbnNlKlYKBUxldmVsEhUKEUxFVkVMX1VOU1BFQ0lGSUVEEAASEAoMTEVWRUxfSElEREVOEAESEQoNTEVWRUxfQkFMQU5DRRACEhEKDUxFVkVMX0RFVEFJTFMQAypmCg1BY2NvdW50U291cmNlEh4KGkFDQ09VTlRfU09VUkNFX1VOU1BFQ0lGSUVEEAASGgoWQUNDT1VOVF9TT1VSQ0VfR0FURVdBWRABEhkKFUFDQ09VTlRfU09VUkNFX01BTlVBTBACKs8BCgdGYWlsdXJlEhcKE0ZBSUxVUkVfVU5TUEVDSUZJRUQQABIcChhGQUlMVVJFX0JBTktfVU5BVkFJTEFCTEUQARIfChtGQUlMVVJFX1NFUlZJQ0VfVU5BVkFJTEFCTEUQAhIcChhGQUlMVVJFX0NPTlNFTlRfREVDTElORUQQAxIbChdGQUlMVVJFX0NPTlNFTlRfRVhQSVJFRBAEEhcKE0ZBSUxVUkVfTk9fQUNDT1VOVFMQBRIYChRGQUlMVVJFX1JBVEVfTElNSVRFRBAGMpUICg5CYW5raW5nU2VydmljZRJSCglMaXN0QmFua3MSIS53aW1tLmJhbmtpbmcudjEuTGlzdEJhbmtzUmVxdWVzdBoiLndpbW0uYmFua2luZy52MS5MaXN0QmFua3NSZXNwb25zZRJkCg9CZWdpbkNvbm5lY3Rpb24SJy53aW1tLmJhbmtpbmcudjEuQmVnaW5Db25uZWN0aW9uUmVxdWVzdBooLndpbW0uYmFua2luZy52MS5CZWdpbkNvbm5lY3Rpb25SZXNwb25zZRJtChJDb21wbGV0ZUNvbm5lY3Rpb24SKi53aW1tLmJhbmtpbmcudjEuQ29tcGxldGVDb25uZWN0aW9uUmVxdWVzdBorLndpbW0uYmFua2luZy52MS5Db21wbGV0ZUNvbm5lY3Rpb25SZXNwb25zZRJ5ChZMaXN0Q29ubmVjdGlvbkFjY291bnRzEi4ud2ltbS5iYW5raW5nLnYxLkxpc3RDb25uZWN0aW9uQWNjb3VudHNSZXF1ZXN0Gi8ud2ltbS5iYW5raW5nLnYxLkxpc3RDb25uZWN0aW9uQWNjb3VudHNSZXNwb25zZRJnChBTZXRBY2NvdW50T3duZXJzEigud2ltbS5iYW5raW5nLnYxLlNldEFjY291bnRPd25lcnNSZXF1ZXN0Gikud2ltbS5iYW5raW5nLnYxLlNldEFjY291bnRPd25lcnNSZXNwb25zZRJkCg9TZXRBY2NvdW50TGV2ZWwSJy53aW1tLmJhbmtpbmcudjEuU2V0QWNjb3VudExldmVsUmVxdWVzdBooLndpbW0uYmFua2luZy52MS5TZXRBY2NvdW50TGV2ZWxSZXNwb25zZRJbCgxMaXN0QWNjb3VudHMSJC53aW1tLmJhbmtpbmcudjEuTGlzdEFjY291bnRzUmVxdWVzdBolLndpbW0uYmFua2luZy52MS5MaXN0QWNjb3VudHNSZXNwb25zZRJkCg9SZWZyZXNoQmFsYW5jZXMSJy53aW1tLmJhbmtpbmcudjEuUmVmcmVzaEJhbGFuY2VzUmVxdWVzdBooLndpbW0uYmFua2luZy52MS5SZWZyZXNoQmFsYW5jZXNSZXNwb25zZRJqChFSZXN0b3JlQ29ubmVjdGlvbhIpLndpbW0uYmFua2luZy52MS5SZXN0b3JlQ29ubmVjdGlvblJlcXVlc3QaKi53aW1tLmJhbmtpbmcudjEuUmVzdG9yZUNvbm5lY3Rpb25SZXNwb25zZRJhCg5EaXNjb25uZWN0QmFuaxImLndpbW0uYmFua2luZy52MS5EaXNjb25uZWN0QmFua1JlcXVlc3QaJy53aW1tLmJhbmtpbmcudjEuRGlzY29ubmVjdEJhbmtSZXNwb25zZULMAQoTY29tLndpbW0uYmFua2luZy52MUIMQmFua2luZ1Byb3RvUAFaSWdpdGh1Yi5jb20veHV1aWQvd2ltbS9wYWNrYWdlcy9jb250cmFjdHMvZ2VuL2dvL3dpbW0vYmFua2luZy92MTtiYW5raW5ndjGiAgNXQliqAg9XaW1tLkJhbmtpbmcuVjHKAg9XaW1tXEJhbmtpbmdcVjHiAhtXaW1tXEJhbmtpbmdcVjFcR1BCTWV0YWRhdGHqAhFXaW1tOjpCYW5raW5nOjpWMWIGcHJvdG8z", [file_buf_validate_validate, file_google_protobuf_timestamp]);
+  fileDesc("Ch13aW1tL2JhbmtpbmcvdjEvYmFua2luZy5wcm90bxIPd2ltbS5iYW5raW5nLnYxIjIKBU1vbmV5Eg0KBW1pbm9yGAEgASgDEhoKCGN1cnJlbmN5GAIgASgJQgi6SAVyA5gBAyJgCgRCYW5rEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHY291bnRyeRgDIAEoCRIQCghsb2dvX3VybBgEIAEoCRIbChNtYXhfY29uc2VudF9zZWNvbmRzGAUgASgDIioKBk1lbWJlchIKCgJpZBgBIAEoCRIUCgxkaXNwbGF5X25hbWUYAiABKAkibAoHQmFsYW5jZRIlCgVtb25leRgBIAEoCzIWLndpbW0uYmFua2luZy52MS5Nb25leRIrCgdyZWFkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBINCgVzdGFsZRgDIAEoCCLQAgoHQWNjb3VudBIKCgJpZBgBIAEoCRIuCgZzb3VyY2UYAiABKA4yHi53aW1tLmJhbmtpbmcudjEuQWNjb3VudFNvdXJjZRIlCgVsZXZlbBgDIAEoDjIWLndpbW0uYmFua2luZy52MS5MZXZlbBINCgVvd25lZBgEIAEoCBInCgZvd25lcnMYBSADKAsyFy53aW1tLmJhbmtpbmcudjEuTWVtYmVyEgwKBG5hbWUYBiABKAkSKQoHYmFsYW5jZRgHIAEoCzIYLndpbW0uYmFua2luZy52MS5CYWxhbmNlEhUKDW51bWJlcl9zdWZmaXgYCCABKAkSFAoMYWNjb3VudF90eXBlGAkgASgJEhMKC2hvbGRlcl9uYW1lGAogASgJEi8KCmNvbm5lY3Rpb24YCyABKAsyGy53aW1tLmJhbmtpbmcudjEuQ29ubmVjdGlvbiLIAQoKQ29ubmVjdGlvbhIKCgJpZBgBIAEoCRIPCgdiYW5rX2lkGAIgASgJEhEKCWJhbmtfbmFtZRgDIAEoCRIVCg1iYW5rX2xvZ29fdXJsGAQgASgJEi0KDGNvbm5lY3RlZF9ieRgFIAEoCzIXLndpbW0uYmFua2luZy52MS5NZW1iZXISNgoSY29uc2VudF9leHBpcmVzX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIMCgRsaXZlGAcgASgIIk0KDUN1cnJlbmN5VG90YWwSJQoFdG90YWwYASABKAsyFi53aW1tLmJhbmtpbmcudjEuTW9uZXkSFQoNYWNjb3VudF9jb3VudBgCIAEoBSJ/CgtCYW5rRmFpbHVyZRIVCg1jb25uZWN0aW9uX2lkGAEgASgJEhEKCWJhbmtfbmFtZRgCIAEoCRIpCgdmYWlsdXJlGAMgASgOMhgud2ltbS5iYW5raW5nLnYxLkZhaWx1cmUSGwoTcmV0cnlfYWZ0ZXJfc2Vjb25kcxgEIAEoAyItChBMaXN0QmFua3NSZXF1ZXN0EhkKB2NvdW50cnkYASABKAlCCLpIBXIDmAECIjkKEUxpc3RCYW5rc1Jlc3BvbnNlEiQKBWJhbmtzGAEgAygLMhUud2ltbS5iYW5raW5nLnYxLkJhbmsiMgoWQmVnaW5Db25uZWN0aW9uUmVxdWVzdBIYCgdiYW5rX2lkGAEgASgJQge6SARyAhABImYKF0JlZ2luQ29ubmVjdGlvblJlc3BvbnNlEhMKC2hhbmRvZmZfdXJsGAEgASgJEjYKEmNvbnNlbnRfZXhwaXJlc19hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiUAoZQ29tcGxldGVDb25uZWN0aW9uUmVxdWVzdBIWCgVzdGF0ZRgBIAEoCUIHukgEcgIQARIMCgRjb2RlGAIgASgJEg0KBWVycm9yGAMgASgJIpoBChpDb21wbGV0ZUNvbm5lY3Rpb25SZXNwb25zZRIvCgpjb25uZWN0aW9uGAEgASgLMhsud2ltbS5iYW5raW5nLnYxLkNvbm5lY3Rpb24SKgoIYWNjb3VudHMYAiADKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudBIfChd3aXRoZHJhd25fYWNjb3VudF9uYW1lcxgDIAMoCSI/Ch1MaXN0Q29ubmVjdGlvbkFjY291bnRzUmVxdWVzdBIeCg1jb25uZWN0aW9uX2lkGAEgASgJQge6SARyAhABIqUBCh5MaXN0Q29ubmVjdGlvbkFjY291bnRzUmVzcG9uc2USKgoIYWNjb3VudHMYASADKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudBIoCgdtZW1iZXJzGAIgAygLMhcud2ltbS5iYW5raW5nLnYxLk1lbWJlchItCgZncmFudHMYAyADKAsyHS53aW1tLmJhbmtpbmcudjEuQWNjb3VudEdyYW50IlwKDEFjY291bnRHcmFudBISCgphY2NvdW50X2lkGAEgASgJEhEKCW1lbWJlcl9pZBgCIAEoCRIlCgVsZXZlbBgDIAEoDjIWLndpbW0uYmFua2luZy52MS5MZXZlbCJKChdTZXRBY2NvdW50T3duZXJzUmVxdWVzdBIbCgphY2NvdW50X2lkGAEgASgJQge6SARyAhABEhIKCm1lbWJlcl9pZHMYAiADKAkiRQoYU2V0QWNjb3VudE93bmVyc1Jlc3BvbnNlEikKB2FjY291bnQYASABKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudCJ4ChZTZXRBY2NvdW50TGV2ZWxSZXF1ZXN0EhsKCmFjY291bnRfaWQYASABKAlCB7pIBHICEAESGgoJbWVtYmVyX2lkGAIgASgJQge6SARyAhABEiUKBWxldmVsGAMgASgOMhYud2ltbS5iYW5raW5nLnYxLkxldmVsIkQKF1NldEFjY291bnRMZXZlbFJlc3BvbnNlEikKB2FjY291bnQYASABKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudCIoChNMaXN0QWNjb3VudHNSZXF1ZXN0EhEKCXNraXBfcmVhZBgBIAEoCCKiAQoUTGlzdEFjY291bnRzUmVzcG9uc2USKgoIYWNjb3VudHMYASADKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudBIuCgZ0b3RhbHMYAiADKAsyHi53aW1tLmJhbmtpbmcudjEuQ3VycmVuY3lUb3RhbBIuCghmYWlsdXJlcxgDIAMoCzIcLndpbW0uYmFua2luZy52MS5CYW5rRmFpbHVyZSIYChZSZWZyZXNoQmFsYW5jZXNSZXF1ZXN0IqUBChdSZWZyZXNoQmFsYW5jZXNSZXNwb25zZRIqCghhY2NvdW50cxgBIAMoCzIYLndpbW0uYmFua2luZy52MS5BY2NvdW50Ei4KBnRvdGFscxgCIAMoCzIeLndpbW0uYmFua2luZy52MS5DdXJyZW5jeVRvdGFsEi4KCGZhaWx1cmVzGAMgAygLMhwud2ltbS5iYW5raW5nLnYxLkJhbmtGYWlsdXJlImoKGFJlc3RvcmVDb25uZWN0aW9uUmVxdWVzdBIeCg1jb25uZWN0aW9uX2lkGAEgASgJQge6SARyAhABEi4KBnJlYXNvbhgCIAEoDjIeLndpbW0uYmFua2luZy52MS5SZXN0b3JlUmVhc29uImgKGVJlc3RvcmVDb25uZWN0aW9uUmVzcG9uc2USEwoLaGFuZG9mZl91cmwYASABKAkSNgoSY29uc2VudF9leHBpcmVzX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCI3ChVEaXNjb25uZWN0QmFua1JlcXVlc3QSHgoNY29ubmVjdGlvbl9pZBgBIAEoCUIHukgEcgIQASIYChZEaXNjb25uZWN0QmFua1Jlc3BvbnNlIpMCCgtUcmFuc2FjdGlvbhIKCgJpZBgBIAEoCRISCgphY2NvdW50X2lkGAIgASgJEhQKDGFjY291bnRfbmFtZRgDIAEoCRIRCgliYW5rX25hbWUYBCABKAkSMgoGc3RhdHVzGAUgASgOMiIud2ltbS5iYW5raW5nLnYxLlRyYW5zYWN0aW9uU3RhdHVzEiYKBmFtb3VudBgGIAEoCzIWLndpbW0uYmFua2luZy52MS5Nb25leRIwCgxib29raW5nX2RhdGUYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhkKEWNvdW50ZXJwYXJ0eV9uYW1lGAggASgJEhIKCnJlbWl0dGFuY2UYCSABKAkiWAoMTGVkZ2VyQ3Vyc29yEjAKDGJvb2tpbmdfZGF0ZRgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFgoOdHJhbnNhY3Rpb25faWQYAiABKAkiPAoQTmFycm93Q29ubmVjdGlvbhIVCg1jb25uZWN0aW9uX2lkGAEgASgJEhEKCWJhbmtfbmFtZRgCIAEoCSJ+ChdMaXN0VHJhbnNhY3Rpb25zUmVxdWVzdBISCgphY2NvdW50X2lkGAEgASgJEi0KBmN1cnNvchgCIAEoCzIdLndpbW0uYmFua2luZy52MS5MZWRnZXJDdXJzb3ISDQoFb2xkZXIYAyABKAgSEQoJc2tpcF9zeW5jGAQgASgIIjAKGlJlZnJlc2hUcmFuc2FjdGlvbnNSZXF1ZXN0EhIKCmFjY291bnRfaWQYASABKAkiQwoYTGlzdFRyYW5zYWN0aW9uc1Jlc3BvbnNlEicKBmxlZGdlchgBIAEoCzIXLndpbW0uYmFua2luZy52MS5MZWRnZXIiRgobUmVmcmVzaFRyYW5zYWN0aW9uc1Jlc3BvbnNlEicKBmxlZGdlchgBIAEoCzIXLndpbW0uYmFua2luZy52MS5MZWRnZXIiywMKBkxlZGdlchIyCgx0cmFuc2FjdGlvbnMYASADKAsyHC53aW1tLmJhbmtpbmcudjEuVHJhbnNhY3Rpb24SMgoOb2xkZXN0X29uX3BhZ2UYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjIKDm5ld2VzdF9vbl9wYWdlGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIRCgloYXNfb2xkZXIYBCABKAgSEQoJaGFzX25ld2VyGAUgASgIEhMKC3RvdGFsX2NvdW50GAYgASgFEi0KCXN5bmNlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMwoPcmVhY2hlc19iYWNrX3RvGAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI9ChJuYXJyb3dfY29ubmVjdGlvbnMYCSADKAsyIS53aW1tLmJhbmtpbmcudjEuTmFycm93Q29ubmVjdGlvbhIuCghmYWlsdXJlcxgKIAMoCzIcLndpbW0uYmFua2luZy52MS5CYW5rRmFpbHVyZRIXCg9vd25zX25vX2FjY291bnQYCyABKAgqVgoFTGV2ZWwSFQoRTEVWRUxfVU5TUEVDSUZJRUQQABIQCgxMRVZFTF9ISURERU4QARIRCg1MRVZFTF9CQUxBTkNFEAISEQoNTEVWRUxfREVUQUlMUxADKmYKDUFjY291bnRTb3VyY2USHgoaQUNDT1VOVF9TT1VSQ0VfVU5TUEVDSUZJRUQQABIaChZBQ0NPVU5UX1NPVVJDRV9HQVRFV0FZEAESGQoVQUNDT1VOVF9TT1VSQ0VfTUFOVUFMEAIqzwEKB0ZhaWx1cmUSFwoTRkFJTFVSRV9VTlNQRUNJRklFRBAAEhwKGEZBSUxVUkVfQkFOS19VTkFWQUlMQUJMRRABEh8KG0ZBSUxVUkVfU0VSVklDRV9VTkFWQUlMQUJMRRACEhwKGEZBSUxVUkVfQ09OU0VOVF9ERUNMSU5FRBADEhsKF0ZBSUxVUkVfQ09OU0VOVF9FWFBJUkVEEAQSFwoTRkFJTFVSRV9OT19BQ0NPVU5UUxAFEhgKFEZBSUxVUkVfUkFURV9MSU1JVEVEEAYqcAoNUmVzdG9yZVJlYXNvbhIeChpSRVNUT1JFX1JFQVNPTl9VTlNQRUNJRklFRBAAEh8KG1JFU1RPUkVfUkVBU09OX0FDQ0VTU19FTkRFRBABEh4KGlJFU1RPUkVfUkVBU09OX1dJREVOX1NDT1BFEAIqdgoRVHJhbnNhY3Rpb25TdGF0dXMSIgoeVFJBTlNBQ1RJT05fU1RBVFVTX1VOU1BFQ0lGSUVEEAASHQoZVFJBTlNBQ1RJT05fU1RBVFVTX0JPT0tFRBABEh4KGlRSQU5TQUNUSU9OX1NUQVRVU19QRU5ESU5HEAIy8AkKDkJhbmtpbmdTZXJ2aWNlElIKCUxpc3RCYW5rcxIhLndpbW0uYmFua2luZy52MS5MaXN0QmFua3NSZXF1ZXN0GiIud2ltbS5iYW5raW5nLnYxLkxpc3RCYW5rc1Jlc3BvbnNlEmQKD0JlZ2luQ29ubmVjdGlvbhInLndpbW0uYmFua2luZy52MS5CZWdpbkNvbm5lY3Rpb25SZXF1ZXN0Gigud2ltbS5iYW5raW5nLnYxLkJlZ2luQ29ubmVjdGlvblJlc3BvbnNlEm0KEkNvbXBsZXRlQ29ubmVjdGlvbhIqLndpbW0uYmFua2luZy52MS5Db21wbGV0ZUNvbm5lY3Rpb25SZXF1ZXN0Gisud2ltbS5iYW5raW5nLnYxLkNvbXBsZXRlQ29ubmVjdGlvblJlc3BvbnNlEnkKFkxpc3RDb25uZWN0aW9uQWNjb3VudHMSLi53aW1tLmJhbmtpbmcudjEuTGlzdENvbm5lY3Rpb25BY2NvdW50c1JlcXVlc3QaLy53aW1tLmJhbmtpbmcudjEuTGlzdENvbm5lY3Rpb25BY2NvdW50c1Jlc3BvbnNlEmcKEFNldEFjY291bnRPd25lcnMSKC53aW1tLmJhbmtpbmcudjEuU2V0QWNjb3VudE93bmVyc1JlcXVlc3QaKS53aW1tLmJhbmtpbmcudjEuU2V0QWNjb3VudE93bmVyc1Jlc3BvbnNlEmQKD1NldEFjY291bnRMZXZlbBInLndpbW0uYmFua2luZy52MS5TZXRBY2NvdW50TGV2ZWxSZXF1ZXN0Gigud2ltbS5iYW5raW5nLnYxLlNldEFjY291bnRMZXZlbFJlc3BvbnNlElsKDExpc3RBY2NvdW50cxIkLndpbW0uYmFua2luZy52MS5MaXN0QWNjb3VudHNSZXF1ZXN0GiUud2ltbS5iYW5raW5nLnYxLkxpc3RBY2NvdW50c1Jlc3BvbnNlEmQKD1JlZnJlc2hCYWxhbmNlcxInLndpbW0uYmFua2luZy52MS5SZWZyZXNoQmFsYW5jZXNSZXF1ZXN0Gigud2ltbS5iYW5raW5nLnYxLlJlZnJlc2hCYWxhbmNlc1Jlc3BvbnNlEmoKEVJlc3RvcmVDb25uZWN0aW9uEikud2ltbS5iYW5raW5nLnYxLlJlc3RvcmVDb25uZWN0aW9uUmVxdWVzdBoqLndpbW0uYmFua2luZy52MS5SZXN0b3JlQ29ubmVjdGlvblJlc3BvbnNlEmEKDkRpc2Nvbm5lY3RCYW5rEiYud2ltbS5iYW5raW5nLnYxLkRpc2Nvbm5lY3RCYW5rUmVxdWVzdBonLndpbW0uYmFua2luZy52MS5EaXNjb25uZWN0QmFua1Jlc3BvbnNlEmcKEExpc3RUcmFuc2FjdGlvbnMSKC53aW1tLmJhbmtpbmcudjEuTGlzdFRyYW5zYWN0aW9uc1JlcXVlc3QaKS53aW1tLmJhbmtpbmcudjEuTGlzdFRyYW5zYWN0aW9uc1Jlc3BvbnNlEnAKE1JlZnJlc2hUcmFuc2FjdGlvbnMSKy53aW1tLmJhbmtpbmcudjEuUmVmcmVzaFRyYW5zYWN0aW9uc1JlcXVlc3QaLC53aW1tLmJhbmtpbmcudjEuUmVmcmVzaFRyYW5zYWN0aW9uc1Jlc3BvbnNlQswBChNjb20ud2ltbS5iYW5raW5nLnYxQgxCYW5raW5nUHJvdG9QAVpJZ2l0aHViLmNvbS94dXVpZC93aW1tL3BhY2thZ2VzL2NvbnRyYWN0cy9nZW4vZ28vd2ltbS9iYW5raW5nL3YxO2Jhbmtpbmd2MaICA1dCWKoCD1dpbW0uQmFua2luZy5WMcoCD1dpbW1cQmFua2luZ1xWMeICG1dpbW1cQmFua2luZ1xWMVxHUEJNZXRhZGF0YeoCEVdpbW06OkJhbmtpbmc6OlYxYgZwcm90bzM", [file_buf_validate_validate, file_google_protobuf_timestamp]);
 
 /**
  * A signed amount in minor units with its currency. Never a float and never a
@@ -767,6 +767,15 @@ export type RestoreConnectionRequest = Message<"wimm.banking.v1.RestoreConnectio
    * @generated from field: string connection_id = 1;
    */
   connectionId: string;
+
+  /**
+   * Why. The flow is the same either way — back to the bank, no picker, owners
+   * and levels carried forward — and the reason is what the screen said before
+   * sending them.
+   *
+   * @generated from field: wimm.banking.v1.RestoreReason reason = 2;
+   */
+  reason: RestoreReason;
 };
 
 /**
@@ -827,6 +836,328 @@ export type DisconnectBankResponse = Message<"wimm.banking.v1.DisconnectBankResp
  */
 export const DisconnectBankResponseSchema: GenMessage<DisconnectBankResponse> = /*@__PURE__*/
   messageDesc(file_wimm_banking_v1_banking, 28);
+
+/**
+ * One entry on one account.
+ *
+ * Transactions reach only the owners of the account they are on. A member
+ * granted a level on an account they do not own receives none of these and no
+ * count of them (ADR 0021).
+ *
+ * @generated from message wimm.banking.v1.Transaction
+ */
+export type Transaction = Message<"wimm.banking.v1.Transaction"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string account_id = 2;
+   */
+  accountId: string;
+
+  /**
+   * The account's name and its bank, carried on the row because the list is
+   * every account the member owns and a row has to say which one it came from.
+   *
+   * @generated from field: string account_name = 3;
+   */
+  accountName: string;
+
+  /**
+   * @generated from field: string bank_name = 4;
+   */
+  bankName: string;
+
+  /**
+   * @generated from field: wimm.banking.v1.TransactionStatus status = 5;
+   */
+  status: TransactionStatus;
+
+  /**
+   * Signed minor units with its currency. The sign carries direction, so
+   * nothing depends on colour alone.
+   *
+   * @generated from field: wimm.banking.v1.Money amount = 6;
+   */
+  amount?: Money | undefined;
+
+  /**
+   * The day it is filed under, which the list orders and groups by.
+   *
+   * @generated from field: google.protobuf.Timestamp booking_date = 7;
+   */
+  bookingDate?: Timestamp | undefined;
+
+  /**
+   * Who it was with, where the bank named them. Empty where it did not: wimm
+   * shows what the bank gave and never invents a name.
+   *
+   * @generated from field: string counterparty_name = 8;
+   */
+  counterpartyName: string;
+
+  /**
+   * The description the bank carried.
+   *
+   * @generated from field: string remittance = 9;
+   */
+  remittance: string;
+};
+
+/**
+ * Describes the message wimm.banking.v1.Transaction.
+ * Use `create(TransactionSchema)` to create a new message.
+ */
+export const TransactionSchema: GenMessage<Transaction> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 29);
+
+/**
+ * Where a page starts. It is the sort key itself rather than an offset, because
+ * a sync inserts at the newest end while a member is reading: with an offset the
+ * rows under them shift and they silently re-read some and skip others.
+ *
+ * It is opaque to the browser. A member is never shown a page number; where they
+ * are is a span of dates.
+ *
+ * @generated from message wimm.banking.v1.LedgerCursor
+ */
+export type LedgerCursor = Message<"wimm.banking.v1.LedgerCursor"> & {
+  /**
+   * @generated from field: google.protobuf.Timestamp booking_date = 1;
+   */
+  bookingDate?: Timestamp | undefined;
+
+  /**
+   * @generated from field: string transaction_id = 2;
+   */
+  transactionId: string;
+};
+
+/**
+ * Describes the message wimm.banking.v1.LedgerCursor.
+ * Use `create(LedgerCursorSchema)` to create a new message.
+ */
+export const LedgerCursorSchema: GenMessage<LedgerCursor> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 30);
+
+/**
+ * A bank connected before wimm could read transactions, with the way to widen
+ * it. It is an inline alert on that bank, never a page banner: a household with
+ * one narrow bank and two wide ones must not be warned about the whole product.
+ *
+ * @generated from message wimm.banking.v1.NarrowConnection
+ */
+export type NarrowConnection = Message<"wimm.banking.v1.NarrowConnection"> & {
+  /**
+   * @generated from field: string connection_id = 1;
+   */
+  connectionId: string;
+
+  /**
+   * @generated from field: string bank_name = 2;
+   */
+  bankName: string;
+};
+
+/**
+ * Describes the message wimm.banking.v1.NarrowConnection.
+ * Use `create(NarrowConnectionSchema)` to create a new message.
+ */
+export const NarrowConnectionSchema: GenMessage<NarrowConnection> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 31);
+
+/**
+ * @generated from message wimm.banking.v1.ListTransactionsRequest
+ */
+export type ListTransactionsRequest = Message<"wimm.banking.v1.ListTransactionsRequest"> & {
+  /**
+   * Narrow to one account the member owns. Empty is every account they own —
+   * the same list filtered, not a different screen.
+   *
+   * @generated from field: string account_id = 1;
+   */
+  accountId: string;
+
+  /**
+   * Where to read from. Absent is the newest page.
+   *
+   * @generated from field: wimm.banking.v1.LedgerCursor cursor = 2;
+   */
+  cursor?: LedgerCursor | undefined;
+
+  /**
+   * Read away from today. False with a cursor reads back towards it.
+   *
+   * @generated from field: bool older = 3;
+   */
+  older: boolean;
+
+  /**
+   * Return what is stored without asking any bank. The page a member paged to
+   * uses it: a sync would insert at the newest end while they are reading
+   * somewhere else.
+   *
+   * @generated from field: bool skip_sync = 4;
+   */
+  skipSync: boolean;
+};
+
+/**
+ * Describes the message wimm.banking.v1.ListTransactionsRequest.
+ * Use `create(ListTransactionsRequestSchema)` to create a new message.
+ */
+export const ListTransactionsRequestSchema: GenMessage<ListTransactionsRequest> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 32);
+
+/**
+ * @generated from message wimm.banking.v1.RefreshTransactionsRequest
+ */
+export type RefreshTransactionsRequest = Message<"wimm.banking.v1.RefreshTransactionsRequest"> & {
+  /**
+   * @generated from field: string account_id = 1;
+   */
+  accountId: string;
+};
+
+/**
+ * Describes the message wimm.banking.v1.RefreshTransactionsRequest.
+ * Use `create(RefreshTransactionsRequestSchema)` to create a new message.
+ */
+export const RefreshTransactionsRequestSchema: GenMessage<RefreshTransactionsRequest> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 33);
+
+/**
+ * @generated from message wimm.banking.v1.ListTransactionsResponse
+ */
+export type ListTransactionsResponse = Message<"wimm.banking.v1.ListTransactionsResponse"> & {
+  /**
+   * @generated from field: wimm.banking.v1.Ledger ledger = 1;
+   */
+  ledger?: Ledger | undefined;
+};
+
+/**
+ * Describes the message wimm.banking.v1.ListTransactionsResponse.
+ * Use `create(ListTransactionsResponseSchema)` to create a new message.
+ */
+export const ListTransactionsResponseSchema: GenMessage<ListTransactionsResponse> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 34);
+
+/**
+ * @generated from message wimm.banking.v1.RefreshTransactionsResponse
+ */
+export type RefreshTransactionsResponse = Message<"wimm.banking.v1.RefreshTransactionsResponse"> & {
+  /**
+   * @generated from field: wimm.banking.v1.Ledger ledger = 1;
+   */
+  ledger?: Ledger | undefined;
+};
+
+/**
+ * Describes the message wimm.banking.v1.RefreshTransactionsResponse.
+ * Use `create(RefreshTransactionsResponseSchema)` to create a new message.
+ */
+export const RefreshTransactionsResponseSchema: GenMessage<RefreshTransactionsResponse> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 35);
+
+/**
+ * One page of the ledger and everything the screen says about it. Both reads
+ * return the same thing, because a refresh is the same screen re-read rather
+ * than a different answer.
+ *
+ * @generated from message wimm.banking.v1.Ledger
+ */
+export type Ledger = Message<"wimm.banking.v1.Ledger"> & {
+  /**
+   * @generated from field: repeated wimm.banking.v1.Transaction transactions = 1;
+   */
+  transactions: Transaction[];
+
+  /**
+   * The span of dates on this page, which is what the member is told instead of
+   * a page number.
+   *
+   * @generated from field: google.protobuf.Timestamp oldest_on_page = 2;
+   */
+  oldestOnPage?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp newest_on_page = 3;
+   */
+  newestOnPage?: Timestamp | undefined;
+
+  /**
+   * Which controls to offer. On the oldest page the screen says there is
+   * nothing older rather than greying a control.
+   *
+   * @generated from field: bool has_older = 4;
+   */
+  hasOlder: boolean;
+
+  /**
+   * @generated from field: bool has_newer = 5;
+   */
+  hasNewer: boolean;
+
+  /**
+   * How many transactions this member may see. A count of what they may see and
+   * not a page count: it survives paging unchanged.
+   *
+   * @generated from field: int32 total_count = 6;
+   */
+  totalCount: number;
+
+  /**
+   * When any of their accounts was last brought up to date. Absent means
+   * nothing has ever been read, which the screen states rather than implying
+   * with an empty list.
+   *
+   * @generated from field: google.protobuf.Timestamp synced_at = 7;
+   */
+  syncedAt?: Timestamp | undefined;
+
+  /**
+   * The date the list actually reaches back to. Absent before the first read:
+   * no bank says in advance how much history it will hand over, so wimm states
+   * what it reached rather than promising a period.
+   *
+   * @generated from field: google.protobuf.Timestamp reaches_back_to = 8;
+   */
+  reachesBackTo?: Timestamp | undefined;
+
+  /**
+   * Banks connected before wimm could read transactions.
+   *
+   * @generated from field: repeated wimm.banking.v1.NarrowConnection narrow_connections = 9;
+   */
+  narrowConnections: NarrowConnection[];
+
+  /**
+   * Banks that did not answer this time. The transactions already on screen
+   * stay with their original time.
+   *
+   * @generated from field: repeated wimm.banking.v1.BankFailure failures = 10;
+   */
+  failures: BankFailure[];
+
+  /**
+   * True when the member owns no account at all, whatever they have been
+   * granted on others. A different empty state from an account read and found
+   * empty, and the two are never collapsed into one.
+   *
+   * @generated from field: bool owns_no_account = 11;
+   */
+  ownsNoAccount: boolean;
+};
+
+/**
+ * Describes the message wimm.banking.v1.Ledger.
+ * Use `create(LedgerSchema)` to create a new message.
+ */
+export const LedgerSchema: GenMessage<Ledger> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 36);
 
 /**
  * What one member may see of one account they do not own.
@@ -958,6 +1289,74 @@ export const FailureSchema: GenEnum<Failure> = /*@__PURE__*/
   enumDesc(file_wimm_banking_v1_banking, 2);
 
 /**
+ * Why a connection is being handed back to the bank. The bank and the accounts
+ * are already known in every case, so the picker is skipped and every account
+ * keeps the owners and the levels it had.
+ *
+ * @generated from enum wimm.banking.v1.RestoreReason
+ */
+export enum RestoreReason {
+  /**
+   * @generated from enum value: RESTORE_REASON_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Access has run out, at the date the bank set or early. A member
+   * experiences both identically.
+   *
+   * @generated from enum value: RESTORE_REASON_ACCESS_ENDED = 1;
+   */
+  ACCESS_ENDED = 1,
+
+  /**
+   * The connection is live and its consent covers balances but not
+   * transactions. It is working, and it is reading everything it was ever
+   * granted — so it is never presented as broken, expired or failing.
+   *
+   * @generated from enum value: RESTORE_REASON_WIDEN_SCOPE = 2;
+   */
+  WIDEN_SCOPE = 2,
+}
+
+/**
+ * Describes the enum wimm.banking.v1.RestoreReason.
+ */
+export const RestoreReasonSchema: GenEnum<RestoreReason> = /*@__PURE__*/
+  enumDesc(file_wimm_banking_v1_banking, 3);
+
+/**
+ * Whether the bank has settled a transaction.
+ *
+ * @generated from enum wimm.banking.v1.TransactionStatus
+ */
+export enum TransactionStatus {
+  /**
+   * @generated from enum value: TRANSACTION_STATUS_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: TRANSACTION_STATUS_BOOKED = 1;
+   */
+  BOOKED = 1,
+
+  /**
+   * Money that has moved as far as the member is concerned. Shown alongside
+   * settled transactions and marked, never hidden.
+   *
+   * @generated from enum value: TRANSACTION_STATUS_PENDING = 2;
+   */
+  PENDING = 2,
+}
+
+/**
+ * Describes the enum wimm.banking.v1.TransactionStatus.
+ */
+export const TransactionStatusSchema: GenEnum<TransactionStatus> = /*@__PURE__*/
+  enumDesc(file_wimm_banking_v1_banking, 4);
+
+/**
  * Connecting a bank, choosing who sees each account, and reading balances.
  *
  * No gateway vocabulary appears anywhere in this file. "Connection" is wimm's
@@ -1072,6 +1471,28 @@ export const BankingService: GenService<{
     methodKind: "unary";
     input: typeof DisconnectBankRequestSchema;
     output: typeof DisconnectBankResponseSchema;
+  },
+  /**
+   * One page of the transactions the calling member may see, newest first.
+   * Deadline: 30s — it brings the member's accounts up to date first.
+   *
+   * @generated from rpc wimm.banking.v1.BankingService.ListTransactions
+   */
+  listTransactions: {
+    methodKind: "unary";
+    input: typeof ListTransactionsRequestSchema;
+    output: typeof ListTransactionsResponseSchema;
+  },
+  /**
+   * Bring the transactions up to date again, because the member asked.
+   * Deadline: 30s.
+   *
+   * @generated from rpc wimm.banking.v1.BankingService.RefreshTransactions
+   */
+  refreshTransactions: {
+    methodKind: "unary";
+    input: typeof RefreshTransactionsRequestSchema;
+    output: typeof RefreshTransactionsResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_wimm_banking_v1_banking, 0);

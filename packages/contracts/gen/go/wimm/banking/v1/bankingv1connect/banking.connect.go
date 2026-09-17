@@ -63,6 +63,12 @@ const (
 	// BankingServiceDisconnectBankProcedure is the fully-qualified name of the BankingService's
 	// DisconnectBank RPC.
 	BankingServiceDisconnectBankProcedure = "/wimm.banking.v1.BankingService/DisconnectBank"
+	// BankingServiceListTransactionsProcedure is the fully-qualified name of the BankingService's
+	// ListTransactions RPC.
+	BankingServiceListTransactionsProcedure = "/wimm.banking.v1.BankingService/ListTransactions"
+	// BankingServiceRefreshTransactionsProcedure is the fully-qualified name of the BankingService's
+	// RefreshTransactions RPC.
+	BankingServiceRefreshTransactionsProcedure = "/wimm.banking.v1.BankingService/RefreshTransactions"
 )
 
 // BankingServiceClient is a client for the wimm.banking.v1.BankingService service.
@@ -92,6 +98,12 @@ type BankingServiceClient interface {
 	RestoreConnection(context.Context, *connect.Request[v1.RestoreConnectionRequest]) (*connect.Response[v1.RestoreConnectionResponse], error)
 	// Remove a bank. Deadline: 15s.
 	DisconnectBank(context.Context, *connect.Request[v1.DisconnectBankRequest]) (*connect.Response[v1.DisconnectBankResponse], error)
+	// One page of the transactions the calling member may see, newest first.
+	// Deadline: 30s — it brings the member's accounts up to date first.
+	ListTransactions(context.Context, *connect.Request[v1.ListTransactionsRequest]) (*connect.Response[v1.ListTransactionsResponse], error)
+	// Bring the transactions up to date again, because the member asked.
+	// Deadline: 30s.
+	RefreshTransactions(context.Context, *connect.Request[v1.RefreshTransactionsRequest]) (*connect.Response[v1.RefreshTransactionsResponse], error)
 }
 
 // NewBankingServiceClient constructs a client for the wimm.banking.v1.BankingService service. By
@@ -165,6 +177,18 @@ func NewBankingServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(bankingServiceMethods.ByName("DisconnectBank")),
 			connect.WithClientOptions(opts...),
 		),
+		listTransactions: connect.NewClient[v1.ListTransactionsRequest, v1.ListTransactionsResponse](
+			httpClient,
+			baseURL+BankingServiceListTransactionsProcedure,
+			connect.WithSchema(bankingServiceMethods.ByName("ListTransactions")),
+			connect.WithClientOptions(opts...),
+		),
+		refreshTransactions: connect.NewClient[v1.RefreshTransactionsRequest, v1.RefreshTransactionsResponse](
+			httpClient,
+			baseURL+BankingServiceRefreshTransactionsProcedure,
+			connect.WithSchema(bankingServiceMethods.ByName("RefreshTransactions")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -180,6 +204,8 @@ type bankingServiceClient struct {
 	refreshBalances        *connect.Client[v1.RefreshBalancesRequest, v1.RefreshBalancesResponse]
 	restoreConnection      *connect.Client[v1.RestoreConnectionRequest, v1.RestoreConnectionResponse]
 	disconnectBank         *connect.Client[v1.DisconnectBankRequest, v1.DisconnectBankResponse]
+	listTransactions       *connect.Client[v1.ListTransactionsRequest, v1.ListTransactionsResponse]
+	refreshTransactions    *connect.Client[v1.RefreshTransactionsRequest, v1.RefreshTransactionsResponse]
 }
 
 // ListBanks calls wimm.banking.v1.BankingService.ListBanks.
@@ -232,6 +258,16 @@ func (c *bankingServiceClient) DisconnectBank(ctx context.Context, req *connect.
 	return c.disconnectBank.CallUnary(ctx, req)
 }
 
+// ListTransactions calls wimm.banking.v1.BankingService.ListTransactions.
+func (c *bankingServiceClient) ListTransactions(ctx context.Context, req *connect.Request[v1.ListTransactionsRequest]) (*connect.Response[v1.ListTransactionsResponse], error) {
+	return c.listTransactions.CallUnary(ctx, req)
+}
+
+// RefreshTransactions calls wimm.banking.v1.BankingService.RefreshTransactions.
+func (c *bankingServiceClient) RefreshTransactions(ctx context.Context, req *connect.Request[v1.RefreshTransactionsRequest]) (*connect.Response[v1.RefreshTransactionsResponse], error) {
+	return c.refreshTransactions.CallUnary(ctx, req)
+}
+
 // BankingServiceHandler is an implementation of the wimm.banking.v1.BankingService service.
 type BankingServiceHandler interface {
 	// Banks connectable in a country, each carrying how long its consent lasts.
@@ -259,6 +295,12 @@ type BankingServiceHandler interface {
 	RestoreConnection(context.Context, *connect.Request[v1.RestoreConnectionRequest]) (*connect.Response[v1.RestoreConnectionResponse], error)
 	// Remove a bank. Deadline: 15s.
 	DisconnectBank(context.Context, *connect.Request[v1.DisconnectBankRequest]) (*connect.Response[v1.DisconnectBankResponse], error)
+	// One page of the transactions the calling member may see, newest first.
+	// Deadline: 30s — it brings the member's accounts up to date first.
+	ListTransactions(context.Context, *connect.Request[v1.ListTransactionsRequest]) (*connect.Response[v1.ListTransactionsResponse], error)
+	// Bring the transactions up to date again, because the member asked.
+	// Deadline: 30s.
+	RefreshTransactions(context.Context, *connect.Request[v1.RefreshTransactionsRequest]) (*connect.Response[v1.RefreshTransactionsResponse], error)
 }
 
 // NewBankingServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -328,6 +370,18 @@ func NewBankingServiceHandler(svc BankingServiceHandler, opts ...connect.Handler
 		connect.WithSchema(bankingServiceMethods.ByName("DisconnectBank")),
 		connect.WithHandlerOptions(opts...),
 	)
+	bankingServiceListTransactionsHandler := connect.NewUnaryHandler(
+		BankingServiceListTransactionsProcedure,
+		svc.ListTransactions,
+		connect.WithSchema(bankingServiceMethods.ByName("ListTransactions")),
+		connect.WithHandlerOptions(opts...),
+	)
+	bankingServiceRefreshTransactionsHandler := connect.NewUnaryHandler(
+		BankingServiceRefreshTransactionsProcedure,
+		svc.RefreshTransactions,
+		connect.WithSchema(bankingServiceMethods.ByName("RefreshTransactions")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/wimm.banking.v1.BankingService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case BankingServiceListBanksProcedure:
@@ -350,6 +404,10 @@ func NewBankingServiceHandler(svc BankingServiceHandler, opts ...connect.Handler
 			bankingServiceRestoreConnectionHandler.ServeHTTP(w, r)
 		case BankingServiceDisconnectBankProcedure:
 			bankingServiceDisconnectBankHandler.ServeHTTP(w, r)
+		case BankingServiceListTransactionsProcedure:
+			bankingServiceListTransactionsHandler.ServeHTTP(w, r)
+		case BankingServiceRefreshTransactionsProcedure:
+			bankingServiceRefreshTransactionsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -397,4 +455,12 @@ func (UnimplementedBankingServiceHandler) RestoreConnection(context.Context, *co
 
 func (UnimplementedBankingServiceHandler) DisconnectBank(context.Context, *connect.Request[v1.DisconnectBankRequest]) (*connect.Response[v1.DisconnectBankResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("wimm.banking.v1.BankingService.DisconnectBank is not implemented"))
+}
+
+func (UnimplementedBankingServiceHandler) ListTransactions(context.Context, *connect.Request[v1.ListTransactionsRequest]) (*connect.Response[v1.ListTransactionsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("wimm.banking.v1.BankingService.ListTransactions is not implemented"))
+}
+
+func (UnimplementedBankingServiceHandler) RefreshTransactions(context.Context, *connect.Request[v1.RefreshTransactionsRequest]) (*connect.Response[v1.RefreshTransactionsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("wimm.banking.v1.BankingService.RefreshTransactions is not implemented"))
 }

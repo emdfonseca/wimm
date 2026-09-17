@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import SidebarNav from '../organisms/SidebarNav.svelte';
+	import BottomNav from '../organisms/BottomNav.svelte';
 	import Brand from '../atoms/Brand.svelte';
 	import IconButton from '../atoms/IconButton.svelte';
-	import type { Destination } from '../destinations.js';
+	import { destinations as allDestinations, type Destination } from '../destinations.js';
 
 	/**
 	 * Where a member arrives once they are in. Origins `IGbQe` (Wide and Ultra)
@@ -21,6 +22,10 @@
 	 * move into a top bar, because a screen showing neither does not tell a
 	 * member which app they are in or who they are signed in as. That bar is
 	 * not a page header: it carries no title, no breadcrumbs and no tabs.
+	 *
+	 * Navigation at Compact is a bottom bar rather than a hamburger, and it is
+	 * a sibling below the scrolling region rather than an overlay — so nothing
+	 * is obscured and the body needs no bottom padding to clear it.
 	 */
 	interface Props {
 		memberName: string;
@@ -33,9 +38,14 @@
 	let {
 		memberName,
 		memberInitials,
-		// Only Overview exists. The canvas disables every other destination, and
-		// a disabled node is absent rather than greyed.
-		destinations = [{ label: 'Overview', href: '/', current: true }],
+		// Overview and Transactions. Both exist; anything else the canvas draws
+		// is disabled, and a disabled node is absent rather than greyed.
+		//
+		// Nothing is current by default. Only the route knows which page this
+		// is, so a caller that forgets to say gets no marker rather than a
+		// wrong one — a sidebar that always says Overview is worse than one
+		// that says nothing.
+		destinations = allDestinations(),
 		onsignout,
 		children
 	}: Props = $props();
@@ -67,13 +77,20 @@
 	<main class="body">
 		{#if children}{@render children()}{/if}
 	</main>
+
+	<div class="bottom">
+		<BottomNav {destinations} />
+	</div>
 </div>
 
 <style>
+	/* svh, not dvh: dvh recomputes as a mobile URL bar shows and hides, which
+	   re-runs this layout mid-scroll and is what made scrolling judder. The
+	   small viewport height is the one that does not move. */
 	.shell {
 		display: flex;
 		flex-direction: column;
-		min-block-size: 100dvh;
+		min-block-size: 100svh;
 		background: var(--color-bg-canvas);
 		font-family: var(--type-family-body);
 		color: var(--color-text-primary);
@@ -111,6 +128,18 @@
 		display: none;
 	}
 
+	/* The sidebar is chrome, not content. Sticky and exactly one viewport tall,
+	   so it stays put while the main column scrolls — as a flex sibling it
+	   stretched to the tallest child instead, growing with a long ledger and
+	   scrolling away with it. */
+
+	/* Below the body in the same column, so it is a sibling rather than an
+	   overlay. It never hides on scroll. */
+	.bottom {
+		position: sticky;
+		inset-block-end: 0;
+	}
+
 	/* Slot `xNVFG`: fill, vertical, padding $space-8, centred on both axes.
 	   The centring is inert for a screen that fills the slot — which every
 	   screen of content does, absorbing the slack with a trailing spacer the
@@ -141,6 +170,15 @@
 
 		.sidebar {
 			display: flex;
+			position: sticky;
+			inset-block-start: 0;
+			align-self: start;
+			block-size: 100svh;
+		}
+
+		/* The sidebar carries the same destinations at this regime. */
+		.bottom {
+			display: none;
 		}
 
 		.body {

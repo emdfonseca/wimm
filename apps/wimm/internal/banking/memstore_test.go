@@ -6,6 +6,7 @@ import (
 	"slices"
 	"time"
 
+	"github.com/xuuid/wimm/apps/wimm/internal/banking"
 	"github.com/xuuid/wimm/apps/wimm/internal/store"
 )
 
@@ -23,6 +24,11 @@ type memStore struct {
 	owners      map[string]map[string]bool // account -> member
 	grants      map[string]map[string]store.Level
 
+	scopes        map[string]store.ConnectionScope
+	transactions  map[string][]store.Transaction
+	syncedThrough map[string]*time.Time
+	syncedAt      map[string]*time.Time
+
 	// expired records that a connection was marked as having run out.
 	expired bool
 
@@ -38,6 +44,11 @@ func newMemStore() *memStore {
 		accounts:    map[string]*store.Account{},
 		owners:      map[string]map[string]bool{},
 		grants:      map[string]map[string]store.Level{},
+
+		scopes:        map[string]store.ConnectionScope{},
+		transactions:  map[string][]store.Transaction{},
+		syncedThrough: map[string]*time.Time{},
+		syncedAt:      map[string]*time.Time{},
 	}
 }
 
@@ -377,4 +388,244 @@ func (m *memStore) everyCiphertext() [][]byte {
 		out = append(out, a.GatewayUID.Ciphertext)
 	}
 	return out
+}
+
+// The ledger, in memory. The scoping rule is reimplemented here rather than
+// imported, for the reason the visibility rules above are: if this and the SQL
+// disagree, one of them is wrong and the store tests cover the SQL.
+
+func (m *memStore) scopeOf(connectionID string) store.ConnectionScope {
+	if s, ok := m.scopes[connectionID]; ok {
+		return s
+	}
+	// Every row that exists was granted balances and nothing else, which is
+	// what the column's default states.
+	return store.ScopeBalances
+}
+
+func (m *memStore) SetConnectionScope(_ context.Context, connectionID string, scope store.ConnectionScope) error {
+	if _, ok := m.connections[connectionID]; !ok {
+		return store.ErrNotFound
+	}
+	m.scopes[connectionID] = scope
+	return nil
+}
+
+func (m *memStore) BankConnectionScope(_ context.Context, connectionID string) (store.ConnectionScope, error) {
+	if _, ok := m.connections[connectionID]; !ok {
+		return "", store.ErrNotFound
+	}
+	return m.scopeOf(connectionID), nil
+}
+
+// ownedBy is the ledger's whole scope: accounts this member owns, and no
+// account they merely hold a level on.
+func (m *memStore) ownedBy(memberID, accountID string) []string {
+	var out []string
+	for id := range m.accounts {
+		if accountID != "" && id != accountID {
+			continue
+		}
+		if m.owners[id][memberID] {
+			out = append(out, id)
+		}
+	}
+	slices.Sort(out)
+	return out
+}
+
+func (m *memStore) SyncableAccounts(_ context.Context, memberID string) ([]store.SyncableAccount, error) {
+	var out []store.SyncableAccount
+	for _, id := range m.ownedBy(memberID, "") {
+		a := m.accounts[id]
+		if a.ConnectionID == nil {
+			continue
+		}
+		c, ok := m.connections[*a.ConnectionID]
+		if !ok || c.DisconnectedAt != nil || c.ExpiredAt != nil {
+			continue
+		}
+		out = append(out, store.SyncableAccount{
+			Account:          *a,
+			BankID:           c.BankID,
+			SyncedThrough:    m.syncedThrough[id],
+			SyncedAt:         m.syncedAt[id],
+			Connection:       c.ID,
+			BankName:         c.BankName,
+			ConsentExpiresAt: c.ConsentExpiresAt,
+			Scope:            m.scopeOf(c.ID),
+		})
+	}
+	return out, nil
+}
+
+func (m *memStore) NarrowConnections(_ context.Context, memberID string) ([]store.NarrowConnection, error) {
+	seen := map[string]bool{}
+	var out []store.NarrowConnection
+	for _, id := range m.ownedBy(memberID, "") {
+		a := m.accounts[id]
+		if a.ConnectionID == nil {
+			continue
+		}
+		c, ok := m.connections[*a.ConnectionID]
+		if !ok || c.DisconnectedAt != nil || seen[c.ID] {
+			continue
+		}
+		if m.scopeOf(c.ID).ReadsTransactions() {
+			continue
+		}
+		seen[c.ID] = true
+		out = append(out, store.NarrowConnection{ConnectionID: c.ID, BankName: c.BankName})
+	}
+	slices.SortFunc(out, func(a, b store.NarrowConnection) int { return cmpString(a.BankName, b.BankName) })
+	return out, nil
+}
+
+func (m *memStore) WriteAccountTransactions(
+	_ context.Context, accountID string, txs []store.Transaction, syncedThrough time.Time,
+) (store.SyncResult, error) {
+	// Pending is a replaceable set; booked is append-only. The ordinal within
+	// what this sync returned is the occurrence, which is what makes the same
+	// payment made twice two rows and the same transaction read twice one.
+	kept := make([]store.Transaction, 0, len(m.transactions[accountID]))
+	for _, t := range m.transactions[accountID] {
+		if t.Status == store.StatusBooked {
+			kept = append(kept, t)
+		}
+	}
+
+	var result store.SyncResult
+	seen := map[string]int{}
+	for _, t := range txs {
+		if t.BookingDate.IsZero() {
+			continue
+		}
+		t.AccountID = accountID
+		seen[string(t.Status)+"\x1f"+t.DedupKey]++
+		t.Occurrence = seen[string(t.Status)+"\x1f"+t.DedupKey]
+
+		if t.Status == store.StatusPending {
+			t.ID = m.id("txn")
+			kept = append(kept, t)
+			result.PendingWritten++
+			continue
+		}
+
+		replaced := false
+		for i, existing := range kept {
+			if existing.Status == store.StatusBooked &&
+				existing.DedupKey == t.DedupKey && existing.Occurrence == t.Occurrence {
+				t.ID = existing.ID
+				t.FirstSeenAt = existing.FirstSeenAt
+				t.LastSeenAt = m.now
+				kept[i] = t
+				replaced = true
+				result.BookedUpdated++
+				break
+			}
+		}
+		if !replaced {
+			t.ID = m.id("txn")
+			t.FirstSeenAt, t.LastSeenAt = m.now, m.now
+			kept = append(kept, t)
+			result.BookedInserted++
+		}
+	}
+
+	slices.SortFunc(kept, func(a, b store.Transaction) int {
+		if !a.BookingDate.Equal(b.BookingDate) {
+			if a.BookingDate.After(b.BookingDate) {
+				return -1
+			}
+			return 1
+		}
+		return cmpString(b.ID, a.ID)
+	})
+	m.transactions[accountID] = kept
+
+	through := syncedThrough
+	at := m.now
+	m.syncedThrough[accountID] = &through
+	m.syncedAt[accountID] = &at
+	return result, nil
+}
+
+func (m *memStore) Ledger(_ context.Context, q store.LedgerQuery) (store.LedgerPage, error) {
+	var all []store.Transaction
+	for _, id := range m.ownedBy(q.MemberID, q.AccountID) {
+		all = append(all, m.transactions[id]...)
+	}
+	slices.SortFunc(all, func(a, b store.Transaction) int {
+		if !a.BookingDate.Equal(b.BookingDate) {
+			if a.BookingDate.After(b.BookingDate) {
+				return -1
+			}
+			return 1
+		}
+		return cmpString(b.ID, a.ID)
+	})
+
+	page := store.LedgerPage{Transactions: all}
+	if len(all) > q.Limit {
+		page.Transactions = all[:q.Limit]
+		page.HasOlder = true
+	}
+	if len(page.Transactions) > 0 {
+		page.Newest = page.Transactions[0].BookingDate
+		page.Oldest = page.Transactions[len(page.Transactions)-1].BookingDate
+	}
+	return page, nil
+}
+
+func (m *memStore) CountLedger(_ context.Context, memberID, accountID string) (int, error) {
+	n := 0
+	for _, id := range m.ownedBy(memberID, accountID) {
+		n += len(m.transactions[id])
+	}
+	return n, nil
+}
+
+func (m *memStore) LedgerState(_ context.Context, memberID, accountID string) (store.LedgerState, error) {
+	owned := m.ownedBy(memberID, accountID)
+	s := store.LedgerState{OwnedAccounts: len(owned)}
+	for _, id := range owned {
+		if at := m.syncedAt[id]; at != nil && (s.SyncedAt == nil || at.After(*s.SyncedAt)) {
+			s.SyncedAt = at
+		}
+		for _, t := range m.transactions[id] {
+			if s.ReachesBack == nil || t.BookingDate.Before(*s.ReachesBack) {
+				d := t.BookingDate
+				s.ReachesBack = &d
+			}
+		}
+	}
+	return s, nil
+}
+
+// testLedgerOptions are the bounds the service's tests run under. The page cap
+// is small so that a fill stopping at it is reachable, and the interval is long
+// so that "a second arrival inside the interval fetches nothing" is a fact
+// about the rule rather than about how fast the test ran.
+func testLedgerOptions() banking.LedgerOptions {
+	return banking.LedgerOptions{
+		Overlap:      7 * 24 * time.Hour,
+		SyncInterval: time.Hour,
+		MaxPages:     3,
+		PageSize:     50,
+	}
+}
+
+func (m *memStore) OwnedAccountLabels(_ context.Context, memberID string) (map[string]store.AccountLabel, error) {
+	out := map[string]store.AccountLabel{}
+	for _, id := range m.ownedBy(memberID, "") {
+		a := m.accounts[id]
+		label := store.AccountLabel{Name: a.Name}
+		if a.ConnectionID != nil {
+			if c, ok := m.connections[*a.ConnectionID]; ok {
+				label.BankName = c.BankName
+			}
+		}
+		out[id] = label
+	}
+	return out, nil
 }

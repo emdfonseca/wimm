@@ -151,6 +151,7 @@ C6vRRC	text	G2Jpxj	Label
 C7MNJ	text	WjbJc	Label
 C8B2G	text	xhUan	Label
 C8PpI	frame	bu96G	Dark
+C9PreI	frame	gZzJS	Slot
 CC09p	text	D1lVSI	Contract
 CHc1y	text	HwcW9	V
 CHtFe	frame	Cf5FA	Brand fill
@@ -158,6 +159,7 @@ CJBPC	text	Fny8k	Cell
 CPO77	frame	yv69e	Spec header
 CPlgP	ref	o85UCF	primary
 CSFi2	text	Glxte	Caption
+CSIlr	frame	wUSMd	Spec header
 CWfNZ	frame	u6KZf	Spacer
 CXJgv	frame	UDCkT	Sidebar
 CXST9	frame	O3Zkv	No yes
@@ -165,6 +167,7 @@ CZBL6	text	T0B02	Px
 CbBwz	text	a1dmeY	Note
 CbeJT	ref	l8D82j	Control
 CdgXi	text	IrseR	Caption
+Ceimo	text	VE2z9	Account
 Cf5FA	frame	Y6vtv	Adjacency
 CghNY	frame	nsi3x	Cell
 CgwUL	frame	Eelod	Spec header
@@ -180,6 +183,7 @@ CsqFW	text	aXfoY	Token
 CtSH4	text	RApR9	Sample
 Ctly1	text	Kawi6	Caption
 CtsNw	frame	t5yZV	Tab
+CwLeL	frame	VE2z9	Status
 Cwh3k	text	DBWSq	duration
 CxxCK	text	pHSdl	Sample
 CzG3v	text	hbe4Q	Eyebrow
@@ -265,6 +269,7 @@ E8w0r	ref	ETiRe	Meter Subscriptions
 E8xrQr	text	rWTSP	D
 E90jP	text	ab09l	rest
 E9Gqc	text	pzKYo	Cell
+EAKJN	frame	yBRDP	Spec header
 EAPDf	text	gDcrz	Key
 EDgMt	frame	xxsPr	Slot
 EEqqR	text	BmXJJ	Note
@@ -379,6 +384,7 @@ G9143	frame	WjbJc	Cell
 G91dii	text	K0cFeu	Scale
 G99J7t	text	P9UHVm	Detail
 GAEsk	text	SvE2S	Detail
+GATbz	text	gZzJS	Note
 GAznZ	text	Kf2Yr	Semantics
 GBhP4	text	w3fR5o	A
 GCCfJ	frame	z3biO1	Cell
@@ -475,6 +481,7 @@ HjJqj	text	MJgsQ	Contract
 Hl95t	frame	UQuEq	Section header
 HlRZX	frame	KUOMa	Pagination
 HnFBv	text	iyeM0	Label
+HodlM	frame	Hxmzc	Paging
 HrJII	frame	sB9oY	Spec header
 HrXtq	ref	Kmn2q	Account stale
 HtDL5	text	Pr4zn	T
@@ -482,6 +489,7 @@ HuIA9	text	nQqPS	Label
 Hv5JJ	text	y98B6	Title
 HvNF3	frame	lD514	Dark
 HwcW9	frame	WRwWX	A budget period
+Hxmzc	frame	MiZAZ	Seek pager
 HyvI1	frame	W9roE6	Specimens
 Hzvk7	text	dYG7b	Role
 HzxsW	text	ufjrF	Duration
@@ -494,6 +502,7 @@ I758m	text	o5lDg	Token
 I7GW2	text	yCPgC	Caption
 I7YAkd	frame	pU6IB	dark
 I7tmt	text	UJKx9	hover
+IAEse	text	Hxmzc	End
 IBz7n	text	wGfF3	Caption
 ICrvF	text	r2J1JC	Label
 IDi3r	ref	l8uV6	Row
@@ -534,6 +543,7 @@ ItrgL	text	qnITi	what the shell shows
 Ittq1	text	DBWSq	what
 Iv0pS	text	NQiiY	Value
 IvL0J	text	nuObm	Label
+IvOch	ref	cfkK0	Transactions
 IwgOG	frame	OxBK3	Head
 Iz6X5	frame	SEiE2	Light
 IzTue	text	qjvsu	Sample
@@ -585,6 +595,7 @@ JcOFm	frame	bQaTk	Specimens
 Jcd8F	text	jP78c	A
 JeOYI	frame	hiKHZ	Cell
 JhOOc	text	oncLV	A
+JiKky	text	VE2z9	Date
 JikOE	text	EVM2r	Zone
 JjEPM	frame	R0OxC0	Sections
 Jlt5Z	frame	sB9oY	Specimens
@@ -612,6 +623,7 @@ K7eXce	frame	hbbM3	Sidebar
 K7tQY	ref	nbkD9	Amount lg
 K82JD	ref	UwIRb	Transactions
 K86xo	frame	fDv32	Cell
+K8RxA	frame	X77fCK	Spec header
 K90Pkd	text	A5emeX	A
 K91jx	frame	rRtOa	Surface
 K91lq5	text	PRm92	A
@@ -718,6 +730,7 @@ M2fdvp	text	B3sC3y	Note
 M2hXU	text	wWdJk	Contract
 M2haw	ref	w5V8d	Next
 M3PqM	frame	aA7RE	H merchant
+M6pnlB	ref	CwLeL	Unsettled
 M6wUrE	text	RLbB1	Corner
 M7ODt8	text	OAIob	c0
 M7nuQx	text	FKSVH	D
@@ -763,6 +776,7 @@ McMfs	frame	ndjUs	Slot
 Mdnav	text	hdnao	Key
 Mgi9v	text	oWCEf	Sub
 MiJZz	text	RLbB1	disabled
+MiZAZ	frame	bY2qv	Slot
 MjpNo	text	pzKYo	Cell
 MkvyB	ref	w5ZouR	Action
 MnjRM	text	foiYU	Why
@@ -802,6 +816,7 @@ NDwpA	ref	CowGt	Header
 NHhUw	frame	gFyRw	Slot
 NKN0w	frame	xVEJk	Chips
 NKnBB	frame	wUZZy	Row 2
+NKnsy	frame	XvVUr	Slot
 NKwSM	frame	sPqSC	Spec header
 NOQjJ	text	u1YNTF	Cell
 NPRYg	text	ETiRe	Note
@@ -890,6 +905,7 @@ OrRM6	ref	x3DFqG	currency affix disabled
 OsYgM	text	g6xB9s	Value
 OtK9f	frame	X6GnPU	Slot
 OtiiX	text	Sq36g	Caption
+OuyVa	text	XvVUr	Note
 OxBK3	frame	ObDQn	Matrix
 OyD6z	text	krg8t	Note
 OyZQH	frame	xsmxk	Slot
@@ -946,6 +962,7 @@ PhX6a	frame	gGqYU	Cell
 Pht3l	frame	WU9Ef	Head
 PiLzy	text	F9KwSQ	C
 PjOIR	ref	Zg3Us	Mark
+PkVlf	ref	VE2z9	Mark
 PmH6g	frame	f0Bt9N	Dark
 PmeKC	ref	YwS18	Row
 PmhWK	text	T0AJo	Group
@@ -1033,6 +1050,7 @@ R6LrgK	text	wLGZd	Expense
 R6irIV	text	Zn1aI	empty
 R7O4b	frame	q4cZdR	md
 R7qKBI	text	ap27B	B
+R8QZCx	text	K8RxA	Name
 R9yDBw	frame	fiwvj	Specimens
 RA9ow	text	HwcW9	S
 RApR9	frame	V3hOmK	type-size-heading-sm
@@ -1070,6 +1088,7 @@ Ryuvt	frame	rrht5	elevation-3
 RzIsX	frame	svm4M	Values
 S0F5UA	frame	J1b63R	color-bg-subtle
 S0TjIa	ref	g02Vl	icon disabled
+S0uP5	frame	bY2qv	States
 S1Xi5	frame	V0nSz	Spacer
 S2qZm	text	ab09l	read-only
 S4RlOZ	frame	vKEkQ	Head
@@ -1154,6 +1173,7 @@ TCNOM	text	jEFOR	Note
 TCZBs	frame	DOmZy	Secondary nav
 TDcrs	frame	nUx8s	elevation-3
 TEEas	text	DmX3u	Label
+TEgln	text	K8RxA	Contract
 TEx4J	text	t1hnAR	Duration
 TFtyP	text	eDQx3	Exclusion
 THRZB	frame	n4QxIB	Panel spacer 2
@@ -1255,6 +1275,7 @@ UwRqI	ref	G3nMm	Density
 UyM7m	text	YkSdu	Px
 V0nSz	frame	ThgLN	Row
 V2zpOv	text	vVN9R	Device
+V3OGqk	frame	gZzJS	States
 V3Q6ij	text	r5qjc	T
 V3QIh	rectangle	uBzdd	Bar
 V3hOmK	frame	XAa5Z	Scale
@@ -1273,6 +1294,7 @@ V8wBF	text	GRRZ1	Key
 VAP32	ref	w5V8d	Previous
 VASPn	text	n4QxIB	Panel headline
 VBd4H	frame	vuzig	Slot
+VE2z9	frame	C9PreI	Ledger row
 VGEvI	text	lFZJj	N
 VJheT	frame	EfEGZ	Spec header
 VL8xV	text	GIvxq	Token
@@ -1365,6 +1387,7 @@ WpEhT	ref	P7u4j	Icon button x
 Wq7QG	frame	qzvC1	light
 WrQEK	ref	Tr38o	Page header
 Wrisz	text	Au3NA	D
+Wrr9y	ref	HodlM	Newer
 Wsz2o	text	XuxEx	Title
 Wt0cD	ref	pu6qZ	App bar
 WtsmM	text	Loebp	Category
@@ -1377,6 +1400,7 @@ X1z44	text	fTBMh	Label
 X2uIw	frame	eEzVs	Deleting a reconciled transaction
 X55a7	frame	eEzVs	Suspected duplicate
 X6GnPU	frame	nUx8s	flat
+X77fCK	frame	exiPr	Bottom nav
 X7dsUM	ref	VsBO4	icon active
 X8aKw	text	XCEta	Token
 X8lN4	text	XtcZM	Title
@@ -1416,6 +1440,7 @@ XtMnH	text	DBWSq	easing
 XtcZM	frame	KkV2T	Tool limitation
 XufDN	frame	CkB7x	prefix and code
 XuxEx	frame	T84bQ	Wide 1440 · shell
+XvVUr	frame	X77fCK	Specimens
 Y0xeDY	text	ULWl4	Label
 Y2H0CS	frame	i3DPb	Row
 Y2T2c	frame	QpSS4	lg
@@ -1437,11 +1462,13 @@ YBQ71	frame	YM2Da	Ledger row
 YCDI4	frame	SNRY5	Housing
 YCmiN	rectangle	O2iP3	Bar
 YFN3i	text	SpMHa	Title
+YFWtK	text	CSIlr	Name
 YG0ss	frame	wUZZy	Row 0
 YH42V	frame	CkB7x	value
 YHA3V	frame	VTcO9	Page behind
 YHgv2	text	SnSJF	Contract
 YIyFf	text	vhWat	Note
+YJhKZ	text	EAKJN	Name
 YKiLb	text	iDyjp	Title
 YM2Da	frame	lUzxR	Compact
 YNG8p	text	pzKYo	Cell
@@ -1598,6 +1625,7 @@ b2GxUH	frame	WopsQ	page transition
 b2Ogk	frame	DEVBi	Adjacency
 b2oOBN	text	jORh1	Token
 b3KPyt	ref	JYlII	icon rest
+b3MTx	frame	NKnsy	Bottom nav
 b4LHWY	frame	fDv32	Cell
 b6mWtV	text	Kqqag	Token
 b81J3	frame	e0JfP	Option A
@@ -1612,6 +1640,7 @@ bAHrn	frame	eEzVs	A transaction is pending at the bank
 bCCBA	frame	O1sfhh	Cell
 bD3o6	frame	LQLd5	Slot
 bFdSt	text	iTG7R	Note
+bG14N	ref	V3OGqk	The bank named nobody
 bGgx4	frame	f0q8O5	color-chart-6
 bN8Lp	ref	I5QZb6	destructive active
 bQaTk	frame	C1M5zg	Button size and configuration
@@ -1625,6 +1654,7 @@ bU8Rq	text	Ryuvt	Label
 bUUAo	ref	PXyZG	icon disabled
 bUkUR	frame	E6wdG6	Light
 bWpQ3	frame	c9hvt	Slot
+bY2qv	frame	wUSMd	Specimens
 bYBj7	text	gDcrz	Value
 bc95w	text	uediR	Role
 bhLwF	ref	EpRPP	Brand
@@ -1676,6 +1706,7 @@ cd3EN	frame	oweC0	Delta
 cdeIK	ref	VqSeL	Tile flat
 cdxoP	text	jH3QI	Token
 ceQVH	text	c7PjG	Detail
+cfkK0	frame	b3MTx	Tab
 cfpvZ	frame	XAa5Z	Schibsted Grotesk
 chid7	frame	RKoEp	CONTENT SLOT
 ciGdg	frame	exiPr	App header
@@ -1916,6 +1947,7 @@ gW1CT	text	kfa2T	rest
 gXYEF	text	W2fEd	S
 gXYsM	text	zfSRK	Token
 gXjT0	text	dgdUO	Name
+gZzJS	frame	yBRDP	Specimens
 gbC1r	frame	RHe01	Row
 gbMe3	ref	UwIRb	Accounts
 gcfqt	frame	BcsEe	Ring
@@ -1931,6 +1963,7 @@ gt28l	frame	iEzP7	Action
 gue4w	frame	fPXrL	Slot
 gvcvW	text	IQbb3	Cell
 gwmnb	frame	Q9Yhaw	Ring
+gxil3	text	Hxmzc	Span
 gy8qm	frame	-	30 · MOLECULES
 gyPQc	text	Rnmyh	Name
 gycof	text	mpiJb	surface
@@ -1979,6 +2012,7 @@ hcT3D	frame	xFbsw	Segmented control
 hdA1I	text	vhWat	Name
 hdYDG	frame	jjwW3	Cell
 hdnao	frame	SpMHa	density-row-height
+he437	ref	HodlM	Older
 heS79	icon	mRsB3	Glyph
 hejz6	frame	o2yc8A	Skeleton
 hf4SC	text	AOHLY	Role
@@ -2016,6 +2050,7 @@ iEzP7	frame	-	10 · FOUNDATIONS
 iG22T	frame	jalb0	amount
 iHA51	text	JmuY6	Note
 iHTbG	ref	MWpS5	Amount
+iJGlX	ref	V3OGqk	Money arriving
 iJJgu	text	jP78c	B
 iQ2yr	ref	ytAFU	Icon download
 iQfpR	frame	a2XDV	Dark
@@ -2163,6 +2198,7 @@ kfa2T	frame	u0xpd	Head
 kj4da	text	E0R6of	Link
 kjcZd	text	RLbB1	focus
 klRge	frame	UqYSS	Rule
+kqffI	ref	pu6qZ	Bottom nav
 krVcQ	text	A1aug9	A
 krg8t	frame	O8AR0	Spec header
 ks0Az	text	FoAm3	W
@@ -2212,6 +2248,7 @@ lYYRu	text	x6SOV	use it for
 lYi8c	text	g0IjA	Key
 lYm9W	text	DWhVh	D
 lYvFu	rectangle	YkSdu	Bar
+lZnGT	ref	tovKh	Overview
 lavNj	text	JjEPM	Label
 lcQYG	text	hrb5G	Panel headline
 lcbKL	text	a1dmeY	Record path
@@ -2237,6 +2274,7 @@ lzo6D	text	n1U67n	P
 m2LV4j	text	D1lVSI	Name
 m4MOLI	text	z9kMyP	D
 m4u3h	text	xuljF	Label
+m5IlD	text	VE2z9	Description
 m6f07u	text	K7eXce	Note
 m7URyf	ref	Qm9H6	Pagination first
 m9cgg	text	ldSnK	Meta
@@ -2498,6 +2536,7 @@ qB87M	ref	a9iQ0B	primary focus
 qCqxX	frame	PviJn	Category column
 qERjH	frame	gy8qm	Transaction row
 qGE8x	ref	sCZaW	plain error
+qGjuI	text	bY2qv	Note
 qIC88	text	L7GmV6	c2
 qINvy	text	xgBmi	Contract
 qLIuQ	frame	TQljT	Slot
@@ -2541,6 +2580,7 @@ qzvC1	frame	UuLOO	Pair
 r1fFmt	text	EbwgK	Contract
 r1goa	frame	UDCkT	Page
 r2J1JC	frame	u0xpd	menu item
+r2Oakp	ref	S0uP5	The oldest page
 r2XfKa	icon	cd3EN	Arrow
 r2jMa	text	u1YNTF	Cell
 r2vS3	text	d76zt	Verdict
@@ -2591,6 +2631,7 @@ rn18v	text	ZA4B8	Caption
 rn3iF	text	IwgOG	hover
 rnGLp	frame	RHe01	Row
 roIf4	text	X6GnPU	Token
+rpHQK	ref	S0uP5	A middle page
 rpbsv	text	Vjqoc	Label
 rptWw	frame	V0nSz	color-amount-negative
 rpw4r	ref	uTTIp	Destructive confirmation
@@ -2608,6 +2649,7 @@ rzPRB	frame	T0AJo	Divider
 s1fWHC	text	s9ZCf	Label
 s2LEWQ	text	K0cFeu	Caption
 s2VNo8	frame	FJMXV	App header / in shell
+s2cbK	ref	V3OGqk	Not settled
 s46J5	text	I3So7c	c0
 s4VfUC	text	p9MYYK	Caption
 s4aZF	text	pn0Xe	N
@@ -2680,6 +2722,7 @@ t7OYv	frame	XAa5Z	Display rule
 t8NDiS	frame	E7JPI	May
 t9LY7	text	q6ImJ	R
 t9iqb	frame	vdV0B	Origin
+t9j2TA	text	EAKJN	Contract
 t9xTM	frame	BIRbz	Amount bar
 tDrQD	text	qsKzL	Name
 tGj5U	text	n7pVT1	Label
@@ -2714,6 +2757,7 @@ tkhwv	text	ERmFl	c2
 tmD8e	frame	nWePx	Dark
 tmXLa	text	sdiaw	Label
 totwS	frame	uYAJw	Chips
+tovKh	frame	b3MTx	Tab
 tq9k5	frame	MLV3D	Surface and navigation decisions
 tqiBA	frame	IbI8K	Auth shell / compact
 tqlYe	frame	t4XTD	Body
@@ -2915,6 +2959,7 @@ wRK4t	ref	aSpLx	radio on hover
 wSR92	text	n4QxIB	Panel footer
 wShyF	ref	UwIRb	Budgets
 wTjfz	text	YwlA6	Token
+wUSMd	frame	gy8qm	Seek pager
 wUZZy	frame	yVfDo	Table
 wUywT	frame	YCDI4	Transaction row/compact
 wVk9t	ref	P0l6eD	Menu focus
@@ -3026,6 +3071,7 @@ y7APpK	frame	f0q8O5	color-chart-3
 y7nJp4	frame	ZdPhc	Tab counts
 y98B6	frame	U3Tzr	Header
 y9pR1n	frame	gy8qm	Pagination
+yBRDP	frame	gy8qm	Ledger row
 yCPgC	frame	wy7Q8	ellipsis
 yDeBw	text	kfa2T	hover
 yDlOH	text	cfpvZ	Use
@@ -3040,6 +3086,7 @@ yPdmm	frame	H0APd	Main
 yQT9Z	text	e7o7M	S
 yR4St	ref	K9E9A	affix + code read-only
 ySkbX	frame	DOmZy	Stepper
+yThTp	text	CSIlr	Contract
 yTrn8	text	KOC57	N
 yTzU8	text	y7nJp4	D
 yUK3I	text	miHSM	Name
@@ -3060,6 +3107,7 @@ yn9UX	frame	unWvr	Pair
 ypzq3	ref	jyhhb	Action
 yr1Hm	text	Fny8k	Cell
 ysP4V	frame	MDNC6	Balance card
+ysgF3	rectangle	cfkK0	Current edge
 ysy3B	frame	B1oanp	Chips
 ytAFU	frame	YM2Da	Toolbar
 ytIEI	frame	YwlA6	Chips
@@ -3118,5 +3166,6 @@ zuaTU	text	GCEbT	Focus
 zv5ci	frame	iEzP7	Header
 zx4i9	text	X1uXU6	Cell
 zx52V	text	rE2VY	Heading
+zynUV	text	VE2z9	Amount
 zz26B	text	ZCRDb	Note
 zz9Lm	frame	QF5ET	Dark

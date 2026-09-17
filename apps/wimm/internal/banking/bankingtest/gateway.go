@@ -13,6 +13,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strconv"
 	"sync"
 	"time"
 
@@ -51,6 +52,11 @@ type Gateway struct {
 	// trip reads it from here rather than reaching into wimm's own hashing.
 	LastState string
 
+	// PageSize is how many transactions one read returns. Zero means all of
+	// them, which is the common case; a test asserting that paging works to
+	// exhaustion sets it small.
+	PageSize int
+
 	// Now is the fake's clock. It is a field rather than a call to time.Now
 	// for two reasons: the process clock is banned from setting any lifetime
 	// in wimm (ADR 0016), and a fake that reads the wall clock makes an expiry
@@ -74,6 +80,10 @@ type bank struct {
 	accounts []banking.Account
 	// balances by account ref.
 	balances map[string][]banking.Balance
+	// transactions by account ref, newest first, as a real bank returns them.
+	// The fake pages over this slice rather than holding pre-cut pages, so a
+	// test scripts history and page size separately.
+	transactions map[string][]banking.Transaction
 }
 
 type session struct {
@@ -105,7 +115,11 @@ func (g *Gateway) Name() string { return "bankingtest" }
 func (g *Gateway) AddBank(info banking.Bank, accounts ...banking.Account) {
 	g.mu.Lock()
 	defer g.mu.Unlock()
-	g.banks[info.ID] = &bank{info: info, accounts: accounts, balances: map[string][]banking.Balance{}}
+	g.banks[info.ID] = &bank{
+		info: info, accounts: accounts,
+		balances:     map[string][]banking.Balance{},
+		transactions: map[string][]banking.Transaction{},
+	}
 }
 
 // SetBalance scripts what an account reads as.
@@ -281,6 +295,85 @@ func (g *Gateway) Balances(
 		return nil, banking.ErrBankUnavailable
 	}
 	return balances, nil
+}
+
+// SetTransactions scripts an account's history, newest first. PageSize decides
+// how much of it one read returns.
+func (g *Gateway) SetTransactions(bankID, accountRef string, txs ...banking.Transaction) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	if b, ok := g.banks[bankID]; ok {
+		b.transactions[accountRef] = txs
+	}
+}
+
+// Transactions reads one page.
+//
+// The cursor is an offset rendered as a string, which is exactly as opaque to
+// the caller as Enable Banking's continuation key: the point of the fake is
+// that nothing above the adapter can learn anything from it.
+//
+// A zero From returns everything the bank holds, as strategy=longest does. A
+// set From returns only what was booked on or after it, which is what makes an
+// incremental sync's overlap window testable.
+func (g *Gateway) Transactions(
+	_ context.Context, conn banking.Connection, account banking.Account, req banking.TransactionsRequest,
+) (banking.TransactionsPage, error) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	g.record(Call{Method: "Transactions", AccountRef: account.Ref})
+	if err := g.next("Transactions"); err != nil {
+		return banking.TransactionsPage{}, err
+	}
+
+	s, ok := g.live[conn.GatewayRef]
+	if !ok {
+		return banking.TransactionsPage{}, banking.ErrConsentExpired
+	}
+
+	held := g.banks[s.bankID].transactions[account.Ref]
+	matching := make([]banking.Transaction, 0, len(held))
+	for _, tx := range held {
+		if req.From.IsZero() || !tx.BookingDate.Before(req.From) {
+			matching = append(matching, tx)
+		}
+	}
+
+	start := 0
+	if req.Cursor != "" {
+		n, err := strconv.Atoi(req.Cursor)
+		if err != nil || n < 0 || n > len(matching) {
+			return banking.TransactionsPage{}, fmt.Errorf("bankingtest: %q is not a cursor this gateway issued", req.Cursor)
+		}
+		start = n
+	}
+
+	size := g.PageSize
+	if size <= 0 {
+		size = len(matching)
+	}
+	end := min(start+size, len(matching))
+
+	page := banking.TransactionsPage{Transactions: matching[start:end]}
+	if end < len(matching) {
+		page.NextCursor = strconv.Itoa(end)
+	}
+	return page, nil
+}
+
+// AccountsSynced returns the refs of every account transactions were read for,
+// in order. "No sync runs without a member" and "a second arrival inside the
+// interval fetches nothing" are both asserted against this.
+func (g *Gateway) AccountsSynced() []string {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	var refs []string
+	for _, c := range g.Calls {
+		if c.Method == "Transactions" {
+			refs = append(refs, c.AccountRef)
+		}
+	}
+	return refs
 }
 
 // EndConnection tells the bank wimm is done.

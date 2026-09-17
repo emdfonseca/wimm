@@ -25,7 +25,11 @@ const cookies = { get: () => 'session', delete: () => {}, set: () => {} };
 
 async function overview() {
 	const { load } = await import('./+page.server');
-	return (await load!({ cookies, url: new URL('http://localhost/') } as never)) as {
+	return (await load!({
+		cookies,
+		depends: () => {},
+		url: new URL('http://localhost/')
+	} as never)) as {
 		accounts: {
 			name: string;
 			balance?: string;
@@ -75,14 +79,33 @@ describe('Overview', () => {
 		expect(data.totals[0]!.total).toMatch(/4[.,]200[.,]10/);
 	});
 
-	// Reading happens on arrival: a member in front of the screen is exactly
-	// the case gateways do not throttle.
-	it('reads on arrival rather than showing what was stored', async () => {
+	/**
+	 * Reading happens on arrival — a member in front of the screen is exactly
+	 * the case gateways do not throttle — but **not inside the load**. A load
+	 * blocks navigation until it returns, and reading balances is a round trip
+	 * per account, so reading here means clicking Overview and watching the
+	 * previous page until every bank has answered.
+	 *
+	 * The figures already held render with the time each was read, which is
+	 * what the spec actually requires: a balance is never presented as current
+	 * when it has not been re-read. The page asks the banks behind the arrival.
+	 */
+	it('never asks a bank while the navigation is waiting', async () => {
 		listAccounts.mockResolvedValue({ accounts: [], totals: [], failures: [] });
 
 		await overview();
 
-		expect(listAccounts).toHaveBeenCalledWith({ skipRead: false }, expect.anything());
+		expect(listAccounts).toHaveBeenCalledWith({ skipRead: true }, expect.anything());
+	});
+
+	it('names the dependency the arrival read re-reads', async () => {
+		listAccounts.mockResolvedValue({ accounts: [], totals: [], failures: [] });
+		const depends = vi.fn();
+
+		const { load } = await import('./+page.server');
+		await load!({ cookies, depends, url: new URL('http://localhost/') } as never);
+
+		expect(depends).toHaveBeenCalledWith('wimm:accounts');
 	});
 
 	// The rate-limited path: the member is told when, and the balance stays.
@@ -242,6 +265,7 @@ describe('the outcome of a hand-off', () => {
 		const { load } = await import('./+page.server');
 		const data = (await load!({
 			cookies: { ...cookies, get: () => handoff ?? undefined },
+			depends: () => {},
 			url: new URL(`http://localhost/${query}`)
 		} as never)) as { outcome?: string; outcomeBank?: string };
 		return data.outcome;

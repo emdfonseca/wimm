@@ -209,3 +209,94 @@ func indexes(t *testing.T, ctx context.Context, pool *pgxpool.Pool) []string {
 		where schemaname = 'public' and tablename <> 'goose_db_version'
 		order by 1`)
 }
+
+// The backfill runs against rows that already exist, so it is asserted against
+// rows that already exist: the schema is taken to the version before it, the
+// fixture is written the way the old code wrote it, and the migration is then
+// asked to produce a bank for every account.
+//
+// Checking the current schema would prove nothing — every account the current
+// code writes carries its bank already.
+func TestTheBankBackfillReachesAccountsThatPredateIt(t *testing.T) {
+	// Its own database: this test migrates backwards, and the rest of the
+	// suite is running against the shared one at the same time.
+	url := storetest.Scratch(t, "bank_backfill")
+
+	const beforeTransactions = 4
+
+	if err := store.MigrateUp(url); err != nil {
+		t.Fatalf("migrating up: %v", err)
+	}
+	if err := store.MigrateDownTo(url, beforeTransactions); err != nil {
+		t.Fatalf("rolling back to the schema before transactions: %v", err)
+	}
+
+	ctx := context.Background()
+	pool, err := pgxpool.New(ctx, url)
+	if err != nil {
+		t.Fatalf("connecting: %v", err)
+	}
+	defer pool.Close()
+
+	var memberID string
+	if err := pool.QueryRow(ctx, `
+		insert into members (email, first_name, last_name)
+		values ('ada@example.com', 'Ada', 'Lovelace') returning id`).Scan(&memberID); err != nil {
+		t.Fatalf("registering a member: %v", err)
+	}
+
+	banks := map[string]string{"PT:Montepio": "Montepio", "PT:Revolut": "Revolut"}
+	want := map[string]string{}
+	for bankID, bankName := range banks {
+		var connID string
+		if err := pool.QueryRow(ctx, `
+			insert into bank_connections (gateway, bank_id, bank_name, connected_by, consent_expires_at)
+			values ('enablebanking', $1, $2, $3, now() + interval '90 days')
+			returning id`, bankID, bankName, memberID).Scan(&connID); err != nil {
+			t.Fatalf("recording a connection: %v", err)
+		}
+		var accountID string
+		if err := pool.QueryRow(ctx, `
+			insert into accounts (source, connection_id, gateway_ref, name, currency)
+			values ('gateway', $1, $2, $3, 'EUR') returning id`,
+			connID, "hash-"+bankID, "Account at "+bankName).Scan(&accountID); err != nil {
+			t.Fatalf("recording an account: %v", err)
+		}
+		want[accountID] = bankID
+	}
+
+	// An account no gateway sources has no bank to backfill, and must not be
+	// refused by the constraint the backfill precedes.
+	if _, err := pool.Exec(ctx, `
+		insert into accounts (source, name, currency) values ('manual', 'Cash tin', 'EUR')`); err != nil {
+		t.Fatalf("recording a manual account: %v", err)
+	}
+
+	if err := store.MigrateUp(url); err != nil {
+		t.Fatalf("migrating the transactions schema in over existing rows: %v", err)
+	}
+
+	for accountID, bankID := range want {
+		var got *string
+		if err := pool.QueryRow(ctx,
+			`select bank_id from accounts where id = $1`, accountID).Scan(&got); err != nil {
+			t.Fatalf("reading an account's bank: %v", err)
+		}
+		if got == nil {
+			t.Errorf("account %s came out of the backfill with no bank", accountID)
+			continue
+		}
+		if *got != bankID {
+			t.Errorf("account %s has bank %q, want %q", accountID, *got, bankID)
+		}
+	}
+
+	var manualBanks int
+	if err := pool.QueryRow(ctx,
+		`select count(*) from accounts where source = 'manual' and bank_id is not null`).Scan(&manualBanks); err != nil {
+		t.Fatalf("counting manual accounts: %v", err)
+	}
+	if manualBanks != 0 {
+		t.Errorf("the backfill gave %d manual accounts a bank", manualBanks)
+	}
+}

@@ -20,9 +20,12 @@ export { default as BankRow } from './molecules/BankRow.svelte';
 export { default as AccountRow } from './molecules/AccountRow.svelte';
 export { default as AccountChoiceRow } from './molecules/AccountChoiceRow.svelte';
 export { default as DisconnectBankDialog } from './molecules/DisconnectBankDialog.svelte';
+export { default as LedgerRow } from './molecules/LedgerRow.svelte';
+export { default as SeekPager } from './molecules/SeekPager.svelte';
 
 // Organisms
 export { default as SidebarNav } from './organisms/SidebarNav.svelte';
+export { default as BottomNav } from './organisms/BottomNav.svelte';
 
 // Templates
 export { default as AuthShell } from './templates/AuthShell.svelte';
@@ -38,12 +41,20 @@ export { default as ChooseBankScreen } from './pages/ChooseBankScreen.svelte';
 export { default as ConsentExplainerScreen } from './pages/ConsentExplainerScreen.svelte';
 export { default as ChooseAccountsScreen } from './pages/ChooseAccountsScreen.svelte';
 export { default as AccountsOverview } from './pages/AccountsOverview.svelte';
+export { default as TransactionsScreen } from './pages/TransactionsScreen.svelte';
+export { default as WidenConsentScreen } from './pages/WidenConsentScreen.svelte';
 
-export type { Destination } from './destinations.js';
+export { destinations, type Destination } from './destinations.js';
 export type { EnrolState } from './pages/EnrolScreen.svelte';
 export type { SignInState } from './pages/SignInScreen.svelte';
 export type { BankListState, Bank } from './pages/ChooseBankScreen.svelte';
 export type { Level, ChoiceAccount, HouseholdMember } from './pages/ChooseAccountsScreen.svelte';
+export type {
+	LedgerEntry,
+	LedgerDay,
+	NarrowBank,
+	LedgerProblem
+} from './pages/TransactionsScreen.svelte';
 export type {
 	OverviewAccount,
 	CurrencyTotal,

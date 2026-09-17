@@ -21,12 +21,42 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		connectionId?: string;
 		/** Only for restore, and only so the return can name the bank. */
 		bankName?: string;
+		/** Only for refresh-transactions: the account the list is narrowed to. */
+		accountId?: string;
 	};
 
 	try {
 		switch (body.action) {
+			// The balance read behind an arrival. The page has already rendered
+			// what is stored, with the time each figure was read; this asks the
+			// banks and the page re-reads itself when they answer.
+			case 'read-balances':
+				await call(cookies, (options) => banking.listAccounts({ skipRead: false }, options));
+				return json({ ok: true });
+
 			case 'refresh':
 				await call(cookies, (options) => banking.refreshBalances({}, options));
+				return json({ ok: true });
+
+			// The sync behind an arrival. The page has already rendered what is
+			// stored; this asks the banks and the page reloads its data when it
+			// answers. Bounded by the per-account interval, so reloading does
+			// not multiply the calls.
+			case 'sync-transactions':
+				await call(cookies, (options) =>
+					banking.listTransactions({ accountId: body.accountId ?? '' }, options)
+				);
+				return json({ ok: true });
+
+			// The ledger's own refresh, which is the member asking in as many
+			// words and is not bound by that interval. Separate from balances
+			// because they are different reads with different costs: a balance
+			// is one number per account, and a sync is a round trip per account
+			// with paging behind it.
+			case 'refresh-transactions':
+				await call(cookies, (options) =>
+					banking.refreshTransactions({ accountId: body.accountId ?? '' }, options)
+				);
 				return json({ ok: true });
 
 			case 'restore': {

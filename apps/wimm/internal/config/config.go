@@ -83,6 +83,25 @@ type Config struct {
 	// BalanceStaleAfter is how old a reading may be before it is shown as
 	// stale. It never hides a reading: a figure with its age is the contract.
 	BalanceStaleAfter time.Duration
+
+	// TransactionOverlap is how far back before the synced-through date an
+	// incremental sync re-reads. A bank can book a transaction with a booking
+	// date earlier than the day wimm last synced, so re-reading a few days and
+	// relying on the identity rule to discard what is already held is cheaper
+	// and more correct than trusting a watermark (ADR 0021).
+	TransactionOverlap time.Duration
+	// TransactionSyncInterval is the least time between two syncs of one
+	// account, so a member reloading repeatedly does not multiply the calls.
+	TransactionSyncInterval time.Duration
+	// TransactionMaxPages bounds one account's sync. A first fill at a bank
+	// that keeps years of history is otherwise unbounded; what it reached is
+	// recorded, so the next sync continues rather than restarting.
+	TransactionMaxPages int
+	// TransactionPageSize is how many transactions one screen of the ledger
+	// holds. At comfortable density roughly twelve rows are visible and at
+	// compact roughly seventeen, so the default is three to four screens
+	// either way.
+	TransactionPageSize int
 }
 
 // ErrMissingOperatorCredential is the refusal to start with the operator
@@ -102,6 +121,12 @@ const (
 	DefaultSessionLifetime       = 14 * 24 * time.Hour
 	DefaultCeremonyLifetime      = 5 * time.Minute
 	DefaultBalanceStaleAfter     = 24 * time.Hour
+
+	// Answered by watching a real first fill; neither changes a spec.
+	DefaultTransactionOverlap      = 7 * 24 * time.Hour
+	DefaultTransactionSyncInterval = 15 * time.Minute
+	DefaultTransactionMaxPages     = 20
+	DefaultTransactionPageSize     = 50
 
 	// GatewayEnableBanking is the only adapter that exists. The value is
 	// stored on every connection, so a later gateway is new connections
@@ -140,6 +165,11 @@ func Load(env func(string) string) (Config, error) {
 		EnableBankingPrivateKeyPath: env("WIMM_ENABLEBANKING_PRIVATE_KEY"),
 		EnableBankingRedirectURL:    env("WIMM_ENABLEBANKING_REDIRECT_URL"),
 		BalanceStaleAfter:           DefaultBalanceStaleAfter,
+
+		TransactionOverlap:      DefaultTransactionOverlap,
+		TransactionSyncInterval: DefaultTransactionSyncInterval,
+		TransactionMaxPages:     DefaultTransactionMaxPages,
+		TransactionPageSize:     DefaultTransactionPageSize,
 	}
 
 	var problems []error
@@ -160,6 +190,8 @@ func Load(env func(string) string) (Config, error) {
 		{"WIMM_SWEEP_INTERVAL", &c.SweepInterval},
 		{"WIMM_REVOKED_SESSION_RETENTION", &c.RevokedSessionRetention},
 		{"WIMM_BALANCE_STALE_AFTER", &c.BalanceStaleAfter},
+		{"WIMM_TRANSACTION_OVERLAP", &c.TransactionOverlap},
+		{"WIMM_TRANSACTION_SYNC_INTERVAL", &c.TransactionSyncInterval},
 	} {
 		if raw := env(d.key); raw != "" {
 			v, err := time.ParseDuration(raw)
@@ -170,6 +202,29 @@ func Load(env func(string) string) (Config, error) {
 				problems = append(problems, fmt.Errorf("%s: must be positive, got %s", d.key, raw))
 			default:
 				*d.field = v
+			}
+		}
+	}
+
+	// Counts, not lifetimes, so they are parsed separately — and refused at
+	// startup when non-positive, like every duration above: a sync bounded by
+	// zero pages reads nothing and reports success.
+	for _, n := range []struct {
+		key   string
+		field *int
+	}{
+		{"WIMM_TRANSACTION_MAX_PAGES", &c.TransactionMaxPages},
+		{"WIMM_TRANSACTION_PAGE_SIZE", &c.TransactionPageSize},
+	} {
+		if raw := env(n.key); raw != "" {
+			v, err := strconv.Atoi(strings.TrimSpace(raw))
+			switch {
+			case err != nil:
+				problems = append(problems, fmt.Errorf("%s: %q is not a number", n.key, raw))
+			case v <= 0:
+				problems = append(problems, fmt.Errorf("%s: must be positive, got %s", n.key, raw))
+			default:
+				*n.field = v
 			}
 		}
 	}

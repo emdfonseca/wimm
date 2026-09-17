@@ -11,6 +11,11 @@
 	 * Focus is trapped, the safe action is focused first, and focus returns to
 	 * whatever opened it — confirmed or dismissed. A member who reaches this by
 	 * mistake should be able to leave it by reflex.
+	 *
+	 * It says the transactions already read are kept, because a member deciding
+	 * whether to disconnect is weighing exactly that: ending wimm's access and
+	 * destroying the record of what it read are different decisions, and only
+	 * the first is being made here (ADR 0021).
 	 */
 	interface Props {
 		open: boolean;
@@ -89,8 +94,9 @@
 				<p id="disconnect-message">
 					{accountCount}
 					{accountCount === 1 ? 'account' : 'accounts'} will stop being shown, for everyone who can
-					see {accountCount === 1 ? 'it' : 'them'}. wimm will stop reading from {bankName}. You can
-					connect it again later.
+					see {accountCount === 1 ? 'it' : 'them'}. wimm will stop reading from {bankName}. The
+					transactions already read stay under Transactions, and you can connect {bankName} again
+					later.
 				</p>
 			</div>
 

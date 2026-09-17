@@ -1,11 +1,24 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import { AccountsOverview, DisconnectBankDialog } from '@wimm/ui';
-	import { goto, invalidateAll } from '$app/navigation';
+	import { afterNavigate, goto, invalidate } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
 	let { data } = $props();
 
 	let refreshing = $state(false);
+
+	/**
+	 * What the last hand-off produced. Held here because the load spends it on
+	 * read: re-reading this page when the arrival's balances land would clear
+	 * the notice a second or two after it appeared. It is assigned on
+	 * navigation, which is the only time a new one can exist.
+	 */
+	// untrack because capturing the initial value is the point: re-deriving it
+	// would put the notice back under the load that spends it.
+	let outcome = $state(untrack(() => data.outcome));
+	let outcomeBank = $state(untrack(() => data.outcomeBank));
+	let outcomeAccessEndsOn = $state(untrack(() => data.outcomeAccessEndsOn));
 	let disconnecting: { connectionId: string; bankName: string; accountCount: number } | null =
 		$state(null);
 
@@ -27,17 +40,39 @@
 		return (await response.json()) as { ok: boolean; handoffUrl?: string; reason?: string };
 	}
 
-	async function refresh() {
+	/**
+	 * Read the balances behind the arrival, and again when the member asks.
+	 *
+	 * `read-balances` is the arrival; `refresh` is the member asking in as many
+	 * words. Neither runs in the load function, because a load holds the
+	 * navigation open until it returns.
+	 */
+	async function read(action: 'read-balances' | 'refresh') {
+		if (refreshing) return;
 		refreshing = true;
 		try {
-			await act({ action: 'refresh' });
+			await act({ action });
 			// Whether or not every bank answered: wimmd keeps the readings it
 			// could not renew, and the reload shows what it has.
-			await invalidateAll();
+			await invalidate('wimm:accounts');
 		} finally {
 			refreshing = false;
 		}
 	}
+
+	/**
+	 * Once per arrival, and not once per render.
+	 *
+	 * `afterNavigate` fires on the initial load and on every navigation after
+	 * it, and not on an invalidation — which is what stops the read that
+	 * re-reads this page from triggering itself.
+	 */
+	afterNavigate(() => {
+		outcome = data.outcome;
+		outcomeBank = data.outcomeBank;
+		outcomeAccessEndsOn = data.outcomeAccessEndsOn;
+		void read('read-balances');
+	});
 
 	async function restore(connectionId: string) {
 		// The name travels with the request so the return can name the bank:
@@ -55,22 +90,22 @@
 
 		await act({ action: 'disconnect', connectionId: target.connectionId });
 		disconnected = { bankName: target.bankName, accountCount: target.accountCount };
-		await invalidateAll();
+		await invalidate('wimm:accounts');
 	}
 
 </script>
 
 <AccountsOverview
-	outcome={disconnected ? 'disconnected' : data.outcome}
-	outcomeBank={disconnected?.bankName ?? data.outcomeBank}
+	outcome={disconnected ? 'disconnected' : outcome}
+	outcomeBank={disconnected?.bankName ?? outcomeBank}
 	outcomeAccountCount={disconnected?.accountCount ?? 0}
-	outcomeAccessEndsOn={data.outcomeAccessEndsOn ?? ''}
+	outcomeAccessEndsOn={outcomeAccessEndsOn ?? ''}
 	banks={data.banks}
 	accounts={data.accounts}
 	totals={data.totals}
 	problems={data.problems}
 	{refreshing}
-	onrefresh={refresh}
+	onrefresh={() => read('refresh')}
 	onconnect={() => goto(resolve('/(app)/connect'))}
 	onrestore={restore}
 	onmanage={(bank) =>

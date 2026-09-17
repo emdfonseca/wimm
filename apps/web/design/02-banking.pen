@@ -8502,7 +8502,7 @@
                                   "content": "Disconnect Monzo?"
                                 },
                                 "ui:a3PGP": {
-                                  "content": "Two accounts will stop being shown to everyone in the household, and the household total will drop by €11,693.55. You can connect Monzo again later."
+                                  "content": "Two accounts will stop being shown to everyone in the household, and the household total will drop by €11,693.55. The transactions already read stay under Transactions, and you can connect Monzo again later."
                                 },
                                 "ui:G8djvU/ui:iYHDG": {
                                   "content": "Keep Monzo"
@@ -9779,6 +9779,1392 @@
                           ]
                         }
                       }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "oXQnv",
+          "name": "J08.A · Include a bank's transactions · PRIMARY SUCCESS",
+          "layout": "vertical",
+          "gap": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "jkZzO",
+              "name": "Path label",
+              "fill": "$ui:color-text-primary",
+              "content": "J08.A · Include a bank's transactions · PRIMARY SUCCESS",
+              "fontFamily": "$ui:type-family-body",
+              "fontSize": "$ui:type-size-heading-md",
+              "fontWeight": "bold"
+            },
+            {
+              "type": "text",
+              "id": "yGb6a",
+              "name": "Path note",
+              "fill": "$ui:color-text-secondary",
+              "textGrowth": "fixed-width",
+              "width": 1100,
+              "content": "A bank connected before wimm could read transactions is live and narrow, not broken. The member starts from the notice on Transactions, drawn in 03-transactions as J07.B / 02, confirms once more at the bank, and comes back to a ledger that now includes it. The picker and the account chooser are both skipped: nothing about ownership changes.",
+              "fontFamily": "$ui:type-family-body",
+              "fontSize": "$ui:type-size-body-md",
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "eM8Dx",
+              "name": "Rows",
+              "gap": 32,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "r70GV",
+                  "name": "01 · What wimm will see",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "taDY5",
+                      "name": "Step label",
+                      "fill": "$ui:color-text-primary",
+                      "content": "01 · What wimm will see",
+                      "fontFamily": "$ui:type-family-body",
+                      "fontSize": "$ui:type-size-body-md",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "xl6W8",
+                      "name": "J08.A / 01 · What wimm will see / Wide / Widening · plate",
+                      "clip": true,
+                      "width": 1442,
+                      "fill": "$ui:color-bg-surface",
+                      "cornerRadius": "$ui:radius-lg",
+                      "stroke": "$ui:color-border-strong",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "L3L87",
+                          "name": "Plate title",
+                          "width": "fill_container",
+                          "height": 44,
+                          "fill": "$ui:color-bg-subtle",
+                          "gap": "$ui:space-3",
+                          "padding": [
+                            0,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "lAEef",
+                              "name": "Name",
+                              "fill": "$ui:color-text-primary",
+                              "content": "J08.A / 01 · What wimm will see / Wide / Widening",
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "o1RuV",
+                              "name": "Spacer",
+                              "width": "fill_container",
+                              "height": 1
+                            },
+                            {
+                              "type": "text",
+                              "id": "Ehmr3",
+                              "name": "Regime",
+                              "fill": "$ui:color-text-placeholder",
+                              "content": "WIDE 1440",
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "z0pTm",
+                          "name": "Trigger",
+                          "width": "fill_container",
+                          "height": 40,
+                          "fill": "$ui:color-bg-surface",
+                          "stroke": "$ui:color-border-subtle",
+                          "strokeWidth": 1,
+                          "padding": [
+                            0,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Z2kBh",
+                              "name": "Trigger text",
+                              "fill": "$ui:color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": 1408,
+                              "content": "Reached when: the member selects Widen at Monzo from the notice on Transactions.",
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "R4QXc0",
+                          "type": "ref",
+                          "ref": "ui:IGbQe",
+                          "name": "J08.A / 01 · What wimm will see / Wide / Widening",
+                          "width": 1440,
+                          "height": 900,
+                          "theme": {
+                            "ui:device": "wide"
+                          },
+                          "descendants": {
+                            "ui:D83An/ui:W4cIE8/ui:PwD8Z": {
+                              "fill": "#FFFFFF00"
+                            },
+                            "ui:D83An/ui:W4cIE8/ui:PwD8Z/ui:TVqlB": {
+                              "fill": "$ui:color-text-secondary"
+                            },
+                            "ui:D83An/ui:W4cIE8/ui:PwD8Z/ui:KfRDI": {
+                              "fill": "$ui:color-text-primary",
+                              "fontWeight": "normal"
+                            },
+                            "ui:D83An/ui:W4cIE8/ui:l4tOM": {
+                              "enabled": true,
+                              "fill": "$ui:color-accent-subtle"
+                            },
+                            "ui:D83An/ui:W4cIE8/ui:l4tOM/ui:TVqlB": {
+                              "fill": "$ui:color-accent"
+                            },
+                            "ui:D83An/ui:W4cIE8/ui:l4tOM/ui:KfRDI": {
+                              "fill": "$ui:color-accent",
+                              "fontWeight": "600"
+                            },
+                            "ui:xNVFG": {
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "g5PY4",
+                                  "name": "Page",
+                                  "width": "fill_container",
+                                  "height": "fill_container",
+                                  "layout": "vertical",
+                                  "gap": 24,
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "DoQhr",
+                                      "name": "Card",
+                                      "width": 620,
+                                      "fill": "$ui:color-bg-elevated",
+                                      "cornerRadius": "$ui:radius-lg",
+                                      "stroke": "$ui:color-border-default",
+                                      "strokeWidth": 1,
+                                      "layout": "vertical",
+                                      "gap": 16,
+                                      "padding": 28,
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "pv9PT",
+                                          "name": "Title",
+                                          "fill": "$ui:color-text-primary",
+                                          "content": "Include Monzo's transactions",
+                                          "fontFamily": "$ui:type-family-body",
+                                          "fontSize": "$ui:type-size-heading-lg",
+                                          "fontWeight": "bold"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "I9G47a",
+                                          "name": "Lede",
+                                          "fill": "$ui:color-text-secondary",
+                                          "textGrowth": "fixed-width",
+                                          "width": 564,
+                                          "content": "You already let wimm read this bank's account names and balances. Confirming once more adds its transactions, so wimm can show what happened on the accounts you own.",
+                                          "fontFamily": "$ui:type-family-body",
+                                          "fontSize": "$ui:type-size-body-md",
+                                          "fontWeight": "normal"
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "r2I4oQ",
+                                          "name": "List",
+                                          "width": "fill_container",
+                                          "layout": "vertical",
+                                          "gap": 10,
+                                          "children": [
+                                            {
+                                              "type": "frame",
+                                              "id": "a1IZdw",
+                                              "name": "Bullet",
+                                              "width": "fill_container",
+                                              "gap": 10,
+                                              "alignItems": "center",
+                                              "children": [
+                                                {
+                                                  "type": "icon",
+                                                  "id": "hoKcb",
+                                                  "name": "Tick",
+                                                  "width": 16,
+                                                  "height": 16,
+                                                  "icon": "check",
+                                                  "library": "lucide",
+                                                  "fill": "#000000"
+                                                },
+                                                {
+                                                  "type": "text",
+                                                  "id": "G0LJ5",
+                                                  "name": "Label",
+                                                  "fill": "$ui:color-text-primary",
+                                                  "textGrowth": "fixed-width",
+                                                  "width": "fill_container",
+                                                  "content": "Account names and balances, as before",
+                                                  "fontFamily": "$ui:type-family-body",
+                                                  "fontSize": "$ui:type-size-body-md",
+                                                  "fontWeight": "normal"
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "type": "frame",
+                                              "id": "jYJGh",
+                                              "name": "Bullet",
+                                              "width": "fill_container",
+                                              "gap": 10,
+                                              "alignItems": "center",
+                                              "children": [
+                                                {
+                                                  "type": "icon",
+                                                  "id": "s7Lez",
+                                                  "name": "Tick",
+                                                  "width": 16,
+                                                  "height": 16,
+                                                  "icon": "check",
+                                                  "library": "lucide",
+                                                  "fill": "#000000"
+                                                },
+                                                {
+                                                  "type": "text",
+                                                  "id": "rME4g",
+                                                  "name": "Label",
+                                                  "fill": "$ui:color-text-primary",
+                                                  "textGrowth": "fixed-width",
+                                                  "width": "fill_container",
+                                                  "content": "Transactions on the accounts you own",
+                                                  "fontFamily": "$ui:type-family-body",
+                                                  "fontSize": "$ui:type-size-body-md",
+                                                  "fontWeight": "normal"
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "type": "frame",
+                                              "id": "d6Skh",
+                                              "name": "Bullet",
+                                              "width": "fill_container",
+                                              "gap": 10,
+                                              "alignItems": "center",
+                                              "children": [
+                                                {
+                                                  "type": "icon",
+                                                  "id": "XoYhY",
+                                                  "name": "Cross",
+                                                  "width": 16,
+                                                  "height": 16,
+                                                  "icon": "x",
+                                                  "library": "lucide",
+                                                  "fill": "$ui:color-text-secondary"
+                                                },
+                                                {
+                                                  "type": "text",
+                                                  "id": "X2qKfC",
+                                                  "name": "Label",
+                                                  "fill": "$ui:color-text-secondary",
+                                                  "textGrowth": "fixed-width",
+                                                  "width": "fill_container",
+                                                  "content": "Never your login, your password or your card number",
+                                                  "fontFamily": "$ui:type-family-body",
+                                                  "fontSize": "$ui:type-size-body-md",
+                                                  "fontWeight": "normal"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "O3uFkT",
+                                          "name": "Helper",
+                                          "fill": "$ui:color-text-secondary",
+                                          "textGrowth": "fixed-width",
+                                          "width": 564,
+                                          "content": "Monzo's access will run out on 17 December 2026. That date is Monzo's own limit, not a wimm setting.",
+                                          "fontFamily": "$ui:type-family-body",
+                                          "fontSize": "$ui:type-size-body-sm",
+                                          "fontWeight": "normal"
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "qyOUn",
+                                          "name": "Actions",
+                                          "width": "fill_container",
+                                          "gap": 12,
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "id": "ES1bM",
+                                              "type": "ref",
+                                              "ref": "ui:W2gOKx",
+                                              "name": "Continue",
+                                              "descendants": {
+                                                "ui:iYHDG": {
+                                                  "content": "Continue to Monzo"
+                                                }
+                                              }
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "FYQYu",
+                                              "name": "Link",
+                                              "fill": "$ui:color-accent",
+                                              "content": "Not now",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": "$ui:type-size-body-md",
+                                              "fontWeight": "600"
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Iqkqm",
+                  "name": "Transition",
+                  "width": 230,
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    300,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "YGImc",
+                      "name": "Arrow",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "arrow-right",
+                      "library": "lucide",
+                      "fill": "$ui:color-text-placeholder"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Lgfrb",
+                      "name": "Action",
+                      "fill": "$ui:color-text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 214,
+                      "content": "Member confirms at Monzo and Monzo returns them to wimm. wimm exchanges the return and starts reading.",
+                      "textAlign": "center",
+                      "fontFamily": "$ui:type-family-body",
+                      "fontSize": "$ui:type-size-body-sm",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "fcI9i",
+                  "name": "02 · Transactions",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "F8Bbw",
+                      "name": "Step label",
+                      "fill": "$ui:color-text-primary",
+                      "content": "02 · Transactions",
+                      "fontFamily": "$ui:type-family-body",
+                      "fontSize": "$ui:type-size-body-md",
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Bnea1",
+                      "name": "J08.A / 02 · Transactions / Wide / Bank now included · plate",
+                      "clip": true,
+                      "width": 1442,
+                      "fill": "$ui:color-bg-surface",
+                      "cornerRadius": "$ui:radius-lg",
+                      "stroke": "$ui:color-border-strong",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ZAg2V",
+                          "name": "Plate title",
+                          "width": "fill_container",
+                          "height": 44,
+                          "fill": "$ui:color-bg-subtle",
+                          "gap": "$ui:space-3",
+                          "padding": [
+                            0,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ur4sK",
+                              "name": "Name",
+                              "fill": "$ui:color-text-primary",
+                              "content": "J08.A / 02 · Transactions / Wide / Bank now included",
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "TPIPZ",
+                              "name": "Spacer",
+                              "width": "fill_container",
+                              "height": 1
+                            },
+                            {
+                              "type": "text",
+                              "id": "KdDVB",
+                              "name": "Regime",
+                              "fill": "$ui:color-text-placeholder",
+                              "content": "WIDE 1440",
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "k4Wlu7",
+                          "name": "Trigger",
+                          "width": "fill_container",
+                          "height": 40,
+                          "fill": "$ui:color-bg-surface",
+                          "stroke": "$ui:color-border-subtle",
+                          "strokeWidth": 1,
+                          "padding": [
+                            0,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "vCt5G",
+                              "name": "Trigger text",
+                              "fill": "$ui:color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": 1408,
+                              "content": "Reached when: the member returns from Monzo having widened what it grants.",
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "NwGCZ",
+                          "type": "ref",
+                          "ref": "ui:IGbQe",
+                          "name": "J08.A / 02 · Transactions / Wide / Bank now included",
+                          "width": 1440,
+                          "height": 900,
+                          "theme": {
+                            "ui:device": "wide"
+                          },
+                          "descendants": {
+                            "ui:D83An/ui:W4cIE8/ui:PwD8Z": {
+                              "fill": "#FFFFFF00"
+                            },
+                            "ui:D83An/ui:W4cIE8/ui:PwD8Z/ui:TVqlB": {
+                              "fill": "$ui:color-text-secondary"
+                            },
+                            "ui:D83An/ui:W4cIE8/ui:PwD8Z/ui:KfRDI": {
+                              "fill": "$ui:color-text-primary",
+                              "fontWeight": "normal"
+                            },
+                            "ui:D83An/ui:W4cIE8/ui:l4tOM": {
+                              "enabled": true,
+                              "fill": "$ui:color-accent-subtle"
+                            },
+                            "ui:D83An/ui:W4cIE8/ui:l4tOM/ui:TVqlB": {
+                              "fill": "$ui:color-accent"
+                            },
+                            "ui:D83An/ui:W4cIE8/ui:l4tOM/ui:KfRDI": {
+                              "fill": "$ui:color-accent",
+                              "fontWeight": "600"
+                            },
+                            "ui:xNVFG": {
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "R3DEY",
+                                  "name": "Page",
+                                  "width": "fill_container",
+                                  "height": "fill_container",
+                                  "layout": "vertical",
+                                  "gap": 24,
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "lEyNx",
+                                      "name": "Page header",
+                                      "width": "fill_container",
+                                      "gap": 16,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "frame",
+                                          "id": "t5UIzP",
+                                          "name": "Heading",
+                                          "width": "fill_container",
+                                          "layout": "vertical",
+                                          "gap": 4,
+                                          "children": [
+                                            {
+                                              "type": "text",
+                                              "id": "ukAMQ",
+                                              "name": "Title",
+                                              "fill": "$ui:color-text-primary",
+                                              "content": "Transactions",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": "$ui:type-size-page-title",
+                                              "fontWeight": "bold"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "WIzzY",
+                                              "name": "Lede",
+                                              "fill": "$ui:color-text-secondary",
+                                              "content": "Every account you own, newest first.",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": "$ui:type-size-body-md",
+                                              "fontWeight": "normal"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "id": "bCXOt",
+                                          "type": "ref",
+                                          "ref": "ui:W2gOKx",
+                                          "name": "Refresh",
+                                          "descendants": {
+                                            "ui:iYHDG": {
+                                              "content": "Refresh"
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": "FpYdP",
+                                      "type": "ref",
+                                      "ref": "ui:WFSg5",
+                                      "name": "Notice",
+                                      "width": "fill_container",
+                                      "fill": "$ui:color-feedback-info-bg",
+                                      "stroke": "$ui:color-feedback-info",
+                                      "descendants": {
+                                        "ui:g1efk1": {
+                                          "icon": "info",
+                                          "fill": "$ui:color-feedback-info"
+                                        },
+                                        "ui:Z5ONBF": {
+                                          "content": "Monzo is sending transactions now"
+                                        },
+                                        "ui:NAIMe": {
+                                          "content": "This is the first read, so it goes back as far as Monzo will give. Nothing about who owns these accounts has changed."
+                                        },
+                                        "ui:gofcu": {
+                                          "enabled": false
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "Q8xr0",
+                                      "name": "Ledger",
+                                      "clip": true,
+                                      "width": "fill_container",
+                                      "fill": "$ui:color-bg-elevated",
+                                      "cornerRadius": "$ui:radius-lg",
+                                      "stroke": "$ui:color-border-default",
+                                      "strokeWidth": 1,
+                                      "strokeAlignment": "inner",
+                                      "layout": "vertical",
+                                      "children": [
+                                        {
+                                          "type": "frame",
+                                          "id": "eP8dn",
+                                          "name": "Toolbar",
+                                          "width": "fill_container",
+                                          "height": 48,
+                                          "stroke": "$ui:color-border-default",
+                                          "strokeWidth": {
+                                            "bottom": 1
+                                          },
+                                          "strokeAlignment": "inner",
+                                          "gap": 12,
+                                          "padding": [
+                                            0,
+                                            "$ui:density-cell-padding-x"
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "text",
+                                              "id": "s0of2Z",
+                                              "name": "Meta",
+                                              "fill": "$ui:color-text-primary",
+                                              "textGrowth": "fixed-width",
+                                              "width": "fill_container",
+                                              "content": "382 transactions",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 13,
+                                              "fontWeight": "500"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "LgZGi",
+                                              "name": "Helper",
+                                              "fill": "$ui:color-text-secondary",
+                                              "content": "Updated at 09:14. Reaching back to 4 June 2026.",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": "$ui:type-size-body-sm",
+                                              "fontWeight": "normal"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "sKLZ8",
+                                          "name": "Header",
+                                          "width": "fill_container",
+                                          "height": 38,
+                                          "fill": "$ui:color-bg-surface",
+                                          "stroke": "$ui:color-border-default",
+                                          "strokeWidth": {
+                                            "bottom": 1
+                                          },
+                                          "strokeAlignment": "inner",
+                                          "gap": 12,
+                                          "padding": [
+                                            0,
+                                            "$ui:density-cell-padding-x"
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "frame",
+                                              "id": "LydIv",
+                                              "name": "Gap",
+                                              "width": 28,
+                                              "height": 1
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "wWLbv",
+                                              "name": "Label",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": "fill_container",
+                                              "content": "Description",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "CBKwI",
+                                              "name": "Label",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": 220,
+                                              "content": "Account",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            },
+                                            {
+                                              "type": "frame",
+                                              "id": "bLsw9",
+                                              "name": "Gap",
+                                              "width": 92,
+                                              "height": 1
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "hL6Pk",
+                                              "name": "Label",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": 52,
+                                              "content": "Date",
+                                              "textAlign": "right",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "gvQGX",
+                                              "name": "Label",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": 112,
+                                              "content": "Amount",
+                                              "textAlign": "right",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "U6Svj",
+                                          "name": "Day",
+                                          "width": "fill_container",
+                                          "height": 32,
+                                          "fill": "$ui:color-bg-subtle",
+                                          "stroke": "$ui:color-border-subtle",
+                                          "strokeWidth": {
+                                            "bottom": 1
+                                          },
+                                          "strokeAlignment": "inner",
+                                          "padding": [
+                                            0,
+                                            "$ui:density-cell-padding-x"
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "text",
+                                              "id": "J15Hh",
+                                              "name": "Label",
+                                              "fill": "$ui:color-text-secondary",
+                                              "content": "Today",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "hopJ0",
+                                          "name": "Row",
+                                          "width": "fill_container",
+                                          "height": 56,
+                                          "stroke": "$ui:color-border-subtle",
+                                          "strokeWidth": {
+                                            "bottom": 1
+                                          },
+                                          "strokeAlignment": "inner",
+                                          "gap": 12,
+                                          "padding": [
+                                            0,
+                                            "$ui:density-cell-padding-x"
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "id": "fbtyJ",
+                                              "type": "ref",
+                                              "ref": "ui:Z2oYAy",
+                                              "name": "Mark",
+                                              "width": 28,
+                                              "height": 28,
+                                              "descendants": {
+                                                "ui:rv5n0": {
+                                                  "content": "PD",
+                                                  "fontSize": 11
+                                                }
+                                              }
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "b36Az",
+                                              "name": "Name",
+                                              "fill": "$ui:color-text-primary",
+                                              "textGrowth": "fixed-width",
+                                              "width": "fill_container",
+                                              "content": "Pingo Doce",
+                                              "lineHeight": "$ui:type-line-table",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 13,
+                                              "fontWeight": "500"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "OMOQV",
+                                              "name": "Bank",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": 220,
+                                              "content": "Current account · Monzo",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 12,
+                                              "fontWeight": "normal"
+                                            },
+                                            {
+                                              "type": "frame",
+                                              "id": "DoYxM",
+                                              "name": "Status",
+                                              "width": 92,
+                                              "height": 22,
+                                              "alignItems": "center"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "Rjrcc",
+                                              "name": "Meta",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": 52,
+                                              "content": "17 Sep",
+                                              "textAlign": "right",
+                                              "fontFamily": "$ui:type-family-mono",
+                                              "fontSize": 11,
+                                              "fontWeight": "normal"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "xu9p2",
+                                              "name": "Balance",
+                                              "fill": "$ui:color-amount-negative",
+                                              "textGrowth": "fixed-width",
+                                              "width": 112,
+                                              "content": "−€42.18",
+                                              "textAlign": "right",
+                                              "fontFamily": "$ui:type-family-mono",
+                                              "fontSize": 13,
+                                              "fontWeight": "normal"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "jGs6K",
+                                          "name": "Row",
+                                          "width": "fill_container",
+                                          "height": 56,
+                                          "stroke": "$ui:color-border-subtle",
+                                          "strokeWidth": {
+                                            "bottom": 1
+                                          },
+                                          "strokeAlignment": "inner",
+                                          "gap": 12,
+                                          "padding": [
+                                            0,
+                                            "$ui:density-cell-padding-x"
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "id": "BPnen",
+                                              "type": "ref",
+                                              "ref": "ui:Z2oYAy",
+                                              "name": "Mark",
+                                              "width": 28,
+                                              "height": 28,
+                                              "descendants": {
+                                                "ui:rv5n0": {
+                                                  "content": "AR",
+                                                  "fontSize": 11
+                                                }
+                                              }
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "NwDAB",
+                                              "name": "Name",
+                                              "fill": "$ui:color-text-primary",
+                                              "textGrowth": "fixed-width",
+                                              "width": "fill_container",
+                                              "content": "Transfer to Ana Reis",
+                                              "lineHeight": "$ui:type-line-table",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 13,
+                                              "fontWeight": "500"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "GQChV",
+                                              "name": "Bank",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": 220,
+                                              "content": "Joint savings · Montepio",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 12,
+                                              "fontWeight": "normal"
+                                            },
+                                            {
+                                              "type": "frame",
+                                              "id": "Y0z6CC",
+                                              "name": "Status",
+                                              "width": 92,
+                                              "height": 22,
+                                              "alignItems": "center",
+                                              "children": [
+                                                {
+                                                  "id": "Ac5LX",
+                                                  "type": "ref",
+                                                  "ref": "ui:iyeM0",
+                                                  "name": "Unsettled",
+                                                  "descendants": {
+                                                    "ui:HnFBv": {
+                                                      "content": "Not settled"
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "QhZhJ",
+                                              "name": "Meta",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": 52,
+                                              "content": "17 Sep",
+                                              "textAlign": "right",
+                                              "fontFamily": "$ui:type-family-mono",
+                                              "fontSize": 11,
+                                              "fontWeight": "normal"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "Ab8Nc",
+                                              "name": "Balance",
+                                              "fill": "$ui:color-amount-negative",
+                                              "textGrowth": "fixed-width",
+                                              "width": 112,
+                                              "content": "−€60.00",
+                                              "textAlign": "right",
+                                              "fontFamily": "$ui:type-family-mono",
+                                              "fontSize": 13,
+                                              "fontWeight": "normal"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "XkrWb",
+                                          "name": "Day",
+                                          "width": "fill_container",
+                                          "height": 32,
+                                          "fill": "$ui:color-bg-subtle",
+                                          "stroke": "$ui:color-border-subtle",
+                                          "strokeWidth": {
+                                            "bottom": 1
+                                          },
+                                          "strokeAlignment": "inner",
+                                          "padding": [
+                                            0,
+                                            "$ui:density-cell-padding-x"
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "text",
+                                              "id": "WNfdb",
+                                              "name": "Label",
+                                              "fill": "$ui:color-text-secondary",
+                                              "content": "Yesterday",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "VlMGG",
+                                          "name": "Row",
+                                          "width": "fill_container",
+                                          "height": 56,
+                                          "stroke": "$ui:color-border-subtle",
+                                          "strokeWidth": {
+                                            "bottom": 1
+                                          },
+                                          "strokeAlignment": "inner",
+                                          "gap": 12,
+                                          "padding": [
+                                            0,
+                                            "$ui:density-cell-padding-x"
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "id": "H8Gnl",
+                                              "type": "ref",
+                                              "ref": "ui:Z2oYAy",
+                                              "name": "Mark",
+                                              "width": 28,
+                                              "height": 28,
+                                              "descendants": {
+                                                "ui:rv5n0": {
+                                                  "content": "GA",
+                                                  "fontSize": 11
+                                                }
+                                              }
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "YXk5J",
+                                              "name": "Name",
+                                              "fill": "$ui:color-text-primary",
+                                              "textGrowth": "fixed-width",
+                                              "width": "fill_container",
+                                              "content": "Galp",
+                                              "lineHeight": "$ui:type-line-table",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 13,
+                                              "fontWeight": "500"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "B5atJO",
+                                              "name": "Bank",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": 220,
+                                              "content": "Current account · Monzo",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 12,
+                                              "fontWeight": "normal"
+                                            },
+                                            {
+                                              "type": "frame",
+                                              "id": "s9gA1",
+                                              "name": "Status",
+                                              "width": 92,
+                                              "height": 22,
+                                              "alignItems": "center"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "dUWNs",
+                                              "name": "Meta",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": 52,
+                                              "content": "16 Sep",
+                                              "textAlign": "right",
+                                              "fontFamily": "$ui:type-family-mono",
+                                              "fontSize": 11,
+                                              "fontWeight": "normal"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "Iqz04",
+                                              "name": "Balance",
+                                              "fill": "$ui:color-amount-negative",
+                                              "textGrowth": "fixed-width",
+                                              "width": 112,
+                                              "content": "−€71.40",
+                                              "textAlign": "right",
+                                              "fontFamily": "$ui:type-family-mono",
+                                              "fontSize": 13,
+                                              "fontWeight": "normal"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "u52AG2",
+                                          "name": "Row",
+                                          "width": "fill_container",
+                                          "height": 56,
+                                          "stroke": "$ui:color-border-subtle",
+                                          "strokeWidth": {
+                                            "bottom": 1
+                                          },
+                                          "strokeAlignment": "inner",
+                                          "gap": 12,
+                                          "padding": [
+                                            0,
+                                            "$ui:density-cell-padding-x"
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "id": "jiYg9",
+                                              "type": "ref",
+                                              "ref": "ui:Z2oYAy",
+                                              "name": "Mark",
+                                              "width": 28,
+                                              "height": 28,
+                                              "descendants": {
+                                                "ui:rv5n0": {
+                                                  "content": "SA",
+                                                  "fontSize": 11
+                                                }
+                                              }
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "Jz7Kv",
+                                              "name": "Name",
+                                              "fill": "$ui:color-text-primary",
+                                              "textGrowth": "fixed-width",
+                                              "width": "fill_container",
+                                              "content": "Salary",
+                                              "lineHeight": "$ui:type-line-table",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 13,
+                                              "fontWeight": "500"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "VZOSA",
+                                              "name": "Bank",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": 220,
+                                              "content": "Current account · Monzo",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 12,
+                                              "fontWeight": "normal"
+                                            },
+                                            {
+                                              "type": "frame",
+                                              "id": "c9Nxqt",
+                                              "name": "Status",
+                                              "width": 92,
+                                              "height": 22,
+                                              "alignItems": "center"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "QWfzN",
+                                              "name": "Meta",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": 52,
+                                              "content": "16 Sep",
+                                              "textAlign": "right",
+                                              "fontFamily": "$ui:type-family-mono",
+                                              "fontSize": 11,
+                                              "fontWeight": "normal"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "wXTIe",
+                                              "name": "Balance",
+                                              "fill": "$ui:color-amount-positive",
+                                              "textGrowth": "fixed-width",
+                                              "width": 112,
+                                              "content": "+€2,180.00",
+                                              "textAlign": "right",
+                                              "fontFamily": "$ui:type-family-mono",
+                                              "fontSize": 13,
+                                              "fontWeight": "normal"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "R5njQ",
+                                          "name": "Row",
+                                          "width": "fill_container",
+                                          "height": 56,
+                                          "stroke": "$ui:color-border-subtle",
+                                          "strokeWidth": {
+                                            "bottom": 1
+                                          },
+                                          "strokeAlignment": "inner",
+                                          "gap": 12,
+                                          "padding": [
+                                            0,
+                                            "$ui:density-cell-padding-x"
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "id": "dr2qR",
+                                              "type": "ref",
+                                              "ref": "ui:Z2oYAy",
+                                              "name": "Mark",
+                                              "width": 28,
+                                              "height": 28,
+                                              "descendants": {
+                                                "ui:rv5n0": {
+                                                  "content": "NO",
+                                                  "fontSize": 11
+                                                }
+                                              }
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "LKRyP",
+                                              "name": "Name",
+                                              "fill": "$ui:color-text-primary",
+                                              "textGrowth": "fixed-width",
+                                              "width": "fill_container",
+                                              "content": "NOS",
+                                              "lineHeight": "$ui:type-line-table",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 13,
+                                              "fontWeight": "500"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "iXHSH",
+                                              "name": "Bank",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": 220,
+                                              "content": "Joint savings · Montepio",
+                                              "fontFamily": "$ui:type-family-body",
+                                              "fontSize": 12,
+                                              "fontWeight": "normal"
+                                            },
+                                            {
+                                              "type": "frame",
+                                              "id": "V1tKhk",
+                                              "name": "Status",
+                                              "width": 92,
+                                              "height": 22,
+                                              "alignItems": "center"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "XOgbx",
+                                              "name": "Meta",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": 52,
+                                              "content": "15 Sep",
+                                              "textAlign": "right",
+                                              "fontFamily": "$ui:type-family-mono",
+                                              "fontSize": 11,
+                                              "fontWeight": "normal"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "kHi0n",
+                                              "name": "Balance",
+                                              "fill": "$ui:color-amount-negative",
+                                              "textGrowth": "fixed-width",
+                                              "width": 112,
+                                              "content": "−€39.99",
+                                              "textAlign": "right",
+                                              "fontFamily": "$ui:type-family-mono",
+                                              "fontSize": 13,
+                                              "fontWeight": "normal"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "x4l8kv",
+                                          "name": "Footer",
+                                          "width": "fill_container",
+                                          "height": 56,
+                                          "fill": "$ui:color-bg-surface",
+                                          "stroke": "$ui:color-border-default",
+                                          "strokeWidth": {
+                                            "top": 1
+                                          },
+                                          "strokeAlignment": "inner",
+                                          "gap": 12,
+                                          "padding": [
+                                            0,
+                                            "$ui:density-cell-padding-x"
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "text",
+                                              "id": "J9rguu",
+                                              "name": "Meta",
+                                              "fill": "$ui:color-text-secondary",
+                                              "textGrowth": "fixed-width",
+                                              "width": "fill_container",
+                                              "content": "17 September to 15 September 2026",
+                                              "fontFamily": "$ui:type-family-mono",
+                                              "fontSize": 12,
+                                              "fontWeight": "normal"
+                                            },
+                                            {
+                                              "type": "frame",
+                                              "id": "iwsH0",
+                                              "name": "Paging",
+                                              "gap": 8,
+                                              "alignItems": "center",
+                                              "children": [
+                                                {
+                                                  "id": "Z9iJY",
+                                                  "type": "ref",
+                                                  "ref": "ui:W2gOKx",
+                                                  "name": "Button",
+                                                  "height": 32,
+                                                  "fill": "$ui:color-action-secondary",
+                                                  "stroke": "$ui:color-control-border",
+                                                  "strokeWidth": 1,
+                                                  "strokeAlignment": "inner",
+                                                  "descendants": {
+                                                    "ui:iYHDG": {
+                                                      "content": "Older",
+                                                      "fill": "$ui:color-text-primary",
+                                                      "fontSize": 13
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      ]
                     }
                   ]
                 }

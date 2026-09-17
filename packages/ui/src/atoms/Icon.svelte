@@ -13,7 +13,8 @@
 		| 'layout-dashboard'
 		| 'user-round-check'
 		| 'panel-left-close'
-		| 'log-out';
+		| 'log-out'
+		| 'arrow-left-right';
 
 	interface Props {
 		name: Name;
@@ -43,6 +44,7 @@
 			'm16 19 2 2 4-4'
 		],
 		'log-out': ['m16 17 5-5-5-5', 'M21 12H9', 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'],
+		'arrow-left-right': ['M8 3 4 7l4 4', 'M4 7h16', 'm16 21 4-4-4-4', 'M20 17H4'],
 		'panel-left-close': [
 			'M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
 			'M9 3v18',

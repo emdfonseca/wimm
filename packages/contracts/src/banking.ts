@@ -5,6 +5,8 @@ export {
 	Level,
 	AccountSource,
 	Failure,
+	RestoreReason,
+	TransactionStatus,
 	type Bank,
 	type Member,
 	type Money,
@@ -33,5 +35,13 @@ export {
 	type RestoreConnectionRequest,
 	type RestoreConnectionResponse,
 	type DisconnectBankRequest,
-	type DisconnectBankResponse
+	type DisconnectBankResponse,
+	type Transaction,
+	type LedgerCursor,
+	type NarrowConnection,
+	type Ledger,
+	type ListTransactionsRequest,
+	type ListTransactionsResponse,
+	type RefreshTransactionsRequest,
+	type RefreshTransactionsResponse
 } from '../gen/ts/wimm/banking/v1/banking_pb.js';

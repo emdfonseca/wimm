@@ -338,11 +338,17 @@ func TestRestoringCarriesOwnersAndGrantsForward(t *testing.T) {
 
 // Disconnecting keeps the connection row for the audit question and leaves
 // nothing openable on it.
+//
+// The accounts stay too, and this is the assertion that says so: ending wimm's
+// access and destroying what that access read are different decisions, and only
+// the first is made here (ADR 0021). What a member experiences is unchanged —
+// the accounts stop being listed — and that is checked through the one query
+// that decides it rather than by counting rows.
 func TestDisconnectingKeepsTheRowAndDestroysTheSecrets(t *testing.T) {
 	db := storetest.New(t)
 	ctx := context.Background()
 	ada := member(t, ctx, db, "ada@example.com")
-	conn, _ := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Joint", "0538"))
+	conn, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Joint", "0538"))
 
 	if err := db.DisconnectBankConnection(ctx, conn.ID); err != nil {
 		t.Fatalf("DisconnectBankConnection: %v", err)
@@ -358,8 +364,133 @@ func TestDisconnectingKeepsTheRowAndDestroysTheSecrets(t *testing.T) {
 	if len(after.GatewayRef.Ciphertext) != 0 || after.GatewayRef.KeyID != "" {
 		t.Error("a sealed value survived disconnection")
 	}
-	if got := count(t, ctx, db, "accounts"); got != 0 {
-		t.Errorf("%d accounts remain after disconnecting", got)
+
+	if got := count(t, ctx, db, "accounts"); got != 1 {
+		t.Errorf("%d accounts remain after disconnecting, want the 1 that was read", got)
+	}
+	kept, err := db.AccountByID(ctx, stored[0].ID)
+	if err != nil {
+		t.Fatalf("the account did not survive disconnection: %v", err)
+	}
+	if len(kept.GatewayUID.Ciphertext) != 0 || kept.GatewayUID.KeyID != "" {
+		t.Error("a sealed per-session identifier survived on an account after disconnection")
+	}
+
+	visible, err := db.VisibleAccounts(ctx, ada.ID, "")
+	if err != nil {
+		t.Fatalf("VisibleAccounts: %v", err)
+	}
+	if len(visible) != 0 {
+		t.Errorf("a disconnected bank's accounts are still shown: %+v", visible)
+	}
+}
+
+// Reconnecting the same bank finds the account that outlived the disconnection
+// and re-points it, rather than putting a second copy beside it. This was free
+// while disconnection deleted; it is what the identity index buys now.
+func TestReconnectingReattachesTheAccountWithEverythingOnIt(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+	grace := member(t, ctx, db, "grace@example.com")
+
+	first, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Joint", "0538"))
+	if err := db.SetAccountLevel(ctx, stored[0].ID, grace.ID, store.LevelBalance, ada.ID); err != nil {
+		t.Fatalf("granting a level: %v", err)
+	}
+	if _, err := db.Pool().Exec(ctx, `
+		insert into transactions (account_id, status, dedup_key, amount_minor, currency, booking_date)
+		values ($1, 'booked', 'ref-1', -1250, 'EUR', current_date)`, stored[0].ID); err != nil {
+		t.Fatalf("storing a transaction: %v", err)
+	}
+
+	if err := db.DisconnectBankConnection(ctx, first.ID); err != nil {
+		t.Fatalf("DisconnectBankConnection: %v", err)
+	}
+
+	second, again := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Joint", "0538"))
+
+	if got := count(t, ctx, db, "accounts"); got != 1 {
+		t.Fatalf("%d account rows after reconnecting, want 1", got)
+	}
+	if again[0].ID != stored[0].ID {
+		t.Errorf("reconnecting produced account %s, want the one that was there: %s", again[0].ID, stored[0].ID)
+	}
+	if again[0].ConnectionID == nil || *again[0].ConnectionID != second.ID {
+		t.Error("the account was not re-pointed at the new connection")
+	}
+
+	owners, err := db.AccountOwners(ctx, stored[0].ID)
+	if err != nil {
+		t.Fatalf("reading owners: %v", err)
+	}
+	if len(owners) != 1 || owners[0] != ada.ID {
+		t.Errorf("owners = %v, want the one owner it had", owners)
+	}
+
+	grants, err := db.GrantsForConnection(ctx, second.ID)
+	if err != nil {
+		t.Fatalf("reading grants: %v", err)
+	}
+	if len(grants) != 1 || grants[0].MemberID != grace.ID || grants[0].Level != store.LevelBalance {
+		t.Errorf("grants = %+v, want the one grant it had", grants)
+	}
+
+	if got := count(t, ctx, db, "transactions"); got != 1 {
+		t.Errorf("%d transactions after reconnecting, want the 1 that was read", got)
+	}
+}
+
+// An account is identified by its bank and the gateway's cross-session hash,
+// across connections rather than within one. Making a second copy
+// unrepresentable is what leaves re-attach with nothing to disambiguate: a
+// missed match would present a member with two of their own accounts, one
+// holding the history.
+func TestOneBankNeverHoldsTwoCopiesOfOneAccount(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+
+	connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Joint", "0538"))
+
+	// A second connection row at the same bank, and an account inserted
+	// directly against it: the upsert would have re-attached, so the index is
+	// asked the question on its own.
+	var secondID string
+	if err := db.Pool().QueryRow(ctx, `
+		insert into bank_connections (gateway, bank_id, bank_name, connected_by, consent_expires_at)
+		values ('enablebanking', $1, 'Montepio', $2, now() + interval '90 days')
+		returning id`, "PT:Montepio", ada.ID).Scan(&secondID); err != nil {
+		t.Fatalf("recording a second connection: %v", err)
+	}
+
+	_, err := db.Pool().Exec(ctx, `
+		insert into accounts (source, connection_id, bank_id, gateway_ref, name, currency)
+		values ('gateway', $1, $2, 'hash-1', 'Joint again', 'EUR')`, secondID, "PT:Montepio")
+	if err == nil {
+		t.Error("a second copy of one account at one bank was accepted")
+	}
+}
+
+// A gateway account whose bank is unknown cannot be re-attached after a
+// disconnection, because its bank is half of its identity.
+func TestAGatewayAccountMustCarryItsBank(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+
+	var connID string
+	if err := db.Pool().QueryRow(ctx, `
+		insert into bank_connections (gateway, bank_id, bank_name, connected_by, consent_expires_at)
+		values ('enablebanking', 'PT:Montepio', 'Montepio', $1, now() + interval '90 days')
+		returning id`, ada.ID).Scan(&connID); err != nil {
+		t.Fatalf("recording a connection: %v", err)
+	}
+
+	if _, err := db.Pool().Exec(ctx, `
+		insert into accounts (source, connection_id, gateway_ref, name, currency)
+		values ('gateway', $1, 'hash-9', 'Bankless', 'EUR')`, connID); err == nil {
+		t.Error("a gateway account with no bank was accepted")
 	}
 }
 

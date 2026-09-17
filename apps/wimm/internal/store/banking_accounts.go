@@ -338,6 +338,15 @@ func (db *DB) ReplaceConnectionAccounts(
 	}
 	defer func() { _ = tx.Rollback(ctx) }()
 
+	// An account's bank is the half of its identity that outlives the
+	// connection, so it is read from the connection being restored rather than
+	// carried in by the caller, who has no reason to know it.
+	var bankID string
+	if err := tx.QueryRow(ctx,
+		`select bank_id from bank_connections where id = $1`, connectionID).Scan(&bankID); err != nil {
+		return nil, nil, fmt.Errorf("reading the connection's bank: %w", err)
+	}
+
 	offered := make([]string, 0, len(accounts))
 	for _, a := range accounts {
 		offered = append(offered, a.GatewayRef)
@@ -371,10 +380,14 @@ func (db *DB) ReplaceConnectionAccounts(
 	// A row that did not exist is created and owned by the restoring member.
 	stored := make([]Account, 0, len(accounts))
 	for _, a := range accounts {
+		// Matched on the bank and the hash rather than on this connection, for
+		// the reason insertAccounts is: that pair is the account's identity for
+		// as long as it exists, and a row that outlived an earlier connection
+		// at this bank already has owners.
 		const exists = `select exists (
-			select 1 from accounts where connection_id = $1 and gateway_ref = $2)`
+			select 1 from accounts where bank_id = $1 and gateway_ref = $2)`
 		var known bool
-		if err := tx.QueryRow(ctx, exists, connectionID, a.GatewayRef).Scan(&known); err != nil {
+		if err := tx.QueryRow(ctx, exists, bankID, a.GatewayRef).Scan(&known); err != nil {
 			return nil, nil, fmt.Errorf("matching an account: %w", err)
 		}
 
@@ -383,7 +396,7 @@ func (db *DB) ReplaceConnectionAccounts(
 			// Already has owners; do not add one.
 			owner = ""
 		}
-		written, err := insertAccounts(ctx, tx, connectionID, []Account{a}, owner)
+		written, err := insertAccounts(ctx, tx, connectionID, bankID, []Account{a}, owner)
 		if err != nil {
 			return nil, nil, err
 		}

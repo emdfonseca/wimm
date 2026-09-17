@@ -45,6 +45,59 @@ IMPLEMENTS = {
     "J05.A / 02 · Overview": ["pages/AccountsOverview.svelte"],
     "J06.A / 01 · Overview": ["pages/AccountsOverview.svelte", "molecules/AccountRow.svelte"],
     "J06.A / 03 · Overview": ["pages/AccountsOverview.svelte", "molecules/AccountRow.svelte"],
+    # J07 · See where the money went. One screen carries every state; the
+    # compact frames are the same component with rows stacked, which is why
+    # they map to the same file rather than to a second one.
+    "J07.A / 01 · Transactions": [
+        "pages/TransactionsScreen.svelte",
+        "molecules/LedgerRow.svelte",
+        "molecules/SeekPager.svelte",
+    ],
+    "J07.A / 02 · Transactions": [
+        "pages/TransactionsScreen.svelte",
+        "molecules/LedgerRow.svelte",
+    ],
+    "J07.A / 03 · Transactions": [
+        "pages/TransactionsScreen.svelte",
+        "molecules/LedgerRow.svelte",
+        "molecules/SeekPager.svelte",
+    ],
+    "J07.A / 04 · Transactions": [
+        "pages/TransactionsScreen.svelte",
+        "molecules/LedgerRow.svelte",
+        "molecules/SeekPager.svelte",
+    ],
+    "J07.B / 01 · Transactions": ["pages/TransactionsScreen.svelte"],
+    "J07.B / 02 · Transactions": ["pages/TransactionsScreen.svelte"],
+    "J07.B / 03 · Transactions": ["pages/TransactionsScreen.svelte"],
+    "J07.B / 04 · Transactions": ["pages/TransactionsScreen.svelte"],
+    "J07.C / 01 · Transactions": [
+        "pages/TransactionsScreen.svelte",
+        "molecules/LedgerRow.svelte",
+        "molecules/SeekPager.svelte",
+    ],
+    "J07.C / 02 · Transactions": [
+        "pages/TransactionsScreen.svelte",
+        "molecules/LedgerRow.svelte",
+        "molecules/SeekPager.svelte",
+    ],
+    "J07.D / 01 · Transactions": [
+        "pages/TransactionsScreen.svelte",
+        "molecules/LedgerRow.svelte",
+        "molecules/SeekPager.svelte",
+    ],
+    "J07.D / 02 · Transactions": [
+        "pages/TransactionsScreen.svelte",
+        "molecules/LedgerRow.svelte",
+        "molecules/SeekPager.svelte",
+    ],
+    # J08 · Include a bank's transactions.
+    "J08.A / 01 · What wimm will see": ["pages/WidenConsentScreen.svelte"],
+    "J08.A / 02 · Transactions": [
+        "pages/TransactionsScreen.svelte",
+        "molecules/LedgerRow.svelte",
+        "molecules/SeekPager.svelte",
+    ],
 }
 
 # Copy a screen deliberately does not carry, and why. Each entry is a promise
@@ -58,6 +111,14 @@ ACCEPTED = {
     "Grace sees the balance; Alan sees it in full.": "names the frame's fixture members",
     "Grace sees the balance of the joint account. The personal one is nobody's, "
     "and no balance will be read for it.": "names the frame's fixture members",
+    # J07.C / 02 draws two banks because the scenario is one answering and one
+    # not, so the bank that failed has to be the second one — Montepio, which
+    # the generator reads as a fixture name rather than as the {bank} hole it
+    # substitutes for Monzo. The screen interpolates whichever bank failed, so
+    # the sentence it renders is the drawn one with the right name in it.
+    "Montepio did not answer": "the frame's second fixture bank, interpolated in the screen",
+    "Everything else is up to date. Montepio's transactions are the ones last "
+    "read at {time}.": "the frame's second fixture bank, interpolated in the screen",
 }
 
 
