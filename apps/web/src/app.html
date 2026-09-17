@@ -5,6 +5,26 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.svg" />
 		%sveltekit.head%
+		<!--
+			The stored theme, applied before anything paints.
+
+			tokens.css resolves light and dark from prefers-color-scheme and
+			lets [data-theme] override it. Setting that attribute from a
+			component would run after first paint, so a member who chose dark
+			on a light system would see a white flash on every navigation.
+
+			Inline and blocking on purpose: it must win the race with paint.
+		-->
+		<script>
+			try {
+				var stored = localStorage.getItem('wimm-theme');
+				if (stored === 'light' || stored === 'dark') {
+					document.documentElement.setAttribute('data-theme', stored);
+				}
+			} catch (e) {
+				// Storage blocked. The media query decides, which is the default.
+			}
+		</script>
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
