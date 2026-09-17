@@ -290,9 +290,18 @@ The MCP keeps one job: the document a person is actually looking at. `just
 pen-save` keeps one job with it — flushing that document, which stays in the
 app's memory until something saves it.
 
-**`pen-exec` fails closed.** A snippet that errors exits non-zero and leaves the
-file byte-identical; both are asserted, because a tool that writes garbage and
-then exits non-zero has still corrupted the artifact.
+**`pen-exec` fails closed, by restoring rather than by abstaining.** A snippet
+that errors exits non-zero and leaves the file byte-identical; both are
+asserted, because a tool that writes garbage and then exits non-zero has still
+corrupted the artifact.
+
+The shim has to *make* that true rather than report it. `pen interactive`
+applies operations one at a time and the `save()` piped after them writes
+whatever succeeded before the error, so a snippet failing part way through
+leaves the file partly rewritten. So the shim snapshots the file first and
+restores it when the output carries an error — and `bin/test-pen-exec` feeds it
+a stub that writes and then fails, asserting both that the run failed and that
+the file did not move. Reverting the restore turns three of its five cases red.
 
 **Headless saves only because it is told to.** `pen interactive` does not save on
 exit. A pipe without `save()` reports every id it created and writes none of
@@ -561,7 +570,7 @@ Sessions and enrolment tickets gain indexes on the columns the sweep scans —
 branch that reads it — built `CONCURRENTLY` in a `NO TRANSACTION` migration.
 `ceremony_challenges` already had its own.
 
-## 0018 · Reading banks through a gateway — Accepted
+## 0018 · Reading banks through a gateway — Accepted; sharing superseded by 0019
 
 **Enable Banking is the first gateway, and nothing outside one package knows its
 name.** `apps/wimm/internal/banking` holds a `Gateway` port in wimm's own
@@ -610,13 +619,18 @@ authorisation; `identification_hash` is what matches an account across them. A
 schema keyed on `uid` would lose every sharing choice the moment a member
 restored a connection, which at 180 days is certain rather than possible.
 
-**Everything the bank returns is stored, and the member chooses what is shared.**
-`POST /sessions` returns account details **once**, and no endpoint lists them
-again. So an earlier plan — store only the shared accounts, re-read the list if
-the member changes their mind — is not implementable: changing your mind would
-mean going back to your bank. Every account the session returns is stored with
-`shared` defaulting to false, and **no balance is ever read for an unshared
-account**, so wimm knows an account exists and does not know what is in it.
+**Everything the bank returns is stored.** `POST /sessions` returns account
+details **once**, and no endpoint lists them again. So an earlier plan — store
+only the accounts a member wants seen, re-read the list if they change their
+mind — is not implementable: changing your mind would mean going back to your
+bank. Every account the session returns is stored, and **no balance is ever read
+for an account nobody may see**, so wimm knows an account exists and does not
+know what is in it.
+
+*Who may see it is superseded by ADR 0019*, which replaces the `shared` boolean
+with owners and a per-member level. The reason this decision exists — details
+are returned once, so everything is stored — is unchanged, and so is the rule
+that wimm never reads what nobody may see.
 
 **The account chooser is not a consent step.** Some banks let the member narrow
 accounts in their own consent screen; others hand over everything, and wimm
@@ -699,10 +713,172 @@ gateway's decimal string, never a bare number without its currency. Totals are
 per currency and mixed currencies are never summed: wimm holds no rates, and
 inventing one would invent the number a household trusts most.
 
-**Accounts are household-visible once shared.** One instance serves one
-household, so there is no scoping rule to implement beyond `shared` itself.
-`connected_by` records whose consent is holding a connection open and who will
-have to restore it.
+**Superseded by ADR 0019.** This decision said accounts are household-visible
+once shared, with no scoping rule beyond the flag itself. An account now has
+owners and each other member a level. `connected_by` survives unchanged: it
+records whose consent is holding a connection open and who will have to restore
+it, and it confers no authority over who sees what.
 
 **The full account number is never stored.** Only enough trailing characters to
 tell two accounts at one bank apart, which is all the behaviour requires.
+
+## 0019 · Accounts have owners, and each member sees a level — Accepted
+
+**An account has owners, and an owner sees it in full.** Ownership is
+many-to-many: a joint account is owned by both partners, which is the case the
+model exists for. Ownership is never a level and never a degree — an owner sees
+everything wimm holds about their account, whatever anyone else has been given.
+
+**Every other member gets a level, per account.** Three, and no others:
+
+```text
+hidden    the account leaves no trace this member can see
+balance   the bank, the account's name, the balance and its read time
+details   balance, plus the number suffix, the account type, the holder name
+```
+
+The split is not "some fields versus more fields": it is between what a
+household needs to answer "where is our money" and what identifies an account to
+a person holding it.
+
+**Change 2's transactions do not ride on `details`; they get a fourth level.**
+The top level is named for what it grants — the account's identifying details —
+rather than "all", precisely so that it cannot silently widen. A member who
+granted it before transactions existed consented to seeing an account number,
+not to seeing someone's spending, and those are different sentences. Adding the
+fourth level is one `ALTER TABLE`, which is what the text-plus-check choice
+above was for.
+
+**Hidden is the absence of a row.** `bank_account_grants` holds only `balance`
+and `details`, so the common read — what may this member see — is a join
+returning what exists rather than a filter over what does not. A member removed
+from the household loses their visibility and their ownership by cascade, in one
+statement, with nothing to remember to clean up.
+
+**A member never holds both an owner row and a grant row on one account.**
+Ownership outranks every level, so a grant beside it is a second answer to a
+settled question. The store refuses the pair rather than resolving it: a row
+that is ignored is a row that will one day be believed.
+
+**Any owner may change owners and levels; the connecting member has no standing
+power.** Whoever holds the consent is recorded in `connected_by` because someone
+has to restore it, and that is all it confers. An account handed to its real
+owner is fully theirs, including the right to hand it on.
+
+**The connecting member owns every account a connection returns, and may disown
+it.** They linked the bank as themselves, so every account it returned is one
+they can already see by logging in there — showing it to them reveals nothing,
+and showing it with its balance is what makes the choice informed rather than a
+list of names.
+
+*Alternative:* arrive with no owner, so nothing is read until a member claims it.
+Rejected: the member would assign levels to bare names with no figures, and the
+balance is the one fact that tells a current account from a mortgage.
+
+**No balance is read for an account with no owner and no grant.** This is 0018's
+guarantee kept, with the boundary moved from "unshared" to "unowned and
+ungranted".
+
+**Every account a bank returns is read once, before anyone can disown it.** The
+return from the bank goes to Overview, where the connecting member owns
+everything that bank returned, so everything is readable and everything is
+read. Disowning is a later, separate action and stops every read after it.
+
+This is stated rather than designed away. Closing it would mean showing no
+figures until a member had finished choosing, which leaves the member who
+connects one bank and finishes staring at an empty screen — and the account
+being read is one that member can already see by logging in at their own bank,
+so the read reveals nothing to them that they did not already have.
+
+An account that reaches the unowned-and-ungranted state is never read again,
+which is the case the rule exists for: an account handed to its real owner, or
+disowned by the member who connected it, goes dark and stays dark.
+
+**Totals are per member.** Two members of one household can land on the same
+screen and correctly see different numbers. A total never announces what it
+omits, because a total that says "and three more you cannot see" reveals the
+omission it exists to respect.
+
+**Restoring carries owners and grants forward**, matched on the gateway's
+cross-session hash. An account newly offered belongs to the member who restored
+it with nobody granted; one the bank no longer offers goes with its owners and
+grants.
+
+## 0020 · A screen is finished when it matches its frame — Accepted
+
+**A UI implementation is not finished until it matches its pen frame.** Not
+"captures the intent", not "close enough" — matches. The frame is the design of
+record and the screen is its implementation, in that order.
+
+So writing a screen starts by reading its frame, not its task description:
+
+```bash
+jq -r '.. | objects | select(.name != null and (.name | startswith("J"))) | .name' \
+  apps/web/design/*.pen | sort -u
+```
+
+A `.pen` is pretty-printed JSON. Read the node tree directly and take from it
+the hierarchy and its order, every `layout`, `gap`, `padding`, `width`,
+`height`, `fontSize` and `fontWeight`, every piece of copy, and which library
+component each `ref` instances. A structure the frame does not have is not a
+detail to decide later; it is a divergence.
+
+**`just check` enforces the part a script can hold.**
+
+```text
+gen-canvas-contract.py   each drawn frame's static copy -> canvas-contract.json
+check-canvas.py          the screens implementing a frame contain that copy
+test-contract.py         the generator extracts copy and leaves fixtures
+test-canvas.py           the check refuses the differences it must refuse
+check-geometry.py        the measurements the canvas records
+```
+
+`check-canvas.py` maps every drawn frame to the files that render it, and a
+frame with no mapping fails: a drawn screen nobody built is a gap rather than a
+silence. Comments are stripped before matching, because otherwise a screen
+satisfies the check by explaining the copy instead of rendering it — which the
+first version of this check allowed.
+
+**The generator is tested harder than the check, because it fails quietly.** A
+check that refuses too much is loud and gets fixed within the hour. A generator
+that extracts too little just asserts less, nothing fails, and the screens
+drift in the gap it left. Both of its first two defects were that:
+
+```text
+a component instance overrides its innards through a `descendants` map keyed
+by library id, and those entries carry no name — so every notice title and
+body was read as unnamed and dropped, and the designed failure messages were
+reinvented in the screen with different wording
+
+any sentence holding a figure was dropped whole, which took the two messages
+naming a clock time and a date with it
+```
+
+The first cost 32 of the 59 strings now asserted. Overrides are resolved
+through the library's own id-to-name map, and a fixture inside a sentence is
+substituted for a placeholder — `{bank}`, `{member}`, `{time}`, `{date}`,
+`{count}` — rather than disqualifying the sentence. The check collapses those
+holes on both sides, so what is compared is the shape of the sentence and the
+words around the hole.
+
+**Fixture data is excluded by node name, never by guessing from text.** A frame
+draws `Monzo` and `€11,693.55`; a screen renders what the household has.
+Guessing flagged `Montepio` and `Conta à Ordem` as copy a screen must contain,
+which would have made the check unusable within a day. Copy lives in titles,
+ledes, labels, helpers and notices; `Name`, `Meta`, `Balance`, `Bank` and `Who`
+hold data.
+
+**The checks are a floor and not the standard.** They hold copy and a handful of
+numbers. They cannot see that accounts were drawn under their bank, or that a
+total is a tile rather than a figure. Passing them is not evidence of fidelity.
+
+**A deliberate difference is recorded with its reason** — in `ACCEPTED` for
+copy, in the change's `canvas.md` otherwise, with the frame redrawn to agree.
+Both directions are legitimate; an undecided difference is not.
+
+*Alternative:* image comparison, exporting each frame to PNG and diffing it
+against a screenshot of the built screen. That is what "pixel perfect" means
+literally and it is the obvious next step. It is not this decision because a
+diff across two renderers needs a tolerance, and a tolerance loose enough to
+pass two different text engines is loose enough to miss the divergences listed
+above. Copy and structure caught all of them.
