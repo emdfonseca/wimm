@@ -1,5 +1,13 @@
 {
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "defaultMode": "auto"
+  },
   "model": "opus[1m]",
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/statusline.sh"
+  },
   "modelSettings": {
     "claude-fable-5-1": {
       "effortLevel": "high"
@@ -8,13 +16,5 @@
   "tui": "fullscreen",
   "autoMemoryEnabled": false,
   "theme": "auto",
-  "agentPushNotifEnabled": true,
-  "statusLine": {
-    "type": "command",
-    "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/statusline.sh"
-  },
-  "includeCoAuthoredBy": false,
-  "permissions": {
-    "defaultMode": "auto"
-  }
+  "agentPushNotifEnabled": true
 }
