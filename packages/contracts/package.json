@@ -5,7 +5,8 @@
   "type": "module",
   "description": "wimm service contracts: protobuf definitions and the clients generated from them",
   "exports": {
-    "./identity": "./src/identity.ts"
+    "./identity": "./src/identity.ts",
+    "./banking": "./src/banking.ts"
   },
   "files": [
     "gen/ts",

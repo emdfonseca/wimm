@@ -1,0 +1,193 @@
+<script lang="ts" module>
+	/**
+	 * J03.A / 01 · Choose a bank.
+	 *
+	 * A full page rather than a dialog: connecting is complex, resumable and
+	 * deep-linkable, which is exactly the case `docs/design/surfaces.md` names
+	 * for a route-backed page.
+	 */
+	export type BankListState = 'default' | 'loading' | 'unavailable';
+
+	export interface Bank {
+		id: string;
+		name: string;
+		logoUrl?: string;
+	}
+</script>
+
+<script lang="ts">
+	import BankRow from '../molecules/BankRow.svelte';
+	import ErrorNotice from '../molecules/ErrorNotice.svelte';
+
+	interface Props {
+		banks?: Bank[];
+		state?: BankListState;
+		onselect?: (bankId: string) => void;
+		onretry?: () => void;
+	}
+
+	// Destructured under another name because a local variable called `state`
+	// makes `$state(...)` below parse as a store subscription on it. The prop
+	// stays `state`, as every other page in this library spells it.
+	let { banks = [], state: listState = 'default', onselect, onretry }: Props = $props();
+
+	let query = $state('');
+
+	const matches = $derived(
+		query.trim() === ''
+			? banks
+			: banks.filter((bank) => bank.name.toLowerCase().includes(query.trim().toLowerCase()))
+	);
+
+	/**
+	 * Announced in a live region, because a list narrowing under a member's
+	 * fingers is a change they cannot see if they are not looking at it.
+	 */
+	const resultsMessage = $derived(
+		query.trim() === ''
+			? ''
+			: matches.length === 0
+				? 'No banks match'
+				: `${matches.length} ${matches.length === 1 ? 'bank' : 'banks'} match`
+	);
+</script>
+
+<main class="screen">
+	<h1 tabindex="-1">Choose your bank</h1>
+	<p class="lede">
+		You will confirm at your bank, not here. wimm never sees your banking password.
+	</p>
+
+	{#if listState === 'unavailable'}
+		<ErrorNotice title="The bank list could not be loaded">
+			wimm could not reach the service it uses to list banks. Nothing has been connected.
+		</ErrorNotice>
+		<button type="button" class="retry" onclick={onretry}>Try again</button>
+	{:else}
+		<label class="search">
+			<span class="search-label">Search banks</span>
+			<input
+				type="search"
+				bind:value={query}
+				placeholder="Start typing a bank's name"
+				autocomplete="off"
+			/>
+		</label>
+
+		<!-- The count, not the list, is what is announced: reading every row
+		     aloud on each keystroke is noise. -->
+		<p class="results" role="status" aria-live="polite">{resultsMessage}</p>
+
+		{#if listState === 'loading'}
+			<p class="empty">Loading banks…</p>
+		{:else if matches.length === 0}
+			<div class="no-match">
+				<p class="empty">No bank matches “{query}”.</p>
+				<p class="empty-note">
+					wimm can only connect banks its open-banking service covers. If yours is not here, it
+					cannot be connected yet.
+				</p>
+			</div>
+		{:else}
+			<ul class="banks">
+				{#each matches as bank (bank.id)}
+					<li>
+						<BankRow name={bank.name} logoUrl={bank.logoUrl} onselect={() => onselect?.(bank.id)} />
+					</li>
+				{/each}
+			</ul>
+		{/if}
+	{/if}
+</main>
+
+<style>
+	.screen {
+		/* Fills the slot and packs content to the top, as the frame's Page does
+		   with a trailing spacer. A screen that does not fill gets centred by
+		   the slot instead, which is what left these floating mid-page. */
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		gap: 16px;
+		inline-size: 100%;
+	}
+
+	h1 {
+		margin: 0;
+		color: var(--color-text-primary);
+		font-family: var(--type-family-display);
+		font-size: var(--type-size-page-title);
+		font-weight: 600;
+	}
+	h1:focus-visible {
+		outline: var(--focus-ring-width) solid var(--focus-ring-color);
+		outline-offset: var(--focus-ring-offset);
+	}
+
+	.lede,
+	.empty,
+	.empty-note,
+	.results {
+		margin: 0;
+		color: var(--color-text-secondary);
+		font-family: var(--type-family-body);
+		font-size: var(--type-size-body-md);
+	}
+
+	.results,
+	.empty-note {
+		font-size: var(--type-size-body-sm);
+	}
+
+	.search {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.search-label {
+		color: var(--color-text-secondary);
+		font-family: var(--type-family-body);
+		font-size: var(--type-size-body-sm);
+	}
+
+	.search input {
+		block-size: 36px;
+		padding-inline: 12px;
+		border: 1px solid var(--color-control-border);
+		border-radius: var(--radius-control);
+		background: var(--color-bg-surface);
+		color: var(--color-text-primary);
+		font-family: var(--type-family-body);
+		font-size: var(--type-size-body-md);
+	}
+	.search input:focus-visible {
+		outline: var(--focus-ring-width) solid var(--focus-ring-color);
+		outline-offset: var(--focus-ring-offset);
+	}
+
+	.banks {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.no-match {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.retry {
+		border: none;
+		background: none;
+		padding: 0;
+		color: var(--color-accent);
+		font-family: var(--type-family-body);
+		font-size: var(--type-size-body-md);
+		text-decoration: underline;
+		cursor: pointer;
+	}
+</style>

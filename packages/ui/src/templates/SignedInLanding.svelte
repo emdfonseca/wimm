@@ -111,12 +111,21 @@
 		display: none;
 	}
 
+	/* Slot `xNVFG`: fill, vertical, padding $space-8, centred on both axes.
+	   The centring is inert for a screen that fills the slot — which every
+	   screen of content does, absorbing the slack with a trailing spacer the
+	   way the frames draw it. It is what centres a short screen, such as the
+	   empty state the library's own specimen shows.
+
+	   The padding was --space-4 and the slot says --space-8, which is why every
+	   screen sat closer to the chrome than it was drawn. */
 	.body {
 		display: flex;
 		flex: 1;
 		flex-direction: column;
 		justify-content: center;
-		padding: var(--space-4);
+		align-items: center;
+		padding: var(--space-8);
 	}
 
 	@media (min-width: 1024px) {

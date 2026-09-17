@@ -67,14 +67,19 @@ bank's access will last, using the limit that bank actually sets.
 ### Requirement: Returning from the bank
 **Story**: S1
 When a member returns from their bank having granted access, wimm SHALL take
-them straight to choosing which accounts the household sees. The one-time value
-the bank returns with SHALL be exchanged immediately and MUST NOT remain in the
-address a member can bookmark, share or find in their history.
+them straight to the household's accounts, where that bank's accounts now
+appear. The one-time value the bank returns with SHALL be exchanged immediately
+and MUST NOT remain in the address a member can bookmark, share or find in
+their history.
+
+Returning SHALL NOT ask the member anything. Every account the bank returned is
+already theirs and already invisible to everyone else, so there is no question
+at this point whose answer is not already filled in.
 
 #### Scenario: Access granted
 - **WHEN** a member confirms at their bank and is returned to wimm
-- **THEN** they are shown the accounts that bank has made available, and asked
-  which of them the household should see
+- **THEN** that bank's accounts appear among the household's accounts, already
+  theirs, and they are told that nobody else in the household sees them yet
 
 #### Scenario: The return address does not keep the one-time value
 - **WHEN** a member has finished returning from their bank
@@ -93,43 +98,76 @@ address a member can bookmark, share or find in their history.
 - **THEN** they are told the attempt has expired and offered the chance to
   start again, and no bank is connected
 
-### Requirement: Choosing which accounts the household sees
+### Requirement: Choosing who owns each account and who sees it
 **Story**: S1
-After access is granted, a member SHALL choose which of the bank's accounts the
-household sees. This SHALL be presented as a choice about what the household
-sees and MUST NOT be presented as granting or withholding access to the bank,
-because the bank has already granted it. Nothing SHALL be shared until the
-member chooses it, and the choice SHALL remain changeable afterwards.
+A member SHALL be able to choose, for each account the bank made available, who
+owns it and what each other member may see of it. This SHALL be presented as a
+choice about what the household sees and MUST NOT be presented as granting or
+withholding access to the bank, because the bank has already granted it.
 
-#### Scenario: Nothing is shared by default
+The choice SHALL be reachable at any time from the household's accounts, and
+SHALL NOT be a step a member passes through to finish connecting a bank. It is
+about who sees an account, which is a different question from whether wimm can
+read it, asked on a different day.
+
+The member who connected the bank SHALL own every account it returned when the
+choice opens, and SHALL be able to disown any of them and to add another member
+as an owner. No other member SHALL be granted any level until an owner grants it.
+Every one of these choices SHALL remain changeable afterwards by any owner of
+the account.
+
+#### Scenario: The connecting member owns what they connected
+- **WHEN** a member has connected a bank and opens the choice for it
+- **THEN** every one of them is already theirs, and they are told that nobody
+  else sees any of it yet
+
+#### Scenario: Nothing is granted to anyone by default
 - **WHEN** a member is shown the accounts a bank has made available
-- **THEN** none of them is marked as shared yet, and the member is told that
-  everyone in the household will see whichever ones they choose
+- **THEN** no other member has any level on any of them, and the member is told
+  that each other member sees only what they are given here
 
-#### Scenario: Sharing everything is one action
-- **WHEN** a member wants the household to see every account at that bank
-- **THEN** a single action selects all of them
+#### Scenario: Handing an account to the member it belongs to
+- **WHEN** a member makes another member an owner of an account and removes
+  themselves
+- **THEN** the other member sees that account in full, the first member no
+  longer sees it at all, and the first member is not offered it again as
+  something to grant
 
-#### Scenario: Finishing with nothing chosen
-- **WHEN** a member has chosen no account
-- **THEN** they cannot finish, and they are told that a bank with nothing shared
-  would show the household nothing
+#### Scenario: Giving one member the balance and another nothing
+- **WHEN** a member grants *balance* on an account to a second member and
+  leaves a third member with nothing
+- **THEN** the second member sees the bank, the name and the amount, and the
+  third member sees no trace of the account
 
-#### Scenario: Only chosen accounts appear
-- **WHEN** a member finishes having chosen some of the bank's accounts
-- **THEN** exactly those accounts appear on Overview for every member of the
-  household, and the ones not chosen appear for nobody, including the member who
-  connected the bank
+#### Scenario: Giving one member everything at one bank is one action
+- **WHEN** a member wants another member to see every account at that bank at
+  the same level
+- **THEN** a single action sets that level on all of them for that member
+
+#### Scenario: Finishing having granted nothing
+- **WHEN** a member finishes having granted no level to anybody
+- **THEN** they can finish, because the accounts are theirs and they can see
+  them; the household simply sees nothing of this bank yet
+
+#### Scenario: An account nobody owns and nobody is granted
+- **WHEN** a member disowns an account and grants no member any level on it
+- **THEN** it appears for nobody, no balance is ever read for it, and it is not
+  counted in anyone's total
 
 #### Scenario: Changing the choice later
-- **WHEN** a member reopens the choice for a connected bank
-- **THEN** they see the same accounts with their current selection, and can
-  share one that was not shared or stop sharing one that was
+- **WHEN** an owner reopens the choice for a connected bank
+- **THEN** they see the accounts they own with their current owners and levels,
+  and can change any of them
+
+#### Scenario: A member who owns nothing at a bank cannot change it
+- **WHEN** a member who owns none of a bank's accounts opens that bank's choice
+- **THEN** they can change nothing, and they see only the accounts they have
+  been granted
 
 #### Scenario: A bank that offers one account
 - **WHEN** a bank makes exactly one account available
-- **THEN** the member is still asked, because sharing it with the household is
-  still a decision, and confirming it is one action
+- **THEN** the member is still asked, because who sees it is still a decision,
+  and leaving it theirs alone is one action
 
 ### Requirement: A connection that cannot be completed
 **Story**: S1
@@ -188,25 +226,27 @@ connection as current, and MUST NOT remove it either.
 **Story**: S4
 A member SHALL be able to restore an expired connection by confirming again at
 the bank, without disconnecting first and without choosing the bank again.
-Accounts the household was already sharing SHALL still be shared afterwards,
-even though the bank issues new identifiers each time.
+Every account SHALL keep the owners and the levels it had before, even though
+the bank issues new identifiers each time.
 
 #### Scenario: Restoring access
 - **WHEN** a member chooses to restore an expired connection and confirms at
   their bank
-- **THEN** the same accounts are shared as before, their balances are read
-  again, and Overview stops saying the bank has stopped updating
+- **THEN** every account keeps the owners and the levels it had before, their
+  balances are read again, and Overview stops saying the bank has stopped
+  updating
 
 #### Scenario: The bank now offers an account it did not before
 - **WHEN** a bank makes an account available on restoring that it did not make
   available before
-- **THEN** it is not shared, and the member is told there is something new to
-  choose
+- **THEN** it belongs to the member who restored the connection, no other member
+  has any level on it, and that member is told there is something new to choose
 
-#### Scenario: The bank no longer offers an account that was shared
-- **WHEN** an account the household was sharing is not among those the bank
-  makes available on restoring
-- **THEN** it stops appearing on Overview, and the member is told which account
+#### Scenario: The bank no longer offers an account that members could see
+- **WHEN** an account members could see is not among those the bank makes
+  available on restoring
+- **THEN** it stops appearing on Overview for everyone who could see it, its
+  owners and levels go with it, and the member restoring is told which account
   the bank no longer offers
 
 #### Scenario: Restoring is refused at the bank

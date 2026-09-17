@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/xuuid/wimm/apps/wimm/internal/banking"
 )
 
 // Config is wimmd's startup configuration, already validated.
@@ -59,6 +61,28 @@ type Config struct {
 
 	// DatabaseURL names the Postgres instance wimmd owns.
 	DatabaseURL string
+
+	// BankingGateway names the open-banking adapter. Empty disables
+	// connecting entirely: the accounts screen shows its empty state, which
+	// is what lets this deploy before anyone holds gateway credentials.
+	BankingGateway string
+	// BankingEncryptionKeyPath is the file holding the keys that seal what
+	// could reach a bank. A path, never the material: an environment
+	// variable carrying a key reaches every child process and every crash
+	// report (ADR 0018).
+	BankingEncryptionKeyPath string
+	// EnableBankingApplicationID is the registered application.
+	EnableBankingApplicationID string
+	// EnableBankingPrivateKeyPath is the file holding the request signing
+	// key. A path, for the same reason.
+	EnableBankingPrivateKeyPath string
+	// EnableBankingRedirectURL must match one registered in the gateway's
+	// control panel, or every hand-off is refused at the bank.
+	EnableBankingRedirectURL string
+
+	// BalanceStaleAfter is how old a reading may be before it is shown as
+	// stale. It never hides a reading: a figure with its age is the contract.
+	BalanceStaleAfter time.Duration
 }
 
 // ErrMissingOperatorCredential is the refusal to start with the operator
@@ -77,6 +101,12 @@ const (
 	DefaultEnrolmentLinkLifetime = 24 * time.Hour
 	DefaultSessionLifetime       = 14 * 24 * time.Hour
 	DefaultCeremonyLifetime      = 5 * time.Minute
+	DefaultBalanceStaleAfter     = 24 * time.Hour
+
+	// GatewayEnableBanking is the only adapter that exists. The value is
+	// stored on every connection, so a later gateway is new connections
+	// rather than a reinterpretation of old rows.
+	GatewayEnableBanking = "enablebanking"
 
 	// Hourly is often enough that a household instance never notices the
 	// backlog, and rare enough that the deletes never compete with a request.
@@ -103,6 +133,13 @@ func Load(env func(string) string) (Config, error) {
 
 		SweepInterval:           DefaultSweepInterval,
 		RevokedSessionRetention: DefaultRevokedSessionRetention,
+
+		BankingGateway:              strings.TrimSpace(env("WIMM_BANKING_GATEWAY")),
+		BankingEncryptionKeyPath:    env("WIMM_BANKING_ENCRYPTION_KEY"),
+		EnableBankingApplicationID:  env("WIMM_ENABLEBANKING_APPLICATION_ID"),
+		EnableBankingPrivateKeyPath: env("WIMM_ENABLEBANKING_PRIVATE_KEY"),
+		EnableBankingRedirectURL:    env("WIMM_ENABLEBANKING_REDIRECT_URL"),
+		BalanceStaleAfter:           DefaultBalanceStaleAfter,
 	}
 
 	var problems []error
@@ -122,6 +159,7 @@ func Load(env func(string) string) (Config, error) {
 		{"WIMM_CEREMONY_LIFETIME", &c.CeremonyLifetime},
 		{"WIMM_SWEEP_INTERVAL", &c.SweepInterval},
 		{"WIMM_REVOKED_SESSION_RETENTION", &c.RevokedSessionRetention},
+		{"WIMM_BALANCE_STALE_AFTER", &c.BalanceStaleAfter},
 	} {
 		if raw := env(d.key); raw != "" {
 			v, err := time.ParseDuration(raw)
@@ -152,6 +190,8 @@ func Load(env func(string) string) (Config, error) {
 	if c.DatabaseURL == "" {
 		problems = append(problems, errors.New("WIMM_DATABASE_URL is not set"))
 	}
+
+	problems = append(problems, c.checkBanking()...)
 
 	// The refusal the operator surface turns on. Last, so it reads first among
 	// equals when several things are wrong.
@@ -194,4 +234,54 @@ func splitOrigins(v string) []string {
 		}
 	}
 	return out
+}
+
+// checkBanking refuses a half-configured gateway. Unset is a supported state
+// and produces no problems at all; named, every credential it needs must be
+// present and every key file must be fit to hold a key.
+//
+// A gateway that starts without its sealing key would write plaintext session
+// identifiers into the database until someone noticed, which is the failure
+// this exists to prevent — so it is a refusal to start rather than a warning.
+func (c Config) checkBanking() []error {
+	if c.BankingGateway == "" {
+		return nil
+	}
+
+	var problems []error
+	if c.BankingGateway != GatewayEnableBanking {
+		problems = append(problems, fmt.Errorf(
+			"WIMM_BANKING_GATEWAY: %q is not a gateway wimm has an adapter for (known: %s)",
+			c.BankingGateway, GatewayEnableBanking))
+	}
+
+	for _, r := range []struct{ key, value string }{
+		{"WIMM_ENABLEBANKING_APPLICATION_ID", c.EnableBankingApplicationID},
+		{"WIMM_ENABLEBANKING_REDIRECT_URL", c.EnableBankingRedirectURL},
+	} {
+		if r.value == "" {
+			problems = append(problems, fmt.Errorf("%s is not set, and %s is enabled", r.key, c.BankingGateway))
+		}
+	}
+	if c.EnableBankingRedirectURL != "" {
+		if _, err := url.Parse(c.EnableBankingRedirectURL); err != nil {
+			problems = append(problems, fmt.Errorf("WIMM_ENABLEBANKING_REDIRECT_URL: %w", err))
+		}
+	}
+
+	// Both key files, checked the same way, so neither is the one that was
+	// forgotten.
+	for _, f := range []struct{ key, path string }{
+		{"WIMM_BANKING_ENCRYPTION_KEY", c.BankingEncryptionKeyPath},
+		{"WIMM_ENABLEBANKING_PRIVATE_KEY", c.EnableBankingPrivateKeyPath},
+	} {
+		if f.path == "" {
+			problems = append(problems, fmt.Errorf("%s is not set, and %s is enabled", f.key, c.BankingGateway))
+			continue
+		}
+		if err := banking.RequireSecretFile(f.path); err != nil {
+			problems = append(problems, fmt.Errorf("%s: %w", f.key, err))
+		}
+	}
+	return problems
 }

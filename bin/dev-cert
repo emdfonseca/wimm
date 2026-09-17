@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Issue a locally-trusted certificate for the dev server: bin/dev-cert
+#
+# Enable Banking requires an https redirect URI even on localhost, so the dev
+# server has to serve TLS. mkcert installs a local certificate authority into
+# the system trust store and signs for localhost against it, which is what
+# makes the browser accept it without a warning to click through.
+#
+# The certificate lives under .devbox/, with the rest of this checkout's
+# per-machine state, and is already gitignored. It is not a secret worth
+# protecting — it signs for localhost — but it is per-machine and regenerable,
+# which is the same reason the operator credential lives there.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+dir=".devbox/certs"
+mkdir -p "$dir"
+
+cert="$dir/localhost.pem"
+key="$dir/localhost-key.pem"
+
+if [ -f "$cert" ] && [ -f "$key" ] && [ "${1:-}" != "--force" ]; then
+  echo "certificate already present: $cert (pass --force to reissue)"
+  exit 0
+fi
+
+# The CA has to be trusted before a certificate signed by it means anything.
+# Installing it prompts for a password the first time and does nothing on
+# every run after, so it is unconditional rather than guarded by a check that
+# would go stale.
+echo "installing mkcert's local CA into the system trust store (may prompt)"
+mkcert -install
+
+mkcert -cert-file "$cert" -key-file "$key" localhost 127.0.0.1 ::1
+
+chmod 600 "$key"
+echo "issued $cert"
+echo
+echo "Now serve over https and register the redirect with the gateway:"
+echo "  WIMM_BASE_URL=https://localhost:9466"
+echo "  WIMM_ENABLEBANKING_REDIRECT_URL=https://localhost:9466/connect/return"

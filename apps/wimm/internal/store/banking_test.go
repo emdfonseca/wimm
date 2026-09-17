@@ -1,0 +1,594 @@
+package store_test
+
+import (
+	"context"
+	"errors"
+	"testing"
+	"time"
+
+	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/xuuid/wimm/apps/wimm/internal/store/storetest"
+)
+
+func sealed(v string) store.Sealed {
+	return store.Sealed{Ciphertext: []byte("sealed:" + v), KeyID: "k1"}
+}
+
+// connect records a live connection with the given accounts, owned by owner.
+func connect(
+	t *testing.T, ctx context.Context, db *store.DB, owner string, consent time.Duration, accounts ...store.Account,
+) (store.BankConnection, []store.Account) {
+	t.Helper()
+
+	now, err := db.Now(ctx)
+	if err != nil {
+		t.Fatalf("reading database time: %v", err)
+	}
+
+	conn, stored, err := db.CreateBankConnection(ctx, store.BankConnection{
+		Gateway:          "enablebanking",
+		GatewayRef:       sealed("session"),
+		BankID:           "PT:Montepio",
+		BankName:         "Montepio",
+		ConnectedBy:      owner,
+		ConsentExpiresAt: now.T.Add(consent),
+	}, accounts, owner)
+	if err != nil {
+		t.Fatalf("recording a connection: %v", err)
+	}
+	return conn, stored
+}
+
+func account(ref, name, suffix string) store.Account {
+	return store.Account{
+		GatewayRef: ref, GatewayUID: sealed(ref), Name: name,
+		NumberSuffix: suffix, AccountType: "CACC", HolderName: "Ada Lovelace", Currency: "EUR",
+	}
+}
+
+// The distinction 5.3 names: a return that was already exchanged is not the
+// same answer as one that never existed, and a member reloading the page they
+// landed on must not be told their connection is unknown.
+func TestAConsumedPendingConnectionIsNotTheSameAsAnUnknownOne(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	m := member(t, ctx, db, "ada@example.com")
+
+	hash := []byte("state-hash-one")
+	if _, err := db.CreatePendingBankConnection(ctx, store.PendingBankConnection{
+		Gateway: "enablebanking", GatewayRef: "auth-1", BankID: "PT:Montepio",
+		BankName: "Montepio", RedirectURL: "https://localhost:8765/psd2/callback", StartedBy: m.ID,
+	}, hash, time.Hour); err != nil {
+		t.Fatalf("recording a pending connection: %v", err)
+	}
+
+	if _, err := db.ConsumePendingBankConnection(ctx, hash); err != nil {
+		t.Fatalf("first consume: %v", err)
+	}
+
+	_, err := db.ConsumePendingBankConnection(ctx, hash)
+	if !errors.Is(err, store.ErrPendingConnectionSpent) {
+		t.Errorf("a replayed return gave %v, want ErrPendingConnectionSpent", err)
+	}
+
+	_, err = db.ConsumePendingBankConnection(ctx, []byte("never issued"))
+	if !errors.Is(err, store.ErrNotFound) {
+		t.Errorf("an unknown return gave %v, want ErrNotFound", err)
+	}
+}
+
+// Expiry is measured against database time, so a pending connection past its
+// expiry cannot be consumed however the process clock is set.
+func TestAnExpiredPendingConnectionCannotBeConsumed(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	m := member(t, ctx, db, "ada@example.com")
+
+	hash := []byte("state-hash-expired")
+	if _, err := db.CreatePendingBankConnection(ctx, store.PendingBankConnection{
+		Gateway: "enablebanking", GatewayRef: "auth-1", BankID: "PT:Montepio",
+		BankName: "Montepio", RedirectURL: "https://x", StartedBy: m.ID,
+	}, hash, -time.Minute); err != nil {
+		t.Fatalf("recording a pending connection: %v", err)
+	}
+
+	if _, err := db.ConsumePendingBankConnection(ctx, hash); !errors.Is(err, store.ErrNotFound) {
+		t.Errorf("got %v, want ErrNotFound for an expired row", err)
+	}
+}
+
+// Every account the session returns is stored, because they are returned once.
+// The connecting member owns them all and can then disown.
+func TestEveryAccountIsStoredAndOwnedByTheConnectingMember(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+
+	_, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour,
+		account("hash-1", "Conta à Ordem", "0538"),
+		account("hash-2", "Poupança", "5594"))
+
+	if len(stored) != 2 {
+		t.Fatalf("stored %d accounts, want 2", len(stored))
+	}
+	for _, a := range stored {
+		owners, err := db.AccountOwners(ctx, a.ID)
+		if err != nil {
+			t.Fatalf("reading owners: %v", err)
+		}
+		if len(owners) != 1 || owners[0] != ada.ID {
+			t.Errorf("%s owners = %v, want just the connecting member", a.Name, owners)
+		}
+	}
+}
+
+// The visibility contract, end to end through the query that decides it.
+func TestWhatEachMemberMaySee(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+	grace := member(t, ctx, db, "grace@example.com")
+
+	_, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour,
+		account("hash-1", "Joint", "0538"),
+		account("hash-2", "Personal", "5594"),
+		account("hash-3", "Savings", "7712"))
+	joint, personal := stored[0], stored[2]
+	_ = personal
+
+	if err := db.SetAccountLevel(ctx, joint.ID, grace.ID, store.LevelBalance, ada.ID); err != nil {
+		t.Fatalf("granting: %v", err)
+	}
+
+	adaSees, err := db.VisibleAccounts(ctx, ada.ID, "")
+	if err != nil {
+		t.Fatalf("VisibleAccounts: %v", err)
+	}
+	if len(adaSees) != 3 {
+		t.Errorf("the owner sees %d accounts, want all 3", len(adaSees))
+	}
+	for _, a := range adaSees {
+		if !a.Owned || a.Level != store.LevelDetails {
+			t.Errorf("%s: owned=%v level=%q, want an owner to see it in full", a.Name, a.Owned, a.Level)
+		}
+	}
+
+	graceSees, err := db.VisibleAccounts(ctx, grace.ID, "")
+	if err != nil {
+		t.Fatalf("VisibleAccounts: %v", err)
+	}
+	if len(graceSees) != 1 {
+		t.Fatalf("the granted member sees %d accounts, want 1", len(graceSees))
+	}
+	if graceSees[0].ID != joint.ID {
+		t.Errorf("sees %q, want the joint account", graceSees[0].Name)
+	}
+	if graceSees[0].Owned {
+		t.Error("a granted member is reported as an owner")
+	}
+	if graceSees[0].Level != store.LevelBalance {
+		t.Errorf("level = %q, want balance", graceSees[0].Level)
+	}
+}
+
+// A member with nothing gets no rows at all — not a redacted row, and not a
+// count of what was withheld.
+func TestAMemberWithNoOwnershipAndNoGrantSeesNothing(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+	grace := member(t, ctx, db, "grace@example.com")
+
+	connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Personal", "0538"))
+
+	seen, err := db.VisibleAccounts(ctx, grace.ID, "")
+	if err != nil {
+		t.Fatalf("VisibleAccounts: %v", err)
+	}
+	if len(seen) != 0 {
+		t.Errorf("sees %d accounts, want none", len(seen))
+	}
+}
+
+// Ownership and a grant on one account are mutually exclusive, refused rather
+// than resolved.
+func TestAnOwnerCannotAlsoHoldAGrant(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+
+	_, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Joint", "0538"))
+
+	err := db.SetAccountLevel(ctx, stored[0].ID, ada.ID, store.LevelBalance, ada.ID)
+	if !errors.Is(err, store.ErrOwnerHoldsAGrant) {
+		t.Errorf("got %v, want ErrOwnerHoldsAGrant", err)
+	}
+}
+
+// Handing an account over removes the grant the new owner held, so the two
+// never coexist even by that route.
+func TestMakingAGranteeAnOwnerClearsTheirGrant(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+	grace := member(t, ctx, db, "grace@example.com")
+
+	_, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Joint", "0538"))
+	id := stored[0].ID
+
+	if err := db.SetAccountLevel(ctx, id, grace.ID, store.LevelBalance, ada.ID); err != nil {
+		t.Fatalf("granting: %v", err)
+	}
+	if err := db.SetAccountOwners(ctx, id, []string{ada.ID, grace.ID}); err != nil {
+		t.Fatalf("setting owners: %v", err)
+	}
+
+	seen, err := db.VisibleAccounts(ctx, grace.ID, "")
+	if err != nil {
+		t.Fatalf("VisibleAccounts: %v", err)
+	}
+	if len(seen) != 1 || !seen[0].Owned || seen[0].Level != store.LevelDetails {
+		t.Errorf("after being made an owner: %+v", seen)
+	}
+}
+
+// Disowning an account nobody else can see makes it unreadable, which is what
+// makes disowning meaningful rather than cosmetic.
+func TestAnAccountWithNoOwnerAndNoGrantIsNeverReadable(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+
+	conn, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour,
+		account("hash-1", "Joint", "0538"),
+		account("hash-2", "Personal", "5594"))
+
+	if err := db.SetAccountOwners(ctx, stored[1].ID, nil); err != nil {
+		t.Fatalf("disowning: %v", err)
+	}
+
+	readable, err := db.ReadableAccounts(ctx, conn.ID)
+	if err != nil {
+		t.Fatalf("ReadableAccounts: %v", err)
+	}
+	if len(readable) != 1 || readable[0].ID != stored[0].ID {
+		t.Errorf("readable = %d accounts, want only the one still owned", len(readable))
+	}
+}
+
+// A balance and its read time are written together: a balance without one is
+// not a balance in this system, and the schema refuses the pair being split.
+func TestABalanceIsStoredWithItsReadTime(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+	_, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Joint", "0538"))
+
+	now, err := db.Now(ctx)
+	if err != nil {
+		t.Fatalf("reading database time: %v", err)
+	}
+	if err := db.RecordBalance(ctx, stored[0].ID, 420_010, now.T); err != nil {
+		t.Fatalf("RecordBalance: %v", err)
+	}
+
+	a, err := db.AccountByID(ctx, stored[0].ID)
+	if err != nil {
+		t.Fatalf("AccountByID: %v", err)
+	}
+	if a.BalanceMinor == nil || *a.BalanceMinor != 420_010 {
+		t.Errorf("BalanceMinor = %v, want 420010", a.BalanceMinor)
+	}
+	if a.BalanceReadAt == nil {
+		t.Error("a balance was stored with no read time")
+	}
+}
+
+// Restoring: owners and grants carry forward on matched accounts, a newly
+// offered one arrives owned by the restorer with nobody granted, and a
+// withdrawn one goes and is named.
+func TestRestoringCarriesOwnersAndGrantsForward(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+	grace := member(t, ctx, db, "grace@example.com")
+
+	conn, stored := connect(t, ctx, db, ada.ID, 24*time.Hour,
+		account("hash-1", "Joint", "0538"),
+		account("hash-2", "Withdrawn", "5594"))
+
+	if err := db.SetAccountLevel(ctx, stored[0].ID, grace.ID, store.LevelDetails, ada.ID); err != nil {
+		t.Fatalf("granting: %v", err)
+	}
+
+	// The bank comes back offering the joint account with a new per-session
+	// uid, a new account, and no longer the second one.
+	restored, withdrawn, err := db.ReplaceConnectionAccounts(ctx, conn.ID, []store.Account{
+		account("hash-1", "Joint", "0538"),
+		account("hash-3", "Newly offered", "7712"),
+	}, ada.ID)
+	if err != nil {
+		t.Fatalf("ReplaceConnectionAccounts: %v", err)
+	}
+	if len(restored) != 2 {
+		t.Fatalf("restored %d accounts, want 2", len(restored))
+	}
+	if len(withdrawn) != 1 || withdrawn[0] != "Withdrawn" {
+		t.Errorf("withdrawn = %v, want the account the bank no longer offers", withdrawn)
+	}
+
+	// The grant survived the restore.
+	graceSees, err := db.VisibleAccounts(ctx, grace.ID, "")
+	if err != nil {
+		t.Fatalf("VisibleAccounts: %v", err)
+	}
+	if len(graceSees) != 1 || graceSees[0].Level != store.LevelDetails {
+		t.Errorf("grace sees %+v, want the joint account still at details", graceSees)
+	}
+
+	// The newly offered account is the restorer's, and nobody else's.
+	adaSees, err := db.VisibleAccounts(ctx, ada.ID, "")
+	if err != nil {
+		t.Fatalf("VisibleAccounts: %v", err)
+	}
+	if len(adaSees) != 2 {
+		t.Errorf("ada sees %d accounts, want 2", len(adaSees))
+	}
+}
+
+// Disconnecting keeps the connection row for the audit question and leaves
+// nothing openable on it.
+func TestDisconnectingKeepsTheRowAndDestroysTheSecrets(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+	conn, _ := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Joint", "0538"))
+
+	if err := db.DisconnectBankConnection(ctx, conn.ID); err != nil {
+		t.Fatalf("DisconnectBankConnection: %v", err)
+	}
+
+	after, err := db.BankConnectionByID(ctx, conn.ID)
+	if err != nil {
+		t.Fatalf("the connection row did not survive: %v", err)
+	}
+	if after.DisconnectedAt == nil {
+		t.Error("disconnected_at was not set")
+	}
+	if len(after.GatewayRef.Ciphertext) != 0 || after.GatewayRef.KeyID != "" {
+		t.Error("a sealed value survived disconnection")
+	}
+	if got := count(t, ctx, db, "accounts"); got != 0 {
+		t.Errorf("%d accounts remain after disconnecting", got)
+	}
+}
+
+// Consent running out destroys the secrets too, and is measured in SQL.
+func TestConsentRunningOutExpiresTheConnectionAndDestroysTheSecrets(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+
+	// ActivoBank's one day, already past.
+	conn, _ := connect(t, ctx, db, ada.ID, -time.Minute, account("hash-1", "Joint", "0538"))
+
+	n, err := db.ExpireBankConnectionsPastConsent(ctx)
+	if err != nil {
+		t.Fatalf("ExpireBankConnectionsPastConsent: %v", err)
+	}
+	if n != 1 {
+		t.Errorf("expired %d connections, want 1", n)
+	}
+
+	after, err := db.BankConnectionByID(ctx, conn.ID)
+	if err != nil {
+		t.Fatalf("BankConnectionByID: %v", err)
+	}
+	if after.ExpiredAt == nil {
+		t.Error("expired_at was not set")
+	}
+	if len(after.GatewayRef.Ciphertext) != 0 {
+		t.Error("a sealed value survived the grant running out")
+	}
+	if after.Live() {
+		t.Error("an expired connection reports itself live")
+	}
+}
+
+// A connection whose consent is still good is left alone.
+func TestALiveConnectionIsNotExpired(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+	conn, _ := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Joint", "0538"))
+
+	if _, err := db.ExpireBankConnectionsPastConsent(ctx); err != nil {
+		t.Fatalf("ExpireBankConnectionsPastConsent: %v", err)
+	}
+	after, err := db.BankConnectionByID(ctx, conn.ID)
+	if err != nil {
+		t.Fatalf("BankConnectionByID: %v", err)
+	}
+	if !after.Live() {
+		t.Error("a live connection was expired")
+	}
+}
+
+func TestOnlyAnOwnerMayChangeAnAccount(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+	grace := member(t, ctx, db, "grace@example.com")
+	_, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Joint", "0538"))
+
+	owns, err := db.MemberOwnsAccount(ctx, stored[0].ID, ada.ID)
+	if err != nil || !owns {
+		t.Errorf("MemberOwnsAccount(owner) = %v, %v", owns, err)
+	}
+	owns, err = db.MemberOwnsAccount(ctx, stored[0].ID, grace.ID)
+	if err != nil || owns {
+		t.Errorf("MemberOwnsAccount(non-owner) = %v, %v", owns, err)
+	}
+}
+
+// Removing a member takes their visibility with them, in one statement.
+func TestRemovingAMemberRemovesTheirOwnershipAndGrants(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+	grace := member(t, ctx, db, "grace@example.com")
+	_, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Joint", "0538"))
+
+	if err := db.SetAccountLevel(ctx, stored[0].ID, grace.ID, store.LevelBalance, ada.ID); err != nil {
+		t.Fatalf("granting: %v", err)
+	}
+	if _, err := db.Pool().Exec(ctx, `delete from members where id = $1`, grace.ID); err != nil {
+		t.Fatalf("removing a member: %v", err)
+	}
+
+	if got := count(t, ctx, db, "account_grants"); got != 0 {
+		t.Errorf("%d grants remain after the member was removed", got)
+	}
+}
+
+// The fourth sweep statement. Abandoned authorisations are the bulk of this
+// table: most members who reach a bank's consent screen and stop leave one.
+func TestAbandonedBankConnectionsAreSweptAndLiveOnesStay(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	m := member(t, ctx, db, "ada@example.com")
+
+	pending := func(state string, lifetime time.Duration) {
+		t.Helper()
+		if _, err := db.CreatePendingBankConnection(ctx, store.PendingBankConnection{
+			Gateway: "enablebanking", GatewayRef: "auth-" + state, BankID: "PT:Montepio",
+			BankName: "Montepio", RedirectURL: "https://x", StartedBy: m.ID,
+		}, []byte(state), lifetime); err != nil {
+			t.Fatalf("recording %s: %v", state, err)
+		}
+	}
+
+	pending("abandoned-1", -time.Hour)
+	pending("abandoned-2", -time.Minute)
+	pending("still-live", time.Hour)
+
+	n, err := db.DeleteAbandonedBankConnections(ctx)
+	if err != nil {
+		t.Fatalf("DeleteAbandonedBankConnections: %v", err)
+	}
+	if n != 2 {
+		t.Errorf("removed %d, want the 2 that expired", n)
+	}
+	if got := count(t, ctx, db, "pending_bank_connections"); got != 1 {
+		t.Errorf("%d rows remain, want the one still live", got)
+	}
+}
+
+// The backlog on an instance running for months is larger than one batch, so
+// the delete repeats until a batch comes up short — the same property the
+// other three statements have.
+func TestAbandonedBankConnectionsAreDeletedPastTheFirstBatch(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	m := member(t, ctx, db, "ada@example.com")
+
+	const expired = store.DeleteBatchSize + 5
+	if _, err := db.Pool().Exec(ctx, `
+		insert into pending_bank_connections
+			(state_hash, gateway, gateway_ref, bank_id, bank_name, redirect_url, started_by, expires_at)
+		select decode(md5(g::text), 'hex'), 'enablebanking', 'ref-' || g, 'PT:Montepio', 'Montepio',
+		       'https://x', $1, now() - make_interval(secs => g)
+		from generate_series(1, $2) g`, m.ID, expired); err != nil {
+		t.Fatalf("seeding: %v", err)
+	}
+
+	n, err := db.DeleteAbandonedBankConnections(ctx)
+	if err != nil {
+		t.Fatalf("DeleteAbandonedBankConnections: %v", err)
+	}
+	if n != expired {
+		t.Errorf("removed %d, want %d", n, expired)
+	}
+}
+
+// The decoupling, asserted rather than assumed: an account exists on its own
+// terms. Nothing in this change creates one this way, which is exactly why it
+// is worth a test — the constraint that would forbid it would otherwise be
+// discovered by whoever adds the first non-gateway account type.
+func TestAnAccountCanExistWithNoGatewayBehindIt(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+	grace := member(t, ctx, db, "grace@example.com")
+
+	var id string
+	if err := db.Pool().QueryRow(ctx, `
+		insert into accounts (source, name, currency) values ('manual', 'Cash tin', 'EUR')
+		returning id`).Scan(&id); err != nil {
+		t.Fatalf("an account with no connection was refused: %v", err)
+	}
+
+	// It is owned and shared through exactly the same tables.
+	if err := db.SetAccountOwners(ctx, id, []string{ada.ID}); err != nil {
+		t.Fatalf("owning a sourceless account: %v", err)
+	}
+	if err := db.SetAccountLevel(ctx, id, grace.ID, store.LevelBalance, ada.ID); err != nil {
+		t.Fatalf("granting on a sourceless account: %v", err)
+	}
+
+	// And it reaches both members through the one visibility query, with no
+	// connection attached.
+	adaSees, err := db.VisibleAccounts(ctx, ada.ID, "")
+	if err != nil {
+		t.Fatalf("VisibleAccounts: %v", err)
+	}
+	if len(adaSees) != 1 {
+		t.Fatalf("the owner sees %d accounts, want 1", len(adaSees))
+	}
+	if adaSees[0].Connection != nil {
+		t.Error("an account with no gateway reported a connection")
+	}
+	if adaSees[0].Source != store.SourceManual {
+		t.Errorf("Source = %q, want manual", adaSees[0].Source)
+	}
+	if !adaSees[0].Owned || adaSees[0].Level != store.LevelDetails {
+		t.Error("an owner does not see their own sourceless account in full")
+	}
+
+	graceSees, err := db.VisibleAccounts(ctx, grace.ID, "")
+	if err != nil {
+		t.Fatalf("VisibleAccounts: %v", err)
+	}
+	if len(graceSees) != 1 || graceSees[0].Level != store.LevelBalance {
+		t.Errorf("the granted member sees %+v, want it at balance", graceSees)
+	}
+}
+
+// A gateway account must carry its connection and reference, and a sourceless
+// one must carry neither. Without this the source column and the columns it
+// describes could disagree, and the disagreement would be found by a reader.
+func TestSourceAndTheGatewayColumnsCannotDisagree(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+
+	for _, tc := range []struct {
+		name string
+		sql  string
+	}{
+		{
+			"a gateway account with no connection",
+			`insert into accounts (source, name, currency) values ('gateway', 'Orphan', 'EUR')`,
+		},
+		{
+			"a manual account carrying a gateway reference",
+			`insert into accounts (source, gateway_ref, name, currency)
+			 values ('manual', 'hash-1', 'Confused', 'EUR')`,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			if _, err := db.Pool().Exec(ctx, tc.sql); err == nil {
+				t.Error("accepted")
+			}
+		})
+	}
+}

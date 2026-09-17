@@ -1,10 +1,12 @@
-## S1 · Connect my bank, and share only what I mean to
+## S1 · Connect my bank, and decide who sees what
 
 **As a** member of the household who banks somewhere wimm does not yet know about
 **I want** to hand wimm access to my bank by confirming it at the bank itself,
-and then choose which of those accounts the rest of the household sees
+and then say which of those accounts are mine, which belong to someone else in
+the house, and how much of each the others get to see
 **so that** the joint account arrives complete and correct without me copying it
-off a statement, and my personal savings does not arrive with it
+off a statement, my partner sees the balance of the account we run together
+without its number, and my personal savings is seen by nobody
 
 ### INVEST
 
@@ -13,18 +15,21 @@ off a statement, and my personal savings does not arrive with it
   Accepted, because the other split is worse: a screen that lists accounts
   before anything can create one is a screen with only an empty state.
 - **Negotiable** — Yes. It says the member confirms at their bank and then
-  chooses what to share. Which gateway carries that, and what the picker and
-  the chooser look like, are open.
+  decides ownership and levels. Which gateway carries that, and what the picker
+  and the chooser look like, are open.
 - **Valuable** — Yes, and the second half is not decoration. Some banks let a
   member narrow accounts in their own consent screen and some hand over
-  everything, so without the chooser, connecting a bank to share one account
-  shares every account at that bank to everyone in the house.
+  everything, so without the chooser, connecting a bank to show one account
+  shows every account at that bank to everyone in the house. Three levels rather
+  than a yes-or-no exist because "my partner can see we have €4,200" and "my
+  partner can see my account number" are different sentences.
 - **Estimable** — Yes, with one unknown priced in: the gateway's sandbox has to
   be reachable before the consent round-trip can be exercised end to end.
 - **Small** — **No.** It is a picker, a hand-off out of the product, a return,
-  a chooser and a failure surface. Kept whole anyway: the round-trip is the
-  story, and no half of it is usable. Splitting the chooser off would ship the
-  exposure this story exists to prevent and then close it in a later change.
+  a chooser carrying ownership and three levels, and a failure surface. Kept
+  whole anyway: the round-trip is the story, and no half of it is usable.
+  Splitting the chooser off would ship the exposure this story exists to prevent
+  and then close it in a later change.
 - **Testable** — Yes, against the gateway's sandbox banks and against the
   in-memory fake, which is what keeps `just check` off the network.
 
@@ -37,7 +42,7 @@ off a statement, and my personal savings does not arrive with it
 - `banking/bank-connections`: Requirement: Choosing a bank to connect
 - `banking/bank-connections`: Requirement: Consenting at the bank
 - `banking/bank-connections`: Requirement: Returning from the bank
-- `banking/bank-connections`: Requirement: Choosing which accounts the household sees
+- `banking/bank-connections`: Requirement: Choosing who owns each account and who sees it
 - `banking/bank-connections`: Requirement: A connection that cannot be completed
 - `banking/bank-connections`: Requirement: What reaches a bank is unreadable at rest
 
@@ -46,8 +51,8 @@ off a statement, and my personal savings does not arrive with it
 ## S2 · See what the household has, in one place
 
 **As a** member of a household whose money sits in several banks
-**I want** every shared account, with a balance I can tell the age of, and a
-total, on the screen I land on
+**I want** every account I own or have been shown, with a balance I can tell the
+age of, and a total of exactly those, on the screen I land on
 **so that** I can answer "where is my money" in one look instead of signing in
 to three banks
 
@@ -55,15 +60,17 @@ to three banks
 
 - **Independent** — **No.** It has nothing to show until S1 has run. It is the
   dependent half of the pair described in S1.
-- **Negotiable** — Yes. It states that the household sees its shared accounts
-  and a total, not how they are grouped, sorted or laid out.
+- **Negotiable** — Yes. It states that a member sees the accounts they may see
+  and a total of them, not how they are grouped, sorted or laid out, nor whether
+  an account shown at *balance* looks different from one shown in full.
 - **Valuable** — Yes, and this is where the change's value lands. S1 is plumbing
   a member endures once; S2 is what they come back for.
 - **Estimable** — Yes.
 - **Small** — Yes. One screen, one list, one total.
-- **Testable** — Yes. A member signed in to a household with shared accounts
-  sees them; a member of a household with none sees the empty state and the way
-  to fix it.
+- **Testable** — Yes, and by two people rather than one. A member sees the
+  accounts they own and those they have been granted; a second member signed in
+  to the same household sees their own narrower set and a total that matches it;
+  a member with nothing sees the empty state and the way to fix it.
 
 ### Capabilities
 
@@ -71,11 +78,11 @@ to three banks
 
 ### Satisfied by
 
-- `banking/household-accounts`: Requirement: Shared accounts belong to the household
-- `banking/household-accounts`: Requirement: Seeing the household's accounts
+- `banking/household-accounts`: Requirement: An account is seen by its owners, and by whoever they grant
+- `banking/household-accounts`: Requirement: Seeing the accounts a member may see
 - `banking/household-accounts`: Requirement: A balance is a reading, not a live figure
 - `banking/household-accounts`: Requirement: Bringing balances up to date
-- `banking/household-accounts`: Requirement: The household total
+- `banking/household-accounts`: Requirement: The total is the member's own
 - `banking/household-accounts`: Requirement: Before any bank is connected
 
 ---
@@ -125,19 +132,19 @@ become a page of stale numbers I have no way to fix
 ### INVEST
 
 - **Independent** — No. It needs a connection to have expired, so it follows S1.
-- **Negotiable** — Yes. It says access is restored and what was shared stays
-  shared; whether the member re-picks the bank, and where the prompt sits, are
+- **Negotiable** — Yes. It says access is restored and that owners and levels
+  survive; whether the member re-picks the bank, and where the prompt sits, are
   open.
 - **Valuable** — Yes, and this is not a rare path. Most banks cap consent at
-  180 days, so every connection reaches this state. Open banking has no refresh
+  90 days, so every connection reaches this state. Open banking has no refresh
   mechanism: renewal is the whole authorisation flow again, which S1 already
   builds.
 - **Estimable** — Yes. It re-enters the flow S1 draws, from a different entry
   point.
 - **Small** — Yes, given S1. It is an entry point, a prompt and the rule that
-  previously shared accounts stay shared.
+  accounts keep the owners and levels they had.
 - **Testable** — Yes. Expire a connection, restore it, and confirm the same
-  accounts are shared and reading again.
+  owners and levels are intact and reading again.
 
 ### Capabilities
 

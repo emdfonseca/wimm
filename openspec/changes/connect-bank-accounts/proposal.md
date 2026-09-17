@@ -14,22 +14,28 @@ a member can use without anyone typing a number in by hand.
 
 - A member picks their bank from a list, is sent to the bank to consent, and
   comes back to wimm with that bank's accounts.
-- **The member then chooses which of those accounts the household sees.** This
-  is not a consent step: access is already granted by the time it appears. Some
+- **The member then says who owns each account and who may see it.** This is
+  not a consent step: access is already granted by the time it appears. Some
   banks let a member narrow the accounts in their own consent screen and some
   hand over everything, so this is the only place the choice reliably exists.
-  Without it, connecting a bank to share a joint account also shares every
+  Without it, connecting a bank to show a joint account also shows every
   personal account at that bank.
-- Accounts the member shares are visible to **every** member of the household.
-  The connection records who made it, for audit and for who has to act when it
+- **Seeing an account is per member and comes in three levels**: nothing at all,
+  the balance, or the balance plus the account's identifying details. An account
+  belongs to one or more members — a joint account has two — and an owner always
+  sees their own account in full. The member who connected the bank owns
+  everything it returned until they hand it over or let it go, and nobody else
+  sees anything until they are given it.
+- Overview stops being empty. It lists the accounts that member may see, with
+  their balances and a total of exactly those — so two members of one household
+  can land on the same screen and correctly see different numbers.
+- The connection records who made it, for audit and for who has to act when it
   expires.
-- Overview stops being empty. It lists the shared accounts with their balances
-  and a household total.
 - **Balances are read when a member opens Overview**, not only when a bank is
   connected, with a control to read them again. A member sitting in front of
   the screen is exactly the case gateways do not throttle.
 - **Access expires, and the member can restore it.** Consent lasts at most what
-  each bank allows, typically 180 days. There is no refresh mechanism in open
+  each bank allows — 90 days at the banks this household uses. There is no refresh mechanism in open
   banking: renewal is the whole authorisation flow again, which this change is
   already building. Shipping without it would mean a screen that tells a member
   their bank stopped working and offers nothing.
@@ -50,12 +56,12 @@ conversion.
 ### New Capabilities
 
 - `banking/bank-connections`: a member connects a bank through an open-banking
-  gateway, chooses which of its accounts the household sees, restores access
-  when it expires, and disconnects. Covers the consent hand-off and return,
+  gateway, says who owns each of its accounts and what each other member may see
+  of them, restores access when it expires, and disconnects. Covers the consent hand-off and return,
   what a connection carries, and what a member is told when the bank refuses or
   is unreachable.
-- `banking/household-accounts`: what the household sees once a bank is
-  connected. Covers household visibility of shared accounts, the account list
+- `banking/household-accounts`: what each member sees once a bank is
+  connected. Covers ownership and the three levels, the account list
   and its balances, the freshness of a balance and how it is brought up to
   date, the household total, and the empty state.
 
@@ -70,14 +76,18 @@ they already establish.
 third-party service wimm calls outbound, and the first secret at rest beyond
 the operator credential. Needs an ADR: dependency, service, schema and secret.
 
-**Commercial.** Enable Banking's free Restricted Production tier covers accounts
-the application owner personally links, which is the shape a self-hosted
-household instance has. Whether a second household member's bank counts as
-personally linked is not answered in their documentation and has to be asked
-before this ships.
+**Commercial.** Enable Banking's free Restricted Production tier reaches only
+accounts the Control Panel user links as themselves — their Terms of Service
+refuse account information that does not belong to that user. So one member
+connects the banks they can authenticate at, joint accounts included, and wimm's
+ownership and levels decide what the rest of the household sees of them. Lifting
+that limit is a contract and KYB, which needs a company; it is not a reason to
+change gateway.
 
-**Schema.** New tables for connections, pending connections and accounts, owned
-by `wimmd`, with goose migrations. Accounts are keyed on the gateway's
+**Schema.** New tables for connections, pending connections and accounts, plus
+an owners table and a per-member grants table, owned by `wimmd`, with goose
+migrations. An account carries no `shared` flag and no single owner: both are
+questions with one answer per member. Accounts are keyed on the gateway's
 cross-session identity hash, not on a per-session identifier. Every lifetime is
 compared against database time, per ADR 0017.
 

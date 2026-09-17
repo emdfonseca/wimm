@@ -1,0 +1,317 @@
+syntax = "proto3";
+
+package wimm.banking.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+
+// Connecting a bank, choosing who sees each account, and reading balances.
+//
+// No gateway vocabulary appears anywhere in this file. "Connection" is wimm's
+// word; Enable Banking calls it a session and GoCardless a requisition, and the
+// browser must not learn which is behind it (ADR 0018). No sealed value appears
+// either: what could reach a bank never leaves the server.
+service BankingService {
+  // Banks connectable in a country, each carrying how long its consent lasts.
+  // Deadline: 10s.
+  rpc ListBanks(ListBanksRequest) returns (ListBanksResponse);
+
+  // Begin a connection and get somewhere to send the member. Deadline: 10s.
+  rpc BeginConnection(BeginConnectionRequest) returns (BeginConnectionResponse);
+
+  // Exchange the member's return for live access. Deadline: 30s — this is the
+  // call that talks to the bank and gets every account back at once.
+  rpc CompleteConnection(CompleteConnectionRequest) returns (CompleteConnectionResponse);
+
+  // The accounts on one connection, for choosing who sees them. Only an owner
+  // of at least one of them may call it. Deadline: 5s.
+  rpc ListConnectionAccounts(ListConnectionAccountsRequest) returns (ListConnectionAccountsResponse);
+
+  // Set who owns an account. Any owner may. Deadline: 5s.
+  rpc SetAccountOwners(SetAccountOwnersRequest) returns (SetAccountOwnersResponse);
+
+  // Set what one member may see of one account. Any owner may. Deadline: 5s.
+  rpc SetAccountLevel(SetAccountLevelRequest) returns (SetAccountLevelResponse);
+
+  // Everything the calling member may see, at the level they may see it, with
+  // a total per currency. Deadline: 30s — it reads balances from the banks.
+  rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse);
+
+  // Read balances again, because the member asked. Deadline: 30s.
+  rpc RefreshBalances(RefreshBalancesRequest) returns (RefreshBalancesResponse);
+
+  // Re-enter the hand-off for a connection whose access has run out.
+  // Deadline: 10s.
+  rpc RestoreConnection(RestoreConnectionRequest) returns (RestoreConnectionResponse);
+
+  // Remove a bank. Deadline: 15s.
+  rpc DisconnectBank(DisconnectBankRequest) returns (DisconnectBankResponse);
+}
+
+// What one member may see of one account they do not own.
+//
+// The zero value is UNSPECIFIED because buf requires it, and the server treats
+// UNSPECIFIED exactly as HIDDEN — never as "leave unchanged" and never as a
+// reason to refuse. That mapping is the point: an unset field, a zero-valued
+// struct and a field a client forgot all end in the member seeing nothing, so
+// the failure mode is "accidentally hidden" rather than "accidentally visible".
+// It is asserted in the handler tests rather than left to a reader.
+enum Level {
+  LEVEL_UNSPECIFIED = 0;
+  // Sees nothing of the account, and is told nothing about its existence.
+  LEVEL_HIDDEN = 1;
+  // The bank, the account's name, and its balance with the time it was read.
+  LEVEL_BALANCE = 2;
+  // Everything LEVEL_BALANCE carries, plus enough of the account number to
+  // tell two accounts at one bank apart, the account type and the holder name.
+  //
+  // It is named for what it grants rather than "all", so that it cannot widen
+  // silently: transactions get their own level rather than riding on this one
+  // (ADR 0019).
+  LEVEL_DETAILS = 3;
+}
+
+// Where an account's figures come from. An account exists on its own terms;
+// being sourced from a bank is a property some accounts have.
+enum AccountSource {
+  ACCOUNT_SOURCE_UNSPECIFIED = 0;
+  ACCOUNT_SOURCE_GATEWAY = 1;
+  ACCOUNT_SOURCE_MANUAL = 2;
+}
+
+// A signed amount in minor units with its currency. Never a float and never a
+// bare number: a number without its currency is the one that eventually gets
+// added to another (ADR 0018).
+message Money {
+  // The amount in the currency's smallest unit — cents for EUR. Signed: an
+  // overdraft is negative, and the sign is what carries direction.
+  int64 minor = 1;
+  // ISO 4217 alphabetic code.
+  string currency = 2 [(buf.validate.field).string.len = 3];
+}
+
+// A bank that can be connected.
+message Bank {
+  string id = 1;
+  string name = 2;
+  // ISO 3166-1 alpha-2.
+  string country = 3;
+  // May be empty; the UI shows a mark rather than a gap.
+  string logo_url = 4;
+  // How long this bank's consent lasts. It is the bank's limit and not a wimm
+  // policy, which is why the member is shown the resulting date before the
+  // hand-off — it is 90 days at some banks and 1 day at others.
+  int64 max_consent_seconds = 5;
+}
+
+// A member, as another member sees them named.
+message Member {
+  string id = 1;
+  string display_name = 2;
+}
+
+// A balance and when it was read. A balance without a read time is not a
+// balance in this system.
+message Balance {
+  Money money = 1;
+  google.protobuf.Timestamp read_at = 2;
+  // True when the last attempt to read failed and this is the previous
+  // reading. The figure stays on screen; it just stops claiming to be current.
+  bool stale = 3;
+}
+
+// One account, as the calling member may see it.
+//
+// Fields above the member's level are **absent, not empty**: the server does
+// not serialise what the member may not see, so there is no client-side
+// redaction step that could be forgotten or bypassed.
+message Account {
+  string id = 1;
+  AccountSource source = 2;
+
+  // The member's own level. LEVEL_DETAILS when they own it.
+  Level level = 3;
+  // True when the calling member owns this account, which outranks every level.
+  bool owned = 4;
+  // Who owns it. Shown so a household can see whose account is whose.
+  repeated Member owners = 5;
+
+  // Present at LEVEL_BALANCE and above.
+  string name = 6;
+  Balance balance = 7;
+
+  // Present only at LEVEL_DETAILS.
+  string number_suffix = 8;
+  string account_type = 9;
+  string holder_name = 10;
+
+  // The bank behind it, absent for an account no gateway sources.
+  Connection connection = 11;
+}
+
+// A live or ended connection to one bank.
+message Connection {
+  string id = 1;
+  string bank_id = 2;
+  string bank_name = 3;
+  string bank_logo_url = 4;
+  // Who made it, and who will have to restore it. It confers no authority over
+  // who sees what.
+  Member connected_by = 5;
+  // When access ends. There is no renewal in open banking: restoring is the
+  // whole flow again.
+  google.protobuf.Timestamp consent_expires_at = 6;
+  // False once access has run out, whether at the date above or early. A
+  // member experiences both identically.
+  bool live = 7;
+}
+
+// A total per currency. Mixed currencies are never summed: wimm holds no rates,
+// and inventing one would invent the number a household trusts most.
+message CurrencyTotal {
+  Money total = 1;
+  int32 account_count = 2;
+}
+
+// Why something a member tried did not work. Routed off the kind alone; no
+// gateway status code reaches the browser.
+enum Failure {
+  FAILURE_UNSPECIFIED = 0;
+  FAILURE_BANK_UNAVAILABLE = 1;
+  FAILURE_SERVICE_UNAVAILABLE = 2;
+  FAILURE_CONSENT_DECLINED = 3;
+  FAILURE_CONSENT_EXPIRED = 4;
+  FAILURE_NO_ACCOUNTS = 5;
+  FAILURE_RATE_LIMITED = 6;
+}
+
+// A bank that could not be read, named so the member is told which.
+message BankFailure {
+  string connection_id = 1;
+  string bank_name = 2;
+  Failure failure = 3;
+  // How long until it can be tried again, where the bank said. Absent means
+  // "later" rather than "now": a zero must never render as an instruction.
+  int64 retry_after_seconds = 4;
+}
+
+message ListBanksRequest {
+  string country = 1 [(buf.validate.field).string.len = 2];
+}
+
+message ListBanksResponse {
+  repeated Bank banks = 1;
+}
+
+message BeginConnectionRequest {
+  string bank_id = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message BeginConnectionResponse {
+  // Where to send the member. The server never puts anything in it that a
+  // member could bookmark and replay.
+  string handoff_url = 1;
+  // When access will end if they consent, so the screen states a real date.
+  google.protobuf.Timestamp consent_expires_at = 2;
+}
+
+message CompleteConnectionRequest {
+  // wimm's own opaque value, returned by the bank. Exchanged server side and
+  // never left in an address a member can share.
+  string state = 1 [(buf.validate.field).string.min_len = 1];
+  // The gateway's authorisation code, where it issues one.
+  string code = 2;
+  // The gateway's own refusal, where the member declined.
+  string error = 3;
+}
+
+message CompleteConnectionResponse {
+  Connection connection = 1;
+  // Every account the bank exposed, all owned by the calling member. They are
+  // returned once and cannot be listed again from the bank, which is why they
+  // are all stored and all returned here.
+  repeated Account accounts = 2;
+  // Set on a restore: accounts the bank no longer offers, named so the member
+  // is told which went.
+  repeated string withdrawn_account_names = 3;
+}
+
+message ListConnectionAccountsRequest {
+  string connection_id = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message ListConnectionAccountsResponse {
+  repeated Account accounts = 1;
+  // Every member of the household, so the chooser can offer a level per person
+  // without a second call.
+  repeated Member members = 2;
+  // What each account grants each member. Absent pairs are hidden.
+  repeated AccountGrant grants = 3;
+}
+
+// One member's level on one account, for the chooser.
+message AccountGrant {
+  string account_id = 1;
+  string member_id = 2;
+  Level level = 3;
+}
+
+message SetAccountOwnersRequest {
+  string account_id = 1 [(buf.validate.field).string.min_len = 1];
+  // May be empty: an account with no owner and no grant is never read again.
+  repeated string member_ids = 2;
+}
+
+message SetAccountOwnersResponse {
+  Account account = 1;
+}
+
+message SetAccountLevelRequest {
+  string account_id = 1 [(buf.validate.field).string.min_len = 1];
+  string member_id = 2 [(buf.validate.field).string.min_len = 1];
+  // LEVEL_HIDDEN removes the grant, and so does LEVEL_UNSPECIFIED.
+  Level level = 3;
+}
+
+message SetAccountLevelResponse {
+  Account account = 1;
+}
+
+message ListAccountsRequest {
+  // Skip reading from the banks and return what is stored. The screen a member
+  // lands on reads; a background poll of the same screen would not.
+  bool skip_read = 1;
+}
+
+message ListAccountsResponse {
+  repeated Account accounts = 1;
+  // One per currency present. Empty when the member may see nothing, rather
+  // than a total of zero.
+  repeated CurrencyTotal totals = 2;
+  // Banks that did not answer. The readings already on screen stay, with their
+  // original times; this says which could not be brought up to date.
+  repeated BankFailure failures = 3;
+}
+
+message RefreshBalancesRequest {}
+
+message RefreshBalancesResponse {
+  repeated Account accounts = 1;
+  repeated CurrencyTotal totals = 2;
+  repeated BankFailure failures = 3;
+}
+
+message RestoreConnectionRequest {
+  string connection_id = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message RestoreConnectionResponse {
+  string handoff_url = 1;
+  google.protobuf.Timestamp consent_expires_at = 2;
+}
+
+message DisconnectBankRequest {
+  string connection_id = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message DisconnectBankResponse {}

@@ -6,6 +6,7 @@ linters:
   enable:
     - bodyclose
     - copyloopvar
+    - depguard
     - errorlint
     - forbidigo
     - gocritic
@@ -16,6 +17,22 @@ linters:
     - unconvert
     - usetesting
   settings:
+    depguard:
+      rules:
+        # The seam ADR 0018 draws. A gateway adapter is the only place that
+        # knows a provider's name, wire vocabulary and status codes; everything
+        # else reaches a bank through banking.Gateway. bankingtest is
+        # deliberately not listed: it is a second implementation of the port and
+        # is meant to be imported by the tests of anything that consumes one.
+        gateway-adapters-stay-behind-the-port:
+          list-mode: lax
+          files:
+            - "!**/apps/wimm/internal/banking/**"
+          deny:
+            - pkg: github.com/xuuid/wimm/apps/wimm/internal/banking/enablebanking
+              desc: >-
+                import internal/banking and depend on banking.Gateway; only
+                code inside internal/banking may name a gateway adapter
     errcheck:
       # Writing to a terminal that has gone away is not a condition a command
       # can act on, and checking it at every call obscures the ones that matter.
@@ -46,6 +63,15 @@ linters:
         linters: [forbidigo]
       # Tests read the clock to measure themselves, which is not a lifetime.
       - path: _test\.go
+        linters: [forbidigo]
+      # The gateway adapter signs every request with a JWT, and iat/exp are
+      # values the remote API requires rather than lifetimes wimm compares
+      # anything against. The ban exists so a skewed clock cannot silently
+      # extend a session or a link; a skewed clock here makes the gateway
+      # reject the token and the request fail loudly, which is the opposite
+      # failure. The clock is injectable, and this is the only package allowed
+      # to reach for the default.
+      - path: internal/banking/enablebanking/
         linters: [forbidigo]
       # A repeated literal in a fixture is the fixture being readable, not a
       # constant waiting to be extracted.

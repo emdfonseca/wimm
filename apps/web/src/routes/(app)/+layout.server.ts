@@ -4,12 +4,12 @@ import { identity, SESSION_COOKIE } from '$lib/server/identity';
 import { call } from '$lib/server/call';
 
 /**
- * The landing page, behind a session.
+ * Everything behind a session, and everything inside the app shell.
  *
- * Someone without one is sent to sign in rather than shown a dead end, and the
- * path they were trying to reach travels as a query parameter only so far as
- * the sign-in route; wimmd records it against the attempt and ignores anything
- * a client supplies later.
+ * The session check lives here rather than in each page because a screen added
+ * later cannot forget a layout. The same reasoning applies to the shell itself
+ * in `+layout.svelte`: `/connect` shipped without it, flush to the left edge
+ * with no nav, precisely because wrapping was each page's job.
  */
 export const load: ServerLoad = async ({ cookies, url }) => {
 	try {
@@ -25,19 +25,12 @@ export const load: ServerLoad = async ({ cookies, url }) => {
 		const query: string[] = [];
 
 		// "You were signed out" is only true if they were signed in. A browser
-		// that sent no session cookie is arriving for the first time, and
-		// telling it a session ended is telling it something that never
-		// happened. The two are separate scenarios in
-		// identity/passkey-sign-in, and separate states on the canvas.
+		// that sent no session cookie is arriving for the first time.
 		if (cookies.get(SESSION_COOKIE)) {
 			query.push('expired');
-			// And clear it, so the notice is shown once rather than on every
-			// visit from now on. The session it names is already gone.
 			cookies.delete(SESSION_COOKIE, { path: '/' });
 		}
 
-		// The landing is where sign-in goes anyway, so carrying it as a return
-		// path says nothing and puts a redirect target in the URL for no reason.
 		const intended = url.pathname + url.search;
 		if (intended !== '/') query.push(`next=${encodeURIComponent(intended)}`);
 

@@ -1,49 +1,90 @@
 ## Purpose
 
 Covers what the household sees once a bank is connected: which accounts are
-shared and with whom, the balances and total on the screen a member lands on,
+owned by whom and seen by whom at what level, the balances and total on the
+screen a member lands on,
 how fresh those balances are and how they are brought up to date, and what that
 screen says before any bank has been connected at all.
 
 ## ADDED Requirements
 
-### Requirement: Shared accounts belong to the household
+### Requirement: An account is seen by its owners, and by whoever they grant
 **Story**: S2
-An account a member has chosen to share SHALL be visible to every member of the
-household, regardless of which member connected it. An account that has not been
-shared SHALL be visible to nobody. wimm SHALL record which member connected each
-bank and SHALL show that to the household, because someone has to know whose
-consent is holding a connection open and whose will have to renew it.
+An account SHALL be visible in full to every member who owns it, and an account
+MAY have more than one owner. Every other member SHALL see it only at the level
+an owner has granted them, and SHALL see nothing of it by default. There are
+three levels and no others:
 
-#### Scenario: Another member sees a newly shared account
-- **WHEN** one member connects a bank and shares two of its accounts, and a
-  different member of the same household signs in
-- **THEN** the second member sees those two accounts and their balances
+- **hidden** — the account leaves no trace anywhere that member can see. This is
+  the absence of a grant, and it is what every member who is not an owner starts
+  with.
+- **balance** — the bank, the account's name, and its balance with its read time.
+- **details** — everything *balance* shows, plus enough of the account number to
+  tell two accounts at one bank apart, the account type, and the holder name.
 
-#### Scenario: An unshared account is visible to nobody
-- **WHEN** a member connects a bank and does not share one of its accounts
-- **THEN** that account appears nowhere in wimm for any member, including the
-  member who connected the bank
+wimm SHALL record which member connected each bank and SHALL show that to the
+household, because someone has to know whose consent is holding a connection
+open and whose will have to renew it.
+
+#### Scenario: An owner sees their own account in full
+- **WHEN** a member who owns an account looks at it
+- **THEN** they see its balance and its identifying details, whatever levels
+  they have granted anyone else
+
+#### Scenario: A joint account has two owners
+- **WHEN** an account is owned by two members and a third member has been
+  granted nothing
+- **THEN** both owners see it in full and the third member sees no trace of it
+
+#### Scenario: A member granted the balance sees the amount and not the number
+- **WHEN** a member who does not own an account has been granted *balance* on it
+- **THEN** they see the bank, the account's name and its balance, and they are
+  shown no part of its account number, its type or its holder name
+
+#### Scenario: A member granted the details sees the identifiers too
+- **WHEN** a member who does not own an account has been granted *details* on it
+- **THEN** they additionally see enough of its account number to tell it from
+  another account at the same bank, its type, and its holder name
+
+#### Scenario: A member granted nothing sees no trace
+- **WHEN** a member has been granted no level on an account they do not own
+- **THEN** that account appears nowhere for them: not in the list, not in any
+  total, and not as a count of accounts withheld
+
+#### Scenario: Two members see the same household differently
+- **WHEN** one member owns three accounts and has granted a second member
+  *balance* on one of them
+- **THEN** the first member sees three accounts and the second sees one, and
+  neither is told what the other sees
 
 #### Scenario: Who connected a bank is visible
-- **WHEN** any member looks at a connected bank
+- **WHEN** any member looks at a bank whose accounts they can see
 - **THEN** they can see which member connected it and when its access ends
 
-### Requirement: Seeing the household's accounts
+### Requirement: Seeing the accounts a member may see
 **Story**: S2
-The screen a member lands on after signing in SHALL list every shared account,
-each showing its name, the bank it belongs to, enough of its number to tell two
-accounts at the same bank apart, and its balance.
+The screen a member lands on after signing in SHALL list every account that
+member may see, each showing its name, the bank it belongs to and its balance,
+and showing enough of its number to tell two accounts at the same bank apart
+wherever that member owns it or has been granted *details*.
 
 #### Scenario: The accounts are listed on arrival
-- **WHEN** a member of a household with shared accounts signs in
-- **THEN** the accounts are listed on the screen they land on, without them
+- **WHEN** a member who may see at least one account signs in
+- **THEN** those accounts are listed on the screen they land on, without them
   navigating anywhere
 
 #### Scenario: Telling two accounts at the same bank apart
-- **WHEN** a household shares two accounts at the same bank
+- **WHEN** a member owns two accounts at the same bank, or has been granted
+  *details* on them
 - **THEN** each is shown with enough of its account number to tell which is
   which, and never with the number in full
+
+#### Scenario: Two accounts at one bank seen only as balances
+- **WHEN** a member has been granted *balance* on two accounts at the same bank
+  that the bank names identically
+- **THEN** both are listed with that name and their own balances, and wimm
+  neither shows any part of their numbers nor invents anything to tell them
+  apart
 
 #### Scenario: An account the bank gave no name
 - **WHEN** a bank makes an account available without a product name
@@ -66,7 +107,7 @@ MUST NOT present a balance as current when it has not been re-read, because a
 stale number about money that is presented as live is worse than no number.
 
 #### Scenario: Balances are read when a member arrives
-- **WHEN** a member opens the screen listing the household's accounts
+- **WHEN** a member opens the screen listing the accounts they may see
 - **THEN** the balances are read from the banks as part of that arrival, so the
   figures a member sees are the ones their banks hold at that moment
 
@@ -82,13 +123,13 @@ stale number about money that is presented as live is worse than no number.
 
 ### Requirement: Bringing balances up to date
 **Story**: S2
-A member SHALL be able to ask wimm to re-read the household's balances at any
-time. Where a bank or the service reaching it refuses because wimm has asked too
+A member SHALL be able to ask wimm to re-read the balances of the accounts they
+may see at any time. Where a bank or the service reaching it refuses because wimm has asked too
 often, the member SHALL be told when it can be tried again and the balances
 already on screen SHALL remain, with their original read times.
 
 #### Scenario: Refreshing
-- **WHEN** a member asks for the household's balances to be brought up to date
+- **WHEN** a member asks for the balances they can see to be brought up to date
 - **THEN** the balances are re-read and shown with a new read time
 
 #### Scenario: Refusing to be asked again so soon
@@ -107,19 +148,27 @@ already on screen SHALL remain, with their original read times.
 - **WHEN** a household with no connected banks looks at its accounts
 - **THEN** no way to refresh is offered
 
-### Requirement: The household total
+### Requirement: The total is the member's own
 **Story**: S2
-The household's shared accounts SHALL be shown with a total. Where accounts are
-held in more than one currency, wimm SHALL show a total per currency and MUST
-NOT add different currencies together, because this change converts nothing and
-a converted figure would be invented.
+The accounts a member may see SHALL be shown with a total of exactly those, so
+two members of one household MAY see different totals and each total MUST agree
+with the accounts shown beneath it. Where those accounts are held in more than
+one currency, wimm SHALL show a total per currency and MUST NOT add different
+currencies together, because this change converts nothing and a converted figure
+would be invented.
 
 #### Scenario: A total across accounts
-- **WHEN** a household's shared accounts are all in one currency
+- **WHEN** every account a member may see is in one currency
 - **THEN** a single total is shown alongside them
 
+#### Scenario: Two members, two totals
+- **WHEN** one member owns two accounts and has granted a second member
+  *balance* on only one of them
+- **THEN** the first member's total covers both accounts, the second member's
+  total covers one, and neither is told that the other's differs
+
 #### Scenario: Accounts in more than one currency
-- **WHEN** a household shares accounts in more than one currency
+- **WHEN** the accounts a member may see are held in more than one currency
 - **THEN** a separate total is shown for each currency, and no combined figure
   is shown
 
@@ -127,9 +176,11 @@ a converted figure would be invented.
 - **WHEN** a member reads the total and adds up the listed balances themselves
 - **THEN** the two agree, including where balances are negative
 
-#### Scenario: The total counts only what is shared
-- **WHEN** a member has chosen not to share one of a bank's accounts
-- **THEN** that account's balance is absent from the total
+#### Scenario: The total counts only what that member may see
+- **WHEN** a member has been granted nothing on one of a bank's accounts
+- **THEN** that account's balance is absent from their total, and the total is
+  not marked as partial, because a total that announces what it omits reveals
+  the omission
 
 ### Requirement: Before any bank is connected
 **Story**: S2
@@ -142,7 +193,7 @@ and the way to fill it, not an empty list.
   way to start connecting one
 
 #### Scenario: No total over nothing
-- **WHEN** a household has no shared accounts
+- **WHEN** a member may see no account
 - **THEN** no total is shown, rather than a total of zero
 
 ### Requirement: Accounts leave with their connection
@@ -156,7 +207,7 @@ of the household, and SHALL stop counting towards the total.
 
 #### Scenario: The total follows
 - **WHEN** a bank is disconnected
-- **THEN** the household total no longer includes its accounts
+- **THEN** no member's total includes its accounts any longer
 
 #### Scenario: Disconnecting the only bank
 - **WHEN** a household disconnects the only bank it had connected

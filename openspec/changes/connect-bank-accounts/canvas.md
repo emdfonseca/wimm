@@ -30,15 +30,15 @@ failed one.
 | J03.A / 01 · Overview / No banks connected / Wide | `nCoPj` | 10 |
 | J03.A / 02 · Choose a bank / Wide | `kEjpg` | 10 |
 | J03.A / 03 · What wimm will see / Wide | `PobEK` | 10 |
-| J03.A / 04 · Choose accounts / Wide / Nothing chosen | `LV6Bi` | 10 |
-| J03.A / 04 · Choose accounts / Wide / Two chosen | `a7OaSW` | 10 |
+| J03.A / 04 · Choose accounts / Wide / As it opens | `LV6Bi` | 10 |
+| J03.A / 04 · Choose accounts / Wide / One disowned, one granted | `a7OaSW` | 10 |
 | J03.A / 05 · Overview / Wide / Accounts connected | `W7ixB` | 10 |
 | J03.A / 05 · Overview / Wide / Two currencies | `B3Q8Ez` | 10 |
 | J03.A / 01 · Overview / Compact / No banks connected | `u5wHxi` | 10 |
 | J03.A / 02 · Choose a bank / Compact | `A4owxP` | 10 |
 | J03.A / 03 · What wimm will see / Compact | `wWf7W` | 10 |
-| J03.A / 04 · Choose accounts / Compact / Nothing chosen | `g9XC9` | 10 |
-| J03.A / 04 · Choose accounts / Compact / Two chosen | `Es1yG` | 10 |
+| J03.A / 04 · Choose accounts / Compact / As it opens | `g9XC9` | 10 |
+| J03.A / 04 · Choose accounts / Compact / Levels stacked | `Es1yG` | 10 |
 | J03.A / 05 · Overview / Compact / Accounts connected | `Euld4` | 10 |
 | J03.B / 01 · Overview / Access not granted | `hmnWx` | 20 |
 | J03.C / 01 · Overview / Bank could not be reached | `sk2rn` | 20 |
@@ -62,16 +62,23 @@ Zone frames: `rH5Ip` 00, `eXFbr` 10, `I2ZpC` 20, `TB1k4` 30, `a1xKy` 40,
 | What wimm will see | Full page | n/a | Route-backed, `/connect/<bank>` |
 | Consent | Off product, at the bank | n/a | Leaves and returns |
 | Consent return | No surface | n/a | Exchanges server side, redirects |
-| Choose accounts | Full page | n/a | Route-backed, `/connect/<bank>/accounts` |
+| Choose accounts | Full page | n/a | Route-backed, `/connect/<bank>/accounts/<connection>`, reached from Overview |
 | Refresh balances | Inline on Overview | n/a | No navigation |
 | Restore access | Re-enters the hand-off | n/a | Route-backed, skips the picker |
 | Disconnect confirmation | Confirmation dialog | Modal | Ephemeral, not route-backed |
 
 Connecting is a full page because `docs/design/surfaces.md` names exactly this
 case: complex, resumable, deep-linkable, likely to grow. The chooser is a full
-page for the same reason and because it is route-backed — a member who closes
-the tab mid-choice has already granted access, and must be able to come back to
-it rather than lose the connection.
+page for the same reason, and it is route-backed per bank because it is where a
+member goes to answer a question about one bank, not a step they pass through
+on the way to somewhere else.
+
+**The chooser is not part of connecting.** Returning from the bank goes to
+Overview. Every account the bank returned is already owned by the connecting
+member and already invisible to everyone else, so the question the chooser asks
+has its correct answer already filled in, and asking it there protects nothing.
+Closing the tab loses no choice, because the choice that matters has already
+been made by default.
 
 The disconnect confirmation is a dialog because it is destructive and
 money-bearing, and it names the bank and how many accounts go rather than asking
@@ -91,7 +98,8 @@ its own.
 | Dialog | `ui:kEly8` | Disconnect confirmation |
 | Metric tile | `ui:oweC0` | Household total, `Delta` disabled |
 | Account selector | `ui:vHJTa` | Every account row on Overview |
-| Checkbox | `ui:UEy2Z` | Every row in the chooser |
+| Checkbox | `ui:UEy2Z` | Claiming ownership of a row in the chooser |
+| Segmented control | `ui:TBD` | Picking a member's level on a row — **missing, see below** |
 | Badge | `ui:iyeM0` | An account newly offered on restore |
 | Search field | `ui:n9KlSw` | Searching the bank list |
 | Button | `ui:W2gOKx` | Every action, primary, secondary and destructive |
@@ -111,17 +119,32 @@ parts switched off and a name that lies about what it holds. **Transaction row
 a date. **Nav item (`ui:rEOk1`)** is a sidebar destination carrying current and
 hover states for navigation, not a list choice with a mark.
 
-**2 · Account choice row** — molecule. A checkbox, a mark, a name, an
-identifier, an optional badge and a sharing status. Distinct from the Bank row
-above because it is a persistent two-state control rather than a navigation
-choice, and distinct from the account row below because it carries no balance —
-by design, since wimm reads no balance for an account nobody has shared.
+**2 · Account choice row** — molecule. A mark, a name, an identifier, an
+optional badge, an ownership control, and one level control per other member of
+the household. It carries a balance, because the connecting member owns every
+row when the chooser opens and an owner sees their own account in full — and
+because choosing who sees an account by its name alone, with no figure, is
+choosing blind.
+
+The row is **not** a two-state control. Ownership is a checkbox; each other
+member's level is one of three, so the row carries one three-way control per
+member. At Compact the level controls stack under the account rather than
+sitting beside it, because a household of three would otherwise need four
+columns on a phone.
 
 Opened and read: **Transaction row (`ui:PviJn`)** already pairs a checkbox with
 a mark and text, and is the closest thing in the library, but its remaining
 columns are a category chip, a date and an amount, and its selection is a
 transient bulk-action selection rather than a stored choice. **Account selector
 (`ui:vHJTa`)** has no checkbox and no room for one.
+
+**2b · Segmented control** — atom. Origin `ui:e0JfP`, `SegmentedControl.svelte`. Three exclusive options in
+a row — *nothing*, *balance*, *details* — labelled, keyboard-operable as one
+control, and readable at Compact. Opened and read: the library has **Checkbox
+(`ui:UEy2Z`)** and **Button (`ui:W2gOKx`)** and nothing that expresses one choice
+among three. Three checkboxes would permit zero or two answers to a question with
+exactly one; three buttons would not announce themselves as a single control to a
+screen reader.
 
 **3 · Account row** — molecule, an **additive extension of Account selector
 (`ui:vHJTa`)** rather than a new component. It already holds the right four data
@@ -152,8 +175,13 @@ including everything deliberately not drawn, is zone 30 on the canvas.
 - Overview with no banks connected.
 - Bank list, default.
 - Consent explainer, carrying the date that bank's access will end.
-- Choose accounts with nothing chosen, Finish disabled.
-- Choose accounts with two of three chosen.
+- Choose accounts as it opens: every row owned by the connecting member, every
+  other member at *nothing*.
+- Choose accounts with one row disowned and one granted *balance* to a second
+  member.
+- Choose accounts with a second member at *details* on one row and *nothing* on
+  another, showing the two levels side by side.
+- Choose accounts at Compact, where the level controls stack under the row.
 - Overview with accounts connected.
 - Overview with accounts in two currencies (wide only — one total per currency
   is not a regime-dependent rule).
@@ -192,37 +220,58 @@ the same shape `/enrol/[link]` already uses, and logs never record the return
 path with its value. The canvas cannot execute any of this; it is drawn as a
 transition and nothing more.
 
-**Nothing is shared until it is chosen.** The chooser's Finish control is
-disabled with nothing ticked, and its helper text says why rather than leaving a
-dead control unexplained. Selecting all is one action.
+**Nobody else sees anything until they are given it.** Every other member starts
+at *nothing* on every row, and Finish is always enabled — finishing having
+granted nothing is a legitimate outcome, because the accounts are the connecting
+member's and they can see them. Setting one member to one level across every row
+at that bank is one action.
 
-**No balance is read for an unshared account**, at connect, on arrival, or on
-refresh. This is what makes leaving an account out meaningful rather than
-cosmetic.
+**No balance is read for an account with no owner and no grant**, at connect, on
+arrival, or on refresh. The canvas cannot execute that rule; it is a contract on
+the routes.
+
+**Every account a bank returns is read once before anyone can disown it**, and
+this is a consequence of the chooser leaving the connect flow rather than a gap
+in the rule above. Returning goes to Overview, where the connecting member owns
+everything the bank returned, so everything is readable and everything is read.
+Disowning happens afterwards and stops every later read.
+
+ADR 0019 left this window open deliberately and described it as the case of a
+member who abandons the chooser. It is now the only path, so the reading is
+certain rather than possible. Closing it would mean showing no figures until a
+member had finished choosing — which is the empty screen that argument
+rejected — and the account being read is one the connecting member can already
+see by logging in at their bank.
 
 **Balances are read when the member arrives.** The read happens in the
 background of the request: previous readings render immediately and update in
 place, so a bank having a bad day never blocks the screen.
 
-**Restoring keeps what was shared.** Accounts are matched across sessions by the
-gateway's cross-session hash, never by its per-session identifier, so a member
-who restores does not re-make every sharing choice. An account newly offered
-arrives unshared and carries a badge; one no longer offered goes, and the member
-is told which.
+**Restoring keeps owners and levels.** Accounts are matched across sessions by
+the gateway's cross-session hash, never by its per-session identifier, so a
+member who restores does not re-make every choice. An account newly offered
+arrives owned by the restoring member with every other member at *nothing*, and
+carries a badge; one no longer offered goes with its owners and grants, and the
+member is told which.
 
-**Focus.** Returning from the bank moves focus to the chooser's heading.
-Returning to a failure moves focus to the page banner. The disconnect dialog
+**Focus.** Returning from the bank moves focus to Overview's outcome notice,
+which names the bank and what happened to it. Returning to a failure moves
+focus to the page banner. The disconnect dialog
 traps focus, focuses the safe action first, and returns focus to the control it
 came from whether confirmed or dismissed.
 
 **Announcements.** Refreshing announces its outcome in a live region: the new
 read time on success, the retry time when a bank refuses, and which bank did not
 answer when only some succeeded. The bank search announces the number of
-matches. Ticking an account in the chooser announces the running count, because
-the Finish control's label changes with it.
+matches. Changing a level in the chooser announces the account and the level it
+moved to, not a running count: with three levels per member there is no single
+number to count, and "Joint current account, balance" is what the member needs to
+hear back.
 
 **Keyboard completion.** Every step is completable from the keyboard alone,
-including picking a bank, ticking accounts, and dismissing the dialog.
+including picking a bank, claiming or releasing an account, moving a member
+between the three levels with arrow keys inside one control, and dismissing the
+dialog.
 
 **Colour never carries direction alone.** Overdrawn balances carry a sign. A
 reading that is no longer being updated changes colour and its text changes with

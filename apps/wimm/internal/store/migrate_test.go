@@ -148,7 +148,22 @@ func TestSweepIndexesRoundTripToThePreviousSchema(t *testing.T) {
 	}
 	defer pool.Close()
 
+	const identityOnly = 1
+
+	// The schema migration 1 alone produces, captured rather than derived.
+	// Deriving it as "head minus what this migration adds" would encode the
+	// number of migrations that exist today, and would fail on the next one
+	// for a reason that has nothing to do with the sweep.
+	if err := store.MigrateDownTo(url, identityOnly); err != nil {
+		t.Fatalf("rolling back to the identity schema: %v", err)
+	}
+	atIdentity := indexes(t, ctx, pool)
+
+	if err := store.MigrateUp(url); err != nil {
+		t.Fatalf("migrating up: %v", err)
+	}
 	atHead := indexes(t, ctx, pool)
+
 	sweepIndexes := []string{
 		"enrolment_tickets_expires_at_idx",
 		"sessions_expires_at_idx",
@@ -160,7 +175,6 @@ func TestSweepIndexesRoundTripToThePreviousSchema(t *testing.T) {
 		}
 	}
 
-	const identityOnly = 1
 	if err := store.MigrateDownTo(url, identityOnly); err != nil {
 		t.Fatalf("rolling the sweep indexes back: %v", err)
 	}
@@ -171,13 +185,10 @@ func TestSweepIndexesRoundTripToThePreviousSchema(t *testing.T) {
 			t.Errorf("%s survived the rollback", name)
 		}
 	}
-	// Everything the identity migration created is still there: the rollback
-	// removed what it added and nothing else.
-	want := slices.DeleteFunc(slices.Clone(atHead), func(name string) bool {
-		return slices.Contains(sweepIndexes, name)
-	})
-	if !slices.Equal(rolledBack, want) {
-		t.Errorf("after the rollback the schema has %v, want %v", rolledBack, want)
+	// Back to exactly the identity schema: every rollback removed what its
+	// migration added, and nothing else.
+	if !slices.Equal(rolledBack, atIdentity) {
+		t.Errorf("after the rollback the schema has %v, want %v", rolledBack, atIdentity)
 	}
 	if got := tables(t, ctx, pool); len(got) == 0 {
 		t.Error("the rollback took the identity tables with it")

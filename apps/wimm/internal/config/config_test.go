@@ -2,6 +2,8 @@ package config_test
 
 import (
 	"errors"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -176,5 +178,156 @@ func TestRejectsNonPositiveSweepDurations(t *testing.T) {
 				t.Errorf("the refusal does not name %s: %v", key, err)
 			}
 		})
+	}
+}
+
+// secretFile writes a fixture fit to hold key material and returns its path.
+func secretFile(t *testing.T, mode os.FileMode) string {
+	t.Helper()
+	path := filepath.Join(t.TempDir(), "key")
+	if err := os.WriteFile(path, []byte("2026-01 AAAA\n"), mode); err != nil {
+		t.Fatalf("writing the fixture: %v", err)
+	}
+	if err := os.Chmod(path, mode); err != nil {
+		t.Fatalf("chmod: %v", err)
+	}
+	return path
+}
+
+// withBanking is a valid environment with the gateway switched on.
+func withBanking(t *testing.T) map[string]string {
+	t.Helper()
+	e := valid()
+	e["WIMM_BANKING_GATEWAY"] = config.GatewayEnableBanking
+	e["WIMM_BANKING_ENCRYPTION_KEY"] = secretFile(t, 0o600)
+	e["WIMM_ENABLEBANKING_PRIVATE_KEY"] = secretFile(t, 0o600)
+	e["WIMM_ENABLEBANKING_APPLICATION_ID"] = "16560d8b-2dc5-4b4d-ac41-8266f62e719b"
+	e["WIMM_ENABLEBANKING_REDIRECT_URL"] = "https://localhost:8765/psd2/callback"
+	return e
+}
+
+// Unset is a supported state, and the one a fresh checkout is in. It must not
+// be a warning or a degraded start — it is simply a wimm that cannot connect a
+// bank yet.
+func TestNoGatewayIsNotAProblem(t *testing.T) {
+	c, err := config.Load(env(valid()))
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if c.BankingGateway != "" {
+		t.Errorf("BankingGateway = %q, want empty", c.BankingGateway)
+	}
+}
+
+func TestAFullyConfiguredGatewayLoads(t *testing.T) {
+	c, err := config.Load(env(withBanking(t)))
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if c.BankingGateway != config.GatewayEnableBanking {
+		t.Errorf("BankingGateway = %q", c.BankingGateway)
+	}
+	if c.BalanceStaleAfter != config.DefaultBalanceStaleAfter {
+		t.Errorf("BalanceStaleAfter = %s, want the default", c.BalanceStaleAfter)
+	}
+}
+
+// A gateway that starts without its sealing key writes plaintext bank
+// credentials until someone notices. Every one of these is a refusal to start.
+func TestRefusesToStartWithAHalfConfiguredGateway(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		mutate func(t *testing.T, e map[string]string)
+		want   string
+	}{
+		{
+			"no sealing key",
+			func(_ *testing.T, e map[string]string) { delete(e, "WIMM_BANKING_ENCRYPTION_KEY") },
+			"WIMM_BANKING_ENCRYPTION_KEY is not set",
+		},
+		{
+			"no signing key",
+			func(_ *testing.T, e map[string]string) { delete(e, "WIMM_ENABLEBANKING_PRIVATE_KEY") },
+			"WIMM_ENABLEBANKING_PRIVATE_KEY is not set",
+		},
+		{
+			"a sealing key that does not exist",
+			func(t *testing.T, e map[string]string) {
+				e["WIMM_BANKING_ENCRYPTION_KEY"] = filepath.Join(t.TempDir(), "absent")
+			},
+			"does not exist",
+		},
+		{
+			"a group-readable sealing key",
+			func(t *testing.T, e map[string]string) {
+				e["WIMM_BANKING_ENCRYPTION_KEY"] = secretFile(t, 0o640)
+			},
+			"readable beyond its owner",
+		},
+		{
+			"a world-readable signing key",
+			func(t *testing.T, e map[string]string) {
+				e["WIMM_ENABLEBANKING_PRIVATE_KEY"] = secretFile(t, 0o644)
+			},
+			"readable beyond its owner",
+		},
+		{
+			"an unreadable sealing key",
+			func(t *testing.T, e map[string]string) {
+				e["WIMM_BANKING_ENCRYPTION_KEY"] = secretFile(t, 0o200)
+			},
+			"cannot be opened",
+		},
+		{
+			"no application id",
+			func(_ *testing.T, e map[string]string) { delete(e, "WIMM_ENABLEBANKING_APPLICATION_ID") },
+			"WIMM_ENABLEBANKING_APPLICATION_ID is not set",
+		},
+		{
+			"no redirect url",
+			func(_ *testing.T, e map[string]string) { delete(e, "WIMM_ENABLEBANKING_REDIRECT_URL") },
+			"WIMM_ENABLEBANKING_REDIRECT_URL is not set",
+		},
+		{
+			"a gateway nothing implements",
+			func(_ *testing.T, e map[string]string) { e["WIMM_BANKING_GATEWAY"] = "plaid" },
+			"not a gateway wimm has an adapter for",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			e := withBanking(t)
+			tc.mutate(t, e)
+
+			_, err := config.Load(env(e))
+			if err == nil {
+				t.Fatal("started")
+			}
+			if !strings.Contains(err.Error(), tc.want) {
+				t.Errorf("error %q does not say %q", err, tc.want)
+			}
+		})
+	}
+}
+
+// One restart should be enough to see everything that is wrong, the way the
+// rest of Load already behaves.
+func TestEveryBankingProblemIsReportedAtOnce(t *testing.T) {
+	e := withBanking(t)
+	delete(e, "WIMM_BANKING_ENCRYPTION_KEY")
+	delete(e, "WIMM_ENABLEBANKING_APPLICATION_ID")
+	e["WIMM_ENABLEBANKING_PRIVATE_KEY"] = secretFile(t, 0o644)
+
+	_, err := config.Load(env(e))
+	if err == nil {
+		t.Fatal("started")
+	}
+	for _, want := range []string{
+		"WIMM_BANKING_ENCRYPTION_KEY is not set",
+		"WIMM_ENABLEBANKING_APPLICATION_ID is not set",
+		"readable beyond its owner",
+	} {
+		if !strings.Contains(err.Error(), want) {
+			t.Errorf("error does not mention %q: %v", want, err)
+		}
 	}
 }

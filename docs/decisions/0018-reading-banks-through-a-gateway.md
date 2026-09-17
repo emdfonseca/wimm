@@ -2,7 +2,11 @@
 
 ## Status
 
-Accepted
+Accepted; sharing superseded by 0019
+
+Accounts have owners and each member sees a level, in place of one `shared`
+boolean. The gateway port, account identity, sealing, money and the chooser's
+purpose are unchanged.
 
 ## Context
 
@@ -81,13 +85,18 @@ authorisation; `identification_hash` is what matches an account across them. A
 schema keyed on `uid` would lose every sharing choice the moment a member
 restored a connection, which at 180 days is certain rather than possible.
 
-**Everything the bank returns is stored, and the member chooses what is shared.**
-`POST /sessions` returns account details **once**, and no endpoint lists them
-again. So an earlier plan — store only the shared accounts, re-read the list if
-the member changes their mind — is not implementable: changing your mind would
-mean going back to your bank. Every account the session returns is stored with
-`shared` defaulting to false, and **no balance is ever read for an unshared
-account**, so wimm knows an account exists and does not know what is in it.
+**Everything the bank returns is stored.** `POST /sessions` returns account
+details **once**, and no endpoint lists them again. So an earlier plan — store
+only the accounts a member wants seen, re-read the list if they change their
+mind — is not implementable: changing your mind would mean going back to your
+bank. Every account the session returns is stored, and **no balance is ever read
+for an account nobody may see**, so wimm knows an account exists and does not
+know what is in it.
+
+*Who may see it is superseded by ADR 0019*, which replaces the `shared` boolean
+with owners and a per-member level. The reason this decision exists — details
+are returned once, so everything is stored — is unchanged, and so is the rule
+that wimm never reads what nobody may see.
 
 **The account chooser is not a consent step.** Some banks let the member narrow
 accounts in their own consent screen; others hand over everything, and wimm
@@ -170,10 +179,11 @@ gateway's decimal string, never a bare number without its currency. Totals are
 per currency and mixed currencies are never summed: wimm holds no rates, and
 inventing one would invent the number a household trusts most.
 
-**Accounts are household-visible once shared.** One instance serves one
-household, so there is no scoping rule to implement beyond `shared` itself.
-`connected_by` records whose consent is holding a connection open and who will
-have to restore it.
+**Superseded by ADR 0019.** This decision said accounts are household-visible
+once shared, with no scoping rule beyond the flag itself. An account now has
+owners and each other member a level. `connected_by` survives unchanged: it
+records whose consent is holding a connection open and who will have to restore
+it, and it confers no authority over who sees what.
 
 **The full account number is never stored.** Only enough trailing characters to
 tell two accounts at one bank apart, which is all the behaviour requires.

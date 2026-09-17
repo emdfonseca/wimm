@@ -14,8 +14,16 @@ build:
 # skip when it is absent: a store test that passes because nothing was
 # reachable cannot fail. And they never run against the development database,
 # because the suite truncates every table it finds.
+#
+# `-p 1` runs one package at a time. Every database-backed package shares one
+# wimm_test and truncates it, so in parallel one package empties the tables
+# another is mid-way through reading — a failure that lands on a different test
+# each run and reads like flakiness rather than a shared fixture.
+#
+# It is a serialisation of packages, not of tests, and it comes off the moment
+# each package gets its own database. Nothing else depends on the flag.
 test:
-    WIMM_TEST_DATABASE_URL="${WIMM_TEST_DATABASE_URL:-$(../../bin/db test-url)}" go test -race ./...
+    WIMM_TEST_DATABASE_URL="${WIMM_TEST_DATABASE_URL:-$(../../bin/db test-url)}" go test -race -p 1 ./...
 
 lint:
     golangci-lint run

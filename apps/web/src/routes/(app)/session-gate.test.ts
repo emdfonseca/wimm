@@ -6,6 +6,10 @@ import { isRedirect } from '@sveltejs/kit';
  * Where an unauthenticated visitor is sent, and what they are told when they
  * get there.
  *
+ * The gate is the (app) group's layout, not any one page: `/connect` shipped
+ * without a session check of its own precisely because guarding was each
+ * page's job. A layout cannot be forgotten by a screen added later.
+ *
  * This shipped wrong: every first visit was told "You were signed out", because
  * the redirect added `expired` whenever the call came back unauthenticated
  * rather than whenever a session had actually ended.
@@ -28,7 +32,7 @@ vi.mock('$lib/server/call', () => ({
 		invoke({ headers: {}, onHeader: () => {} })
 }));
 
-const { load } = await import('./+page.server');
+const { load } = await import('./+layout.server');
 
 function visit(path: string, jar: Record<string, string> = {}) {
 	const deleted: string[] = [];
@@ -101,7 +105,9 @@ describe('a visitor with a live session', () => {
 		getCurrentMember.mockResolvedValue({ member: { firstName: 'Ada', lastName: 'Lovelace' } });
 
 		const { run } = visit('/');
-		await expect(run()).resolves.toEqual({ firstName: 'Ada', lastName: 'Lovelace' });
+		// toMatchObject, not toEqual: this test is about who the member is, and
+		// the load also carries their accounts now.
+		await expect(run()).resolves.toMatchObject({ firstName: 'Ada', lastName: 'Lovelace' });
 	});
 });
 

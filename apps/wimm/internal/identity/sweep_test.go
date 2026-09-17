@@ -22,10 +22,13 @@ import (
 type fakeSweepStore struct {
 	mu sync.Mutex
 
-	ceremonies, sessions, tickets int
-	removed                       int64
+	ceremonies, sessions, tickets, pending int
+	removed                                int64
 
 	failSessions error
+	// failPending fails only the fourth statement, so the other three can be
+	// shown to run anyway.
+	failPending error
 	// failFirstSweep fails every table on the first pass only, so a later
 	// sweep can be shown to run normally afterwards.
 	failFirstSweep error
@@ -74,6 +77,20 @@ func (f *fakeSweepStore) DeleteExpiredEnrolmentTickets(context.Context) (int64, 
 	return f.removed, nil
 }
 
+func (f *fakeSweepStore) DeleteAbandonedBankConnections(context.Context) (int64, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+
+	f.pending++
+	if f.failPending != nil {
+		return 0, f.failPending
+	}
+	if err := f.firstSweepFailure(); err != nil {
+		return 0, err
+	}
+	return f.removed, nil
+}
+
 // firstSweepFailure is held while f.mu is locked; the ceremony delete is the
 // first of the three, so its count is the pass number.
 func (f *fakeSweepStore) firstSweepFailure() error {
@@ -87,6 +104,12 @@ func (f *fakeSweepStore) counts() (int, int, int) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	return f.ceremonies, f.sessions, f.tickets
+}
+
+func (f *fakeSweepStore) pendingCount() int {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	return f.pending
 }
 
 // syncBuffer is a log destination a test goroutine can read while Run is
@@ -427,4 +450,55 @@ func errText(err error) string {
 		return ""
 	}
 	return err.Error()
+}
+
+// The fourth statement is independent of the other three, which is the whole
+// reason each table gets its own delete and its own error.
+func TestTheOtherThreeStatementsRunWhenTheFourthFails(t *testing.T) {
+	boom := errors.New("pending_bank_connections is unreachable")
+	fake := &fakeSweepStore{removed: 2, failPending: boom}
+
+	var logged syncBuffer
+	sweeper := identity.NewSweeper(fake, logged.logger(), sweepConfig(t, nil))
+
+	result := sweeper.Sweep(context.Background())
+
+	if !errors.Is(result.PendingBankConnections.Err, boom) {
+		t.Errorf("PendingBankConnections.Err = %v, want the failure", result.PendingBankConnections.Err)
+	}
+	if !result.Failed() {
+		t.Error("a failed fourth statement did not make the sweep report a failure")
+	}
+	for name, swept := range map[string]identity.Swept{
+		"ceremonies": result.Ceremonies,
+		"sessions":   result.Sessions,
+		"tickets":    result.Tickets,
+	} {
+		if swept.Err != nil {
+			t.Errorf("%s failed alongside the fourth statement: %v", name, swept.Err)
+		}
+		if swept.Removed != 2 {
+			t.Errorf("%s removed %d rows, want 2", name, swept.Removed)
+		}
+	}
+}
+
+// The log line carries a count per kind, including the new one, and including
+// when every count is zero.
+func TestTheSweepLineCarriesTheFourthCount(t *testing.T) {
+	fake := &fakeSweepStore{}
+
+	var logged syncBuffer
+	sweeper := identity.NewSweeper(fake, logged.logger(), sweepConfig(t, nil))
+	sweeper.Sweep(context.Background())
+
+	line := logged.String()
+	for _, key := range []string{"ceremonies", "sessions", "tickets", "pending_bank_connections"} {
+		if !strings.Contains(line, `"`+key+`":0`) {
+			t.Errorf("the sweep line does not carry %s as zero: %s", key, line)
+		}
+	}
+	if fake.pendingCount() != 1 {
+		t.Errorf("the fourth statement ran %d times, want 1", fake.pendingCount())
+	}
 }

@@ -8,12 +8,13 @@ import (
 	"github.com/xuuid/wimm/apps/wimm/internal/config"
 )
 
-// SweepStore is the part of the store a sweep uses: three deletes, each its
-// own statement against its own table.
+// SweepStore is the part of the store a sweep uses: four deletes, each its own
+// statement against its own table.
 type SweepStore interface {
 	DeleteExpiredCeremonies(ctx context.Context) (int64, error)
 	DeleteExpiredEnrolmentTickets(ctx context.Context) (int64, error)
 	DeleteFinishedSessions(ctx context.Context, revokedRetention time.Duration) (int64, error)
+	DeleteAbandonedBankConnections(ctx context.Context) (int64, error)
 }
 
 // Swept is what one table's delete removed, and what stopped it.
@@ -26,21 +27,26 @@ type Swept struct {
 	Err     error
 }
 
-// SweepResult is one pass over all three tables.
+// SweepResult is one pass over all four tables.
 //
 // There is no combined error. Each table fails on its own, because there is no
 // invariant spanning them that a partial sweep could break — and a single error
-// would make a sweep that cleared two tables and lost one look like a sweep
+// would make a sweep that cleared three tables and lost one look like a sweep
 // that did nothing.
 type SweepResult struct {
 	Ceremonies Swept
 	Sessions   Swept
 	Tickets    Swept
+	// PendingBankConnections is authorisations begun and never returned from.
+	// It is in the identity sweep rather than one of its own because a second
+	// goroutine on a second ticker would be a scheduler, and this is not that.
+	PendingBankConnections Swept
 }
 
 // Failed reports whether any table's delete returned an error.
 func (r SweepResult) Failed() bool {
-	return r.Ceremonies.Err != nil || r.Sessions.Err != nil || r.Tickets.Err != nil
+	return r.Ceremonies.Err != nil || r.Sessions.Err != nil ||
+		r.Tickets.Err != nil || r.PendingBankConnections.Err != nil
 }
 
 // Sweeper removes identity rows that can no longer be used.
@@ -79,11 +85,14 @@ func (s *Sweeper) Sweep(ctx context.Context) SweepResult {
 	r.Ceremonies.Removed, r.Ceremonies.Err = s.store.DeleteExpiredCeremonies(ctx)
 	r.Sessions.Removed, r.Sessions.Err = s.store.DeleteFinishedSessions(ctx, s.revokedRetention)
 	r.Tickets.Removed, r.Tickets.Err = s.store.DeleteExpiredEnrolmentTickets(ctx)
+	r.PendingBankConnections.Removed, r.PendingBankConnections.Err =
+		s.store.DeleteAbandonedBankConnections(ctx)
 
 	s.log.InfoContext(ctx, "swept expired identity rows",
 		"ceremonies", r.Ceremonies.Removed,
 		"sessions", r.Sessions.Removed,
-		"tickets", r.Tickets.Removed)
+		"tickets", r.Tickets.Removed,
+		"pending_bank_connections", r.PendingBankConnections.Removed)
 
 	for _, f := range []struct {
 		kind  string
@@ -92,6 +101,7 @@ func (s *Sweeper) Sweep(ctx context.Context) SweepResult {
 		{"ceremonies", r.Ceremonies},
 		{"sessions", r.Sessions},
 		{"tickets", r.Tickets},
+		{"pending_bank_connections", r.PendingBankConnections},
 	} {
 		if f.swept.Err != nil {
 			s.log.ErrorContext(ctx, "sweeping failed", "kind", f.kind, "error", f.swept.Err)

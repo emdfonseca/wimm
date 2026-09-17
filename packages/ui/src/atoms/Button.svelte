@@ -19,6 +19,10 @@
 		size?: 'sm' | 'md' | 'lg';
 		/** Takes the full width of its container, as it does inside an auth card. */
 		block?: boolean;
+		/** The underlying element, for the callers that must focus it — a modal
+		 *  focusing its safe action, say. Bindable so that never has to be done
+		 *  by querying DOM order, which reordering silently breaks. */
+		ref?: HTMLButtonElement;
 		children: Snippet;
 	}
 
@@ -27,12 +31,13 @@
 		size = 'md',
 		block = false,
 		type = 'button',
+		ref = $bindable(),
 		children,
 		...rest
 	}: Props = $props();
 </script>
 
-<button class="button {variant} {size}" class:block {type} {...rest}>
+<button bind:this={ref} class="button {variant} {size}" class:block {type} {...rest}>
 	{@render children()}
 </button>
 

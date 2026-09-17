@@ -96,3 +96,25 @@ func (db *DB) deleteInBatches(ctx context.Context, query string, args ...any) (i
 		}
 	}
 }
+
+// DeleteAbandonedBankConnections clears authorisations that were begun and
+// never returned from.
+//
+// Most pending connections end this way: a member who closes the tab at their
+// bank leaves one behind, so this table accumulates faster than the three
+// above it. A consumed row goes too, once it is past its expiry — it is kept
+// until then so that a replayed return is refused as spent rather than as
+// never-issued, which are different answers and only one of them is true.
+func (db *DB) DeleteAbandonedBankConnections(ctx context.Context) (int64, error) {
+	const q = `
+		delete from pending_bank_connections
+		where id in (
+			select id from pending_bank_connections where expires_at <= now() limit $1
+		)`
+
+	n, err := db.deleteInBatches(ctx, q)
+	if err != nil {
+		return n, fmt.Errorf("clearing abandoned bank connections: %w", err)
+	}
+	return n, nil
+}

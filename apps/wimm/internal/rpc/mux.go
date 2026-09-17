@@ -6,6 +6,7 @@ import (
 
 	"connectrpc.com/connect"
 
+	"github.com/xuuid/wimm/packages/contracts/gen/go/wimm/banking/v1/bankingv1connect"
 	"github.com/xuuid/wimm/packages/contracts/gen/go/wimm/identity/v1/identityv1connect"
 )
 
@@ -26,6 +27,15 @@ func OperatorHandler(log *slog.Logger, srv identityv1connect.OperatorServiceHand
 // PublicHandler returns the service the browser reaches.
 func PublicHandler(log *slog.Logger, srv identityv1connect.PublicServiceHandler) (string, http.Handler) {
 	return identityv1connect.NewPublicServiceHandler(srv,
+		connect.WithInterceptors(AccessLog(log)),
+	)
+}
+
+// BankingHandler returns the banking service the browser reaches. It sits on
+// the public listener beside PublicHandler: every method needs a session, and
+// the session is what says whose view is returned.
+func BankingHandler(log *slog.Logger, srv bankingv1connect.BankingServiceHandler) (string, http.Handler) {
+	return bankingv1connect.NewBankingServiceHandler(srv,
 		connect.WithInterceptors(AccessLog(log)),
 	)
 }
