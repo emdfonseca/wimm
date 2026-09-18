@@ -251,15 +251,16 @@ func (m *memStore) AccountsForConnection(_ context.Context, connectionID string)
 	return out, nil
 }
 
-// ReadableAccounts is the guarantee in miniature: an account with no owner and
-// no grant is not in this list, so nothing can read it.
+// ReadableAccounts is the guarantee in miniature: a left-out account is not in
+// this list, so nothing can read it (ADR 0022). An account always has an
+// owner, so that is the only test left.
 func (m *memStore) ReadableAccounts(_ context.Context, connectionID string) ([]store.Account, error) {
 	var out []store.Account
 	for _, a := range m.accounts {
 		if connectionID != "" && (a.ConnectionID == nil || *a.ConnectionID != connectionID) {
 			continue
 		}
-		if len(m.owners[a.ID]) == 0 && len(m.grants[a.ID]) == 0 {
+		if a.LeftOutAt != nil {
 			continue
 		}
 		out = append(out, *a)
@@ -289,7 +290,13 @@ func (m *memStore) MemberOwnsAccount(_ context.Context, accountID, memberID stri
 	return m.owners[accountID][memberID], nil
 }
 
+// SetAccountOwners refuses emptying an account's owners, the same as the
+// database's deferred constraint trigger does for real (ADR 0022): an account
+// always has at least one.
 func (m *memStore) SetAccountOwners(_ context.Context, accountID string, memberIDs []string) error {
+	if len(memberIDs) == 0 {
+		return fmt.Errorf("account %s would be left with no owner", accountID)
+	}
 	delete(m.owners, accountID)
 	for _, id := range memberIDs {
 		m.own(accountID, id)
@@ -309,6 +316,29 @@ func (m *memStore) SetAccountLevel(_ context.Context, accountID, memberID string
 		m.grants[accountID] = map[string]store.Level{}
 	}
 	m.grants[accountID][memberID] = level
+	return nil
+}
+
+func (m *memStore) SetAccountLeftOut(_ context.Context, accountID string, leftOut bool) error {
+	a, ok := m.accounts[accountID]
+	if !ok {
+		return store.ErrNotFound
+	}
+	if leftOut {
+		at := m.now
+		a.LeftOutAt = &at
+	} else {
+		a.LeftOutAt = nil
+	}
+	return nil
+}
+
+func (m *memStore) SetAccountName(_ context.Context, accountID, householdName string) error {
+	a, ok := m.accounts[accountID]
+	if !ok {
+		return store.ErrNotFound
+	}
+	a.HouseholdName = householdName
 	return nil
 }
 
@@ -422,8 +452,11 @@ func (m *memStore) BankConnectionScope(_ context.Context, connectionID string) (
 // account they merely hold a level on.
 func (m *memStore) ownedBy(memberID, accountID string) []string {
 	var out []string
-	for id := range m.accounts {
+	for id, a := range m.accounts {
 		if accountID != "" && id != accountID {
+			continue
+		}
+		if a.LeftOutAt != nil {
 			continue
 		}
 		if m.owners[id][memberID] {
@@ -575,6 +608,41 @@ func (m *memStore) Ledger(_ context.Context, q store.LedgerQuery) (store.LedgerP
 		page.Oldest = page.Transactions[len(page.Transactions)-1].BookingDate
 	}
 	return page, nil
+}
+
+// LedgerPageIndex sorts this member's owned, not-left-out transactions the
+// same way Ledger does and buckets them into pages of pageSize, newest first
+// — the same independent reimplementation Ledger itself is, so a disagreement
+// with the SQL is a defect in one of them rather than something this masks.
+func (m *memStore) LedgerPageIndex(
+	_ context.Context, memberID, accountID string, pageSize int,
+) ([]store.PageMarker, error) {
+	var all []store.Transaction
+	for _, id := range m.ownedBy(memberID, accountID) {
+		all = append(all, m.transactions[id]...)
+	}
+	slices.SortFunc(all, func(a, b store.Transaction) int {
+		if !a.BookingDate.Equal(b.BookingDate) {
+			if a.BookingDate.After(b.BookingDate) {
+				return -1
+			}
+			return 1
+		}
+		return cmpString(b.ID, a.ID)
+	})
+
+	var out []store.PageMarker
+	for start := 0; start < len(all); start += pageSize {
+		end := min(start+pageSize, len(all))
+		newest := all[start]
+		oldest := all[end-1]
+		out = append(out, store.PageMarker{
+			Cursor: store.Cursor{BookingDate: newest.BookingDate, ID: newest.ID},
+			Newest: newest.BookingDate,
+			Oldest: oldest.BookingDate,
+		})
+	}
+	return out, nil
 }
 
 func (m *memStore) CountLedger(_ context.Context, memberID, accountID string) (int, error) {

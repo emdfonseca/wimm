@@ -8,7 +8,7 @@ export interface Destination {
 	current?: boolean;
 	/** The glyph beside the label. The sidebar and the bottom bar draw the
 	 *  same one, because they are the same destination in two places. */
-	icon?: 'layout-dashboard' | 'arrow-left-right';
+	icon?: 'layout-dashboard' | 'arrow-left-right' | 'settings';
 }
 
 /**
@@ -25,6 +25,12 @@ export function destinations(current?: string): Destination[] {
 			href: '/transactions',
 			icon: 'arrow-left-right',
 			current: current === '/transactions'
+		},
+		{
+			label: 'Settings',
+			href: '/settings',
+			icon: 'settings',
+			current: current === '/settings'
 		}
 	];
 }

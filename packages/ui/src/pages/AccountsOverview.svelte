@@ -21,6 +21,9 @@
 		stale?: boolean;
 		notUpdating?: boolean;
 		negative?: boolean;
+		/** Left out of wimm: no figure, marked, and excluded from every total
+		 *  (ADR 0022). Reaches only an owner. */
+		leftOut?: boolean;
 	}
 
 	export interface CurrencyTotal {
@@ -82,6 +85,7 @@
 	import EmptyState from '../molecules/EmptyState.svelte';
 	import ErrorNotice from '../molecules/ErrorNotice.svelte';
 	import InfoNotice from '../molecules/InfoNotice.svelte';
+	import Page from '../templates/Page.svelte';
 
 	interface Props {
 		outcome?: Outcome;
@@ -217,9 +221,8 @@
 	{/if}
 {/snippet}
 
-<main class="screen">
-	<header class="head">
-		<h1 tabindex="-1">Overview</h1>
+<Page title="Overview">
+	{#snippet action()}
 		{#if accounts.length > 0}
 			<!-- Primary in the frame: it is the one thing a member comes back to
 			     this screen to do. -->
@@ -227,7 +230,7 @@
 				{refreshing ? 'Refreshing…' : 'Refresh balances'}
 			</Button>
 		{/if}
-	</header>
+	{/snippet}
 
 	<!-- Under the page header, not above it: J04.B / 01 draws Overview, then
 	     Refresh balances, then the notice, then the total. -->
@@ -344,6 +347,7 @@
 							stale={account.stale}
 							notUpdating={account.notUpdating}
 							negative={account.negative}
+							leftOut={account.leftOut}
 						/>
 					{/each}
 				</div>
@@ -368,6 +372,7 @@
 				stale={account.stale}
 				notUpdating={account.notUpdating}
 				negative={account.negative}
+				leftOut={account.leftOut}
 			/>
 		{/each}
 
@@ -378,39 +383,9 @@
 		     figures change. -->
 		<p class="sr-only" role="status" aria-live="polite">{refreshOutcome}</p>
 	{/if}
-</main>
+</Page>
 
 <style>
-	.screen {
-		/* Fills the slot and packs content to the top, as the frame's Page does
-		   with a trailing spacer. A screen that does not fill gets centred by
-		   the slot instead, which is what left these floating mid-page. */
-		display: flex;
-		flex: 1;
-		flex-direction: column;
-		gap: 16px;
-		inline-size: 100%;
-	}
-
-	.head {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 16px;
-	}
-
-	h1 {
-		margin: 0;
-		color: var(--color-text-primary);
-		font-family: var(--type-family-display);
-		font-size: var(--type-size-page-title);
-		font-weight: 600;
-	}
-	h1:focus-visible {
-		outline: var(--focus-ring-width) solid var(--focus-ring-color);
-		outline-offset: var(--focus-ring-offset);
-	}
-
 	/* Frame J05.A / 01: a labelled tile at 300, in a row with a spacer. */
 	.totals {
 		display: flex;
@@ -514,7 +489,7 @@
 		border-block-end: 1px solid var(--color-border-subtle);
 	}
 
-	@media (max-width: 599px) {
+	@media (max-width: 767px) {
 		.card-header {
 			flex-wrap: wrap;
 			padding-block: 8px;

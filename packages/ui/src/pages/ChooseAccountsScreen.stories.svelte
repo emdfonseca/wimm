@@ -13,6 +13,8 @@
 	const current = {
 		id: 'a1',
 		name: 'Conta à Ordem',
+		bankAccountName: 'Conta à Ordem',
+		bankName: 'Montepio',
 		meta: 'Montepio · •••• 0538',
 		balance: '€4,200.10',
 		owned: true
@@ -20,6 +22,8 @@
 	const savings = {
 		id: 'a2',
 		name: 'Poupança',
+		bankAccountName: 'Poupança',
+		bankName: 'Montepio',
 		meta: 'Montepio · •••• 7712',
 		balance: '€11,930.00',
 		owned: true
@@ -27,6 +31,8 @@
 	const personal = {
 		id: 'a3',
 		name: 'Conta Pessoal',
+		bankAccountName: 'Conta Pessoal',
+		bankName: 'Montepio',
 		meta: 'Montepio · •••• 5594',
 		balance: '€820.44',
 		owned: true
@@ -45,7 +51,10 @@
 			members,
 			levels: {},
 			onownedchange: fn(),
+			onownerchange: fn(),
 			onlevelchange: fn(),
+			onleaveout: fn(),
+			onbringback: fn(),
 			onfinish: fn()
 		}
 	});
@@ -57,10 +66,10 @@
 	name="As it opens"
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		for (const box of canvas.getAllByRole('checkbox')) {
+		for (const box of canvas.getAllByRole('checkbox', { name: /is mine/ })) {
 			await expect(box).toBeChecked();
 		}
-		await expect(canvas.getByText(/nobody sees anything until you say so/)).toBeInTheDocument();
+		await expect(canvas.getByText(/Nobody sees anything until you say so/)).toBeInTheDocument();
 	}}
 />
 
@@ -145,6 +154,8 @@
 			{
 				id: 'a9',
 				name: 'Conta Nova',
+				bankAccountName: 'Conta Nova',
+				bankName: 'Montepio',
 				meta: 'Montepio · •••• 9021',
 				balance: '€64.00',
 				owned: true,
@@ -189,5 +200,103 @@
 	name="Focus lands on the heading"
 	play={async ({ canvasElement }) => {
 		await expect(within(canvasElement).getByRole('heading', { level: 1 })).toHaveFocus();
+	}}
+/>
+
+<!-- J09.A: ticking a co-owner box reports only that member, never a
+     replacement list — the fix for the defect the single "Mine" checkbox had. -->
+<Story
+	name="Making an owner"
+	play={async ({ canvasElement, args }) => {
+		await userEvent.click(within(canvasElement).getAllByRole('checkbox', { name: 'Grace' })[0]!);
+		await expect(args.onownerchange).toHaveBeenCalledWith('a1', 'grace', true);
+	}}
+/>
+
+<Story
+	name="Handed on"
+	args={{ owners: { a1: { grace: true } } }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getAllByRole('checkbox', { name: 'Grace' })[0]).toBeChecked();
+		await expect(
+			canvas.queryByRole('radiogroup', { name: 'What Grace sees of Conta à Ordem' })
+		).toBeNull();
+	}}
+/>
+
+<!-- J09.A / 03: the last owner cannot step back. The database refuses it; the
+     screen shows the refusal inline, beside the row, naming leaving the
+     account out as the way to the same end. -->
+<Story
+	name="The last owner cannot step back"
+	args={{ refusedAccountId: 'a1' }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(
+			canvas.getByText('An account has to belong to somebody')
+		).toBeInTheDocument();
+		await expect(
+			canvas.getByText(/this would leave it with nobody/)
+		).toBeInTheDocument();
+	}}
+/>
+
+<!-- J09.A / 04: leaving an account out is offered as a confirmation, naming
+     the account. -->
+<Story
+	name="Leaving an account out"
+	play={async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getAllByRole('button', { name: /Leave out|Bring back/ })[0]!);
+		await expect(
+			canvas.getByRole('heading', { name: 'Leave Conta à Ordem out of wimm?' })
+		).toBeInTheDocument();
+
+		await userEvent.click(canvas.getByRole('button', { name: 'Leave it out' }));
+		await expect(args.onleaveout).toHaveBeenCalledWith('a1');
+	}}
+/>
+
+<!-- J09.A / 05, 06: bringing an account back is required rather than offered,
+     and names every member who will see it again and at what level — they
+     were given that before it was left out and nobody is asking them again. -->
+<Story
+	name="Bringing it back"
+	args={{
+		accounts: [{ ...current, leftOut: true }, savings, personal],
+		levels: { a1: { grace: 'balance', alan: 'details' } }
+	}}
+	play={async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getByRole('button', { name: 'Bring back' }));
+		await expect(
+			canvas.getByRole('heading', { name: 'Bring Conta à Ordem back?' })
+		).toBeInTheDocument();
+		await expect(
+			canvas.getByText(
+				'Grace will see its balance again and Alan will see its balance and its details, which is what each of them had before you left it out. wimm starts reading it from now.'
+			)
+		).toBeInTheDocument();
+
+		await userEvent.click(canvas.getByRole('button', { name: 'Bring it back' }));
+		await expect(args.onbringback).toHaveBeenCalledWith('a1');
+	}}
+/>
+
+<!-- J10.A / 01: naming an account, inline and ephemeral, on the row it
+     belongs to. -->
+<Story
+	name="Naming an account"
+	args={{ onrename: fn() }}
+	play={async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getAllByRole('button', { name: 'Rename' })[0]!);
+
+		const field = canvas.getByRole('textbox');
+		await userEvent.type(field, 'Rent');
+		await userEvent.click(canvas.getByRole('button', { name: 'Save' }));
+
+		await expect(args.onrename).toHaveBeenCalledWith('a1', 'Rent');
 	}}
 />

@@ -14,7 +14,10 @@
 		| 'user-round-check'
 		| 'panel-left-close'
 		| 'log-out'
-		| 'arrow-left-right';
+		| 'arrow-left-right'
+		| 'settings'
+		| 'chevron-left'
+		| 'chevron-right';
 
 	interface Props {
 		name: Name;
@@ -22,6 +25,12 @@
 	}
 
 	let { name, size = 16 }: Props = $props();
+
+	// settings is the one glyph lucide draws with a circle rather than only
+	// paths, so it is kept separately instead of forcing a circle into a path.
+	const circles: Partial<Record<Name, { cx: number; cy: number; r: number }>> = {
+		settings: { cx: 12, cy: 12, r: 3 }
+	};
 
 	const paths: Record<Name, string[]> = {
 		'circle-help': [
@@ -49,8 +58,15 @@
 			'M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
 			'M9 3v18',
 			'm16 15-3-3 3-3'
-		]
+		],
+		settings: [
+			'M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z'
+		],
+		'chevron-left': ['m15 18-6-6 6-6'],
+		'chevron-right': ['m9 18 6-6-6-6']
 	};
+
+	const circle = $derived(circles[name]);
 </script>
 
 <svg
@@ -68,4 +84,7 @@
 	{#each paths[name] as d (d)}
 		<path {d} />
 	{/each}
+	{#if circle}
+		<circle cx={circle.cx} cy={circle.cy} r={circle.r} />
+	{/if}
 </svg>

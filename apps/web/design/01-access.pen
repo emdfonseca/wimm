@@ -492,7 +492,7 @@
                                       "id": "IC4AQ",
                                       "type": "ref",
                                       "ref": "ui:kJkV1",
-                                      "name": "01 · Enrolment invitation / Default",
+                                      "name": "J01.A / 01 · Enrolment invitation / Wide / Default",
                                       "width": 1440,
                                       "height": 900,
                                       "theme": {
@@ -619,7 +619,7 @@
                                       "id": "hOVdC",
                                       "type": "ref",
                                       "ref": "ui:kJkV1",
-                                      "name": "01 · Enrolment invitation / Passkey not saved",
+                                      "name": "J01.A / 01 · Enrolment invitation / Wide / Passkey not saved",
                                       "width": 1440,
                                       "height": 900,
                                       "theme": {
@@ -776,7 +776,7 @@
                                       "id": "h1NPCE",
                                       "type": "ref",
                                       "ref": "ui:kJkV1",
-                                      "name": "01 · Enrolment invitation / Prompt dismissed",
+                                      "name": "J01.A / 01 · Enrolment invitation / Wide / Prompt dismissed",
                                       "width": 1440,
                                       "height": 900,
                                       "theme": {
@@ -1013,7 +1013,7 @@
                                       "id": "UWQr3",
                                       "type": "ref",
                                       "ref": "ui:kJkV1",
-                                      "name": "02 · Creating passkey / Waiting",
+                                      "name": "J01.A / 02 · Creating passkey / Wide / Waiting",
                                       "width": 1440,
                                       "height": 900,
                                       "theme": {
@@ -1220,7 +1220,7 @@
                                       "id": "c3N3z",
                                       "type": "ref",
                                       "ref": "ui:IGbQe",
-                                      "name": "03 · Signed in / Default",
+                                      "name": "J01.A / 03 · Signed in / Wide / Default",
                                       "width": 1440,
                                       "height": 900,
                                       "theme": {
@@ -1380,7 +1380,7 @@
                                       "id": "nycwW",
                                       "type": "ref",
                                       "ref": "ui:tqiBA",
-                                      "name": "01 · Enrolment invitation / Default",
+                                      "name": "J01.A / 01 · Enrolment invitation / Compact / Default",
                                       "width": 390,
                                       "height": 844,
                                       "theme": {
@@ -1587,7 +1587,7 @@
                                       "id": "v8bd7N",
                                       "type": "ref",
                                       "ref": "ui:pu6qZ",
-                                      "name": "03 · Signed in / Default",
+                                      "name": "J01.A / 03 · Signed in / Compact / Default",
                                       "width": 390,
                                       "height": 844,
                                       "theme": {
@@ -1747,7 +1747,7 @@
                                       "id": "On6yE",
                                       "type": "ref",
                                       "ref": "ui:IGbQe",
-                                      "name": "03 · Signed in / Default",
+                                      "name": "J01.A / 03 · Signed in / Ultra / Default",
                                       "width": 1920,
                                       "height": 1080,
                                       "theme": {
@@ -1947,7 +1947,7 @@
                                       "id": "h79SR",
                                       "type": "ref",
                                       "ref": "ui:kJkV1",
-                                      "name": "01 · Sign in / Default",
+                                      "name": "J02.A / 01 · Sign in / Wide / Default",
                                       "width": 1440,
                                       "height": 900,
                                       "theme": {
@@ -2074,7 +2074,7 @@
                                       "id": "xd2g8",
                                       "type": "ref",
                                       "ref": "ui:kJkV1",
-                                      "name": "01 · Sign in / Prompt dismissed",
+                                      "name": "J02.A / 01 · Sign in / Wide / Prompt dismissed",
                                       "width": 1440,
                                       "height": 900,
                                       "theme": {
@@ -2231,7 +2231,7 @@
                                       "id": "hsnpo",
                                       "type": "ref",
                                       "ref": "ui:kJkV1",
-                                      "name": "01 · Sign in / Session expired",
+                                      "name": "J02.A / 01 · Sign in / Wide / Session expired",
                                       "width": 1440,
                                       "height": 900,
                                       "theme": {
@@ -2455,7 +2455,7 @@
                                       "id": "CErpj",
                                       "type": "ref",
                                       "ref": "ui:IGbQe",
-                                      "name": "02 · Signed in / Default",
+                                      "name": "J02.A / 02 · Signed in / Wide / Default",
                                       "width": 1440,
                                       "height": 900,
                                       "theme": {
@@ -2615,7 +2615,7 @@
                                       "id": "kX5Hn",
                                       "type": "ref",
                                       "ref": "ui:tqiBA",
-                                      "name": "01 · Sign in / Default",
+                                      "name": "J02.A / 01 · Sign in / Compact / Default",
                                       "width": 390,
                                       "height": 844,
                                       "theme": {
@@ -2822,7 +2822,7 @@
                                       "id": "uQFxV",
                                       "type": "ref",
                                       "ref": "ui:pu6qZ",
-                                      "name": "02 · Signed in / Default",
+                                      "name": "J02.A / 02 · Signed in / Compact / Default",
                                       "width": 390,
                                       "height": 844,
                                       "theme": {
@@ -3044,7 +3044,7 @@
                                       "id": "lthfY",
                                       "type": "ref",
                                       "ref": "ui:kJkV1",
-                                      "name": "01 · Passkey not recognised / Default",
+                                      "name": "J02.B / 01 · Passkey not recognised / Wide / Default",
                                       "width": 1440,
                                       "height": 900,
                                       "theme": {
@@ -3256,7 +3256,7 @@
                                       "id": "I9oOq6",
                                       "type": "ref",
                                       "ref": "ui:tqiBA",
-                                      "name": "01 · Passkey not recognised / Default",
+                                      "name": "J02.B / 01 · Passkey not recognised / Compact / Default",
                                       "width": 390,
                                       "height": 844,
                                       "theme": {
@@ -3492,7 +3492,7 @@
                                       "id": "d4i2f",
                                       "type": "ref",
                                       "ref": "ui:kJkV1",
-                                      "name": "01 · Link unusable / Default",
+                                      "name": "J01.B / 01 · Link unusable / Wide / Default",
                                       "width": 1440,
                                       "height": 900,
                                       "theme": {
@@ -3670,7 +3670,7 @@
                                       "id": "CRAE1",
                                       "type": "ref",
                                       "ref": "ui:tqiBA",
-                                      "name": "01 · Link unusable / Default",
+                                      "name": "J01.B / 01 · Link unusable / Compact / Default",
                                       "width": 390,
                                       "height": 844,
                                       "theme": {
@@ -4666,6 +4666,45 @@
           "fontFamily": "$ui:type-family-body",
           "fontSize": 14,
           "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "BB9yS",
+          "name": "Medium is not drawn, and why",
+          "width": 1240,
+          "fill": "$ui:color-bg-surface",
+          "cornerRadius": "$ui:radius-md",
+          "stroke": "$ui:color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "l1KPgL",
+              "name": "Title",
+              "fill": "$ui:color-text-primary",
+              "content": "Medium is not drawn, and why",
+              "fontFamily": "$ui:type-family-body",
+              "fontSize": "$ui:type-size-heading-sm",
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "VMp8U",
+              "name": "Note",
+              "fill": "$ui:color-text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Every screen in this file is Auth shell: a centred card on the canvas with no navigation of any kind. Between 768 and 1200 that card is the same card in the same place, so a Medium frame would be a second copy of Wide with a different number written on it, and somebody would have to keep the two in step forever.\n\nMedium therefore follows the Wide composition and takes Medium's own token values for the gutter and the type scale. Compact is drawn, because the card goes full-bleed and the shell's own padding changes. Ultra is drawn, because the card stops growing with the window.\n\nThis is the rule the design standard already states: a regime that adds no structural information is recorded here rather than drawn. It is a decision about these screens only. Every signed-in screen does change at Medium, where the navigation becomes a rail, and those are drawn.",
+              "lineHeight": 1.45,
+              "fontFamily": "$ui:type-family-body",
+              "fontSize": "$ui:type-size-body-md",
+              "fontWeight": "normal"
+            }
+          ]
         }
       ]
     }

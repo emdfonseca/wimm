@@ -2,8 +2,11 @@ package store_test
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
+
+	"github.com/jackc/pgx/v5"
 
 	"github.com/xuuid/wimm/apps/wimm/internal/store"
 	"github.com/xuuid/wimm/apps/wimm/internal/store/storetest"
@@ -482,5 +485,231 @@ func TestOwnershipIsNeverInferredFromTheHolderName(t *testing.T) {
 	}
 	if len(both) != 2 {
 		t.Errorf("a joint account reports %d owners, want 2", len(both))
+	}
+}
+
+// Leaving an account out says it is not in wimm (ADR 0022), and a ledger still
+// listing its rows would contradict that: it drops out of the list, the count
+// and the span, none of it deleted, all of it back the moment it is un-left.
+func TestLeavingAnAccountOutRemovesItFromTheLedgerAndBringingItBackRestoresIt(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+
+	accountID := ledger(t, ctx, db, ada.ID,
+		booked("ref-a", 1, -100), booked("ref-b", 5, -200), booked("ref-c", 9, -300))
+
+	page := readPage(t, ctx, db, store.LedgerQuery{MemberID: ada.ID, Limit: 50})
+	if len(page.Transactions) != 3 {
+		t.Fatalf("before leaving out: %d transactions, want 3", len(page.Transactions))
+	}
+
+	if err := db.SetAccountLeftOut(ctx, accountID, true); err != nil {
+		t.Fatalf("SetAccountLeftOut: %v", err)
+	}
+
+	page = readPage(t, ctx, db, store.LedgerQuery{MemberID: ada.ID, Limit: 50})
+	if len(page.Transactions) != 0 {
+		t.Errorf("a left-out account's ledger holds %d transactions, want 0", len(page.Transactions))
+	}
+	if n, err := db.CountLedger(ctx, ada.ID, ""); err != nil || n != 0 {
+		t.Errorf("CountLedger = %d, %v, want 0, nil", n, err)
+	}
+	state, err := db.LedgerState(ctx, ada.ID, "")
+	if err != nil {
+		t.Fatalf("LedgerState: %v", err)
+	}
+	if state.ReachesBack != nil {
+		t.Errorf("ReachesBack = %v for a left-out account's ledger, want nil", state.ReachesBack)
+	}
+
+	if err := db.SetAccountLeftOut(ctx, accountID, false); err != nil {
+		t.Fatalf("bringing it back: %v", err)
+	}
+	page = readPage(t, ctx, db, store.LedgerQuery{MemberID: ada.ID, Limit: 50})
+	if len(page.Transactions) != 3 {
+		t.Errorf("after bringing it back: %d transactions, want 3 restored", len(page.Transactions))
+	}
+	if n, err := db.CountLedger(ctx, ada.ID, ""); err != nil || n != 3 {
+		t.Errorf("CountLedger = %d, %v, want 3, nil", n, err)
+	}
+}
+
+// Newest is the cursor being absent; oldest and a month are the same seek
+// anchored elsewhere. A jump must land on a page contiguous with the ones
+// either side of it, with nothing repeated and nothing skipped.
+func TestOldestJumpIsContiguousWithThePageEitherSide(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+
+	var txs []store.Transaction
+	for i := 1; i <= 9; i++ {
+		txs = append(txs, booked("ref-"+string(rune('a'+i-1)), i, int64(-100*i)))
+	}
+	ledger(t, ctx, db, ada.ID, txs...)
+
+	oldest := readPage(t, ctx, db, store.LedgerQuery{MemberID: ada.ID, Limit: 3, Oldest: true})
+	if oldest.HasOlder {
+		t.Error("the oldest page offers something older")
+	}
+	if !oldest.HasNewer {
+		t.Error("the oldest page offers nothing newer, but six transactions are")
+	}
+	if want := []string{"ref-c", "ref-b", "ref-a"}; !same(keys(oldest), want) {
+		t.Fatalf("the oldest page holds %v, want %v", keys(oldest), want)
+	}
+
+	// Newer, from the oldest page's own newest row: must reach the segment
+	// immediately above it with nothing repeated and nothing skipped.
+	first := oldest.Transactions[0]
+	newer := readPage(t, ctx, db, store.LedgerQuery{
+		MemberID: ada.ID, Limit: 3, Cursor: store.Cursor{BookingDate: first.BookingDate, ID: first.ID}})
+	if want := []string{"ref-f", "ref-e", "ref-d"}; !same(keys(newer), want) {
+		t.Errorf("paging newer from the oldest page gave %v, want %v", keys(newer), want)
+	}
+}
+
+// A page start is a cursor resolved on the server: it must land on precisely
+// that page, contiguous with the page before and after it — the property a
+// calendar month cannot promise once a page spans more of them than one.
+func TestPageStartIsContiguousWithThePageEitherSide(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+
+	on := func(m time.Month, d int) time.Time { return time.Date(2026, m, d, 0, 0, 0, 0, time.UTC) }
+	txOn := func(key string, when time.Time, minor int64) store.Transaction {
+		return store.Transaction{
+			Status: store.StatusBooked, DedupKey: key, AmountMinor: minor,
+			Currency: "EUR", BookingDate: when, CounterpartyName: "Padaria Ribeiro",
+		}
+	}
+
+	_, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Conta a Ordem", "0538"))
+	txs := []store.Transaction{
+		txOn("jan-a", on(time.January, 1), -100),
+		txOn("jan-b", on(time.January, 5), -200),
+		txOn("feb-a", on(time.February, 2), -300),
+		txOn("feb-b", on(time.February, 10), -400),
+		txOn("mar-a", on(time.March, 3), -500),
+		txOn("mar-b", on(time.March, 7), -600),
+	}
+	if _, err := db.WriteAccountTransactions(ctx, stored[0].ID, txs, on(time.March, 10)); err != nil {
+		t.Fatalf("WriteAccountTransactions: %v", err)
+	}
+
+	index, err := db.LedgerPageIndex(ctx, ada.ID, "", 2)
+	if err != nil {
+		t.Fatalf("LedgerPageIndex: %v", err)
+	}
+	if len(index) != 3 {
+		t.Fatalf("LedgerPageIndex = %+v, want 3 pages of 2", index)
+	}
+	middle := index[1] // mar-b, mar-a is index[0]; feb-b, feb-a is index[1].
+
+	page := readPage(t, ctx, db, store.LedgerQuery{
+		MemberID: ada.ID, Limit: 2, PageStart: &middle.Cursor})
+	if want := []string{"feb-b", "feb-a"}; !same(keys(page), want) {
+		t.Fatalf("the page named by the index holds %v, want %v", keys(page), want)
+	}
+	if !page.HasOlder {
+		t.Error("this page offers nothing older, but January is")
+	}
+	if !page.HasNewer {
+		t.Error("this page offers nothing newer, but March is")
+	}
+
+	last := page.Transactions[len(page.Transactions)-1]
+	older := readPage(t, ctx, db, store.LedgerQuery{
+		MemberID: ada.ID, Limit: 2, Older: true,
+		Cursor: store.Cursor{BookingDate: last.BookingDate, ID: last.ID}})
+	if want := []string{"jan-b", "jan-a"}; !same(keys(older), want) {
+		t.Errorf("paging older from this page gave %v, want January: %v", keys(older), want)
+	}
+
+	first := page.Transactions[0]
+	newer := readPage(t, ctx, db, store.LedgerQuery{
+		MemberID: ada.ID, Limit: 2, Cursor: store.Cursor{BookingDate: first.BookingDate, ID: first.ID}})
+	if want := []string{"mar-b", "mar-a"}; !same(keys(newer), want) {
+		t.Errorf("paging newer from this page gave %v, want March: %v", keys(newer), want)
+	}
+}
+
+// The page index buckets every transaction into a real page, oldest page
+// last and never larger than the page size — a calendar aggregate could
+// offer a range with a hundred rows in it, and none of them would be a page
+// a member could actually land on.
+func TestThePageIndexBucketsIntoRealPages(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+
+	on := func(m time.Month, d int) time.Time { return time.Date(2026, m, d, 0, 0, 0, 0, time.UTC) }
+	_, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Conta a Ordem", "0538"))
+	txs := []store.Transaction{
+		{Status: store.StatusBooked, DedupKey: "jan-a", AmountMinor: -100, Currency: "EUR", BookingDate: on(time.January, 1)},
+		{Status: store.StatusBooked, DedupKey: "jan-b", AmountMinor: -200, Currency: "EUR", BookingDate: on(time.January, 20)},
+		{Status: store.StatusBooked, DedupKey: "mar-a", AmountMinor: -300, Currency: "EUR", BookingDate: on(time.March, 3)},
+	}
+	if _, err := db.WriteAccountTransactions(ctx, stored[0].ID, txs, on(time.March, 10)); err != nil {
+		t.Fatalf("WriteAccountTransactions: %v", err)
+	}
+
+	index, err := db.LedgerPageIndex(ctx, ada.ID, "", 2)
+	if err != nil {
+		t.Fatalf("LedgerPageIndex: %v", err)
+	}
+	if len(index) != 2 {
+		t.Fatalf("LedgerPageIndex = %+v, want 2 pages of at most 2", index)
+	}
+	if !index[0].Newest.Equal(on(time.March, 3)) || !index[0].Oldest.Equal(on(time.January, 20)) {
+		t.Errorf("newest page = %+v, want March 3 to January 20", index[0])
+	}
+	if !index[1].Newest.Equal(on(time.January, 1)) || !index[1].Oldest.Equal(on(time.January, 1)) {
+		t.Errorf("oldest page = %+v, want January 1 alone", index[1])
+	}
+}
+
+// The page index runs on the same index the ledger already pages through, so
+// it is measured here rather than assumed: a scan over 50,000 rows must stay
+// well clear of anything a member would notice.
+func TestThePageIndexStaysFastAtFiftyThousandRows(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+
+	_, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Conta a Ordem", "0538"))
+	accountID := stored[0].ID
+
+	const total = 50_000
+	start := time.Date(2018, time.January, 1, 0, 0, 0, 0, time.UTC)
+	rows := make([][]any, total)
+	for i := range total {
+		rows[i] = []any{
+			accountID, string(store.StatusBooked), fmt.Sprintf("bulk-%d", i), int64(-100 - i),
+			"EUR", start.AddDate(0, 0, i%2000),
+		}
+	}
+	if _, err := db.Pool().CopyFrom(ctx,
+		pgx.Identifier{"transactions"},
+		[]string{"account_id", "status", "dedup_key", "amount_minor", "currency", "booking_date"},
+		pgx.CopyFromRows(rows),
+	); err != nil {
+		t.Fatalf("seeding 50,000 transactions: %v", err)
+	}
+
+	began := time.Now()
+	index, err := db.LedgerPageIndex(ctx, ada.ID, "", 50)
+	elapsed := time.Since(began)
+	if err != nil {
+		t.Fatalf("LedgerPageIndex: %v", err)
+	}
+	t.Logf("LedgerPageIndex over %d rows took %s", total, elapsed)
+	if elapsed > 2*time.Second {
+		t.Errorf("LedgerPageIndex took %s over %d rows, want well under 2s", elapsed, total)
+	}
+	if len(index) != total/50 {
+		t.Errorf("LedgerPageIndex returned %d pages, want %d", len(index), total/50)
 	}
 }

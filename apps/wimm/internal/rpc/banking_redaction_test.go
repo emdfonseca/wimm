@@ -111,3 +111,60 @@ func TestAnUnsetLevelMeansHidden(t *testing.T) {
 		t.Errorf("UNSPECIFIED mapped to %q, want no grant", got)
 	}
 }
+
+// A left-out account omits its balance even for its owner (ADR 0022): the
+// query still returns it, so this is asserted at the one place redaction
+// happens — the field is absent from the response, not present as a zero
+// value that a client might render as "€0.00, just read".
+func TestALeftOutAccountSendsNoBalance(t *testing.T) {
+	a := visible(store.LevelDetails, true)
+	leftOutAt := time.Date(2026, time.September, 18, 8, 0, 0, 0, time.UTC)
+	a.LeftOutAt = &leftOutAt
+
+	out := toProtoAccountForTest(a)
+
+	if out.GetBalance() != nil {
+		t.Error("a left-out account's balance reached the wire")
+	}
+	if !out.GetLeftOutAt().IsValid() {
+		t.Error("LeftOutAt did not reach the wire")
+	}
+	// Everything else an owner sees stays: leaving an account out is a fact
+	// about it, not a demotion in what its owner may see of it.
+	if out.GetName() == "" {
+		t.Error("a left-out account's name was redacted from its owner")
+	}
+	if out.GetNumberSuffix() == "" {
+		t.Error("a left-out account's details were redacted from its owner")
+	}
+}
+
+// The household's own name reaches the wire beside the bank's, never in place
+// of it: household_name is the reader's job (ADR 0022), so both are sent.
+func TestHouseholdNameIsSerialisedBesideTheBanksOwn(t *testing.T) {
+	a := visible(store.LevelBalance, false)
+	a.HouseholdName = "Rent"
+
+	out := toProtoAccountForTest(a)
+
+	if out.GetHouseholdName() != "Rent" {
+		t.Errorf("HouseholdName = %q, want %q", out.GetHouseholdName(), "Rent")
+	}
+	if out.GetName() != "Conta à Ordem" {
+		t.Errorf("Name = %q, want the bank's own name kept beside it", out.GetName())
+	}
+}
+
+// Bringing an account back is clearing the fact, not restating the balance:
+// once left_out_at is nil again the query's own balance columns are what
+// decide whether one renders.
+func TestAnAccountBroughtBackSendsItsBalanceAgain(t *testing.T) {
+	out := toProtoAccountForTest(visible(store.LevelDetails, true))
+
+	if out.GetLeftOutAt() != nil {
+		t.Error("LeftOutAt reached the wire for an account that was never left out")
+	}
+	if out.GetBalance() == nil {
+		t.Error("an account in wimm sent no balance")
+	}
+}

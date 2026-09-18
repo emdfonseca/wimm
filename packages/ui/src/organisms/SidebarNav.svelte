@@ -75,7 +75,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
-		inline-size: 264px;
+		inline-size: var(--layout-sidebar-width);
 		/* Fills whatever the shell gives it, which at Wide is one viewport. */
 		block-size: 100%;
 		padding: 12px;

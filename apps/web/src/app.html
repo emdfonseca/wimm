@@ -6,12 +6,15 @@
 		<link rel="icon" href="%sveltekit.assets%/favicon.svg" />
 		%sveltekit.head%
 		<!--
-			The stored theme, applied before anything paints.
+			The stored theme and density, applied before anything paints.
 
-			tokens.css resolves light and dark from prefers-color-scheme and
-			lets [data-theme] override it. Setting that attribute from a
-			component would run after first paint, so a member who chose dark
-			on a light system would see a white flash on every navigation.
+			tokens.css resolves light/dark from prefers-color-scheme and
+			comfortable/compact from nothing but [data-density] — there is no
+			media query default for density, so leaving this out entirely
+			would make the choice unreachable rather than merely late.
+			Setting either attribute from a component would run after first
+			paint, so a member who chose dark or compact would see the product
+			flash to the default and then rearrange on every navigation.
 
 			Inline and blocking on purpose: it must win the race with paint.
 		-->
@@ -23,6 +26,14 @@
 				}
 			} catch (e) {
 				// Storage blocked. The media query decides, which is the default.
+			}
+			try {
+				var density = localStorage.getItem('wimm-density');
+				if (density === 'compact') {
+					document.documentElement.setAttribute('data-density', density);
+				}
+			} catch (e) {
+				// Storage blocked. Comfortable, the default, decides.
 			}
 		</script>
 	</head>

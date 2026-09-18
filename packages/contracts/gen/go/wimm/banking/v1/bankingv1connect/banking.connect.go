@@ -51,6 +51,12 @@ const (
 	// BankingServiceSetAccountLevelProcedure is the fully-qualified name of the BankingService's
 	// SetAccountLevel RPC.
 	BankingServiceSetAccountLevelProcedure = "/wimm.banking.v1.BankingService/SetAccountLevel"
+	// BankingServiceSetAccountLeftOutProcedure is the fully-qualified name of the BankingService's
+	// SetAccountLeftOut RPC.
+	BankingServiceSetAccountLeftOutProcedure = "/wimm.banking.v1.BankingService/SetAccountLeftOut"
+	// BankingServiceSetAccountNameProcedure is the fully-qualified name of the BankingService's
+	// SetAccountName RPC.
+	BankingServiceSetAccountNameProcedure = "/wimm.banking.v1.BankingService/SetAccountName"
 	// BankingServiceListAccountsProcedure is the fully-qualified name of the BankingService's
 	// ListAccounts RPC.
 	BankingServiceListAccountsProcedure = "/wimm.banking.v1.BankingService/ListAccounts"
@@ -88,6 +94,11 @@ type BankingServiceClient interface {
 	SetAccountOwners(context.Context, *connect.Request[v1.SetAccountOwnersRequest]) (*connect.Response[v1.SetAccountOwnersResponse], error)
 	// Set what one member may see of one account. Any owner may. Deadline: 5s.
 	SetAccountLevel(context.Context, *connect.Request[v1.SetAccountLevelRequest]) (*connect.Response[v1.SetAccountLevelResponse], error)
+	// Leave an account out, or bring it back. Any owner may. Deadline: 5s.
+	SetAccountLeftOut(context.Context, *connect.Request[v1.SetAccountLeftOutRequest]) (*connect.Response[v1.SetAccountLeftOutResponse], error)
+	// Set the household's name for an account, or clear it back to the bank's
+	// own name. Any owner may. Deadline: 5s.
+	SetAccountName(context.Context, *connect.Request[v1.SetAccountNameRequest]) (*connect.Response[v1.SetAccountNameResponse], error)
 	// Everything the calling member may see, at the level they may see it, with
 	// a total per currency. Deadline: 30s — it reads balances from the banks.
 	ListAccounts(context.Context, *connect.Request[v1.ListAccountsRequest]) (*connect.Response[v1.ListAccountsResponse], error)
@@ -153,6 +164,18 @@ func NewBankingServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(bankingServiceMethods.ByName("SetAccountLevel")),
 			connect.WithClientOptions(opts...),
 		),
+		setAccountLeftOut: connect.NewClient[v1.SetAccountLeftOutRequest, v1.SetAccountLeftOutResponse](
+			httpClient,
+			baseURL+BankingServiceSetAccountLeftOutProcedure,
+			connect.WithSchema(bankingServiceMethods.ByName("SetAccountLeftOut")),
+			connect.WithClientOptions(opts...),
+		),
+		setAccountName: connect.NewClient[v1.SetAccountNameRequest, v1.SetAccountNameResponse](
+			httpClient,
+			baseURL+BankingServiceSetAccountNameProcedure,
+			connect.WithSchema(bankingServiceMethods.ByName("SetAccountName")),
+			connect.WithClientOptions(opts...),
+		),
 		listAccounts: connect.NewClient[v1.ListAccountsRequest, v1.ListAccountsResponse](
 			httpClient,
 			baseURL+BankingServiceListAccountsProcedure,
@@ -200,6 +223,8 @@ type bankingServiceClient struct {
 	listConnectionAccounts *connect.Client[v1.ListConnectionAccountsRequest, v1.ListConnectionAccountsResponse]
 	setAccountOwners       *connect.Client[v1.SetAccountOwnersRequest, v1.SetAccountOwnersResponse]
 	setAccountLevel        *connect.Client[v1.SetAccountLevelRequest, v1.SetAccountLevelResponse]
+	setAccountLeftOut      *connect.Client[v1.SetAccountLeftOutRequest, v1.SetAccountLeftOutResponse]
+	setAccountName         *connect.Client[v1.SetAccountNameRequest, v1.SetAccountNameResponse]
 	listAccounts           *connect.Client[v1.ListAccountsRequest, v1.ListAccountsResponse]
 	refreshBalances        *connect.Client[v1.RefreshBalancesRequest, v1.RefreshBalancesResponse]
 	restoreConnection      *connect.Client[v1.RestoreConnectionRequest, v1.RestoreConnectionResponse]
@@ -236,6 +261,16 @@ func (c *bankingServiceClient) SetAccountOwners(ctx context.Context, req *connec
 // SetAccountLevel calls wimm.banking.v1.BankingService.SetAccountLevel.
 func (c *bankingServiceClient) SetAccountLevel(ctx context.Context, req *connect.Request[v1.SetAccountLevelRequest]) (*connect.Response[v1.SetAccountLevelResponse], error) {
 	return c.setAccountLevel.CallUnary(ctx, req)
+}
+
+// SetAccountLeftOut calls wimm.banking.v1.BankingService.SetAccountLeftOut.
+func (c *bankingServiceClient) SetAccountLeftOut(ctx context.Context, req *connect.Request[v1.SetAccountLeftOutRequest]) (*connect.Response[v1.SetAccountLeftOutResponse], error) {
+	return c.setAccountLeftOut.CallUnary(ctx, req)
+}
+
+// SetAccountName calls wimm.banking.v1.BankingService.SetAccountName.
+func (c *bankingServiceClient) SetAccountName(ctx context.Context, req *connect.Request[v1.SetAccountNameRequest]) (*connect.Response[v1.SetAccountNameResponse], error) {
+	return c.setAccountName.CallUnary(ctx, req)
 }
 
 // ListAccounts calls wimm.banking.v1.BankingService.ListAccounts.
@@ -285,6 +320,11 @@ type BankingServiceHandler interface {
 	SetAccountOwners(context.Context, *connect.Request[v1.SetAccountOwnersRequest]) (*connect.Response[v1.SetAccountOwnersResponse], error)
 	// Set what one member may see of one account. Any owner may. Deadline: 5s.
 	SetAccountLevel(context.Context, *connect.Request[v1.SetAccountLevelRequest]) (*connect.Response[v1.SetAccountLevelResponse], error)
+	// Leave an account out, or bring it back. Any owner may. Deadline: 5s.
+	SetAccountLeftOut(context.Context, *connect.Request[v1.SetAccountLeftOutRequest]) (*connect.Response[v1.SetAccountLeftOutResponse], error)
+	// Set the household's name for an account, or clear it back to the bank's
+	// own name. Any owner may. Deadline: 5s.
+	SetAccountName(context.Context, *connect.Request[v1.SetAccountNameRequest]) (*connect.Response[v1.SetAccountNameResponse], error)
 	// Everything the calling member may see, at the level they may see it, with
 	// a total per currency. Deadline: 30s — it reads balances from the banks.
 	ListAccounts(context.Context, *connect.Request[v1.ListAccountsRequest]) (*connect.Response[v1.ListAccountsResponse], error)
@@ -346,6 +386,18 @@ func NewBankingServiceHandler(svc BankingServiceHandler, opts ...connect.Handler
 		connect.WithSchema(bankingServiceMethods.ByName("SetAccountLevel")),
 		connect.WithHandlerOptions(opts...),
 	)
+	bankingServiceSetAccountLeftOutHandler := connect.NewUnaryHandler(
+		BankingServiceSetAccountLeftOutProcedure,
+		svc.SetAccountLeftOut,
+		connect.WithSchema(bankingServiceMethods.ByName("SetAccountLeftOut")),
+		connect.WithHandlerOptions(opts...),
+	)
+	bankingServiceSetAccountNameHandler := connect.NewUnaryHandler(
+		BankingServiceSetAccountNameProcedure,
+		svc.SetAccountName,
+		connect.WithSchema(bankingServiceMethods.ByName("SetAccountName")),
+		connect.WithHandlerOptions(opts...),
+	)
 	bankingServiceListAccountsHandler := connect.NewUnaryHandler(
 		BankingServiceListAccountsProcedure,
 		svc.ListAccounts,
@@ -396,6 +448,10 @@ func NewBankingServiceHandler(svc BankingServiceHandler, opts ...connect.Handler
 			bankingServiceSetAccountOwnersHandler.ServeHTTP(w, r)
 		case BankingServiceSetAccountLevelProcedure:
 			bankingServiceSetAccountLevelHandler.ServeHTTP(w, r)
+		case BankingServiceSetAccountLeftOutProcedure:
+			bankingServiceSetAccountLeftOutHandler.ServeHTTP(w, r)
+		case BankingServiceSetAccountNameProcedure:
+			bankingServiceSetAccountNameHandler.ServeHTTP(w, r)
 		case BankingServiceListAccountsProcedure:
 			bankingServiceListAccountsHandler.ServeHTTP(w, r)
 		case BankingServiceRefreshBalancesProcedure:
@@ -439,6 +495,14 @@ func (UnimplementedBankingServiceHandler) SetAccountOwners(context.Context, *con
 
 func (UnimplementedBankingServiceHandler) SetAccountLevel(context.Context, *connect.Request[v1.SetAccountLevelRequest]) (*connect.Response[v1.SetAccountLevelResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("wimm.banking.v1.BankingService.SetAccountLevel is not implemented"))
+}
+
+func (UnimplementedBankingServiceHandler) SetAccountLeftOut(context.Context, *connect.Request[v1.SetAccountLeftOutRequest]) (*connect.Response[v1.SetAccountLeftOutResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("wimm.banking.v1.BankingService.SetAccountLeftOut is not implemented"))
+}
+
+func (UnimplementedBankingServiceHandler) SetAccountName(context.Context, *connect.Request[v1.SetAccountNameRequest]) (*connect.Response[v1.SetAccountNameResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("wimm.banking.v1.BankingService.SetAccountName is not implemented"))
 }
 
 func (UnimplementedBankingServiceHandler) ListAccounts(context.Context, *connect.Request[v1.ListAccountsRequest]) (*connect.Response[v1.ListAccountsResponse], error) {

@@ -1,9 +1,10 @@
 import type { Cookies, ServerLoad } from '@sveltejs/kit';
-import type { LedgerDay, LedgerProblem, NarrowBank } from '@wimm/ui';
+import type { LedgerDay, LedgerProblem, NarrowBank, ScrubberPage } from '@wimm/ui';
 import {
 	Failure,
 	TransactionStatus,
 	type Ledger,
+	type PageMarker,
 	type NarrowConnection,
 	type BankFailure,
 	type Transaction
@@ -39,15 +40,18 @@ export const load: ServerLoad = async ({ cookies, depends, url }) => {
 	const accountId = url.searchParams.get('account') ?? '';
 	const before = url.searchParams.get('before') ?? '';
 	const after = url.searchParams.get('after') ?? '';
+	const oldest = url.searchParams.get('oldest') === '1';
+	const page = url.searchParams.get('page') ?? '';
 
-	const ledger = await read(cookies, { accountId, before, after });
+	const ledger = await read(cookies, { accountId, before, after, oldest, page });
 
 	return {
 		...ledger,
 		accountId: accountId || undefined,
-		// Only the newest page brings itself up to date. A cursor means the
-		// member is reading somewhere that new transactions do not belong.
-		syncOnArrival: !before && !after
+		// Only the newest page brings itself up to date, and only when nothing
+		// else named where to start reading — a jump is a member asking to be
+		// somewhere specific, not an arrival at the newest page.
+		syncOnArrival: !before && !after && !oldest && !page
 	};
 };
 
@@ -55,6 +59,11 @@ interface Query {
 	accountId: string;
 	before: string;
 	after: string;
+	oldest: boolean;
+	// A page named by the ledger's own page index — `<booking date>.<id>`,
+	// the same shape `before`/`after` already take, because it is the same
+	// kind of thing: a cursor, never a calendar bound.
+	page: string;
 }
 
 /**
@@ -63,7 +72,11 @@ interface Query {
  */
 async function read(cookies: Cookies, query: Query) {
 	try {
+		// Cursor, oldest and page are mutually exclusive ways to say where to
+		// start reading, and a cursor wins if somehow more than one arrived —
+		// the contract's own stated precedence.
 		const cursor = parseCursor(query.before || query.after);
+		const pageStart = parseCursor(query.page);
 		const [response, accounts] = await Promise.all([
 			call(cookies, (options) =>
 				banking.listTransactions(
@@ -71,6 +84,8 @@ async function read(cookies: Cookies, query: Query) {
 						accountId: query.accountId,
 						cursor,
 						older: query.before !== '',
+						oldest: !cursor && query.oldest,
+						pageStart: !cursor && !query.oldest ? pageStart : undefined,
 						// Stored rows only. The sync is the page's own, after it
 						// has rendered.
 						skipSync: true
@@ -110,33 +125,22 @@ function parseCursor(raw: string) {
 	return { bookingDate: { seconds: BigInt(Math.floor(date / 1000)), nanos: 0 }, transactionId };
 }
 
-function cursorOf(transaction: Transaction | undefined): string {
-	const seconds = transaction?.bookingDate?.seconds;
-	if (!transaction || seconds === undefined) return '';
-	return `${isoDate(seconds)}.${transaction.id}`;
-}
-
 function present(ledger: Ledger | undefined, query: Query, noBank: boolean) {
 	const transactions = ledger?.transactions ?? [];
 	const filter = query.accountId ? transactions[0]?.accountName : undefined;
 
-	const href = (key: 'before' | 'after', cursor: string) => {
+	const paramsFor = (extra: Record<string, string>) => {
 		const params = new URLSearchParams();
 		if (query.accountId) params.set('account', query.accountId);
-		params.set(key, cursor);
-		return `/transactions?${params}`;
+		for (const [key, value] of Object.entries(extra)) params.set(key, value);
+		return params;
 	};
-
-	const oldest = cursorOf(transactions[transactions.length - 1]);
-	const newest = cursorOf(transactions[0]);
 
 	return {
 		days: group(transactions),
 		count: ledger?.totalCount ?? 0,
 		freshness: freshnessOf(ledger),
 		span: spanOf(ledger),
-		olderHref: ledger?.hasOlder && oldest ? href('before', oldest) : undefined,
-		newerHref: ledger?.hasNewer && newest ? href('after', newest) : undefined,
 		// Only said on a page that has reached the end, and only once something
 		// has been read: before the first read wimm knows no date to reach to.
 		atOldest: Boolean(ledger && !ledger.hasOlder && transactions.length > 0 && ledger.reachesBackTo),
@@ -148,8 +152,46 @@ function present(ledger: Ledger | undefined, query: Query, noBank: boolean) {
 		// A member who can see nothing at all is in a household with no bank; one
 		// who can see accounts but owns none is told that instead.
 		noBank,
-		ownsNothing: !noBank && (ledger?.ownsNoAccount ?? false)
+		ownsNothing: !noBank && (ledger?.ownsNoAccount ?? false),
+		pages: pagesFrom(ledger, paramsFor),
+		currentPage: currentPageKey(ledger),
+		// Absent exactly where the page is already there: the newest page has
+		// no cursor, no oldest flag and no page, and the oldest page is the
+		// one place hasOlder says there is nothing further.
+		newestHref:
+			query.before || query.after || query.oldest || query.page
+				? `/transactions?${paramsFor({})}`
+				: undefined,
+		oldestHref: ledger?.hasOlder ? `/transactions?${paramsFor({ oldest: '1' })}` : undefined
 	};
+}
+
+/** `<booking date>.<id>`, the cursor a page's own newest row encodes to. */
+function cursorKey(cursor: PageMarker['cursor']): string {
+	const seconds = cursor?.bookingDate?.seconds;
+	return seconds === undefined ? '' : `${isoDate(seconds)}.${cursor?.transactionId ?? ''}`;
+}
+
+function pagesFrom(
+	ledger: Ledger | undefined,
+	paramsFor: (extra: Record<string, string>) => URLSearchParams
+): ScrubberPage[] {
+	return (ledger?.pages ?? []).map((p: PageMarker) => ({
+		key: cursorKey(p.cursor),
+		label: spanLabel(p.newest?.seconds, p.oldest?.seconds),
+		href: `/transactions?${paramsFor({ page: cursorKey(p.cursor) })}`
+	}));
+}
+
+/** Which of the ledger's own pages this response's page actually is, so the
+ *  scrubber can say so without guessing from the query string — the page a
+ *  cursor names and the page a member is shown are the same fact stated
+ *  twice, and only one of them should have to know how a cursor is spelled. */
+function currentPageKey(ledger: Ledger | undefined): string | undefined {
+	const newest = ledger?.newestOnPage?.seconds;
+	if (newest === undefined) return undefined;
+	const match = (ledger?.pages ?? []).find((p) => p.newest?.seconds === newest);
+	return match ? cursorKey(match.cursor) : undefined;
 }
 
 function bankOf(transaction: Transaction | undefined): string {
@@ -237,9 +279,14 @@ function freshnessOf(ledger: Ledger | undefined): string | undefined {
 
 /** Where in time the member is. Never a page number. */
 function spanOf(ledger: Ledger | undefined): string | undefined {
-	const newest = ledger?.newestOnPage?.seconds;
-	const oldest = ledger?.oldestOnPage?.seconds;
-	if (newest === undefined || oldest === undefined) return undefined;
+	return spanLabel(ledger?.newestOnPage?.seconds, ledger?.oldestOnPage?.seconds);
+}
+
+/** Where in time a span of dates sits. Shared by the toolbar's own span and
+ *  every page the scrubber offers, because a page is described exactly the
+ *  way the page a member is already on is. */
+function spanLabel(newest: bigint | undefined, oldest: bigint | undefined): string {
+	if (newest === undefined || oldest === undefined) return '';
 
 	if (newest === oldest) return longDate(newest);
 
@@ -268,9 +315,14 @@ function isoDate(seconds: bigint): string {
 
 function shortDate(seconds: bigint | undefined): string {
 	if (seconds === undefined) return '';
+	// The year is never omitted: the day group heading above a row states it,
+	// but the row itself is what a member actually reads while scanning down
+	// a list that can span years, and "Sep 15" alone is a different day in
+	// nearly every one of them.
 	return new Date(Number(seconds) * 1000).toLocaleDateString(undefined, {
 		day: 'numeric',
 		month: 'short',
+		year: '2-digit',
 		timeZone: 'UTC'
 	});
 }

@@ -84,6 +84,18 @@
 	}}
 />
 
+<!-- Left out: the figures never render, whatever balance was passed, because a
+     left-out account is never read. -->
+<Story
+	name="Left out"
+	args={{ leftOut: true }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Left out')).toBeInTheDocument();
+		await expect(canvas.queryByText('€4,200.10')).not.toBeInTheDocument();
+	}}
+/>
+
 <Story name="A list" tags={['!test']}>
 	{#snippet template(args)}
 		<div style="display: flex; flex-direction: column; inline-size: 520px;">

@@ -82,6 +82,13 @@ type LedgerQuery struct {
 	// Older reads away from today. False with a set cursor reads back towards
 	// it.
 	Older bool
+	// Oldest jumps to the oldest page, native to a keyset seek the same way the
+	// newest page already is. Ignored when Cursor is set.
+	Oldest bool
+	// PageStart jumps to a specific real page, named by LedgerPageIndex rather
+	// than by calendar: the newest row on that page, read inclusively.
+	// Ignored when Cursor is set.
+	PageStart *Cursor
 	// Limit is the page size.
 	Limit int
 }
@@ -94,12 +101,19 @@ type LedgerQuery struct {
 // are, because seeing a balance and seeing what was spent are different
 // sentences and only the first was agreed to (ADR 0021).
 //
+// A left-out account drops out of every read that uses this fragment — the
+// ledger, its count and the span it reports — because leaving an account out
+// says it is not in wimm and a ledger still listing it would contradict that
+// (ADR 0022). Its rows are not deleted: bringing the account back restores them
+// to every one of these reads with nothing else to do.
+//
 // It is a fragment rather than a repeated predicate so that widening it is one
 // edit in one place, which is what the fourth level will be.
 const ownedAccounts = `
 	select a.id from accounts a
 	join account_owners o on o.account_id = a.id and o.member_id = $1
-	where ($2::uuid is null or a.id = $2)`
+	where ($2::uuid is null or a.id = $2)
+	  and a.left_out_at is null`
 
 // Ledger reads one page of the transactions a member may see.
 //
@@ -119,8 +133,40 @@ func (db *DB) Ledger(ctx context.Context, q LedgerQuery) (LedgerPage, error) {
 
 	var query string
 	args := []any{q.MemberID, nullString(q.AccountID)}
+	// ascending is true wherever the fetch runs oldest-first and the result has
+	// to be reversed to read newest-first on the page, the way every other
+	// branch already does.
+	ascending := false
 
 	switch {
+	case q.Cursor.Zero() && q.Oldest:
+		// The mirror of the newest page: scanned from the very start of the
+		// index instead of the very end, with nothing bounding it either way.
+		ascending = true
+		query = `
+			select id, account_id, status, dedup_key, occurrence, amount_minor, currency,
+			       booking_date, value_date, transaction_date,
+			       coalesce(counterparty_name, ''), coalesce(remittance, ''),
+			       first_seen_at, last_seen_at
+			from transactions
+			where account_id in (` + ownedAccounts + `)
+			order by booking_date asc, id asc
+			limit $3`
+		args = append(args, probe)
+	case q.Cursor.Zero() && q.PageStart != nil:
+		// Inclusive, on the exact row LedgerPageIndex named: that row is this
+		// page's own newest, not a calendar bound standing in for it.
+		query = `
+			select id, account_id, status, dedup_key, occurrence, amount_minor, currency,
+			       booking_date, value_date, transaction_date,
+			       coalesce(counterparty_name, ''), coalesce(remittance, ''),
+			       first_seen_at, last_seen_at
+			from transactions
+			where account_id in (` + ownedAccounts + `)
+			  and (booking_date, id) <= ($4::date, $5::uuid)
+			order by booking_date desc, id desc
+			limit $3`
+		args = append(args, probe, q.PageStart.BookingDate, q.PageStart.ID)
 	case q.Cursor.Zero():
 		query = `
 			select id, account_id, status, dedup_key, occurrence, amount_minor, currency,
@@ -149,6 +195,7 @@ func (db *DB) Ledger(ctx context.Context, q LedgerQuery) (LedgerPage, error) {
 		// side" is a different question from "the 50 newest rows", and only the
 		// first one comes back towards the member through the same
 		// transactions in the same order.
+		ascending = true
 		query = `
 			select id, account_id, status, dedup_key, occurrence, amount_minor, currency,
 			       booking_date, value_date, transaction_date,
@@ -180,12 +227,11 @@ func (db *DB) Ledger(ctx context.Context, q LedgerQuery) (LedgerPage, error) {
 		return LedgerPage{}, fmt.Errorf("reading the ledger: %w", err)
 	}
 
-	readingNewer := !q.Cursor.Zero() && !q.Older
 	more := len(out) > q.Limit
 	if more {
 		out = out[:q.Limit]
 	}
-	if readingNewer {
+	if ascending {
 		reverse(out)
 	}
 
@@ -195,6 +241,13 @@ func (db *DB) Ledger(ctx context.Context, q LedgerQuery) (LedgerPage, error) {
 		page.Oldest = out[len(out)-1].BookingDate
 	}
 	switch {
+	case q.Cursor.Zero() && q.Oldest:
+		// The mirror of the newest page: nothing older, possibly something
+		// newer — "more" here means rows nearer today than what is shown.
+		page.HasNewer = more
+	case q.Cursor.Zero() && q.PageStart != nil:
+		page.HasOlder = more
+		page.HasNewer = true
 	case q.Cursor.Zero():
 		page.HasOlder = more
 	case q.Older:
@@ -233,6 +286,90 @@ func (db *DB) CountLedger(ctx context.Context, memberID, accountID string) (int,
 		return 0, fmt.Errorf("counting the ledger: %w", err)
 	}
 	return n, nil
+}
+
+// PageMarker is one real, reachable page of the ledger: the cursor that seeks
+// straight to it and the span of dates it actually holds. A calendar month is
+// not this — a household reading two transactions a day fills one 50-row page
+// with four months of them, and a scrubber built on months would let a member
+// click four different destinations that are, underneath, the same page.
+type PageMarker struct {
+	// Cursor seeks to this page directly: the newest row on it, read
+	// inclusively (LedgerQuery.PageStart), the same way Month already reads
+	// inclusively from a calendar bound.
+	Cursor Cursor
+	Newest time.Time
+	Oldest time.Time
+}
+
+// LedgerPageIndex lists every real page the ledger will ever hand back for
+// this scope at this page size, oldest page last. It is one pass over the row
+// numbers the ledger's own seek already orders by, so a page here is exactly
+// the page `Ledger` returns for its cursor — never an approximation a member
+// could click through to and land somewhere else.
+func (db *DB) LedgerPageIndex(ctx context.Context, memberID, accountID string, pageSize int) ([]PageMarker, error) {
+	if pageSize <= 0 {
+		return nil, fmt.Errorf("a ledger page index of %d transactions", pageSize)
+	}
+
+	// Every row that opens a page, (rn-1) % pageSize = 0, or closes one, rn %
+	// pageSize = 0, plus the very last row: the oldest page is usually
+	// shorter than pageSize, so it never lands on that second condition on
+	// its own.
+	const query = `
+		with owned as (` + ownedAccounts + `),
+		numbered as (
+			select booking_date, id,
+			       row_number() over (order by booking_date desc, id desc) as rn
+			from transactions
+			where account_id in (select id from owned)
+		),
+		total as (select count(*) as n from numbered)
+		select booking_date, id, rn
+		from numbered, total
+		where (rn - 1) % $3 = 0 or rn % $3 = 0 or rn = total.n
+		order by rn`
+
+	rows, err := db.pool.Query(ctx, query, memberID, nullString(accountID), pageSize)
+	if err != nil {
+		return nil, fmt.Errorf("reading the ledger's page index: %w", err)
+	}
+	defer rows.Close()
+
+	type marker struct {
+		bookingDate time.Time
+		id          string
+		rn          int
+	}
+	var byPage []([]marker)
+	for rows.Next() {
+		var m marker
+		if err := rows.Scan(&m.bookingDate, &m.id, &m.rn); err != nil {
+			return nil, fmt.Errorf("reading the ledger's page index: %w", err)
+		}
+		page := (m.rn - 1) / pageSize
+		for len(byPage) <= page {
+			byPage = append(byPage, nil)
+		}
+		byPage[page] = append(byPage[page], m)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("reading the ledger's page index: %w", err)
+	}
+
+	out := make([]PageMarker, 0, len(byPage))
+	for _, marks := range byPage {
+		if len(marks) == 0 {
+			continue
+		}
+		newest, oldest := marks[0], marks[len(marks)-1]
+		out = append(out, PageMarker{
+			Cursor: Cursor{BookingDate: newest.bookingDate, ID: newest.id},
+			Newest: newest.bookingDate,
+			Oldest: oldest.bookingDate,
+		})
+	}
+	return out, nil
 }
 
 // SyncResult is what one account's sync wrote.
@@ -438,7 +575,8 @@ func (db *DB) SyncableAccounts(ctx context.Context, memberID string) ([]Syncable
 		join account_owners o on o.account_id = a.id and o.member_id = $1
 		join bank_connections c on c.id = a.connection_id
 		where c.disconnected_at is null and c.expired_at is null
-		order by c.bank_name, a.name`
+		  and a.left_out_at is null
+		order by c.bank_name, coalesce(a.household_name, a.name)`
 
 	rows, err := db.pool.Query(ctx, query, memberID)
 	if err != nil {
@@ -480,6 +618,7 @@ func (db *DB) NarrowConnections(ctx context.Context, memberID string) ([]NarrowC
 		join accounts a on a.connection_id = c.id
 		join account_owners o on o.account_id = a.id and o.member_id = $1
 		where c.disconnected_at is null and c.scope <> 'balances_and_transactions'
+		  and a.left_out_at is null
 		order by c.bank_name`
 
 	rows, err := db.pool.Query(ctx, query, memberID)
@@ -572,10 +711,11 @@ type AccountLabel struct {
 // their rows still have to say where they came from.
 func (db *DB) OwnedAccountLabels(ctx context.Context, memberID string) (map[string]AccountLabel, error) {
 	const query = `
-		select a.id, coalesce(a.name, ''), coalesce(c.bank_name, '')
+		select a.id, coalesce(a.household_name, a.name, ''), coalesce(c.bank_name, '')
 		from accounts a
 		join account_owners o on o.account_id = a.id and o.member_id = $1
-		left join bank_connections c on c.id = a.connection_id`
+		left join bank_connections c on c.id = a.connection_id
+		where a.left_out_at is null`
 
 	rows, err := db.pool.Query(ctx, query, memberID)
 	if err != nil {

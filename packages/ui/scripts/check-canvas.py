@@ -31,8 +31,43 @@ CONTRACT = SRC / "canvas-contract.json"
 # together renders it: Overview's disconnect confirmation is the screen plus
 # the dialog it opens.
 IMPLEMENTS = {
+    # J01 · Enrol a passkey, J02 · Sign in. The member arrives signed in either
+    # way, and that landing is Overview rather than a screen of its own — see
+    # ACCEPTED for the placeholder copy the frame still carries from before
+    # Overview existed.
+    "J01.A / 01 · Enrolment invitation": ["pages/EnrolScreen.svelte"],
+    "J01.A / 02 · Creating passkey": ["pages/EnrolScreen.svelte"],
+    "J01.A / 03 · Signed in": ["pages/AccountsOverview.svelte"],
+    "J01.B / 01 · Link unusable": ["pages/LinkUnusableScreen.svelte"],
+    "J02.A / 01 · Sign in": ["pages/SignInScreen.svelte"],
+    "J02.A / 02 · Signed in": ["pages/AccountsOverview.svelte"],
+    "J02.B / 01 · Passkey not recognised": ["pages/SignInScreen.svelte"],
+    # J03 · Connect a bank.
+    "J03.A / 01 · Overview": ["pages/AccountsOverview.svelte"],
+    "J03.A / 02 · Choose a bank": ["pages/ChooseBankScreen.svelte"],
+    "J03.A / 03 · What wimm will see": ["pages/ConsentExplainerScreen.svelte"],
     "J03.A / 04 · Choose accounts": ["pages/ChooseAccountsScreen.svelte"],
     "J06.A / 02 · Choose accounts": ["pages/ChooseAccountsScreen.svelte"],
+    # J09 · Hand an account to its owner, leave one out, bring it back.
+    "J09.A / 01 · Choose accounts": ["pages/ChooseAccountsScreen.svelte"],
+    "J09.A / 02 · Choose accounts": ["pages/ChooseAccountsScreen.svelte"],
+    "J09.A / 03 · Choose accounts": ["pages/ChooseAccountsScreen.svelte"],
+    "J09.A / 04 · Choose accounts": [
+        "pages/ChooseAccountsScreen.svelte",
+        "molecules/LeftOutDialog.svelte",
+    ],
+    "J09.A / 05 · Overview": ["pages/AccountsOverview.svelte", "molecules/AccountRow.svelte"],
+    "J09.A / 06 · Choose accounts": ["pages/ChooseAccountsScreen.svelte"],
+    # J10 · Name an account and the household.
+    "J10.A / 01 · Choose accounts": ["pages/ChooseAccountsScreen.svelte", "molecules/AccountName.svelte"],
+    "J10.A / 02 · Overview": ["pages/AccountsOverview.svelte"],
+    # J11 · Settings.
+    "J11.A / 01 · Settings": ["pages/SettingsScreen.svelte", "molecules/ThemeToggle.svelte"],
+    "J11.B / 01 · Settings": [
+        "pages/SettingsScreen.svelte",
+        "molecules/ThemeToggle.svelte",
+        "molecules/DensityControl.svelte",
+    ],
     "J03.B / 01 · Overview": ["pages/AccountsOverview.svelte"],
     "J03.C / 01 · Overview": ["pages/AccountsOverview.svelte"],
     "J03.D / 01 · Overview": ["pages/AccountsOverview.svelte"],
@@ -48,6 +83,11 @@ IMPLEMENTS = {
     # J07 · See where the money went. One screen carries every state; the
     # compact frames are the same component with rows stacked, which is why
     # they map to the same file rather than to a second one.
+    "J07.A / 00 · Transactions": [
+        "pages/TransactionsScreen.svelte",
+        "molecules/LedgerRow.svelte",
+        "molecules/SeekPager.svelte",
+    ],
     "J07.A / 01 · Transactions": [
         "pages/TransactionsScreen.svelte",
         "molecules/LedgerRow.svelte",
@@ -63,6 +103,11 @@ IMPLEMENTS = {
         "molecules/SeekPager.svelte",
     ],
     "J07.A / 04 · Transactions": [
+        "pages/TransactionsScreen.svelte",
+        "molecules/LedgerRow.svelte",
+        "molecules/SeekPager.svelte",
+    ],
+    "J07.A / 05 · Transactions": [
         "pages/TransactionsScreen.svelte",
         "molecules/LedgerRow.svelte",
         "molecules/SeekPager.svelte",
@@ -108,17 +153,50 @@ ACCEPTED = {
     # would say "Grace sees the balance of the joint account" to a household
     # with neither — which is what this check briefly talked me into writing.
     # The screen computes the equivalent sentence from what is actually there.
-    "Grace sees the balance; Alan sees it in full.": "names the frame's fixture members",
-    "Grace sees the balance of the joint account. The personal one is nobody's, "
+    # "Alan" is not itself a recognised fixture, so only "Grace" collapses.
+    "{member} sees the balance; Alan sees it in full.": "names the frame's fixture members",
+    "{member} sees the balance of the joint account. The personal one is nobody's, "
     "and no balance will be read for it.": "names the frame's fixture members",
     # J07.C / 02 draws two banks because the scenario is one answering and one
-    # not, so the bank that failed has to be the second one — Montepio, which
-    # the generator reads as a fixture name rather than as the {bank} hole it
-    # substitutes for Monzo. The screen interpolates whichever bank failed, so
-    # the sentence it renders is the drawn one with the right name in it.
-    "Montepio did not answer": "the frame's second fixture bank, interpolated in the screen",
-    "Everything else is up to date. Montepio's transactions are the ones last "
+    # not, so the bank that failed has to be the second one. The screen
+    # interpolates whichever bank failed, so the sentence it renders is the
+    # drawn one with the right name in it.
+    "{bank} did not answer": "the frame's second fixture bank, interpolated in the screen",
+    "Everything else is up to date. {bank}'s transactions are the ones last "
     "read at {time}.": "the frame's second fixture bank, interpolated in the screen",
+    # J01.A / 03 and J02.A / 02's "Signed in" frames predate Overview: drawn
+    # once as a placeholder for "you land here next", before Overview had a
+    # design of its own. The member lands on the real Overview, which says
+    # what is actually there rather than "nothing here yet".
+    "Signed in as {member}": "a placeholder predating Overview; the member lands on Overview itself",
+    "There is nothing here yet.": "a placeholder predating Overview; the member lands on Overview itself",
+    # J09.A's chooser draws a transient confirmation of the action a member
+    # just took — a helper line replacing the standing one, or a notice above
+    # the list — naming who now owns or no longer owns an account. Built
+    # instead: `invalidateAll()` re-renders the row itself (the other member
+    # now shown as an owner, or the account gone from the list and the total),
+    # which is the change these sentences narrate. No spec scenario asks for
+    # the narration in addition to the visible change, and the local state
+    # needed to say "the member you just added" rather than the current
+    # owner/grant list is not otherwise part of this screen.
+    "{member} owns this account too now. Both of you see it in full, and either "
+    "of you can change who else does.": "a transient action confirmation; the row's own change carries it",
+    "{account} is {member}'s now": "a transient action confirmation; the row's own change carries it",
+    "You stopped being an owner, so it has left your list and your total. "
+    "{member} can hand it back.": "a transient action confirmation; the row's own change carries it",
+    "Leaving everything else as it is keeps these accounts to yourself. You can "
+    "change any of this later.": "the standing helper, not the just-handed-on variant; see above",
+    # A page-level "Balances read just now." summary above the account list.
+    # Each row already states its own reading (AccountRow's "Reading", a
+    # DATA_NODE), which is the freshness fact ADR 0018 requires; an aggregate
+    # restating it for the whole page was not built.
+    "Balances read just now.": "a page-level freshness summary; each row already states its own reading",
+    # J07.A / 03 and 04 draw a "Newer" control beside SeekPager's "Older": both
+    # moved to the month scrubber, which reaches every page either did and
+    # more (a click on any dot is a page). This is a live redesign, not yet
+    # drawn back into the frame — the canvas still shows the pager it
+    # replaced.
+    "Newer": "superseded by the month scrubber; the frame is not yet redrawn to agree",
 }
 
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SignedInLanding, ThemeToggle, destinations } from '@wimm/ui';
+	import { SignedInLanding, destinations } from '@wimm/ui';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
@@ -25,28 +25,4 @@
 	onsignout={signout}
 >
 	{@render children()}
-
-	<!-- In the shell rather than on a screen: it belongs to the app, not to
-	     whatever page happens to be open. -->
-	<div class="appearance">
-		<span class="appearance-label">Appearance</span>
-		<ThemeToggle />
-	</div>
 </SignedInLanding>
-
-<style>
-	.appearance {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		margin-block-start: 32px;
-		padding-block-start: 16px;
-		border-block-start: 1px solid var(--color-border-subtle);
-	}
-
-	.appearance-label {
-		color: var(--color-text-secondary);
-		font-family: var(--type-family-body);
-		font-size: var(--type-size-body-sm);
-	}
-</style>

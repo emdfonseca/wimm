@@ -1,8 +1,9 @@
 <script lang="ts">
 	/**
 	 * Mirrors `Account selector` (`vHJTa`), extended additively with a
-	 * `Reading` line and a `Badge` slot — both disabled by default on the
-	 * origin, so every instance that existed before renders unchanged.
+	 * `Reading` line, a `Badge` slot, and the left-out state from `NZhzh` —
+	 * all disabled by default on the origin, so every instance that existed
+	 * before renders unchanged.
 	 *
 	 * A balance is never shown without the time it was read. A stale reading
 	 * keeps its figure and its original time and says it could not be updated:
@@ -12,6 +13,13 @@
 	 * What is rendered depends on the viewer's level. At `balance` the bank,
 	 * the name and the amount appear and no identifier does — the server does
 	 * not send one, and this does not invent one.
+	 *
+	 * Left out (ADR 0022): the row dims and its figures never render, whatever
+	 * is passed for them — a left-out account is never read, so there is
+	 * nothing current to show — and a "Left out" badge replaces any other.
+	 * This reaches only an owner; visibleAccountsQuery never returns a
+	 * left-out account to anyone else, so no other viewer ever sees this row
+	 * in this state at all.
 	 */
 	interface Props {
 		name: string;
@@ -32,6 +40,8 @@
 		 *  colour alone — the figure itself carries the sign. */
 		negative?: boolean;
 		initials?: string;
+		/** The account is left out of wimm. Reaches only an owner. */
+		leftOut?: boolean;
 	}
 
 	let {
@@ -43,14 +53,15 @@
 		stale = false,
 		notUpdating = false,
 		negative = false,
-		initials
+		initials,
+		leftOut = false
 	}: Props = $props();
 
 	const mark = $derived(initials ?? bank.slice(0, 2).toUpperCase());
 	const meta = $derived(numberSuffix ? `${bank} · •••• ${numberSuffix}` : bank);
 </script>
 
-<div class="account-row">
+<div class="account-row" class:left-out={leftOut}>
 	<span class="mark" aria-hidden="true">{mark}</span>
 
 	<span class="identity">
@@ -58,13 +69,15 @@
 		<span class="meta">{meta}</span>
 	</span>
 
-	{#if notUpdating}
+	{#if leftOut}
+		<span class="badge left-out-badge">Left out</span>
+	{:else if notUpdating}
 		<span class="badge stopped">Not updating</span>
 	{:else if stale}
 		<span class="badge">Could not update</span>
 	{/if}
 
-	{#if balance}
+	{#if balance && !leftOut}
 		<span class="figures">
 			<span class="balance" class:negative>{balance}</span>
 			{#if readAt}
@@ -143,6 +156,19 @@
 	.stopped {
 		background: var(--color-feedback-danger-bg);
 		color: var(--color-feedback-danger);
+	}
+
+	.left-out {
+		background: var(--color-bg-subtle);
+	}
+
+	.left-out .name {
+		color: var(--color-text-secondary);
+	}
+
+	.left-out-badge {
+		background: var(--color-bg-elevated);
+		color: var(--color-text-secondary);
 	}
 
 	.figures {

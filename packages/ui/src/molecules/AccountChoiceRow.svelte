@@ -2,25 +2,36 @@
 	import SegmentedControl from '../atoms/SegmentedControl.svelte';
 
 	/**
-	 * Origin `QU4bL`. A card per account in the chooser: ownership on the left,
-	 * the account in the middle, its balance on the right, and one level
-	 * control per other member of the household beneath.
+	 * Origin `QU4bL`, gaining the owner set from `o0Tc2`. A card per account in
+	 * the chooser: ownership on the left, the account in the middle, its
+	 * balance on the right, an owner checkbox per other member of the
+	 * household, and one level control per member who is not an owner.
+	 *
+	 * The owner set is what fixes the defect the single "Mine" checkbox had:
+	 * each member's checkbox reports only that member's own change, so handing
+	 * an account to Grace never silently drops Alan's ownership the way posting
+	 * a single replacement list from one checkbox used to (ADR 0022). Ownership
+	 * can never fall to zero — the database refuses it — so this control only
+	 * ever adds or hands on, never orphans.
+	 *
+	 * Ownership and a level are mutually exclusive per member (ADR 0019): a
+	 * member who is an owner does not also get a level control, because seeing
+	 * a level once you already see everything is not a real choice.
 	 *
 	 * It carries a balance on purpose. The connecting member owns every row
 	 * when the chooser opens and an owner sees their own account in full, and
-	 * choosing who sees an account by its name alone — with no figure — is
-	 * choosing blind: the balance is what tells a current account from a
-	 * mortgage.
-	 *
-	 * Not a two-state control. Ownership is a checkbox; a level is one of
-	 * three, which is why each member gets a SegmentedControl rather than a
-	 * second checkbox.
+	 * choosing who sees an account by its name alone, with no figure, is
+	 * choosing blind.
 	 */
 	export type Level = 'hidden' | 'balance' | 'details';
 
-	interface Member {
+	export interface OtherMember {
 		id: string;
 		name: string;
+		/** Whether this member already owns the account. */
+		isOwner: boolean;
+		/** Meaningful only when not an owner. */
+		level: Level;
 	}
 
 	interface Props {
@@ -32,15 +43,20 @@
 		initials?: string;
 		/** Whether the viewing member owns this account. */
 		owned: boolean;
-		/** The other members of the household, each with their level. */
-		members?: Member[];
-		levels?: Record<string, Level>;
+		/** Every other member of the household. */
+		others?: OtherMember[];
 		/** Set when the bank offered this account for the first time on a
 		 *  restore, so the member is told there is something new to choose. */
 		newlyOffered?: boolean;
+		/** The account is left out of wimm; the action reads "Bring back". */
+		leftOut?: boolean;
 		disabled?: boolean;
 		onownedchange?: (owned: boolean) => void;
+		/** One member's owner checkbox changed. Add or remove just that member
+		 *  — never replace the whole owner set from this alone. */
+		onownerchange?: (memberId: string, isOwner: boolean) => void;
 		onlevelchange?: (memberId: string, level: Level) => void;
+		onleaveout?: () => void;
 	}
 
 	let {
@@ -49,12 +65,14 @@
 		balance,
 		initials,
 		owned = $bindable(),
-		members = [],
-		levels = {},
+		others = [],
 		newlyOffered = false,
+		leftOut = false,
 		disabled = false,
 		onownedchange,
-		onlevelchange
+		onownerchange,
+		onlevelchange,
+		onleaveout
 	}: Props = $props();
 
 	const levelOptions = [
@@ -71,6 +89,8 @@
 				.toUpperCase() ??
 			''
 	);
+
+	const levelled = $derived(others.filter((m) => !m.isOwner));
 </script>
 
 <div class="row" class:disabled>
@@ -103,14 +123,39 @@
 		{/if}
 	</div>
 
-	{#if members.length > 0}
+	{#if others.length > 0 || onleaveout}
+		<div class="owners">
+			{#if others.length > 0}
+				<span class="who">Also owned by</span>
+				{#each others as member (member.id)}
+					<label class="co-owner">
+						<input
+							type="checkbox"
+							checked={member.isOwner}
+							{disabled}
+							onchange={(event) => onownerchange?.(member.id, event.currentTarget.checked)}
+						/>
+						<span class="who">{member.name}</span>
+					</label>
+				{/each}
+			{/if}
+			{#if onleaveout}
+				<span class="spacer"></span>
+				<button type="button" class="leave-out" {disabled} onclick={onleaveout}>
+					{leftOut ? 'Bring back' : 'Leave out'}
+				</button>
+			{/if}
+		</div>
+	{/if}
+
+	{#if levelled.length > 0}
 		<div class="levels">
-			{#each members as member (member.id)}
+			{#each levelled as member (member.id)}
 				<div class="level">
 					<span class="who" id="who-{member.id}-{name}">{member.name} sees</span>
 					<SegmentedControl
 						options={levelOptions}
-						value={levels[member.id] ?? 'hidden'}
+						value={member.level}
 						label="What {member.name} sees of {name}"
 						{disabled}
 						onchange={(level) => onlevelchange?.(member.id, level as Level)}
@@ -211,6 +256,45 @@
 		font-size: 13px;
 	}
 
+	.owners {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.co-owner {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		cursor: pointer;
+	}
+
+	.co-owner input {
+		accent-color: var(--color-action-primary);
+	}
+
+	.spacer {
+		flex: 1 1 auto;
+	}
+
+	.leave-out {
+		flex: 0 0 auto;
+		block-size: 28px;
+		padding-inline: 10px;
+		border: none;
+		background: transparent;
+		color: var(--color-accent);
+		font-family: var(--type-family-body);
+		font-size: 13px;
+		font-weight: 500;
+		cursor: pointer;
+	}
+
+	.leave-out:focus-visible {
+		outline: var(--focus-ring-width) solid var(--focus-ring-color);
+		outline-offset: var(--focus-ring-offset);
+	}
+
 	.levels {
 		display: flex;
 		flex-direction: column;
@@ -231,9 +315,10 @@
 		font-size: var(--type-size-body-sm);
 	}
 
-	/* At Compact the level controls stack under the account: a household of
-	   three would otherwise need four columns on a phone. */
-	@media (max-width: 599px) {
+	/* At Compact the level controls stack under the account, and the owner
+	   checkboxes wrap: a household of three would otherwise need four columns
+	   on a phone. */
+	@media (max-width: 767px) {
 		.level {
 			flex-direction: column;
 			align-items: stretch;
@@ -241,6 +326,9 @@
 		}
 		.balance {
 			inline-size: auto;
+		}
+		.owners {
+			flex-wrap: wrap;
 		}
 	}
 

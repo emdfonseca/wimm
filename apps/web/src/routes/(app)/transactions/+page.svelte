@@ -56,9 +56,11 @@
 	count={data.count}
 	freshness={data.freshness}
 	span={data.span}
-	olderHref={data.olderHref}
-	newerHref={data.newerHref}
 	atOldest={data.atOldest}
+	pages={data.pages}
+	currentPage={data.currentPage}
+	newestHref={data.newestHref}
+	oldestHref={data.oldestHref}
 	filterAccount={data.filterAccount}
 	narrow={data.narrow}
 	problems={data.problems}

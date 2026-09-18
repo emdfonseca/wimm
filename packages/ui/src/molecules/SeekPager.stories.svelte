@@ -8,57 +8,35 @@
 		component: SeekPager,
 		tags: ['autodocs'],
 		args: {
-			span: '17 September to 15 September 2026',
-			olderHref: '/transactions?before=abc'
+			span: '17 September to 15 September 2026'
 		}
 	});
 </script>
 
-<!-- The newest page: only Older is offered, because there is nothing newer to
-     go back to. -->
+<!-- Where the member is, is a date. There is no page number anywhere, and no
+     Older/Newer here — both moved to the scrubber. -->
 <Story
-	name="TheNewestPage"
-	play={async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await expect(canvas.getByRole('link', { name: 'Older' })).toBeInTheDocument();
-		await expect(canvas.queryByRole('link', { name: 'Newer' })).not.toBeInTheDocument();
-	}}
-/>
-
-<Story
-	name="AMiddlePage"
-	args={{ span: '4 August to 31 July 2026', newerHref: '/transactions?after=def' }}
-	play={async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await expect(canvas.getByRole('link', { name: 'Newer' })).toBeInTheDocument();
-		await expect(canvas.getByRole('link', { name: 'Older' })).toBeInTheDocument();
-	}}
-/>
-
-<!-- Nothing older is a sentence, not a greyed control. -->
-<Story
-	name="TheOldestPage"
-	args={{
-		span: '4 June 2026',
-		olderHref: undefined,
-		newerHref: '/transactions?after=def',
-		nothingOlder: 'Nothing older. This is as far back as the bank would go.'
-	}}
-	play={async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await expect(canvas.queryByRole('link', { name: 'Older' })).not.toBeInTheDocument();
-		await expect(canvas.getByText(/Nothing older/)).toBeInTheDocument();
-	}}
-/>
-
-<!-- Where the member is, is a date. There is no page number anywhere. -->
-<Story
-	name="NoPageNumbers"
+	name="Default"
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('17 September to 15 September 2026')).toBeInTheDocument();
 		await expect(canvas.queryByText(/\bof\b/)).not.toBeInTheDocument();
 		await expect(canvas.queryByText(/\d+\s*\/\s*\d+/)).not.toBeInTheDocument();
+		await expect(canvas.queryByRole('link')).not.toBeInTheDocument();
+	}}
+/>
+
+<!-- The oldest page states the reach in words. -->
+<Story
+	name="TheOldestPage"
+	args={{
+		span: '4 June 2026',
+		nothingOlder: 'Nothing older. This is as far back as the bank would go.'
+	}}
+	play={async ({ canvasElement }) => {
+		await expect(
+			within(canvasElement).getByText(/Nothing older/)
+		).toBeInTheDocument();
 	}}
 />
 

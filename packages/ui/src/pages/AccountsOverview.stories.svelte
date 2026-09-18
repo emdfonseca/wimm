@@ -516,3 +516,21 @@
 		).toBeInTheDocument();
 	}}
 />
+
+<!-- J09.A / 05: an account left out stays on Overview, marked, with no figure
+     — an owner who cannot see it has no way back to it. The total passed in
+     is already the household's, excluding it: that arithmetic is the
+     backend's (ADR 0022), this only asserts the row itself. -->
+<Story
+	name="An account left out"
+	args={{
+		accounts: [current, { ...savings, leftOut: true, balance: undefined, readAt: undefined }],
+		totals: [{ total: '€4,200.10', currency: 'EUR' }]
+	}}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Left out')).toBeInTheDocument();
+		await expect(canvas.queryByText('€11,930.00')).not.toBeInTheDocument();
+		await expect(canvas.getAllByText('€4,200.10')).toHaveLength(2);
+	}}
+/>

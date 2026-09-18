@@ -80,6 +80,11 @@ func toConnectError(err error) error {
 	case errors.Is(err, store.ErrOwnerHoldsAGrant):
 		return connect.NewError(connect.CodeInvalidArgument, err)
 
+	// The last owner cannot step back (ADR 0022). Leaving the account out is
+	// the way to the same end, and the screen names it inline.
+	case errors.Is(err, store.ErrAccountWouldHaveNoOwner):
+		return connect.NewError(connect.CodeFailedPrecondition, err)
+
 	case errors.Is(err, store.ErrNotFound):
 		return connect.NewError(connect.CodeNotFound, err)
 

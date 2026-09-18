@@ -51,22 +51,16 @@
 	}}
 />
 
-<!-- An expired session is the page's own subject, so the heading carries it and
-     there is no notice restating what the heading is for. -->
+<!-- Arrival context, above the heading: why they are here this time. -->
 <Story
 	name="Session expired"
 	args={{ state: 'expired' }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
+		await expect(canvas.getByText('You were signed out')).toBeInTheDocument();
 		await expect(canvas.getByRole('heading', { level: 1 })).toHaveTextContent('Your session ended');
 		await expect(canvas.queryByRole('alert')).toBeNull();
-		// No notice restating the heading. PendingButton's own live region is a
-		// role="status" and is always present, so the check is that nothing
-		// announces anything, not that no status element exists.
-		for (const status of canvas.queryAllByRole('status')) {
-			await expect(status).toHaveTextContent('');
-		}
-		await expect(canvas.getByText(/go back to where you were/)).toBeInTheDocument();
+		await expect(canvas.getAllByText(/go back to where you were/)).toHaveLength(2);
 	}}
 />
 

@@ -1,90 +1,101 @@
 <script lang="ts" module>
 	/**
-	 * J03.A / 02 · What wimm will see.
+	 * J03.A / 02 · What wimm will see. Step 2 of 2.
 	 *
-	 * The last screen before the member leaves for their bank. Its whole job is
-	 * to say what is about to be granted and for how long, in the member's own
-	 * terms, before they can no longer change it here.
-	 *
-	 * The date is the bank's, not a wimm policy — and the difference matters
-	 * more than it looks: consent runs 90 days at some banks and 1 day at
-	 * others, so a member who is not shown the real date will read a daily
-	 * prompt as a defect.
+	 * The last screen before the member leaves for their bank: what is read,
+	 * that it stays private to them until they choose otherwise, and that
+	 * they are about to leave wimm and come back.
 	 */
 </script>
 
 <script lang="ts">
-	import Button from '../atoms/Button.svelte';
+	import Page from '../templates/Page.svelte';
+	import StepIndicator from '../molecules/StepIndicator.svelte';
+	import StepActions from '../molecules/StepActions.svelte';
+	import Notice from '../atoms/Notice.svelte';
 
 	interface Props {
 		bankName: string;
-		/** Already formatted as a person reads it, e.g. "18 September 2026". */
-		accessEndsOn: string;
-		/** Set when that date is soon enough to be worth naming plainly. */
-		shortLived?: boolean;
+		/** Where "Pick another bank" goes. */
+		backHref?: string;
 		oncontinue?: () => void;
 		oncancel?: () => void;
 	}
 
-	let { bankName, accessEndsOn, shortLived = false, oncontinue, oncancel }: Props = $props();
+	let { bankName, backHref = '/connect', oncontinue, oncancel }: Props = $props();
+
+	/** Compact drops the header's back link, the "Leaving" paragraph and takes
+	 *  shorter lines throughout — drawn directly rather than passed down, so
+	 *  every caller does not need to know a layout breakpoint that is this
+	 *  screen's concern alone. */
+	let autoCompact = $state(false);
+
+	$effect(() => {
+		if (typeof window === 'undefined' || !window.matchMedia) return;
+		const mq = window.matchMedia('(max-width: 767px)');
+		autoCompact = mq.matches;
+		const onchange = (e: MediaQueryListEvent) => (autoCompact = e.matches);
+		mq.addEventListener('change', onchange);
+		return () => mq.removeEventListener('change', onchange);
+	});
 </script>
 
-<main class="screen">
-	<h1 tabindex="-1">What {bankName} will share with wimm</h1>
-
-	<ul class="scope">
-		<li><strong>Your accounts and their balances.</strong> Names, numbers and amounts.</li>
-		<li>
-			<strong>Their transactions.</strong> What happened on the accounts you own. Nobody else in the
-			household sees them unless you make them an owner.
-		</li>
-		<li>
-			<strong>Nothing that could move money.</strong> wimm cannot make a payment.
-		</li>
-		<li>
-			<strong>Not your banking password.</strong> You confirm at {bankName}. wimm never sees it.
-		</li>
-	</ul>
-
-	<p class="until">
-		Access ends on <strong>{accessEndsOn}</strong>, which is {bankName}'s own limit rather than a
-		wimm setting.
-		{#if shortLived}
-			That is soon: you will be asked to confirm again, and wimm will tell you when.
-		{:else}
-			After that you confirm again to carry on.
+<Page title="wimm will read your {bankName} accounts" focusHeading>
+	{#snippet action()}
+		{#if !autoCompact}
+			<a class="back" href={backHref}>Pick another bank</a>
 		{/if}
-	</p>
+	{/snippet}
 
-	<div class="actions">
-		<Button onclick={oncontinue}>Continue to {bankName}</Button>
-		<Button variant="secondary" onclick={oncancel}>Cancel</Button>
+	<div class="prose">
+		<StepIndicator current={2} total={2} />
+
+		<ul class="scope">
+			<li>The name of each account, and the last four digits of its number.</li>
+			{#if autoCompact}
+				<li>The balance of each account, read now and again on request.</li>
+				<li>Nothing else. wimm never sees your {bankName} password.</li>
+			{:else}
+				<li>
+					The balance of each account, read now and again whenever someone asks wimm to refresh.
+				</li>
+				<li>
+					Nothing else. wimm does not see your transactions in this version, and never sees your
+					{bankName} password.
+				</li>
+			{/if}
+		</ul>
+
+		<Notice title="Only you can see these accounts">
+			{#if autoCompact}
+				Nobody else sees an account until you choose who does, and how much they see.
+			{:else}
+				wimm serves one household, but nothing here reaches another member until you choose them.
+				Per person, you decide whether they see an account's balance or its full details.
+			{/if}
+		</Notice>
+
+		{#if !autoCompact}
+			<p class="leaving">You will leave wimm and come back here when {bankName} is done.</p>
+		{/if}
+
+		<StepActions
+			primaryLabel="Continue to {bankName}"
+			lesserLabel="Cancel"
+			onPrimary={oncontinue}
+			onLesser={oncancel}
+		/>
 	</div>
-</main>
+</Page>
 
 <style>
-	.screen {
-		/* Fills the slot and packs content to the top, as the frame's Page does
-		   with a trailing spacer. A screen that does not fill gets centred by
-		   the slot instead, which is what left these floating mid-page. */
+	/* Prose, so its measure is capped (ADR 0005) — the whole screen, since it
+	   is nothing but the scope, the notice and the step's own actions. */
+	.prose {
 		display: flex;
-		flex: 1;
 		flex-direction: column;
 		gap: 16px;
-		inline-size: 100%;
-		max-inline-size: var(--layout-content-max); /* prose, so its measure is capped (ADR 0005) */
-	}
-
-	h1 {
-		margin: 0;
-		color: var(--color-text-primary);
-		font-family: var(--type-family-display);
-		font-size: var(--type-size-page-title);
-		font-weight: 600;
-	}
-	h1:focus-visible {
-		outline: var(--focus-ring-width) solid var(--focus-ring-color);
-		outline-offset: var(--focus-ring-offset);
+		max-inline-size: var(--layout-content-max);
 	}
 
 	.scope {
@@ -98,29 +109,23 @@
 		font-size: var(--type-size-body-md);
 	}
 
-	.scope strong,
-	.until strong {
-		color: var(--color-text-primary);
-		font-weight: 600;
-	}
-
-	.until {
+	.leaving {
 		margin: 0;
 		color: var(--color-text-secondary);
 		font-family: var(--type-family-body);
 		font-size: var(--type-size-body-md);
 	}
 
-	.actions {
-		display: flex;
-		gap: 12px;
-		align-items: center;
+	.back {
+		color: var(--color-accent);
+		font-family: var(--type-family-body);
+		font-size: var(--type-size-body-sm);
+		font-weight: 500;
+		text-decoration: none;
 	}
 
-	@media (max-width: 599px) {
-		.actions {
-			flex-direction: column;
-			align-items: stretch;
-		}
+	.back:focus-visible {
+		outline: var(--focus-ring-width) solid var(--focus-ring-color);
+		outline-offset: var(--focus-ring-offset);
 	}
 </style>

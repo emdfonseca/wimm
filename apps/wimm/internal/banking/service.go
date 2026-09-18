@@ -39,6 +39,8 @@ type Store interface {
 	MemberOwnsAccount(ctx context.Context, accountID, memberID string) (bool, error)
 	SetAccountOwners(ctx context.Context, accountID string, memberIDs []string) error
 	SetAccountLevel(ctx context.Context, accountID, memberID string, level store.Level, grantedBy string) error
+	SetAccountLeftOut(ctx context.Context, accountID string, leftOut bool) error
+	SetAccountName(ctx context.Context, accountID, householdName string) error
 	RecordBalance(ctx context.Context, accountID string, minor int64, readAt time.Time) error
 
 	// Secrets are stored in a second step: a value is sealed against the
@@ -55,6 +57,7 @@ type Store interface {
 	Ledger(ctx context.Context, q store.LedgerQuery) (store.LedgerPage, error)
 	CountLedger(ctx context.Context, memberID, accountID string) (int, error)
 	LedgerState(ctx context.Context, memberID, accountID string) (store.LedgerState, error)
+	LedgerPageIndex(ctx context.Context, memberID, accountID string, pageSize int) ([]store.PageMarker, error)
 	SyncableAccounts(ctx context.Context, memberID string) ([]store.SyncableAccount, error)
 	WriteAccountTransactions(ctx context.Context, accountID string, txs []store.Transaction, syncedThrough time.Time) (store.SyncResult, error)
 	NarrowConnections(ctx context.Context, memberID string) ([]store.NarrowConnection, error)
@@ -394,12 +397,9 @@ func (s *Service) SetLevel(ctx context.Context, memberID, accountID, subjectID s
 	return s.store.SetAccountLevel(ctx, accountID, subjectID, level, memberID)
 }
 
-// requireOwner allows any owner of the account, and the member who connected
-// the bank when the account has no owner at all.
-//
-// The second clause is what makes disowning reversible. Without it an account
-// with no owners can never gain one: the check asks for an owner, and there is
-// none to be.
+// requireOwner allows any owner of the account. An account always has at
+// least one (ADR 0022): the database refuses a commit that would leave one
+// with none, so the orphan this used to rescue can no longer occur.
 func (s *Service) requireOwner(ctx context.Context, accountID, memberID string) error {
 	owners, err := s.store.AccountOwners(ctx, accountID)
 	if err != nil {
@@ -410,25 +410,25 @@ func (s *Service) requireOwner(ctx context.Context, accountID, memberID string) 
 			return nil
 		}
 	}
-	if len(owners) > 0 {
-		return ErrNotOwner
-	}
+	return ErrNotOwner
+}
 
-	account, err := s.store.AccountByID(ctx, accountID)
-	if err != nil {
+// SetLeftOut leaves an account out of wimm, or brings it back. Only an owner
+// may (ADR 0022).
+func (s *Service) SetLeftOut(ctx context.Context, memberID, accountID string, leftOut bool) error {
+	if err := s.requireOwner(ctx, accountID, memberID); err != nil {
 		return err
 	}
-	if account.ConnectionID == nil {
-		return ErrNotOwner
-	}
-	conn, err := s.store.BankConnectionByID(ctx, *account.ConnectionID)
-	if err != nil {
+	return s.store.SetAccountLeftOut(ctx, accountID, leftOut)
+}
+
+// SetName sets the household's own name for an account, or clears it back to
+// the bank's with an empty string. Only an owner may (ADR 0022).
+func (s *Service) SetName(ctx context.Context, memberID, accountID, householdName string) error {
+	if err := s.requireOwner(ctx, accountID, memberID); err != nil {
 		return err
 	}
-	if conn.ConnectedBy != memberID {
-		return ErrNotOwner
-	}
-	return nil
+	return s.store.SetAccountName(ctx, accountID, householdName)
 }
 
 func findBank(banks []Bank, id string) (Bank, bool) {

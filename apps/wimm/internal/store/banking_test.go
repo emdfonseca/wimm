@@ -232,9 +232,10 @@ func TestMakingAGranteeAnOwnerClearsTheirGrant(t *testing.T) {
 	}
 }
 
-// Disowning an account nobody else can see makes it unreadable, which is what
-// makes disowning meaningful rather than cosmetic.
-func TestAnAccountWithNoOwnerAndNoGrantIsNeverReadable(t *testing.T) {
+// An account always has an owner (ADR 0022): disowning it down to zero is
+// refused rather than producing the unreadable orphan ADR 0019 used to allow.
+// Leaving an account out, once that exists, is how this case is now handled.
+func TestDisowningAnAccountToZeroOwnersIsRefused(t *testing.T) {
 	db := storetest.New(t)
 	ctx := context.Background()
 	ada := member(t, ctx, db, "ada@example.com")
@@ -243,16 +244,126 @@ func TestAnAccountWithNoOwnerAndNoGrantIsNeverReadable(t *testing.T) {
 		account("hash-1", "Joint", "0538"),
 		account("hash-2", "Personal", "5594"))
 
-	if err := db.SetAccountOwners(ctx, stored[1].ID, nil); err != nil {
-		t.Fatalf("disowning: %v", err)
+	if err := db.SetAccountOwners(ctx, stored[1].ID, nil); !errors.Is(err, store.ErrAccountWouldHaveNoOwner) {
+		t.Fatalf("disowning an account's only owner gave %v, want ErrAccountWouldHaveNoOwner", err)
 	}
 
 	readable, err := db.ReadableAccounts(ctx, conn.ID)
 	if err != nil {
 		t.Fatalf("ReadableAccounts: %v", err)
 	}
-	if len(readable) != 1 || readable[0].ID != stored[0].ID {
-		t.Errorf("readable = %d accounts, want only the one still owned", len(readable))
+	if len(readable) != 2 {
+		t.Errorf("readable = %d accounts after a refused disowning, want both untouched", len(readable))
+	}
+}
+
+// A left-out account is read by nobody and appears for its owners and for
+// nobody else (ADR 0022): a grant survives being left out, but the grantee
+// half of visibleAccountsQuery's join is gated on left_out_at, and the owner
+// half is not.
+func TestALeftOutAccountIsReadableByNobodyAndVisibleOnlyToItsOwner(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+	grace := member(t, ctx, db, "grace@example.com")
+
+	conn, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Personal", "0538"))
+	acc := stored[0]
+
+	if err := db.SetAccountLevel(ctx, acc.ID, grace.ID, store.LevelBalance, ada.ID); err != nil {
+		t.Fatalf("granting: %v", err)
+	}
+	if err := db.SetAccountLeftOut(ctx, acc.ID, true); err != nil {
+		t.Fatalf("SetAccountLeftOut: %v", err)
+	}
+
+	readable, err := db.ReadableAccounts(ctx, conn.ID)
+	if err != nil {
+		t.Fatalf("ReadableAccounts: %v", err)
+	}
+	if len(readable) != 0 {
+		t.Errorf("a left-out account is readable by %d accounts' worth, want none", len(readable))
+	}
+
+	adaSees, err := db.VisibleAccounts(ctx, ada.ID, "")
+	if err != nil {
+		t.Fatalf("VisibleAccounts(owner): %v", err)
+	}
+	if len(adaSees) != 1 || adaSees[0].LeftOutAt == nil {
+		t.Errorf("the owner does not see the left-out account it owns: %+v", adaSees)
+	}
+
+	graceSees, err := db.VisibleAccounts(ctx, grace.ID, "")
+	if err != nil {
+		t.Fatalf("VisibleAccounts(grantee): %v", err)
+	}
+	if len(graceSees) != 0 {
+		t.Errorf("a grantee sees %d accounts of a left-out one, want none", len(graceSees))
+	}
+
+	// Bringing it back restores both.
+	if err := db.SetAccountLeftOut(ctx, acc.ID, false); err != nil {
+		t.Fatalf("bringing it back: %v", err)
+	}
+	readable, err = db.ReadableAccounts(ctx, conn.ID)
+	if err != nil {
+		t.Fatalf("ReadableAccounts after bringing back: %v", err)
+	}
+	if len(readable) != 1 {
+		t.Errorf("readable = %d accounts after bringing one back, want 1", len(readable))
+	}
+	graceSees, err = db.VisibleAccounts(ctx, grace.ID, "")
+	if err != nil {
+		t.Fatalf("VisibleAccounts(grantee) after bringing back: %v", err)
+	}
+	if len(graceSees) != 1 {
+		t.Errorf("the grantee sees %d accounts after it came back, want 1", len(graceSees))
+	}
+}
+
+// A household name survives a reconnect: the gateway's upsert never names
+// household_name in its `do update set` list, which is the entire mechanism
+// (ADR 0022).
+func TestAHouseholdNameSurvivesAReconnect(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	ada := member(t, ctx, db, "ada@example.com")
+
+	conn, stored := connect(t, ctx, db, ada.ID, 90*24*time.Hour, account("hash-1", "Conta a Ordem", "0538"))
+	acc := stored[0]
+
+	if err := db.SetAccountName(ctx, acc.ID, "Rent"); err != nil {
+		t.Fatalf("SetAccountName: %v", err)
+	}
+
+	// The gateway's own upsert, exactly as a restore runs it, with its own name
+	// for the account unchanged.
+	if _, _, err := db.ReplaceConnectionAccounts(ctx, conn.ID,
+		[]store.Account{account("hash-1", "Conta a Ordem", "0538")}, ada.ID); err != nil {
+		t.Fatalf("ReplaceConnectionAccounts: %v", err)
+	}
+
+	got, err := db.AccountByID(ctx, acc.ID)
+	if err != nil {
+		t.Fatalf("AccountByID: %v", err)
+	}
+	if got.HouseholdName != "Rent" {
+		t.Errorf("HouseholdName = %q after a reconnect, want it to survive as %q", got.HouseholdName, "Rent")
+	}
+	if got.Name != "Conta a Ordem" {
+		t.Errorf("Name = %q, want the bank's own name kept beside it", got.Name)
+	}
+
+	// Clearing it reverts the screen to the bank's own name.
+	if err := db.SetAccountName(ctx, acc.ID, ""); err != nil {
+		t.Fatalf("clearing the household name: %v", err)
+	}
+	got, err = db.AccountByID(ctx, acc.ID)
+	if err != nil {
+		t.Fatalf("AccountByID: %v", err)
+	}
+	if got.HouseholdName != "" {
+		t.Errorf("HouseholdName = %q after clearing, want empty", got.HouseholdName)
 	}
 }
 
@@ -652,17 +763,28 @@ func TestAnAccountCanExistWithNoGatewayBehindIt(t *testing.T) {
 	ada := member(t, ctx, db, "ada@example.com")
 	grace := member(t, ctx, db, "grace@example.com")
 
+	// An account always has an owner (ADR 0022), so its creation and its first
+	// owner row are written in one transaction: the deferred trigger checks at
+	// commit, and a bare autocommitted insert would never reach one.
+	tx, err := db.Pool().Begin(ctx)
+	if err != nil {
+		t.Fatalf("beginning a transaction: %v", err)
+	}
 	var id string
-	if err := db.Pool().QueryRow(ctx, `
+	if err := tx.QueryRow(ctx, `
 		insert into accounts (source, name, currency) values ('manual', 'Cash tin', 'EUR')
 		returning id`).Scan(&id); err != nil {
 		t.Fatalf("an account with no connection was refused: %v", err)
 	}
-
-	// It is owned and shared through exactly the same tables.
-	if err := db.SetAccountOwners(ctx, id, []string{ada.ID}); err != nil {
+	if _, err := tx.Exec(ctx,
+		`insert into account_owners (account_id, member_id) values ($1, $2)`, id, ada.ID); err != nil {
 		t.Fatalf("owning a sourceless account: %v", err)
 	}
+	if err := tx.Commit(ctx); err != nil {
+		t.Fatalf("committing a sourceless account with its owner: %v", err)
+	}
+
+	// It is shared through exactly the same table as any other account.
 	if err := db.SetAccountLevel(ctx, id, grace.ID, store.LevelBalance, ada.ID); err != nil {
 		t.Fatalf("granting on a sourceless account: %v", err)
 	}

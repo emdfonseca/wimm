@@ -1,0 +1,2111 @@
+{
+  "version": "2.17",
+  "children": [
+    {
+      "type": "frame",
+      "id": "H01ss",
+      "x": 0,
+      "y": 0,
+      "name": "00 · JOURNEY OVERVIEW",
+      "layout": "vertical",
+      "gap": 48,
+      "padding": 64,
+      "children": [
+        {
+          "type": "text",
+          "id": "vQw4G",
+          "name": "Zone label",
+          "fill": "$ui:color-text-primary",
+          "content": "00 · JOURNEY OVERVIEW",
+          "fontFamily": "$ui:type-family-body",
+          "fontSize": "$ui:type-size-page-title",
+          "fontWeight": "bold"
+        },
+        {
+          "type": "frame",
+          "id": "kWJZq",
+          "name": "J11 · Set how wimm looks",
+          "width": 760,
+          "fill": "$ui:color-bg-surface",
+          "cornerRadius": "$ui:radius-lg",
+          "stroke": "$ui:color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "gap": 14,
+          "padding": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "bCUOg",
+              "name": "Title",
+              "fill": "$ui:color-text-primary",
+              "content": "J11 · Set how wimm looks",
+              "fontFamily": "$ui:type-family-display",
+              "fontSize": "$ui:type-size-heading-md",
+              "fontWeight": "bold"
+            },
+            {
+              "type": "frame",
+              "id": "oGRGh",
+              "name": "Goal",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "q0FE70",
+                  "name": "Key",
+                  "fill": "$ui:color-text-placeholder",
+                  "content": "Goal",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "zfjdX",
+                  "name": "Value",
+                  "fill": "$ui:color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Choose the appearance and the row height wimm uses, and find both in one place.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-md",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "xWpbv",
+              "name": "Primary actor",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ErYUa",
+                  "name": "Key",
+                  "fill": "$ui:color-text-placeholder",
+                  "content": "Primary actor",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "ptQG1",
+                  "name": "Value",
+                  "fill": "$ui:color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "A signed-in member. Every choice here is that member's own and reaches nobody else.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-md",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "DQkSh",
+              "name": "Entry point",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "djR6z",
+                  "name": "Key",
+                  "fill": "$ui:color-text-placeholder",
+                  "content": "Entry point",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "DNUWO",
+                  "name": "Value",
+                  "fill": "$ui:color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Settings, in the primary navigation, at every size.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-md",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "P9Nyh",
+              "name": "Entry route",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "kYf2i",
+                  "name": "Key",
+                  "fill": "$ui:color-text-placeholder",
+                  "content": "Entry route",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "BBEVL",
+                  "name": "Value",
+                  "fill": "$ui:color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Overview → Settings",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-md",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "cRRJc",
+              "name": "Navigation hierarchy",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "AIwoE",
+                  "name": "Key",
+                  "fill": "$ui:color-text-placeholder",
+                  "content": "Navigation hierarchy",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "Lwhio",
+                  "name": "Value",
+                  "fill": "$ui:color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "wimm → Settings (L0 → L1). One level; there is no Settings detail page.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-md",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "b08mm",
+              "name": "Primary task surface",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "kdzsq",
+                  "name": "Key",
+                  "fill": "$ui:color-text-placeholder",
+                  "content": "Primary task surface",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "lxMAs",
+                  "name": "Value",
+                  "fill": "$ui:color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Full page, route-backed, with its choices in named sections inside it.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-md",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "vTD7k",
+              "name": "Primary success outcome",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "E0s14d",
+                  "name": "Key",
+                  "fill": "$ui:color-text-placeholder",
+                  "content": "Primary success outcome",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "KwNii",
+                  "name": "Value",
+                  "fill": "$ui:color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The product changes to match immediately, and it still matches on the next visit.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-md",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "KckAY",
+              "name": "Success destination",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Ps7o8",
+                  "name": "Key",
+                  "fill": "$ui:color-text-placeholder",
+                  "content": "Success destination",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "O88VHs",
+                  "name": "Value",
+                  "fill": "$ui:color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Settings. Nothing navigates away, because nothing was submitted.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-md",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "T6Yc3",
+              "name": "Constraint",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "xFMPO",
+                  "name": "Key",
+                  "fill": "$ui:color-text-placeholder",
+                  "content": "Constraint",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "ouuxw",
+                  "name": "Value",
+                  "fill": "$ui:color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Both choices have to be in force before first paint. A product that appears one way and rearranges itself is worse than one that never offered the choice.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-md",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Sdhwl",
+              "name": "Constraint",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Eb1Hh",
+                  "name": "Key",
+                  "fill": "$ui:color-text-placeholder",
+                  "content": "Constraint",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "ARAe1",
+                  "name": "Value",
+                  "fill": "$ui:color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The row height choice is absent where the pointer is coarse, not disabled (ADR 0004).",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-md",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "msmxy",
+              "name": "Constraint",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "u6hNqh",
+                  "name": "Key",
+                  "fill": "$ui:color-text-placeholder",
+                  "content": "Constraint",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "KKcHf",
+                  "name": "Value",
+                  "fill": "$ui:color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "One section is drawn, because one section exists. The subsection list card arrives with the second section, not before it.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-md",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "A4kyT5",
+              "name": "Stories",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "P72w3",
+                  "name": "Key",
+                  "fill": "$ui:color-text-placeholder",
+                  "content": "Stories",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "HOwop",
+                  "name": "Value",
+                  "fill": "$ui:color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "S9 · Fit more of the ledger on the screen.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-md",
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "C3UtLc",
+      "x": 0,
+      "y": 1400,
+      "name": "10 · PRIMARY SUCCESS",
+      "layout": "vertical",
+      "gap": 48,
+      "padding": 64,
+      "children": [
+        {
+          "type": "text",
+          "id": "q834K3",
+          "name": "Zone label",
+          "fill": "$ui:color-text-primary",
+          "content": "10 · PRIMARY SUCCESS",
+          "fontFamily": "$ui:type-family-body",
+          "fontSize": "$ui:type-size-page-title",
+          "fontWeight": "bold"
+        },
+        {
+          "type": "frame",
+          "id": "XZhvS",
+          "name": "J11.A / 01 · Settings / Wide / Appearance · plate",
+          "clip": true,
+          "width": 1442,
+          "fill": "$ui:color-bg-surface",
+          "cornerRadius": "$ui:radius-lg",
+          "stroke": "$ui:color-border-strong",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "qnka7",
+              "name": "Plate title",
+              "width": "fill_container",
+              "fill": "$ui:color-bg-subtle",
+              "gap": 12,
+              "padding": [
+                10,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "B19cxM",
+                  "name": "Name",
+                  "fill": "$ui:color-text-primary",
+                  "content": "J11.A / 01 · Settings / Wide / Appearance",
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "K8eGeo",
+                  "name": "Spacer",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "text",
+                  "id": "CnbNC",
+                  "name": "Regime",
+                  "fill": "$ui:color-text-secondary",
+                  "content": "WIDE 1440",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "OU51x",
+              "name": "Trigger",
+              "width": "fill_container",
+              "fill": "$ui:color-bg-surface",
+              "padding": [
+                8,
+                16
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "eKG29",
+                  "name": "Trigger text",
+                  "fill": "$ui:color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Reached when: a member chooses Settings in the primary navigation. Every choice takes effect as it is made; there is nothing to save.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "aKoCs",
+              "type": "ref",
+              "ref": "ui:IGbQe",
+              "name": "J11.A / 01 · Settings / Wide / Appearance",
+              "width": 1440,
+              "height": 900,
+              "theme": {
+                "ui:device": "wide"
+              },
+              "descendants": {
+                "ui:D83An/ui:W4cIE8/ui:l4tOM": {
+                  "fill": "#FFFFFF00"
+                },
+                "ui:D83An/ui:W4cIE8/ui:l4tOM/ui:TVqlB": {
+                  "fill": "$ui:color-text-secondary"
+                },
+                "ui:D83An/ui:W4cIE8/ui:l4tOM/ui:KfRDI": {
+                  "fill": "$ui:color-text-primary",
+                  "fontWeight": "500"
+                },
+                "ui:D83An/ui:W4cIE8/ui:zVJvb": {
+                  "enabled": true,
+                  "fill": "$ui:color-accent-subtle"
+                },
+                "ui:D83An/ui:W4cIE8/ui:zVJvb/ui:TVqlB": {
+                  "fill": "$ui:color-accent"
+                },
+                "ui:D83An/ui:W4cIE8/ui:zVJvb/ui:KfRDI": {
+                  "fill": "$ui:color-accent",
+                  "fontWeight": "600"
+                },
+                "ui:xNVFG": {
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "MpNRH",
+                      "name": "Page",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": 24,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "FlUx1",
+                          "name": "Page header",
+                          "width": "fill_container",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "k6bWTd",
+                              "name": "Title",
+                              "fill": "$ui:color-text-primary",
+                              "content": "Settings",
+                              "fontFamily": "$ui:type-family-display",
+                              "fontSize": "$ui:type-size-page-title",
+                              "fontWeight": "bold"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "t3b857",
+                          "name": "Appearance",
+                          "width": "fill_container",
+                          "fill": "$ui:color-bg-surface",
+                          "cornerRadius": "$ui:radius-md",
+                          "stroke": "$ui:color-border-default",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 16,
+                          "padding": 20,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "PlaZs",
+                              "name": "Section",
+                              "fill": "$ui:color-text-primary",
+                              "content": "Appearance",
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-heading-sm",
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "IYQbu",
+                              "name": "Row",
+                              "width": "fill_container",
+                              "gap": 16,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Kydnb",
+                                  "name": "Label",
+                                  "fill": "$ui:color-text-primary",
+                                  "content": "Theme",
+                                  "fontFamily": "$ui:type-family-body",
+                                  "fontSize": "$ui:type-size-body-md",
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "J0kxss",
+                                  "name": "Spacer",
+                                  "width": "fill_container",
+                                  "height": 1
+                                },
+                                {
+                                  "id": "MfriU",
+                                  "type": "ref",
+                                  "ref": "ui:e0JfP",
+                                  "name": "Theme",
+                                  "width": 264,
+                                  "descendants": {
+                                    "ui:kOfrp": {
+                                      "content": "System"
+                                    },
+                                    "ui:GoMH3": {
+                                      "content": "Light"
+                                    },
+                                    "ui:K5btpF": {
+                                      "content": "Dark"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "FRFZN",
+                              "name": "Helper",
+                              "fill": "$ui:color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "wimm follows whatever your device is set to unless you choose here.",
+                              "lineHeight": 1.45,
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "etvXF",
+                              "name": "Rule",
+                              "width": "fill_container",
+                              "height": 1,
+                              "fill": "$ui:color-border-subtle"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "CZ7hI",
+                              "name": "Row",
+                              "width": "fill_container",
+                              "gap": 16,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "I5rH9",
+                                  "name": "Label",
+                                  "fill": "$ui:color-text-primary",
+                                  "content": "Rows",
+                                  "fontFamily": "$ui:type-family-body",
+                                  "fontSize": "$ui:type-size-body-md",
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "t8xrz",
+                                  "name": "Spacer",
+                                  "width": "fill_container",
+                                  "height": 1
+                                },
+                                {
+                                  "id": "lIlhC",
+                                  "type": "ref",
+                                  "ref": "ui:Yt1rq",
+                                  "name": "Rows",
+                                  "width": 264
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "OCxdb",
+                              "name": "Helper",
+                              "fill": "$ui:color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Compact makes every row shorter, so about five more transactions fit on a laptop screen. It changes nothing else.",
+                              "lineHeight": 1.45,
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "q97dap",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fill_container"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Ch49p",
+          "name": "J11.A / 01 · Settings / Medium / Appearance · plate",
+          "clip": true,
+          "width": 1026,
+          "fill": "$ui:color-bg-surface",
+          "cornerRadius": "$ui:radius-lg",
+          "stroke": "$ui:color-border-strong",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "A9f0r",
+              "name": "Plate title",
+              "width": "fill_container",
+              "fill": "$ui:color-bg-subtle",
+              "gap": 12,
+              "padding": [
+                10,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ZPO9H",
+                  "name": "Name",
+                  "fill": "$ui:color-text-primary",
+                  "content": "J11.A / 01 · Settings / Medium / Appearance",
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "IgZDu",
+                  "name": "Spacer",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "text",
+                  "id": "RB9xQ",
+                  "name": "Regime",
+                  "fill": "$ui:color-text-secondary",
+                  "content": "MEDIUM 1024",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "u5CbH",
+              "name": "Trigger",
+              "width": "fill_container",
+              "fill": "$ui:color-bg-surface",
+              "padding": [
+                8,
+                16
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "L5cLN4",
+                  "name": "Trigger text",
+                  "fill": "$ui:color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Reached when: a member chooses Settings in the primary navigation. Every choice takes effect as it is made; there is nothing to save.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "YyMbD",
+              "type": "ref",
+              "ref": "ui:WMlvF",
+              "name": "J11.A / 01 · Settings / Medium / Appearance",
+              "width": 1024,
+              "height": 760,
+              "theme": {
+                "ui:device": "medium"
+              },
+              "descendants": {
+                "ui:DpWec/ui:K82JD": {
+                  "fill": "#FFFFFF00"
+                },
+                "ui:DpWec/ui:K82JD/ui:Tv4pz": {
+                  "fill": "$ui:color-text-secondary"
+                },
+                "ui:DpWec/ui:a9mpu": {
+                  "fill": "$ui:color-accent-subtle"
+                },
+                "ui:DpWec/ui:a9mpu/ui:Tv4pz": {
+                  "fill": "$ui:color-accent"
+                },
+                "ui:kwcdh": {
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "aW3Zo",
+                      "name": "Page",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": 24,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "X35V1b",
+                          "name": "Page header",
+                          "width": "fill_container",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "U76k03",
+                              "name": "Title",
+                              "fill": "$ui:color-text-primary",
+                              "content": "Settings",
+                              "fontFamily": "$ui:type-family-display",
+                              "fontSize": "$ui:type-size-page-title",
+                              "fontWeight": "bold"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "xZa99",
+                          "name": "Appearance",
+                          "width": "fill_container",
+                          "fill": "$ui:color-bg-surface",
+                          "cornerRadius": "$ui:radius-md",
+                          "stroke": "$ui:color-border-default",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 16,
+                          "padding": 20,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "qLg4M",
+                              "name": "Section",
+                              "fill": "$ui:color-text-primary",
+                              "content": "Appearance",
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-heading-sm",
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "avJe0",
+                              "name": "Row",
+                              "width": "fill_container",
+                              "gap": 16,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "mblOF",
+                                  "name": "Label",
+                                  "fill": "$ui:color-text-primary",
+                                  "content": "Theme",
+                                  "fontFamily": "$ui:type-family-body",
+                                  "fontSize": "$ui:type-size-body-md",
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "hMtX6",
+                                  "name": "Spacer",
+                                  "width": "fill_container",
+                                  "height": 1
+                                },
+                                {
+                                  "id": "flWfH",
+                                  "type": "ref",
+                                  "ref": "ui:e0JfP",
+                                  "name": "Theme",
+                                  "width": 264,
+                                  "descendants": {
+                                    "ui:kOfrp": {
+                                      "content": "System"
+                                    },
+                                    "ui:GoMH3": {
+                                      "content": "Light"
+                                    },
+                                    "ui:K5btpF": {
+                                      "content": "Dark"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "KQNy1",
+                              "name": "Helper",
+                              "fill": "$ui:color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "wimm follows whatever your device is set to unless you choose here.",
+                              "lineHeight": 1.45,
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "o2JlxQ",
+                              "name": "Rule",
+                              "width": "fill_container",
+                              "height": 1,
+                              "fill": "$ui:color-border-subtle"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "MdRyI",
+                              "name": "Row",
+                              "width": "fill_container",
+                              "gap": 16,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "f6JOEQ",
+                                  "name": "Label",
+                                  "fill": "$ui:color-text-primary",
+                                  "content": "Rows",
+                                  "fontFamily": "$ui:type-family-body",
+                                  "fontSize": "$ui:type-size-body-md",
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "uYGNN",
+                                  "name": "Spacer",
+                                  "width": "fill_container",
+                                  "height": 1
+                                },
+                                {
+                                  "id": "XvTkU",
+                                  "type": "ref",
+                                  "ref": "ui:Yt1rq",
+                                  "name": "Rows",
+                                  "width": 264
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "B0H1UX",
+                              "name": "Helper",
+                              "fill": "$ui:color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Compact makes every row shorter, so about five more transactions fit on a laptop screen. It changes nothing else.",
+                              "lineHeight": 1.45,
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "WXX38",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fill_container"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "L3CH0",
+          "name": "J11.A / 01 · Settings / Ultra / Appearance · plate",
+          "clip": true,
+          "width": 1922,
+          "fill": "$ui:color-bg-surface",
+          "cornerRadius": "$ui:radius-lg",
+          "stroke": "$ui:color-border-strong",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "p9rPq",
+              "name": "Plate title",
+              "width": "fill_container",
+              "fill": "$ui:color-bg-subtle",
+              "gap": 12,
+              "padding": [
+                10,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "OTNGf",
+                  "name": "Name",
+                  "fill": "$ui:color-text-primary",
+                  "content": "J11.A / 01 · Settings / Ultra / Appearance",
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "rzbdt",
+                  "name": "Spacer",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "text",
+                  "id": "qMuLV",
+                  "name": "Regime",
+                  "fill": "$ui:color-text-secondary",
+                  "content": "ULTRA 1920",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "mucj5",
+              "name": "Trigger",
+              "width": "fill_container",
+              "fill": "$ui:color-bg-surface",
+              "padding": [
+                8,
+                16
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "odt5q",
+                  "name": "Trigger text",
+                  "fill": "$ui:color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Reached when: a member chooses Settings in the primary navigation. Every choice takes effect as it is made; there is nothing to save.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "jfrPt",
+              "type": "ref",
+              "ref": "ui:NEIet",
+              "name": "J11.A / 01 · Settings / Ultra / Appearance",
+              "width": 1920,
+              "height": 860,
+              "theme": {
+                "ui:device": "ultra"
+              },
+              "descendants": {
+                "ui:CpZPm/ui:W4cIE8/ui:l4tOM": {
+                  "fill": "#FFFFFF00"
+                },
+                "ui:CpZPm/ui:W4cIE8/ui:l4tOM/ui:TVqlB": {
+                  "fill": "$ui:color-text-secondary"
+                },
+                "ui:CpZPm/ui:W4cIE8/ui:l4tOM/ui:KfRDI": {
+                  "fill": "$ui:color-text-primary",
+                  "fontWeight": "500"
+                },
+                "ui:CpZPm/ui:W4cIE8/ui:zVJvb": {
+                  "enabled": true,
+                  "fill": "$ui:color-accent-subtle"
+                },
+                "ui:CpZPm/ui:W4cIE8/ui:zVJvb/ui:TVqlB": {
+                  "fill": "$ui:color-accent"
+                },
+                "ui:CpZPm/ui:W4cIE8/ui:zVJvb/ui:KfRDI": {
+                  "fill": "$ui:color-accent",
+                  "fontWeight": "600"
+                },
+                "ui:g0HWMH": {
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "o5y7F4",
+                      "name": "Page",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": 24,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "W6dDw3",
+                          "name": "Page header",
+                          "width": "fill_container",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "VrgSh",
+                              "name": "Title",
+                              "fill": "$ui:color-text-primary",
+                              "content": "Settings",
+                              "fontFamily": "$ui:type-family-display",
+                              "fontSize": "$ui:type-size-page-title",
+                              "fontWeight": "bold"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Fi6Vx",
+                          "name": "Appearance",
+                          "width": "fill_container",
+                          "fill": "$ui:color-bg-surface",
+                          "cornerRadius": "$ui:radius-md",
+                          "stroke": "$ui:color-border-default",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 16,
+                          "padding": 20,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "TRYwh",
+                              "name": "Section",
+                              "fill": "$ui:color-text-primary",
+                              "content": "Appearance",
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-heading-sm",
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "GVhFt",
+                              "name": "Row",
+                              "width": "fill_container",
+                              "gap": 16,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "OeQDI",
+                                  "name": "Label",
+                                  "fill": "$ui:color-text-primary",
+                                  "content": "Theme",
+                                  "fontFamily": "$ui:type-family-body",
+                                  "fontSize": "$ui:type-size-body-md",
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "p4Y9IA",
+                                  "name": "Spacer",
+                                  "width": "fill_container",
+                                  "height": 1
+                                },
+                                {
+                                  "id": "iCTfq",
+                                  "type": "ref",
+                                  "ref": "ui:e0JfP",
+                                  "name": "Theme",
+                                  "width": 264,
+                                  "descendants": {
+                                    "ui:kOfrp": {
+                                      "content": "System"
+                                    },
+                                    "ui:GoMH3": {
+                                      "content": "Light"
+                                    },
+                                    "ui:K5btpF": {
+                                      "content": "Dark"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "EEQ2s",
+                              "name": "Helper",
+                              "fill": "$ui:color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "wimm follows whatever your device is set to unless you choose here.",
+                              "lineHeight": 1.45,
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "la1Fg",
+                              "name": "Rule",
+                              "width": "fill_container",
+                              "height": 1,
+                              "fill": "$ui:color-border-subtle"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "hu3Kz",
+                              "name": "Row",
+                              "width": "fill_container",
+                              "gap": 16,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "QyTD4",
+                                  "name": "Label",
+                                  "fill": "$ui:color-text-primary",
+                                  "content": "Rows",
+                                  "fontFamily": "$ui:type-family-body",
+                                  "fontSize": "$ui:type-size-body-md",
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "c7Lpe",
+                                  "name": "Spacer",
+                                  "width": "fill_container",
+                                  "height": 1
+                                },
+                                {
+                                  "id": "g6tirg",
+                                  "type": "ref",
+                                  "ref": "ui:Yt1rq",
+                                  "name": "Rows",
+                                  "width": 264
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "xBiN1",
+                              "name": "Helper",
+                              "fill": "$ui:color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Compact makes every row shorter, so about five more transactions fit on a laptop screen. It changes nothing else.",
+                              "lineHeight": 1.45,
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "lpY9Z",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fill_container"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "t5a3vp",
+          "name": "J11.A / 01 · Settings / Compact / Appearance · plate",
+          "clip": true,
+          "width": 392,
+          "fill": "$ui:color-bg-surface",
+          "cornerRadius": "$ui:radius-lg",
+          "stroke": "$ui:color-border-strong",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "KRFyQ",
+              "name": "Plate title",
+              "width": "fill_container",
+              "fill": "$ui:color-bg-subtle",
+              "gap": 12,
+              "padding": [
+                10,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "U2gsjw",
+                  "name": "Name",
+                  "fill": "$ui:color-text-primary",
+                  "content": "J11.A / 01 · Settings / Compact / Appearance",
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "zdxz1",
+                  "name": "Spacer",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "text",
+                  "id": "KOoCi",
+                  "name": "Regime",
+                  "fill": "$ui:color-text-secondary",
+                  "content": "COMPACT 390",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "RuM9K",
+              "name": "Trigger",
+              "width": "fill_container",
+              "fill": "$ui:color-bg-surface",
+              "padding": [
+                8,
+                16
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "pQipK",
+                  "name": "Trigger text",
+                  "fill": "$ui:color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Reached when: a member chooses Settings in the primary navigation. Every choice takes effect as it is made; there is nothing to save.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "UUFeF",
+              "type": "ref",
+              "ref": "ui:pu6qZ",
+              "name": "J11.A / 01 · Settings / Compact / Appearance",
+              "width": 390,
+              "height": 844,
+              "theme": {
+                "ui:device": "compact"
+              },
+              "descendants": {
+                "ui:A2bVbC": {
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "bo3Jt",
+                      "name": "Page",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": 24,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "bi76e",
+                          "name": "Page header",
+                          "width": "fill_container",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bNIcd",
+                              "name": "Title",
+                              "fill": "$ui:color-text-primary",
+                              "content": "Settings",
+                              "fontFamily": "$ui:type-family-display",
+                              "fontSize": "$ui:type-size-page-title",
+                              "fontWeight": "bold"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "c5RLF",
+                          "name": "Appearance",
+                          "width": "fill_container",
+                          "fill": "$ui:color-bg-surface",
+                          "cornerRadius": "$ui:radius-md",
+                          "stroke": "$ui:color-border-default",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 16,
+                          "padding": 20,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "cJuLZ",
+                              "name": "Section",
+                              "fill": "$ui:color-text-primary",
+                              "content": "Appearance",
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-heading-sm",
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "qAvNk",
+                              "name": "Row",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "QYsDV",
+                                  "name": "Label",
+                                  "fill": "$ui:color-text-primary",
+                                  "content": "Theme",
+                                  "fontFamily": "$ui:type-family-body",
+                                  "fontSize": "$ui:type-size-body-md",
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "id": "pgvCF",
+                                  "type": "ref",
+                                  "ref": "ui:e0JfP",
+                                  "name": "Theme",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "ui:kOfrp": {
+                                      "content": "System"
+                                    },
+                                    "ui:GoMH3": {
+                                      "content": "Light"
+                                    },
+                                    "ui:K5btpF": {
+                                      "content": "Dark"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "co33U",
+                              "name": "Helper",
+                              "fill": "$ui:color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "wimm follows whatever your device is set to unless you choose here.",
+                              "lineHeight": 1.45,
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "b0atc",
+                              "name": "Rule",
+                              "width": "fill_container",
+                              "height": 1,
+                              "fill": "$ui:color-border-subtle"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "arJoT",
+                              "name": "Row",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "qlFJg",
+                                  "name": "Label",
+                                  "fill": "$ui:color-text-primary",
+                                  "content": "Rows",
+                                  "fontFamily": "$ui:type-family-body",
+                                  "fontSize": "$ui:type-size-body-md",
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "id": "z19k2i",
+                                  "type": "ref",
+                                  "ref": "ui:Yt1rq",
+                                  "name": "Rows",
+                                  "width": "fill_container"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "dO5gx",
+                              "name": "Helper",
+                              "fill": "$ui:color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Compact makes every row shorter, so about five more transactions fit on a laptop screen. It changes nothing else.",
+                              "lineHeight": 1.45,
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "j9tSa",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fill_container"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "ui:kqffI/ui:ysgF3": {
+                  "enabled": false
+                },
+                "ui:kqffI/ui:IvOch/ui:TVqlB": {
+                  "fill": "$ui:color-text-secondary"
+                },
+                "ui:kqffI/ui:H0gal/ui:TVqlB": {
+                  "fill": "$ui:color-accent"
+                },
+                "ui:kqffI/ui:H0gal/ui:KfRDI": {
+                  "fill": "$ui:color-accent",
+                  "fontWeight": "600"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "LBFZU",
+      "x": 0,
+      "y": 3600,
+      "name": "20 · ALTERNATIVE / FAILURE / RECOVERY PATHS",
+      "layout": "vertical",
+      "gap": 48,
+      "padding": 64,
+      "children": [
+        {
+          "type": "text",
+          "id": "oRa9h",
+          "name": "Zone label",
+          "fill": "$ui:color-text-primary",
+          "content": "20 · ALTERNATIVE / FAILURE / RECOVERY PATHS",
+          "fontFamily": "$ui:type-family-body",
+          "fontSize": "$ui:type-size-page-title",
+          "fontWeight": "bold"
+        },
+        {
+          "type": "frame",
+          "id": "S2E4u",
+          "name": "J11.B / 01 · Settings / Compact / On a touch screen · plate",
+          "clip": true,
+          "width": 392,
+          "fill": "$ui:color-bg-surface",
+          "cornerRadius": "$ui:radius-lg",
+          "stroke": "$ui:color-border-strong",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "S28Vm9",
+              "name": "Plate title",
+              "width": "fill_container",
+              "fill": "$ui:color-bg-subtle",
+              "gap": 12,
+              "padding": [
+                10,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "OVksd",
+                  "name": "Name",
+                  "fill": "$ui:color-text-primary",
+                  "content": "J11.B / 01 · Settings / Compact / On a touch screen",
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "AntU4",
+                  "name": "Spacer",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "text",
+                  "id": "Aa41X",
+                  "name": "Regime",
+                  "fill": "$ui:color-text-secondary",
+                  "content": "COMPACT 390",
+                  "fontFamily": "$ui:type-family-mono",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "sDixd",
+              "name": "Trigger",
+              "width": "fill_container",
+              "fill": "$ui:color-bg-surface",
+              "padding": [
+                8,
+                16
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ULBmh",
+                  "name": "Trigger text",
+                  "fill": "$ui:color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Reached when: a member opens Settings on a device they touch rather than point at. The row height choice is absent, not greyed: there is nothing here for them to work out how to enable.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$ui:type-family-body",
+                  "fontSize": "$ui:type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "hTkMR",
+              "type": "ref",
+              "ref": "ui:pu6qZ",
+              "name": "J11.B / 01 · Settings / Compact / On a touch screen",
+              "width": 390,
+              "height": 844,
+              "theme": {
+                "ui:device": "compact"
+              },
+              "descendants": {
+                "ui:A2bVbC": {
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "FEojp",
+                      "name": "Page",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": 24,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "x41WQQ",
+                          "name": "Page header",
+                          "width": "fill_container",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "XiLyT",
+                              "name": "Title",
+                              "fill": "$ui:color-text-primary",
+                              "content": "Settings",
+                              "fontFamily": "$ui:type-family-display",
+                              "fontSize": "$ui:type-size-page-title",
+                              "fontWeight": "bold"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "HsAXR",
+                          "name": "Appearance",
+                          "width": "fill_container",
+                          "fill": "$ui:color-bg-surface",
+                          "cornerRadius": "$ui:radius-md",
+                          "stroke": "$ui:color-border-default",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 16,
+                          "padding": 20,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "OSIo1",
+                              "name": "Section",
+                              "fill": "$ui:color-text-primary",
+                              "content": "Appearance",
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-heading-sm",
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "GlMX5",
+                              "name": "Row",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "MSej4",
+                                  "name": "Label",
+                                  "fill": "$ui:color-text-primary",
+                                  "content": "Theme",
+                                  "fontFamily": "$ui:type-family-body",
+                                  "fontSize": "$ui:type-size-body-md",
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "id": "Uuc7t",
+                                  "type": "ref",
+                                  "ref": "ui:e0JfP",
+                                  "name": "Theme",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "ui:kOfrp": {
+                                      "content": "System"
+                                    },
+                                    "ui:GoMH3": {
+                                      "content": "Light"
+                                    },
+                                    "ui:K5btpF": {
+                                      "content": "Dark"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "imJBn",
+                              "name": "Helper",
+                              "fill": "$ui:color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "wimm follows whatever your device is set to unless you choose here.",
+                              "lineHeight": 1.45,
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "sfMDh",
+                              "name": "Helper",
+                              "fill": "$ui:color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Row height is not offered here. Compact rows are smaller than a finger reliably hits, so on a touch screen wimm stays comfortable.",
+                              "lineHeight": 1.45,
+                              "fontFamily": "$ui:type-family-body",
+                              "fontSize": "$ui:type-size-body-sm",
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "l5jnt",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": "fill_container"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "ui:kqffI/ui:ysgF3": {
+                  "enabled": false
+                },
+                "ui:kqffI/ui:IvOch/ui:TVqlB": {
+                  "fill": "$ui:color-text-secondary"
+                },
+                "ui:kqffI/ui:H0gal/ui:TVqlB": {
+                  "fill": "$ui:color-accent"
+                },
+                "ui:kqffI/ui:H0gal/ui:KfRDI": {
+                  "fill": "$ui:color-accent",
+                  "fontWeight": "600"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "SwCNQ",
+      "x": 0,
+      "y": 6200,
+      "name": "30 · STATE / EDGE-CASE INDEX",
+      "layout": "vertical",
+      "gap": 48,
+      "padding": 64,
+      "children": [
+        {
+          "type": "text",
+          "id": "m8qe6",
+          "name": "Zone label",
+          "fill": "$ui:color-text-primary",
+          "content": "30 · STATE / EDGE-CASE INDEX",
+          "fontFamily": "$ui:type-family-body",
+          "fontSize": "$ui:type-size-page-title",
+          "fontWeight": "bold"
+        },
+        {
+          "type": "frame",
+          "id": "Qfll0",
+          "name": "States drawn, and the one that is not",
+          "width": 1240,
+          "fill": "$ui:color-bg-surface",
+          "cornerRadius": "$ui:radius-md",
+          "stroke": "$ui:color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "RgbNJ",
+              "name": "Title",
+              "fill": "$ui:color-text-primary",
+              "content": "States drawn, and the one that is not",
+              "fontFamily": "$ui:type-family-body",
+              "fontSize": "$ui:type-size-heading-sm",
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "snlRs",
+              "name": "Note",
+              "fill": "$ui:color-text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "J11.A / 01 · Appearance is drawn at all four sizes, because the shell differs at all four and Settings is the first screen in the product reached from the Settings destination.\n\nJ11.B / 01 · On a touch screen is drawn at Compact only. The rule is about pointer capability and not about width, so it applies at every size; Compact is where a coarse pointer is overwhelmingly likely and drawing it four times would say the opposite.\n\nNot drawn: a saving state, because nothing is saved; a validation error, because neither control can be wrong; and an empty state, because a screen of settings is never empty.",
+              "lineHeight": 1.45,
+              "fontFamily": "$ui:type-family-body",
+              "fontSize": "$ui:type-size-body-md",
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "eolMa",
+      "x": 0,
+      "y": 7400,
+      "name": "40 · THEME + ACCESSIBILITY QA",
+      "layout": "vertical",
+      "gap": 48,
+      "padding": 64,
+      "children": [
+        {
+          "type": "text",
+          "id": "lZwbq",
+          "name": "Zone label",
+          "fill": "$ui:color-text-primary",
+          "content": "40 · THEME + ACCESSIBILITY QA",
+          "fontFamily": "$ui:type-family-body",
+          "fontSize": "$ui:type-size-page-title",
+          "fontWeight": "bold"
+        },
+        {
+          "type": "frame",
+          "id": "bO5QM",
+          "name": "Theme and accessibility QA",
+          "width": 1240,
+          "fill": "$ui:color-bg-surface",
+          "cornerRadius": "$ui:radius-md",
+          "stroke": "$ui:color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "X5WqWz",
+              "name": "Title",
+              "fill": "$ui:color-text-primary",
+              "content": "Theme and accessibility QA",
+              "fontFamily": "$ui:type-family-body",
+              "fontSize": "$ui:type-size-heading-sm",
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "hl4yq",
+              "name": "Note",
+              "fill": "$ui:color-text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Both controls are Segmented control instances, so their contrast, focus ring and 44 px target floor are already asserted in the library's own QA zone and are not re-asserted here.\n\nWhat is specific to this screen and cannot be drawn: the choice has to be in force before first paint, and the announcement when it changes. Both are contracts in the change's canvas record.",
+              "lineHeight": 1.45,
+              "fontFamily": "$ui:type-family-body",
+              "fontSize": "$ui:type-size-body-md",
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "fSEVL",
+      "x": 0,
+      "y": 8400,
+      "name": "90 · TEMPORARY NOTES",
+      "layout": "vertical",
+      "gap": 48,
+      "padding": 64,
+      "children": [
+        {
+          "type": "text",
+          "id": "RYRic",
+          "name": "Zone label",
+          "fill": "$ui:color-text-primary",
+          "content": "90 · TEMPORARY NOTES",
+          "fontFamily": "$ui:type-family-body",
+          "fontSize": "$ui:type-size-page-title",
+          "fontWeight": "bold"
+        },
+        {
+          "type": "frame",
+          "id": "zXljb",
+          "name": "One section, and when the list card arrives",
+          "width": 1240,
+          "fill": "$ui:color-bg-surface",
+          "cornerRadius": "$ui:radius-md",
+          "stroke": "$ui:color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "LFPCj",
+              "name": "Title",
+              "fill": "$ui:color-text-primary",
+              "content": "One section, and when the list card arrives",
+              "fontFamily": "$ui:type-family-body",
+              "fontSize": "$ui:type-size-heading-sm",
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "zRPmw",
+              "name": "Note",
+              "fill": "$ui:color-text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Settings holds one section today. ADR 0005 chooses the form by the content and only by the content: a longer or growing set of subdivisions becomes a list card in the page, and a fixed handful of peer views becomes tabs. One section is neither, so neither is drawn.\n\nThe library's Settings templates draw the list card with six rows — Profile, Connections, Categories, Rules, Notifications, Export — and the templates' own contract table marks those as provisional rather than decided. Drawing them here would turn an illustration into a promise.",
+              "lineHeight": 1.45,
+              "fontFamily": "$ui:type-family-body",
+              "fontSize": "$ui:type-size-body-md",
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "beBmG",
+          "name": "Where the sharing surface will go",
+          "width": 1240,
+          "fill": "$ui:color-bg-surface",
+          "cornerRadius": "$ui:radius-md",
+          "stroke": "$ui:color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "pbLxq",
+              "name": "Title",
+              "fill": "$ui:color-text-primary",
+              "content": "Where the sharing surface will go",
+              "fontFamily": "$ui:type-family-body",
+              "fontSize": "$ui:type-size-heading-sm",
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "EMxm7",
+              "name": "Note",
+              "fill": "$ui:color-text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "ADR 0019 named a sharing surface that spans banks, so a member can answer \"what can my partner see?\" without opening every bank in turn, and deliberately left it out. This change adds the screen that would hold it and does not add it.",
+              "lineHeight": 1.45,
+              "fontFamily": "$ui:type-family-body",
+              "fontSize": "$ui:type-size-body-md",
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "imports": {
+    "ui": "../../../packages/ui/design/product-ui.lib.pen"
+  },
+  "fileToken": "7e8730be-657d-4c16-9c61-80d668998c0c"
+}

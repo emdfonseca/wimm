@@ -14,6 +14,7 @@
 
 <script lang="ts">
 	import Button from '../atoms/Button.svelte';
+	import Page from '../templates/Page.svelte';
 
 	interface Props {
 		bankName: string;
@@ -28,54 +29,39 @@
 	let { bankName, accessEndsOn, oncontinue, cancelHref = '/transactions' }: Props = $props();
 </script>
 
-<main class="screen">
-	<h1 tabindex="-1">Include {bankName}'s transactions</h1>
+<Page title="Include {bankName}'s transactions" focusHeading>
+	<div class="prose">
+		<p class="lede">
+			You already let wimm read this bank's account names and balances. Confirming once more adds
+			its transactions, so wimm can show what happened on the accounts you own.
+		</p>
 
-	<p class="lede">
-		You already let wimm read this bank's account names and balances. Confirming once more adds its
-		transactions, so wimm can show what happened on the accounts you own.
-	</p>
+		<ul class="scope">
+			<li>Account names and balances, as before</li>
+			<li>Transactions on the accounts you own</li>
+			<li class="never">Never your login, your password or your card number</li>
+		</ul>
 
-	<ul class="scope">
-		<li>Account names and balances, as before</li>
-		<li>Transactions on the accounts you own</li>
-		<li class="never">Never your login, your password or your card number</li>
-	</ul>
+		<p class="helper">
+			{bankName}'s access will run out on {accessEndsOn}. That date is {bankName}'s own limit, not a
+			wimm setting.
+		</p>
 
-	<p class="helper">
-		{bankName}'s access will run out on {accessEndsOn}. That date is {bankName}'s own limit, not a
-		wimm setting.
-	</p>
-
-	<div class="actions">
-		<Button onclick={oncontinue}>Continue to {bankName}</Button>
-		<a class="not-now" href={cancelHref}>Not now</a>
+		<div class="actions">
+			<Button onclick={oncontinue}>Continue to {bankName}</Button>
+			<a class="not-now" href={cancelHref}>Not now</a>
+		</div>
 	</div>
-</main>
+</Page>
 
 <style>
-	.screen {
+	/* Prose, so its measure is capped (ADR 0005). */
+	.prose {
 		display: flex;
-		flex: 1;
 		flex-direction: column;
 		gap: 16px;
-		inline-size: 100%;
-		/* Prose, so its measure is capped (ADR 0005). */
 		max-inline-size: var(--layout-content-max);
 		font-family: var(--type-family-body);
-	}
-
-	h1 {
-		margin: 0;
-		color: var(--color-text-primary);
-		font-family: var(--type-family-display);
-		font-size: var(--type-size-heading-lg);
-		font-weight: 700;
-	}
-
-	h1:focus-visible {
-		outline: var(--focus-ring-width) solid var(--color-focus-ring);
-		outline-offset: var(--focus-ring-offset);
 	}
 
 	.lede {

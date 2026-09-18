@@ -54,10 +54,14 @@
 	interface Props {
 		/** Omitted, it reads what is stored on mount. */
 		value?: Theme;
+		/** Names the group for assistive technology. Settings labels the row
+		 *  "Theme"; anywhere else "Appearance" is the clearer name for the
+		 *  same choice. */
+		label?: string;
 		onchange?: (theme: Theme) => void;
 	}
 
-	let { value = $bindable('system'), onchange }: Props = $props();
+	let { value = $bindable('system'), label = 'Appearance', onchange }: Props = $props();
 
 	// Read on mount rather than at module scope: this component renders on the
 	// server too, where there is no localStorage and no document.
@@ -78,4 +82,4 @@
 	}
 </script>
 
-<SegmentedControl {options} {value} label="Appearance" onchange={choose} />
+<SegmentedControl {options} {value} {label} onchange={choose} />

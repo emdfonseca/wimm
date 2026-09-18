@@ -266,10 +266,20 @@ func TestTheBankBackfillReachesAccountsThatPredateIt(t *testing.T) {
 	}
 
 	// An account no gateway sources has no bank to backfill, and must not be
-	// refused by the constraint the backfill precedes.
-	if _, err := pool.Exec(ctx, `
-		insert into accounts (source, name, currency) values ('manual', 'Cash tin', 'EUR')`); err != nil {
+	// refused by the constraint the backfill precedes. Owned like any real
+	// manual account would be — the account ownership migration's own backfill
+	// only reaches gateway accounts, so a manual one still needs its owner row
+	// written the way the (not yet existing) route that creates one would.
+	var manualAccountID string
+	if err := pool.QueryRow(ctx, `
+		insert into accounts (source, name, currency) values ('manual', 'Cash tin', 'EUR')
+		returning id`).Scan(&manualAccountID); err != nil {
 		t.Fatalf("recording a manual account: %v", err)
+	}
+	if _, err := pool.Exec(ctx,
+		`insert into account_owners (account_id, member_id) values ($1, $2)`,
+		manualAccountID, memberID); err != nil {
+		t.Fatalf("owning the manual account: %v", err)
 	}
 
 	if err := store.MigrateUp(url); err != nil {

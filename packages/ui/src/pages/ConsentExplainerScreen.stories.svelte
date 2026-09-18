@@ -9,58 +9,53 @@
 		tags: ['autodocs'],
 		parameters: { layout: 'fullscreen' },
 		args: {
-			bankName: 'Montepio',
-			accessEndsOn: '16 December 2026',
+			bankName: 'Monzo',
 			oncontinue: fn(),
 			oncancel: fn()
 		}
 	});
 </script>
 
-<!-- 90 days, which is what Montepio and Revolut grant. -->
 <Story
 	name="Default"
 	play={async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getByText('16 December 2026')).toBeInTheDocument();
-		await userEvent.click(canvas.getByRole('button', { name: 'Continue to Montepio' }));
+		await expect(canvas.getByText('wimm will read your Monzo accounts')).toBeInTheDocument();
+		await expect(canvas.getByRole('link', { name: 'Pick another bank' })).toBeInTheDocument();
+		await userEvent.click(canvas.getByRole('button', { name: 'Continue to Monzo' }));
 		await expect(args.oncontinue).toHaveBeenCalledOnce();
 	}}
 />
 
-<!-- ActivoBank grants a single day. A member not shown that date reads the
-     daily prompt as a defect rather than as their bank's limit. -->
+<!-- What is read, and the two things that are not. -->
 <Story
-	name="A bank that grants one day"
-	args={{ bankName: 'ActivoBank', accessEndsOn: 'tomorrow', shortLived: true }}
+	name="It states what is and is not read"
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getByText('tomorrow')).toBeInTheDocument();
-		await expect(canvas.getByText(/That is soon/)).toBeInTheDocument();
+		await expect(canvas.getByText(/last four digits of its number/)).toBeInTheDocument();
+		await expect(canvas.getByText(/read now and again/)).toBeInTheDocument();
+		await expect(canvas.getByText(/does not see your transactions/)).toBeInTheDocument();
+		await expect(canvas.getByText(/never sees your Monzo password/)).toBeInTheDocument();
 	}}
 />
 
-<!-- The date is the bank's own limit, and the copy says so: otherwise a member
-     reads it as something wimm chose and could change. -->
+<!-- Privacy is per person and reversible, stated before the member can no
+     longer change what they granted here. -->
 <Story
-	name="The date belongs to the bank"
+	name="It says who can see it"
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Only you can see these accounts')).toBeInTheDocument();
+		await expect(canvas.getByText(/nothing here reaches another member/)).toBeInTheDocument();
+	}}
+/>
+
+<Story
+	name="It says the member is about to leave"
 	play={async ({ canvasElement }) => {
 		await expect(
-			within(canvasElement).getByText(/Montepio's own limit rather than a wimm setting/)
+			within(canvasElement).getByText('You will leave wimm and come back here when Monzo is done.')
 		).toBeInTheDocument();
-	}}
-/>
-
-<!-- The consent asks for account names, balances and transactions, and the
-     screen says all three before the member can no longer change it here. What
-     is not granted is stated in the same breath. -->
-<Story
-	name="It states what is and is not shared"
-	play={async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await expect(canvas.getByText(/Their transactions/)).toBeInTheDocument();
-		await expect(canvas.getByText(/cannot make a payment/)).toBeInTheDocument();
-		await expect(canvas.getByText(/never sees it/)).toBeInTheDocument();
 	}}
 />
 

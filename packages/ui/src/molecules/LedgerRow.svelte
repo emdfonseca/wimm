@@ -146,7 +146,7 @@
 
 	.date {
 		flex: 0 0 auto;
-		inline-size: 52px;
+		inline-size: 72px;
 		text-align: end;
 		color: var(--color-text-secondary);
 		font-family: var(--type-family-mono);

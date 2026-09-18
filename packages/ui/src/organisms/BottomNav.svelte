@@ -50,7 +50,7 @@
 		display: flex;
 		align-items: stretch;
 		inline-size: 100%;
-		block-size: 60px;
+		block-size: var(--layout-header-height);
 		background: var(--color-bg-surface);
 		border-block-start: 1px solid var(--color-border-default);
 		font-family: var(--type-family-body);
@@ -63,7 +63,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 3px;
-		/* The target is the whole tab: at 390 that is 195 x 60, well clear of
+		/* The target is the whole tab: at 390 that is 195 x 56, well clear of
 		   any target-size floor. */
 		min-block-size: 44px;
 		padding-inline: 4px;

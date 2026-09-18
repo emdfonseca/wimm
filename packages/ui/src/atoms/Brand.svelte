@@ -70,6 +70,11 @@
 		font-weight: 600;
 		letter-spacing: -0.32px;
 		line-height: var(--type-line-tight);
+		color: var(--color-action-primary);
+	}
+
+	.inverted .name {
+		color: var(--color-text-on-brand);
 	}
 
 	.inverted {

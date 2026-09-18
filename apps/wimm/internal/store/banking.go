@@ -21,6 +21,11 @@ var ErrPendingConnectionSpent = errors.New("pending connection already consumed"
 // day be believed (ADR 0019).
 var ErrOwnerHoldsAGrant = errors.New("a member cannot hold both ownership and a level on one account")
 
+// ErrAccountWouldHaveNoOwner is the deferred constraint trigger's refusal
+// (ADR 0022): a change that would leave an account with no owner at all.
+// Leaving the account out is the way to the same end that remains open.
+var ErrAccountWouldHaveNoOwner = errors.New("an account cannot be left with no owner")
+
 // Sealed is a value held encrypted, as its two columns. The store moves the
 // pair around and never opens it: the key lives outside the database and
 // outside this package.
@@ -95,7 +100,16 @@ type Account struct {
 	Currency      string
 	BalanceMinor  *int64
 	BalanceReadAt *time.Time
+	// HouseholdName is the name an owner gave the account. Empty means nobody
+	// has; Name, the bank's own, is what shows instead (ADR 0022).
+	HouseholdName string
+	// LeftOutAt is set when the household keeps a record of this account and
+	// wimm does not read it. Nil means the account is in wimm (ADR 0022).
+	LeftOutAt *time.Time
 }
+
+// LeftOut reports whether this account is left out of wimm.
+func (a Account) LeftOut() bool { return a.LeftOutAt != nil }
 
 // Level is what one member may see of one account they do not own. Hidden is
 // the absence of a grant rather than a value, so it is not in this list.
@@ -242,7 +256,8 @@ func insertAccounts(
 			currency           = excluded.currency
 		returning id, source, connection_id, coalesce(gateway_ref, ''), coalesce(name, ''),
 		          coalesce(number_suffix, ''), coalesce(account_type, ''),
-		          coalesce(holder_name, ''), currency, balance_minor, balance_read_at`
+		          coalesce(holder_name, ''), currency, balance_minor, balance_read_at,
+		          coalesce(household_name, ''), left_out_at`
 
 	const own = `
 		insert into account_owners (account_id, member_id)
@@ -256,7 +271,8 @@ func insertAccounts(
 			nullBytes(a.GatewayUID.Ciphertext), nullString(a.GatewayUID.KeyID),
 			a.Name, a.NumberSuffix, a.AccountType, a.HolderName, a.Currency,
 		).Scan(&out.ID, &out.Source, &out.ConnectionID, &out.GatewayRef, &out.Name, &out.NumberSuffix,
-			&out.AccountType, &out.HolderName, &out.Currency, &out.BalanceMinor, &out.BalanceReadAt)
+			&out.AccountType, &out.HolderName, &out.Currency, &out.BalanceMinor, &out.BalanceReadAt,
+			&out.HouseholdName, &out.LeftOutAt)
 		if err != nil {
 			return nil, fmt.Errorf("recording an account: %w", err)
 		}

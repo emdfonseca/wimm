@@ -33,6 +33,15 @@ OUT = Path(__file__).resolve().parents[1] / "src/canvas-contract.json"
 # header ("J04 · Keep the household's balances current") or a stage note
 # ("J05.A · Disconnect a bank · PRIMARY SUCCESS"), both of which carry prose
 # about the flow rather than copy on a screen.
+#
+# The access and connect journeys' frames used to skip the journey qualifier
+# ("01 · Sign in / Default" rather than "J02.A / 01 · Sign in / …"), which this
+# pattern already refused to treat as a screen — indistinguishable from it by
+# shape alone is a zone header ("20 · ALTERNATIVE / FAILURE / RECOVERY PATHS"),
+# which also starts "\d+ · " and must never be read as one. Rather than widen
+# the pattern to accept the unqualified form and then separately exclude every
+# zone header by name, the frames were renamed to the qualified form they were
+# always missing.
 SCREEN = re.compile(r"^J\d+\.\w+ / \d+")
 
 # Nodes whose text is fixture data: a bank's name, an account's name, an
@@ -58,17 +67,20 @@ DATA_NODES = {
 #
 # Spelled-out "one" is not a count here: it is a common word in this copy
 # ("one of these"), and substituting it would compare a sentence that does not
-# exist.
+# exist. Nor is "four" in "the last four digits of its number": that four
+# never varies with a household's own data, it names a fixed truncation width,
+# so it is copy rather than a count fixture.
 FIXTURES = (
-    (re.compile(r"Monzo"), "{bank}"),
-    (re.compile(r"Ana Reis"), "{member}"),
+    (re.compile(r"Monzo|Montepio"), "{bank}"),
+    (re.compile(r"Ana Reis|Grace"), "{member}"),
+    (re.compile(r"Conta à Ordem"), "{account}"),
     (re.compile(r"\b\d{1,2}:\d{2}\b"), "{time}"),
     (re.compile(
         r"\b\d{1,2} (?:January|February|March|April|May|June|July|August"
         r"|September|October|November|December)\b"
     ), "{date}"),
     (re.compile(
-        r"\b(?:two|three|four|five|six|seven|eight|nine|ten)\b"
+        r"\b(?:two|three|four|five|six|seven|eight|nine|ten)\b(?! digits| more)"
     ), "{count}"),
 )
 

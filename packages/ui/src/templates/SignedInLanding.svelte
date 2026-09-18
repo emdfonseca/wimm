@@ -3,12 +3,13 @@
 	import SidebarNav from '../organisms/SidebarNav.svelte';
 	import BottomNav from '../organisms/BottomNav.svelte';
 	import Brand from '../atoms/Brand.svelte';
+	import Icon from '../atoms/Icon.svelte';
 	import IconButton from '../atoms/IconButton.svelte';
 	import { destinations as allDestinations, type Destination } from '../destinations.js';
 
 	/**
-	 * Where a member arrives once they are in. Origins `IGbQe` (Wide and Ultra)
-	 * and `pu6qZ` (Compact).
+	 * Where a member arrives once they are in. Origins `IGbQe` (Wide),
+	 * `pu6qZ` (Compact), `WMlvF` (Medium, the rail) and `NEIet` (Ultra).
 	 *
 	 * There is no page header. `App header` is a stack of breadcrumbs, a title
 	 * row and tabs; here all three are empty but the title, which would render
@@ -26,6 +27,12 @@
 	 * Navigation at Compact is a bottom bar rather than a hamburger, and it is
 	 * a sibling below the scrolling region rather than an overlay — so nothing
 	 * is obscured and the body needs no bottom padding to clear it.
+	 *
+	 * At Medium the sidebar is a 72px rail: icon-only, the same destinations
+	 * the labelled sidebar reaches, because labels do not fit beside a content
+	 * column at this width and a bottom bar would waste a row of it. At Wide
+	 * and Ultra it is the labelled sidebar, `layout-sidebar-width` giving it
+	 * 264 or 288 — the one number that differs between the two.
 	 */
 	interface Props {
 		memberName: string;
@@ -59,6 +66,8 @@
 				.map((part) => part[0]?.toUpperCase() ?? '')
 				.join('')
 	);
+
+	const shown = $derived(destinations.filter((d) => d.href));
 </script>
 
 <div class="shell">
@@ -70,6 +79,29 @@
 			<IconButton icon="log-out" label="Sign out" onclick={onsignout} />
 		{/if}
 	</header>
+
+	<nav class="rail" aria-label="Sections">
+		<div class="rail-brand"><Brand markOnly /></div>
+		<ul class="rail-items">
+			{#each shown as destination (destination.label)}
+				<li>
+					<a
+						class="rail-item"
+						class:current={destination.current}
+						href={destination.href}
+						aria-current={destination.current ? 'page' : undefined}
+						aria-label={destination.label}
+					>
+						<Icon name={destination.icon ?? 'layout-dashboard'} size={20} />
+					</a>
+				</li>
+			{/each}
+		</ul>
+		<span class="rail-spacer"></span>
+		{#if onsignout}
+			<IconButton icon="log-out" label="Sign out" onclick={onsignout} />
+		{/if}
+	</nav>
 
 	<div class="sidebar">
 		<SidebarNav {destinations} {memberName} {onsignout} />
@@ -90,20 +122,20 @@
 	.shell {
 		display: flex;
 		flex-direction: column;
-		min-block-size: 100svh;
+		block-size: 100svh;
+		overflow: hidden;
 		background: var(--color-bg-canvas);
 		font-family: var(--type-family-body);
 		color: var(--color-text-primary);
 	}
 
-	/* The Compact bar. 56 is layout-header-height at this regime; the library
-	   holds it as a literal because pen discards a size bound to a variable. */
+	/* The Compact bar, `layout-header-height` at this regime. */
 	.bar {
 		display: flex;
 		align-items: center;
 		gap: var(--space-3);
-		block-size: 56px;
-		padding-inline: var(--space-4);
+		block-size: var(--layout-header-height);
+		padding-inline: var(--layout-page-gutter);
 		background: var(--color-bg-surface);
 		border-block-end: 1px solid var(--color-border-default);
 	}
@@ -124,14 +156,15 @@
 		font-weight: 600;
 	}
 
+	.rail,
 	.sidebar {
 		display: none;
 	}
 
-	/* The sidebar is chrome, not content. Sticky and exactly one viewport tall,
-	   so it stays put while the main column scrolls — as a flex sibling it
-	   stretched to the tallest child instead, growing with a long ledger and
-	   scrolling away with it. */
+	/* The sidebar and the rail are chrome, not content. Sticky and exactly one
+	   viewport tall, so either stays put while the main column scrolls — as a
+	   flex sibling it stretched to the tallest child instead, growing with a
+	   long ledger and scrolling away with it. */
 
 	/* Below the body in the same column, so it is a sibling rather than an
 	   overlay. It never hides on scroll. */
@@ -140,34 +173,63 @@
 		inset-block-end: 0;
 	}
 
-	/* Slot `xNVFG`: fill, vertical, padding $space-8, centred on both axes.
-	   The centring is inert for a screen that fills the slot — which every
-	   screen of content does, absorbing the slack with a trailing spacer the
-	   way the frames draw it. It is what centres a short screen, such as the
-	   empty state the library's own specimen shows.
+	/* Slot `xNVFG`: fill, vertical, centred on both axes. The centring is
+	   inert for a screen that fills the slot — which every screen of content
+	   does, absorbing the slack with a trailing spacer the way the frames draw
+	   it. It is what centres a short screen, such as the empty state the
+	   library's own specimen shows.
 
-	   The padding was --space-4 and the slot says --space-8, which is why every
-	   screen sat closer to the chrome than it was drawn. */
+	   No padding here: the slot's child is always a `Page`, whose own header
+	   spans edge to edge of the main column and owns `layout-page-gutter`
+	   itself, for its content only. Padding on this wrapper insets the header
+	   too, on every regime, which is not what any frame draws. */
 	.body {
 		display: flex;
 		flex: 1;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		padding: var(--space-8);
+		min-block-size: 0;
+		overflow-y: auto;
 	}
 
-	@media (min-width: 1024px) {
+	/* Medium: the rail. Labels do not fit beside a content column at this
+	   width and a bottom bar would waste a row of it (`WMlvF`). */
+	@media (min-width: 768px) and (max-width: 1199px) {
 		.shell {
 			flex-direction: row;
 		}
-
-		/* The sidebar carries the brand and the account at this regime, so the
-		   bar would be a second copy of both. */
 		.bar {
 			display: none;
 		}
+		.rail {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 2px;
+			position: sticky;
+			inset-block-start: 0;
+			align-self: start;
+			block-size: 100svh;
+			inline-size: var(--layout-sidebar-width);
+			padding-block: 12px;
+			background: var(--color-bg-surface);
+			border-inline-end: 1px solid var(--color-border-default);
+		}
+		.bottom {
+			display: none;
+		}
+	}
 
+	/* Wide and Ultra: the labelled sidebar. `layout-sidebar-width` is the one
+	   number that differs between them — 264 or 288 (`IGbQe`, `NEIet`). */
+	@media (min-width: 1200px) {
+		.shell {
+			flex-direction: row;
+		}
+		.bar {
+			display: none;
+		}
 		.sidebar {
 			display: flex;
 			position: sticky;
@@ -175,14 +237,52 @@
 			align-self: start;
 			block-size: 100svh;
 		}
-
-		/* The sidebar carries the same destinations at this regime. */
 		.bottom {
 			display: none;
 		}
+	}
 
-		.body {
-			padding: var(--space-8);
-		}
+	.rail-brand {
+		display: grid;
+		place-items: center;
+		block-size: 36px;
+		margin-block-end: 8px;
+	}
+
+	.rail-items {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.rail-item {
+		display: grid;
+		place-items: center;
+		inline-size: 44px;
+		block-size: 36px;
+		border-radius: var(--radius-sm);
+		color: var(--color-text-secondary);
+		text-decoration: none;
+	}
+
+	.rail-item:hover {
+		background: var(--color-bg-hover);
+	}
+
+	.rail-item:focus-visible {
+		outline: var(--focus-ring-width) solid var(--focus-ring-color);
+		outline-offset: var(--focus-ring-offset);
+	}
+
+	.rail-item.current {
+		background: var(--color-accent-subtle);
+		color: var(--color-accent);
+	}
+
+	.rail-spacer {
+		flex: 1;
 	}
 </style>

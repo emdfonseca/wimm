@@ -24,7 +24,7 @@
 	name="Default"
 	play={async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getAllByRole('button')).toHaveLength(4);
+		await expect(canvas.getAllByRole('button')).toHaveLength(5);
 		await userEvent.click(canvas.getByRole('button', { name: 'Revolut' }));
 		await expect(args.onselect).toHaveBeenCalledWith('PT:Revolut');
 	}}
@@ -37,7 +37,7 @@
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await userEvent.type(canvas.getByRole('searchbox'), 'caixa');
-		await expect(canvas.getAllByRole('button')).toHaveLength(2);
+		await expect(canvas.getAllByRole('button')).toHaveLength(3);
 		await expect(canvas.getByRole('status')).toHaveTextContent('2 banks match');
 	}}
 />

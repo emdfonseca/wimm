@@ -15,7 +15,9 @@
 					'smartphone',
 					'layout-dashboard',
 					'user-round-check',
-					'panel-left-close'
+					'panel-left-close',
+					'arrow-left-right',
+					'settings'
 				]
 			},
 			size: { control: { type: 'number' } }
@@ -37,6 +39,8 @@
 			<Icon {...args} name="layout-dashboard" />
 			<Icon {...args} name="user-round-check" />
 			<Icon {...args} name="panel-left-close" />
+			<Icon {...args} name="arrow-left-right" />
+			<Icon {...args} name="settings" />
 		</div>
 	{/snippet}
 </Story>

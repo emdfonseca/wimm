@@ -81,8 +81,8 @@ async function open(search = '') {
 		accountId?: string;
 		freshness?: string;
 		span?: string;
-		olderHref?: string;
-		newerHref?: string;
+		oldestHref?: string;
+		newestHref?: string;
 		atOldest: boolean;
 		syncOnArrival: boolean;
 		noBank: boolean;
@@ -165,8 +165,8 @@ describe('the query shapes', () => {
 
 		const data = await open('?account=a1');
 
-		expect(data.olderHref).toContain('account=a1');
-		expect(data.olderHref).toContain('before=2026-09-17.t1');
+		expect(data.oldestHref).toContain('account=a1');
+		expect(data.oldestHref).toContain('oldest=1');
 	});
 });
 

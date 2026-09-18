@@ -37,6 +37,12 @@ type Ledger struct {
 	// Accounts names every account this member owns, so a row can say which
 	// one it came from without a second call per row.
 	Accounts map[string]store.AccountLabel
+	// Pages are every real page the ledger holds for this scope, newest
+	// first: the scrubber's list. Each is a page LedgerPageIndex actually
+	// found, at the same page size this request itself pages by, so a
+	// member choosing one lands on precisely what it says — never a
+	// calendar month that might share a page with three others.
+	Pages []store.PageMarker
 }
 
 // LedgerRequest is what a member asked for.
@@ -45,6 +51,12 @@ type LedgerRequest struct {
 	AccountID string
 	Cursor    store.Cursor
 	Older     bool
+	// Oldest jumps to the oldest page, native to a keyset seek the same way
+	// the newest page already is. Ignored when Cursor is set.
+	Oldest bool
+	// PageStart jumps to a specific real page, named by LedgerPageIndex.
+	// Ignored when Cursor is set.
+	PageStart *store.Cursor
 	// Refresh asks the banks again rather than waiting for the interval. It is
 	// still bounded by it: a member holding the button does not multiply the
 	// calls.
@@ -71,7 +83,8 @@ func (s *Service) Transactions(ctx context.Context, req LedgerRequest) (Ledger, 
 
 	page, err := s.store.Ledger(ctx, store.LedgerQuery{
 		MemberID: req.MemberID, AccountID: req.AccountID,
-		Cursor: req.Cursor, Older: req.Older, Limit: s.pageSize,
+		Cursor: req.Cursor, Older: req.Older, Oldest: req.Oldest, PageStart: req.PageStart,
+		Limit: s.pageSize,
 	})
 	if err != nil {
 		return Ledger{}, err
@@ -97,8 +110,14 @@ func (s *Service) Transactions(ctx context.Context, req LedgerRequest) (Ledger, 
 		return Ledger{}, err
 	}
 
+	pages, err := s.store.LedgerPageIndex(ctx, req.MemberID, req.AccountID, s.pageSize)
+	if err != nil {
+		return Ledger{}, err
+	}
+
 	return Ledger{
 		Accounts: labels,
+		Pages:    pages,
 		Page:     page, Count: count, Narrow: narrow, Failures: failures,
 		SyncedAt:    state.SyncedAt,
 		ReachesBack: state.ReachesBack,

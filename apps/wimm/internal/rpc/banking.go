@@ -173,6 +173,39 @@ func (s *BankingServer) SetAccountLevel(
 	}), nil
 }
 
+// SetAccountLeftOut leaves an account out of wimm, or brings it back.
+func (s *BankingServer) SetAccountLeftOut(
+	ctx context.Context, req *connect.Request[bankingv1.SetAccountLeftOutRequest],
+) (*connect.Response[bankingv1.SetAccountLeftOutResponse], error) {
+	m, err := s.member(ctx, req.Header())
+	if err != nil {
+		return nil, toConnectError(err)
+	}
+	if err := s.banking.SetLeftOut(ctx, m.ID, req.Msg.GetAccountId(), req.Msg.GetLeftOut()); err != nil {
+		return nil, toConnectError(err)
+	}
+	return connect.NewResponse(&bankingv1.SetAccountLeftOutResponse{
+		Account: s.accountAfterChange(ctx, m.ID, req.Msg.GetAccountId()),
+	}), nil
+}
+
+// SetAccountName sets the household's own name for an account, or clears it
+// back to the bank's own name.
+func (s *BankingServer) SetAccountName(
+	ctx context.Context, req *connect.Request[bankingv1.SetAccountNameRequest],
+) (*connect.Response[bankingv1.SetAccountNameResponse], error) {
+	m, err := s.member(ctx, req.Header())
+	if err != nil {
+		return nil, toConnectError(err)
+	}
+	if err := s.banking.SetName(ctx, m.ID, req.Msg.GetAccountId(), req.Msg.GetHouseholdName()); err != nil {
+		return nil, toConnectError(err)
+	}
+	return connect.NewResponse(&bankingv1.SetAccountNameResponse{
+		Account: s.accountAfterChange(ctx, m.ID, req.Msg.GetAccountId()),
+	}), nil
+}
+
 // accountAfterChange returns the account as the caller now sees it, or nil if
 // they can no longer see it at all — which is what disowning their own account
 // does, and is a correct answer rather than an error.
@@ -296,6 +329,8 @@ func (s *BankingServer) ListTransactions(
 		AccountID: req.Msg.GetAccountId(),
 		Cursor:    fromProtoCursor(req.Msg.GetCursor()),
 		Older:     req.Msg.GetOlder(),
+		Oldest:    req.Msg.GetOldest(),
+		PageStart: fromProtoPageStart(req.Msg.GetPageStart()),
 		SkipSync:  req.Msg.GetSkipSync(),
 	})
 	if err != nil {
@@ -332,6 +367,35 @@ func fromProtoCursor(c *bankingv1.LedgerCursor) store.Cursor {
 	return store.Cursor{BookingDate: c.GetBookingDate().AsTime(), ID: c.GetTransactionId()}
 }
 
+func fromProtoPageStart(c *bankingv1.LedgerCursor) *store.Cursor {
+	if c == nil || c.GetTransactionId() == "" {
+		return nil
+	}
+	cursor := store.Cursor{BookingDate: c.GetBookingDate().AsTime(), ID: c.GetTransactionId()}
+	return &cursor
+}
+
+func toProtoCursor(c store.Cursor) *bankingv1.LedgerCursor {
+	return &bankingv1.LedgerCursor{
+		BookingDate:   timestamppb.New(c.BookingDate),
+		TransactionId: c.ID,
+	}
+}
+
+// toProtoPages renders the ledger's page index, newest first, the way
+// LedgerPageIndex already ordered it.
+func toProtoPages(pages []store.PageMarker) []*bankingv1.PageMarker {
+	out := make([]*bankingv1.PageMarker, 0, len(pages))
+	for _, p := range pages {
+		out = append(out, &bankingv1.PageMarker{
+			Cursor: toProtoCursor(p.Cursor),
+			Newest: timestamppb.New(p.Newest),
+			Oldest: timestamppb.New(p.Oldest),
+		})
+	}
+	return out
+}
+
 // toProtoLedger renders one page. The account's name and its bank travel on
 // every row, because the list is every account the member owns and a row has to
 // say which one it came from.
@@ -343,6 +407,7 @@ func toProtoLedger(l banking.Ledger) *bankingv1.Ledger {
 		OwnsNoAccount:     l.OwnsNothing,
 		Failures:          toProtoFailures(l.Failures),
 		NarrowConnections: toProtoNarrow(l.Narrow),
+		Pages:             toProtoPages(l.Pages),
 	}
 
 	for _, t := range l.Page.Transactions {
@@ -423,7 +488,14 @@ func toProtoAccount(a store.VisibleAccount, who names) *bankingv1.Account {
 	}
 
 	out.Name = a.Name
-	if a.BalanceMinor != nil && a.BalanceReadAt != nil {
+	out.HouseholdName = a.HouseholdName
+	if a.LeftOutAt != nil {
+		out.LeftOutAt = timestamppb.New(*a.LeftOutAt)
+	}
+	// Left out omits the balance here, in the handler, rather than in the
+	// query: visibleAccountsQuery still returns it to an owner, and this is the
+	// one place "what may this member see" is decided (ADR 0022).
+	if a.LeftOutAt == nil && a.BalanceMinor != nil && a.BalanceReadAt != nil {
 		out.Balance = &bankingv1.Balance{
 			Money:  &bankingv1.Money{Minor: *a.BalanceMinor, Currency: a.Currency},
 			ReadAt: timestamppb.New(*a.BalanceReadAt),

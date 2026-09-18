@@ -33,12 +33,16 @@ def check(src: Path) -> list[str]:
     expected = [
         ("templates/AuthShell.svelte", ".card", "max-inline-size", "480px"),
         ("templates/AuthShell.svelte", ".panel", "flex", "0 0 560px"),
-        ("organisms/SidebarNav.svelte", ".sidebar", "inline-size", "264px"),
-        # Slot `xNVFG` in the signed-in shell. It was --space-4, and the slot
-        # says --space-8, so every screen sat closer to the chrome than it was
-        # drawn — the kind of single wrong token that makes a whole page look
-        # unlike its frame while every component in it is correct.
-        ("templates/SignedInLanding.svelte", ".body", "padding", "var(--space-8)"),
+        # `layout-sidebar-width`: 264 at Wide, 288 at Ultra (`NEIet`) — one
+        # token rather than a literal, because the two regimes disagree on the
+        # number and a literal can only ever be right for one of them.
+        ("organisms/SidebarNav.svelte", ".sidebar", "inline-size", "var(--layout-sidebar-width)"),
+        # The rail (`WMlvF`): 72 at Medium, the same token.
+        ("templates/SignedInLanding.svelte", ".rail", "inline-size", "var(--layout-sidebar-width)"),
+        # Slot `xNVFG`'s child is always a `Page`, which owns its own gutter —
+        # for its content, not its header. The slot itself had this same
+        # padding too, which inset the header the frames draw edge to edge.
+        ("templates/Page.svelte", ".body", "padding", "var(--layout-page-gutter)"),
     ]
 
     # A screen of content fills its slot and packs to the top, which is how
@@ -60,6 +64,27 @@ def check(src: Path) -> list[str]:
                 "shell's slot will centre it instead of the frame's own Page "
                 "filling and packing content to the top."
             )
+
+    # The token itself, at the three regimes that give it a value: 72 at
+    # Medium (the rail, `WMlvF`), 264 at Wide, 288 at Ultra (`NEIet`). A screen
+    # can declare `var(--layout-sidebar-width)` correctly and still be wrong if
+    # the token's own per-regime value drifts — which is what the check above
+    # cannot see.
+    tokens_css = src / "tokens.css"
+    if not tokens_css.is_file():
+        problems.append("tokens.css is missing")
+    else:
+        css = tokens_css.read_text(encoding="utf-8")
+        for min_width, want_px, device in ((768, 72, "medium"), (1200, 264, "wide"), (1800, 288, "ultra")):
+            block = re.search(
+                rf"@media \(min-width:\s*{min_width}px\)\s*\{{(.*?\n\}}\n)", css, re.S
+            )
+            if not block or f"--layout-sidebar-width: {want_px}px" not in block.group(1):
+                problems.append(
+                    f"tokens.css: --layout-sidebar-width is not {want_px}px at "
+                    f"{device} (min-width: {min_width}px), which is what the "
+                    "canvas measures there."
+                )
 
     for filename, selector, prop, want in expected:
         path = src / filename
@@ -84,7 +109,7 @@ def main() -> int:
         for problem in problems:
             print(f"  {problem}", file=sys.stderr)
         return 1
-    print("geometry matches the canvas (border-box, card 480, panel 560, sidebar 264)")
+    print("geometry matches the canvas (border-box, card 480, panel 560, sidebar/rail tokenised)")
     return 0
 
 

@@ -162,7 +162,7 @@
 		justify-content: flex-end;
 	}
 
-	@media (max-width: 599px) {
+	@media (max-width: 767px) {
 		.footer {
 			flex-direction: column-reverse;
 		}

@@ -125,9 +125,9 @@ func TestTwoMembersSeeDifferentTotals(t *testing.T) {
 	}
 }
 
-// 6.4, and the guarantee ADR 0019 keeps from 0018: an account nobody may see
-// is never read from the bank at all.
-func TestNoBalanceIsEverReadForAnAccountNobodyMaySee(t *testing.T) {
+// The guarantee ADR 0022 keeps from 0018/0019: a left-out account is never
+// read from the bank at all, whatever it held before.
+func TestNoBalanceIsEverReadForALeftOutAccount(t *testing.T) {
 	svc, gw, st := newService(t)
 	gw.AddBank(montepio(),
 		banking.Account{Ref: "hash-1", Name: "Joint", Currency: "EUR"},
@@ -140,9 +140,8 @@ func TestNoBalanceIsEverReadForAnAccountNobodyMaySee(t *testing.T) {
 	personal := done.Accounts[1]
 
 	ctx := context.Background()
-	// Disowned, and granted to nobody: the account exists and nothing may read it.
-	if err := svc.SetOwners(ctx, ada, personal.ID, nil); err != nil {
-		t.Fatalf("SetOwners: %v", err)
+	if err := svc.SetLeftOut(ctx, ada, personal.ID, true); err != nil {
+		t.Fatalf("SetLeftOut: %v", err)
 	}
 
 	if _, err := svc.Accounts(ctx, ada, false); err != nil {
@@ -151,10 +150,69 @@ func TestNoBalanceIsEverReadForAnAccountNobodyMaySee(t *testing.T) {
 
 	read := gw.AccountsRead()
 	if slices.Contains(read, "hash-2") {
-		t.Errorf("a balance was read for an account nobody may see; reads were %v", read)
+		t.Errorf("a balance was read for a left-out account; reads were %v", read)
 	}
 	if !slices.Contains(read, "hash-1") {
-		t.Errorf("the owned account was not read; reads were %v", read)
+		t.Errorf("the account still in wimm was not read; reads were %v", read)
+	}
+}
+
+// The total agrees with what the member is shown: a left-out account holds a
+// balance underneath, and it counts in neither the total nor its account count
+// (ADR 0022).
+func TestTheTotalDropsByALeftOutAccountsBalance(t *testing.T) {
+	svc, gw, st := newService(t)
+	gw.AddBank(montepio(),
+		banking.Account{Ref: "hash-1", Name: "Joint", Currency: "EUR"},
+		banking.Account{Ref: "hash-2", Name: "Personal", Currency: "EUR"})
+	gw.SetBalance("PT:Montepio", "hash-1", banking.Balance{Money: banking.Money{Minor: 400_000, Currency: "EUR"}, Kind: "CLAV"})
+	gw.SetBalance("PT:Montepio", "hash-2", banking.Balance{Money: banking.Money{Minor: 100_000, Currency: "EUR"}, Kind: "CLAV"})
+
+	done := connectBank(t, svc, gw, st)
+	personal := done.Accounts[1]
+
+	ctx := context.Background()
+	before, err := svc.Accounts(ctx, ada, false)
+	if err != nil {
+		t.Fatalf("Accounts before leaving out: %v", err)
+	}
+	if len(before.Totals) != 1 || before.Totals[0].Money.Minor != 500_000 || before.Totals[0].AccountCount != 2 {
+		t.Fatalf("total before leaving out = %+v, want 500000 across 2 accounts", before.Totals)
+	}
+
+	if err := svc.SetLeftOut(ctx, ada, personal.ID, true); err != nil {
+		t.Fatalf("SetLeftOut: %v", err)
+	}
+
+	after, err := svc.Accounts(ctx, ada, true)
+	if err != nil {
+		t.Fatalf("Accounts after leaving out: %v", err)
+	}
+	if len(after.Totals) != 1 || after.Totals[0].Money.Minor != 400_000 || after.Totals[0].AccountCount != 1 {
+		t.Errorf("total after leaving out = %+v, want 400000 across 1 account", after.Totals)
+	}
+}
+
+// A gateway reports "XXX" — ISO 4217's own "no currency" — for an account it
+// cannot express as a single currency, such as a multi-currency wallet
+// aggregated as one account. Its 0 minor units is not a real balance, so it
+// carries no total of its own and does not appear in another currency's.
+func TestAnAccountWithNoCurrencyCarriesNoTotal(t *testing.T) {
+	svc, gw, st := newService(t)
+	gw.AddBank(montepio(),
+		banking.Account{Ref: "hash-1", Name: "Current", Currency: "EUR"},
+		banking.Account{Ref: "hash-2", Name: "Wallet", Currency: "XXX"})
+	gw.SetBalance("PT:Montepio", "hash-1", banking.Balance{Money: banking.Money{Minor: 400_000, Currency: "EUR"}, Kind: "CLAV"})
+	gw.SetBalance("PT:Montepio", "hash-2", banking.Balance{Money: banking.Money{Minor: 0, Currency: "XXX"}, Kind: "CLAV"})
+
+	connectBank(t, svc, gw, st)
+
+	view, err := svc.Accounts(context.Background(), ada, false)
+	if err != nil {
+		t.Fatalf("Accounts: %v", err)
+	}
+	if len(view.Totals) != 1 || view.Totals[0].Money.Currency != "EUR" || view.Totals[0].Money.Minor != 400_000 {
+		t.Errorf("totals = %+v, want only the EUR total", view.Totals)
 	}
 }
 
@@ -290,13 +348,15 @@ func TestAFailureIsNotReportedToAMemberWhoSeesNothingOfThatBank(t *testing.T) {
 	}
 }
 
-// Disowning your last account must stay reversible.
+// Disowning your last account used to lock a real member out: unchecking the
+// last account they owned left nobody owning anything on that connection, so
+// the chooser refused them — and the chooser was the only screen that could
+// undo it.
 //
-// This locked a real member out: unchecking the last account they owned left
-// nobody owning anything on that connection, so the chooser refused them —
-// and the chooser is the only screen that could undo it. The check asked for
-// an owner, and there was none to be.
-func TestDisowningYourLastAccountDoesNotLockYouOut(t *testing.T) {
+// ADR 0022 closes this a different way: an account always has an owner, so
+// disowning your last one is refused outright rather than produced and then
+// rescued. This is now a test of that refusal.
+func TestDisowningYourLastAccountIsRefused(t *testing.T) {
 	svc, gw, st := newService(t)
 	gw.AddBank(montepio(),
 		banking.Account{Ref: "hash-1", Name: "CLASSIC CEMG", Currency: "EUR"},
@@ -305,37 +365,32 @@ func TestDisowningYourLastAccountDoesNotLockYouOut(t *testing.T) {
 	done := connectBank(t, svc, gw, st)
 	ctx := context.Background()
 
-	// Release both: now nobody owns anything at this bank.
+	// Releasing either is refused: both are still owned by nobody but ada.
 	for _, account := range done.Accounts {
-		if err := svc.SetOwners(ctx, ada, account.ID, nil); err != nil {
-			t.Fatalf("disowning %s: %v", account.Name, err)
+		if err := svc.SetOwners(ctx, ada, account.ID, nil); err == nil {
+			t.Errorf("disowning %s's only owner succeeded, want a refusal", account.Name)
 		}
 	}
 
-	// The chooser still opens for the member who connected the bank.
+	// Both accounts are untouched, and the chooser still shows them.
 	shown, err := svc.ConnectionAccounts(ctx, ada, done.Connection.ID)
 	if err != nil {
-		t.Fatalf("the chooser locked out the member who connected the bank: %v", err)
+		t.Fatalf("ConnectionAccounts: %v", err)
 	}
 	if len(shown) != 2 {
 		t.Errorf("shows %d accounts, want both", len(shown))
-	}
-
-	// And they can take one back.
-	if err := svc.SetOwners(ctx, ada, done.Accounts[0].ID, []string{ada}); err != nil {
-		t.Fatalf("reclaiming an orphaned account: %v", err)
 	}
 	view, err := svc.Accounts(ctx, ada, true)
 	if err != nil {
 		t.Fatalf("Accounts: %v", err)
 	}
-	if len(view.Accounts) != 1 {
-		t.Errorf("sees %d accounts after reclaiming one, want 1", len(view.Accounts))
+	if len(view.Accounts) != 2 {
+		t.Errorf("sees %d accounts after a refused disowning, want both", len(view.Accounts))
 	}
 }
 
-// The escape hatch is only for an account nobody owns. It is not the standing
-// power over other people's accounts that ADR 0019 withholds.
+// The connecting member has no standing power over other people's accounts
+// (ADR 0019): owning a bank's connection is not owning what it exposes.
 func TestTheConnectingMemberCannotTouchAnAccountSomebodyElseOwns(t *testing.T) {
 	svc, gw, st := newService(t)
 	gw.AddBank(montepio(), banking.Account{Ref: "hash-1", Name: "Joint", Currency: "EUR"})
@@ -366,11 +421,7 @@ func TestAStrangerToTheConnectionIsStillRefused(t *testing.T) {
 	done := connectBank(t, svc, gw, st)
 	ctx := context.Background()
 
-	if err := svc.SetOwners(ctx, ada, done.Accounts[0].ID, nil); err != nil {
-		t.Fatalf("disowning: %v", err)
-	}
-
-	// Orphaned, but Grace did not connect this bank.
+	// Grace neither owns this account nor connected the bank.
 	if _, err := svc.ConnectionAccounts(ctx, grace, done.Connection.ID); !errors.Is(err, banking.ErrNotOwner) {
 		t.Errorf("ConnectionAccounts = %v, want ErrNotOwner", err)
 	}

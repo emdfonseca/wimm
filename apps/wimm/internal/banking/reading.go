@@ -182,13 +182,20 @@ func preferred(balances []Balance) (Balance, bool) {
 	return balances[0], true
 }
 
-// totals sums per currency, over exactly the accounts the member may see.
+// totals sums per currency, over exactly the accounts the member may see —
+// and a left-out account is never in that sum, however stale a balance it
+// still holds underneath: the total agrees with what the member is shown,
+// and a left-out account shows no balance at all (ADR 0022).
 func totals(accounts []store.VisibleAccount) []Total {
 	order := make([]string, 0, 4)
 	sums := map[string]*Total{}
 
 	for _, a := range accounts {
-		if a.BalanceMinor == nil {
+		// ISO 4217's own "no currency" code: a gateway reports it for an
+		// account it cannot express as a single currency (a multi-currency
+		// wallet aggregated as one account), and 0 minor units alongside it is
+		// not a real balance to sum.
+		if a.BalanceMinor == nil || a.LeftOut() || a.Currency == "XXX" {
 			continue
 		}
 		t, ok := sums[a.Currency]
@@ -245,21 +252,16 @@ func (s *Service) ConnectionAccounts(ctx context.Context, memberID, connectionID
 // connection. Ownership of one account at a bank is what makes that bank
 // theirs to manage.
 //
-// It also allows the member who connected the bank whenever an account on it
-// has no owner at all. Without that, disowning your last account locks you out
-// of the only screen that could undo it: nobody owns it, so nobody may claim
-// it, so it can never be owned again. A dead end reachable by one click.
-//
-// This is not the standing power ADR 0019 withholds from the connecting
-// member. They cannot touch an account somebody else owns; they can only pick
-// up one that nobody does.
+// An account always has an owner (ADR 0022), so the orphan this used to rescue
+// — disowning your last account and being locked out of the only screen that
+// could undo it — can no longer occur: the database refuses the disowning
+// itself, before this is ever reached.
 func (s *Service) requireOwnerOnConnection(ctx context.Context, memberID, connectionID string) error {
 	accounts, err := s.store.AccountsForConnection(ctx, connectionID)
 	if err != nil {
 		return err
 	}
 
-	orphaned := false
 	for _, a := range accounts {
 		owners, err := s.store.AccountOwners(ctx, a.ID)
 		if err != nil {
@@ -269,19 +271,6 @@ func (s *Service) requireOwnerOnConnection(ctx context.Context, memberID, connec
 			if owner == memberID {
 				return nil
 			}
-		}
-		if len(owners) == 0 {
-			orphaned = true
-		}
-	}
-
-	if orphaned {
-		conn, err := s.store.BankConnectionByID(ctx, connectionID)
-		if err != nil {
-			return err
-		}
-		if conn.ConnectedBy == memberID {
-			return nil
 		}
 	}
 	return ErrNotOwner

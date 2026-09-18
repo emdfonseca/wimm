@@ -66,6 +66,53 @@ func TestAFirstFillAsksForEverythingAndTheNextSyncAsksFromWhereItStopped(t *test
 	}
 }
 
+// A transaction dated in none of the three fields cannot be filed anywhere in
+// a ledger that orders and groups by one date, so the sync drops it rather
+// than inventing today — and drops only it: the rest of what the bank
+// returned is still stored. This is wimm's own fallback and refusal
+// (identity.EffectiveDate, toStoreTransaction), exercised here through the
+// generic sync path against bankingtest rather than any one gateway's client.
+func TestATransactionWithNoDateAtAllIsDroppedNotStored(t *testing.T) {
+	dateless := gwTx("ref-dateless", 1, -500, banking.StatusBooked)
+	dateless.BookingDate = time.Time{}
+
+	svc, _, _ := ledgerFor(t, dateless, gwTx("ref-dated", 10, -1190, banking.StatusBooked))
+
+	ledger, err := svc.Transactions(context.Background(), banking.LedgerRequest{MemberID: ada})
+	if err != nil {
+		t.Fatalf("Transactions: %v", err)
+	}
+	if len(ledger.Page.Transactions) != 1 {
+		t.Fatalf("the ledger holds %d transactions, want 1 (the dateless one dropped)", len(ledger.Page.Transactions))
+	}
+	if ledger.Page.Transactions[0].DedupKey != "ref-dated" {
+		t.Errorf("the stored transaction is %q, want the dated one", ledger.Page.Transactions[0].DedupKey)
+	}
+}
+
+// The fallback order is value date then transaction date, the same order
+// identity.go's digest already uses — asserted here against the sync rather
+// than against EffectiveDate alone, so a regression in either is caught by the
+// path a member actually reads through.
+func TestATransactionWithNoBookingDateFallsBackToTheValueDate(t *testing.T) {
+	tx := gwTx("ref-fallback", 1, -500, banking.StatusBooked)
+	tx.BookingDate = time.Time{}
+	tx.ValueDate = time.Date(2026, time.September, 12, 0, 0, 0, 0, time.UTC)
+
+	svc, _, _ := ledgerFor(t, tx)
+
+	ledger, err := svc.Transactions(context.Background(), banking.LedgerRequest{MemberID: ada})
+	if err != nil {
+		t.Fatalf("Transactions: %v", err)
+	}
+	if len(ledger.Page.Transactions) != 1 {
+		t.Fatalf("the ledger holds %d transactions, want 1", len(ledger.Page.Transactions))
+	}
+	if got := ledger.Page.Transactions[0].BookingDate; !got.Equal(tx.ValueDate) {
+		t.Errorf("BookingDate = %s, want the value date %s", got, tx.ValueDate)
+	}
+}
+
 // The overlap re-reads a few days and the identity rule discards what is
 // already held, so nothing is stored twice.
 func TestTheOverlapReReadsWithoutDuplicating(t *testing.T) {

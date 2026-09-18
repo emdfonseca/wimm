@@ -8,6 +8,7 @@ export { default as IconButton } from './atoms/IconButton.svelte';
 export { default as Button } from './atoms/Button.svelte';
 export { default as Notice } from './atoms/Notice.svelte';
 export { default as SegmentedControl } from './atoms/SegmentedControl.svelte';
+export { default as NavigationProgress } from './atoms/NavigationProgress.svelte';
 
 // Molecules
 export { default as EmptyState } from './molecules/EmptyState.svelte';
@@ -18,10 +19,22 @@ export { default as ThemeToggle } from './molecules/ThemeToggle.svelte';
 export { applyTheme, storedTheme, THEME_KEY, type Theme } from './molecules/ThemeToggle.svelte';
 export { default as BankRow } from './molecules/BankRow.svelte';
 export { default as AccountRow } from './molecules/AccountRow.svelte';
-export { default as AccountChoiceRow } from './molecules/AccountChoiceRow.svelte';
+export { default as AccountChoiceRow, type OtherMember } from './molecules/AccountChoiceRow.svelte';
+export { default as AccountName } from './molecules/AccountName.svelte';
 export { default as DisconnectBankDialog } from './molecules/DisconnectBankDialog.svelte';
+export { default as LeftOutDialog, type Grantee } from './molecules/LeftOutDialog.svelte';
 export { default as LedgerRow } from './molecules/LedgerRow.svelte';
 export { default as SeekPager } from './molecules/SeekPager.svelte';
+export { default as StepIndicator } from './molecules/StepIndicator.svelte';
+export { default as StepActions } from './molecules/StepActions.svelte';
+export { default as PageScrubber, type ScrubberPage } from './molecules/PageScrubber.svelte';
+export {
+	default as DensityControl,
+	applyDensity,
+	storedDensity,
+	DENSITY_KEY,
+	type Density
+} from './molecules/DensityControl.svelte';
 
 // Organisms
 export { default as SidebarNav } from './organisms/SidebarNav.svelte';
@@ -30,6 +43,7 @@ export { default as BottomNav } from './organisms/BottomNav.svelte';
 // Templates
 export { default as AuthShell } from './templates/AuthShell.svelte';
 export { default as SignedInLanding } from './templates/SignedInLanding.svelte';
+export { default as Page } from './templates/Page.svelte';
 
 // Pages — pure screens: data in as props, intent out as callbacks. They read
 // nothing from $app, which is what lets them be storied without mocking.
@@ -43,6 +57,7 @@ export { default as ChooseAccountsScreen } from './pages/ChooseAccountsScreen.sv
 export { default as AccountsOverview } from './pages/AccountsOverview.svelte';
 export { default as TransactionsScreen } from './pages/TransactionsScreen.svelte';
 export { default as WidenConsentScreen } from './pages/WidenConsentScreen.svelte';
+export { default as SettingsScreen } from './pages/SettingsScreen.svelte';
 
 export { destinations, type Destination } from './destinations.js';
 export type { EnrolState } from './pages/EnrolScreen.svelte';

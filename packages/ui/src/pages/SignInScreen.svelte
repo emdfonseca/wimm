@@ -27,9 +27,6 @@
 		state === 'not-recognised' ? 'Try another passkey' : 'Sign in with a passkey'
 	);
 
-	// An expired session is the page's own subject, so the heading says it. A
-	// notice above a "Welcome back" greeting made the card commiserate and
-	// welcome in the same breath, and restated what the heading was for.
 	const heading = $derived(state === 'expired' ? 'Your session ended' : 'Welcome back');
 
 	const bodyText = $derived(
@@ -40,6 +37,14 @@
 </script>
 
 <AuthShell {heading}>
+	{#snippet context()}
+		{#if state === 'expired'}
+			<InfoNotice title="You were signed out">
+				Your session ended. Sign in again and you will go back to where you were.
+			</InfoNotice>
+		{/if}
+	{/snippet}
+
 	{#snippet body()}{bodyText}{/snippet}
 
 	<!-- Results of the last attempt, directly above the action. -->

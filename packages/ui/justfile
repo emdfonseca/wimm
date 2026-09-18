@@ -45,6 +45,8 @@ test:
     @python3 scripts/check-palette.py
     @python3 scripts/test-palette.py
     @python3 scripts/check-geometry.py src
+    @python3 scripts/check-breakpoints.py src
+    @python3 scripts/test-breakpoints.py
     @python3 scripts/check-canvas.py
     @python3 scripts/test-contract.py
     @python3 scripts/test-canvas.py

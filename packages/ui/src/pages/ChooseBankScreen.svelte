@@ -18,18 +18,47 @@
 <script lang="ts">
 	import BankRow from '../molecules/BankRow.svelte';
 	import ErrorNotice from '../molecules/ErrorNotice.svelte';
+	import Page from '../templates/Page.svelte';
+	import StepIndicator from '../molecules/StepIndicator.svelte';
+	import StepActions from '../molecules/StepActions.svelte';
 
 	interface Props {
 		banks?: Bank[];
 		state?: BankListState;
 		onselect?: (bankId: string) => void;
 		onretry?: () => void;
+		/** Where "Back to Overview" goes. */
+		backHref?: string;
+		/** "Cancel", in the step's own footer — nothing has been chosen yet on
+		 *  this step, so it is the same step back as the header's link. */
+		oncancel?: () => void;
 	}
 
 	// Destructured under another name because a local variable called `state`
 	// makes `$state(...)` below parse as a store subscription on it. The prop
 	// stays `state`, as every other page in this library spells it.
-	let { banks = [], state: listState = 'default', onselect, onretry }: Props = $props();
+	let {
+		banks = [],
+		state: listState = 'default',
+		onselect,
+		onretry,
+		backHref = '/',
+		oncancel
+	}: Props = $props();
+
+	/** Compact drops the header's back link and takes a shorter lede — both
+	 *  drawn directly rather than passed down, so every caller does not need to
+	 *  know a layout breakpoint that is this screen's concern alone. */
+	let autoCompact = $state(false);
+
+	$effect(() => {
+		if (typeof window === 'undefined' || !window.matchMedia) return;
+		const mq = window.matchMedia('(max-width: 767px)');
+		autoCompact = mq.matches;
+		const onchange = (e: MediaQueryListEvent) => (autoCompact = e.matches);
+		mq.addEventListener('change', onchange);
+		return () => mq.removeEventListener('change', onchange);
+	});
 
 	let query = $state('');
 
@@ -52,10 +81,22 @@
 	);
 </script>
 
-<main class="screen">
-	<h1 tabindex="-1">Choose your bank</h1>
+<Page title="Connect a bank" focusHeading>
+	{#snippet action()}
+		{#if !autoCompact}
+			<a class="back" href={backHref}>Back to Overview</a>
+		{/if}
+	{/snippet}
+
+	<StepIndicator current={1} total={2} />
+
 	<p class="lede">
-		You will confirm at your bank, not here. wimm never sees your banking password.
+		{#if autoCompact}
+			Pick your bank. You confirm at the bank itself.
+		{:else}
+			Pick the bank you want wimm to read. You confirm at the bank itself, and wimm never sees
+			your banking password.
+		{/if}
 	</p>
 
 	{#if listState === 'unavailable'}
@@ -98,28 +139,20 @@
 			</ul>
 		{/if}
 	{/if}
-</main>
+
+	<StepActions lesserLabel="Cancel" onLesser={oncancel} />
+</Page>
 
 <style>
-	.screen {
-		/* Fills the slot and packs content to the top, as the frame's Page does
-		   with a trailing spacer. A screen that does not fill gets centred by
-		   the slot instead, which is what left these floating mid-page. */
-		display: flex;
-		flex: 1;
-		flex-direction: column;
-		gap: 16px;
-		inline-size: 100%;
+	.back {
+		color: var(--color-accent);
+		font-family: var(--type-family-body);
+		font-size: var(--type-size-body-sm);
+		font-weight: 500;
+		text-decoration: none;
 	}
 
-	h1 {
-		margin: 0;
-		color: var(--color-text-primary);
-		font-family: var(--type-family-display);
-		font-size: var(--type-size-page-title);
-		font-weight: 600;
-	}
-	h1:focus-visible {
+	.back:focus-visible {
 		outline: var(--focus-ring-width) solid var(--focus-ring-color);
 		outline-offset: var(--focus-ring-offset);
 	}

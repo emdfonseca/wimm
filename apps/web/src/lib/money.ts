@@ -11,6 +11,12 @@
 export function formatMoney(money?: { minor: bigint | number; currency: string }): string | undefined {
 	if (!money) return undefined;
 
+	// ISO 4217's own "no currency" code. A gateway reports it for an account
+	// it cannot express as a single currency — a multi-currency wallet such as
+	// PayPal, aggregated as one account — and 0 minor units alongside it is
+	// not a real zero balance, so nothing is shown rather than a false one.
+	if (money.currency.toUpperCase() === 'XXX') return undefined;
+
 	const format = new Intl.NumberFormat(undefined, {
 		style: 'currency',
 		currency: money.currency

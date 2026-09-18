@@ -147,7 +147,9 @@ async function accounts(cookies: Cookies) {
 				// account fell through the "no bank behind it" branch and the
 				// grouping the frame draws never rendered at all.
 				connectionId: account.connection?.id,
-				name: account.name,
+				// The household's own name, where an owner set one; the bank's
+				// stays available beside it in the chooser (ADR 0022).
+				name: account.householdName || account.name,
 				bank: account.connection?.bankName ?? '',
 				// Absent at balance level, because the server sent none.
 				numberSuffix: account.numberSuffix || undefined,
@@ -155,7 +157,8 @@ async function accounts(cookies: Cookies) {
 				readAt: account.balance?.readAt ? relative(account.balance.readAt.seconds) : undefined,
 				stale: account.balance?.stale ?? false,
 				notUpdating: account.connection ? !account.connection.live : false,
-				negative: isNegative(account.balance?.money)
+				negative: isNegative(account.balance?.money),
+				leftOut: Boolean(account.leftOutAt)
 			})),
 			totals: view.totals.map((total) => ({
 				total: formatMoney(total.total) ?? '',

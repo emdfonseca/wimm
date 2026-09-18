@@ -122,8 +122,7 @@
 			days,
 			count: 382,
 			freshness,
-			span: '17 September to 15 September 2026',
-			olderHref: '/transactions?before=abc'
+			span: '17 September to 15 September 2026'
 		}
 	});
 </script>
@@ -159,15 +158,12 @@
 	name="AnOlderPage"
 	args={{
 		days: olderDays,
-		span: '4 August to 31 July 2026',
-		newerHref: '/transactions?after=def'
+		span: '4 August to 31 July 2026'
 	}}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		// The day heading and the span of dates both name it.
 		await expect(canvas.getAllByText(/August.*2026/).length).toBeGreaterThan(0);
-		await expect(canvas.getByRole('link', { name: 'Newer' })).toBeInTheDocument();
-		await expect(canvas.getByRole('link', { name: 'Older' })).toBeInTheDocument();
 	}}
 />
 
@@ -177,21 +173,17 @@
 	args={{
 		days: [olderDays[1]!],
 		span: '4 June 2026',
-		olderHref: undefined,
-		newerHref: '/transactions?after=def',
 		atOldest: true
 	}}
 	play={async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await expect(canvas.getByText(/Nothing older/)).toBeInTheDocument();
-		await expect(canvas.queryByRole('link', { name: 'Older' })).not.toBeInTheDocument();
+		await expect(within(canvasElement).getByText(/Nothing older/)).toBeInTheDocument();
 	}}
 />
 
 <!-- J07.B / 01 -->
 <Story
 	name="NoBankConnected"
-	args={{ days: [], count: 0, freshness: undefined, span: undefined, olderHref: undefined, noBank: true }}
+	args={{ days: [], count: 0, freshness: undefined, span: undefined, noBank: true }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('No transactions yet')).toBeInTheDocument();
@@ -207,7 +199,6 @@
 		count: 0,
 		freshness: undefined,
 		span: undefined,
-		olderHref: undefined,
 		narrow: [{ connectionId: 'c1', bankName: 'Monzo', widenHref: '/connect/widen/c1' }]
 	}}
 	play={async ({ canvasElement }) => {
@@ -226,7 +217,6 @@
 		count: 0,
 		freshness: undefined,
 		span: undefined,
-		olderHref: undefined,
 		ownsNothing: true
 	}}
 	play={async ({ canvasElement }) => {
@@ -247,7 +237,6 @@
 		count: 0,
 		freshness: undefined,
 		span: undefined,
-		olderHref: undefined,
 		refreshing: true
 	}}
 	play={async ({ canvasElement }) => {
@@ -283,7 +272,6 @@
 		count: 0,
 		freshness: undefined,
 		span: undefined,
-		olderHref: undefined,
 		problems: [{ connectionId: 'c1', bankName: 'Monzo', kind: 'first-read' as const }]
 	}}
 	play={async ({ canvasElement }) => {
@@ -365,13 +353,15 @@
 	}}
 />
 
-<!-- Everything fits on one page: no way to page is offered. -->
+<!-- Everything fits on one page: the span still shows, but no way to page is
+     offered — the pager keeps the span rather than disappearing (5.5). -->
 <Story
 	name="EverythingFitsOnOnePage"
-	args={{ count: 5, olderHref: undefined, newerHref: undefined }}
+	args={{ count: 5 }}
 	play={async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await expect(canvas.queryByRole('navigation', { name: 'Pages of transactions' })).not.toBeInTheDocument();
+		await expect(
+			within(canvasElement).getByRole('navigation', { name: 'Pages of transactions' })
+		).toBeInTheDocument();
 	}}
 />
 

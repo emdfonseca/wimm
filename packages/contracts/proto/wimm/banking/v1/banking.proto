@@ -33,6 +33,13 @@ service BankingService {
   // Set what one member may see of one account. Any owner may. Deadline: 5s.
   rpc SetAccountLevel(SetAccountLevelRequest) returns (SetAccountLevelResponse);
 
+  // Leave an account out, or bring it back. Any owner may. Deadline: 5s.
+  rpc SetAccountLeftOut(SetAccountLeftOutRequest) returns (SetAccountLeftOutResponse);
+
+  // Set the household's name for an account, or clear it back to the bank's
+  // own name. Any owner may. Deadline: 5s.
+  rpc SetAccountName(SetAccountNameRequest) returns (SetAccountNameResponse);
+
   // Everything the calling member may see, at the level they may see it, with
   // a total per currency. Deadline: 30s — it reads balances from the banks.
   rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse);
@@ -144,8 +151,11 @@ message Account {
   // Who owns it. Shown so a household can see whose account is whose.
   repeated Member owners = 5;
 
-  // Present at LEVEL_BALANCE and above.
+  // Present at LEVEL_BALANCE and above. household_name, where the household has
+  // set one, is what a person reads; name is the bank's own and stays
+  // available beside it.
   string name = 6;
+  string household_name = 12;
   Balance balance = 7;
 
   // Present only at LEVEL_DETAILS.
@@ -155,6 +165,11 @@ message Account {
 
   // The bank behind it, absent for an account no gateway sources.
   Connection connection = 11;
+
+  // Set when the account is left out: wimm keeps the record and does not read
+  // it (ADR 0022). Reaches only an owner — visibleAccountsQuery returns a
+  // left-out account to nobody else — and its balance is absent even for them.
+  google.protobuf.Timestamp left_out_at = 13;
 }
 
 // A live or ended connection to one bank.
@@ -266,8 +281,9 @@ message AccountGrant {
 
 message SetAccountOwnersRequest {
   string account_id = 1 [(buf.validate.field).string.min_len = 1];
-  // May be empty: an account with no owner and no grant is never read again.
-  repeated string member_ids = 2;
+  // At least one, always: ownership can never fall to zero (ADR 0022). Leaving
+  // an account out is a separate call, for a member who is not an owner.
+  repeated string member_ids = 2 [(buf.validate.field).repeated.min_items = 1];
 }
 
 message SetAccountOwnersResponse {
@@ -282,6 +298,26 @@ message SetAccountLevelRequest {
 }
 
 message SetAccountLevelResponse {
+  Account account = 1;
+}
+
+message SetAccountNameRequest {
+  string account_id = 1 [(buf.validate.field).string.min_len = 1];
+  // Empty clears it, reverting the screen to the bank's own name.
+  string household_name = 2;
+}
+
+message SetAccountNameResponse {
+  Account account = 1;
+}
+
+message SetAccountLeftOutRequest {
+  string account_id = 1 [(buf.validate.field).string.min_len = 1];
+  // True to leave it out; false to bring it back.
+  bool left_out = 2;
+}
+
+message SetAccountLeftOutResponse {
   Account account = 1;
 }
 
@@ -408,6 +444,14 @@ message ListTransactionsRequest {
   // uses it: a sync would insert at the newest end while they are reading
   // somewhere else.
   bool skip_sync = 4;
+  // Jump to the oldest page, native to a keyset seek the same way the newest
+  // page already is. Ignored when cursor or page_start is set.
+  bool oldest = 5;
+  // Jump to a specific real page, named by the ledger's own page index
+  // (never a calendar month — a page can span more of them than one). Read
+  // inclusively: this is that page's own newest row. Ignored when cursor is
+  // set.
+  LedgerCursor page_start = 6;
 }
 
 message RefreshTransactionsRequest {
@@ -457,4 +501,19 @@ message Ledger {
   // granted on others. A different empty state from an account read and found
   // empty, and the two are never collapsed into one.
   bool owns_no_account = 11;
+
+  // Every real page the ledger holds for this scope, newest first — never a
+  // calendar month standing in for one, which a household with sparse
+  // transactions can fill with several of them. Never a "filter" — the list
+  // is not cut down by choosing one.
+  repeated PageMarker pages = 12;
+}
+
+// One real, reachable page of the ledger: the cursor that seeks straight to
+// it and the span of dates it actually holds — enough for the scrubber to
+// name the page, never to filter by it.
+message PageMarker {
+  LedgerCursor cursor = 1;
+  google.protobuf.Timestamp newest = 2;
+  google.protobuf.Timestamp oldest = 3;
 }

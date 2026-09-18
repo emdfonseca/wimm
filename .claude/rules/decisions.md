@@ -940,3 +940,62 @@ behind the arrival. This is a weaker promise than the one balances make, and the
 weakening is survivable only because it is written on the screen: ADR 0018's rule
 that a stale figure presented as live is worse than no figure is satisfied by the
 statement, not by the freshness.
+
+## 0022 · An account always has an owner, and being out of wimm is its own fact — Accepted
+
+**Every account has at least one owner, and the database is what says so.** A
+deferred constraint trigger on `account_owners` and on `accounts` refuses any
+transaction that would commit an account with no owner row.
+
+It is deferred because `SetAccountOwners` deletes every owner row and inserts
+the new set inside one transaction, so an immediate trigger would fire in the
+gap and refuse a legal change. It checks the account still exists, because
+deleting an account — or a connection, which cascades to its accounts — cascades
+to its owner rows, and a trigger that did not look would refuse every
+disconnection.
+
+*Alternative: a check in Go.* Rejected, and the evidence is in this repository.
+The other rule 0019 states about these tables — that a member never holds both
+an owner row and a grant row — is guarded in Go on one write path and quietly
+resolved by deleting the grant on the other. Two call sites, two behaviours, one
+rule. This rule has no route that may bend it, so it belongs where no route can.
+
+*Alternative: `accounts.owner_id not null`.* Rejected: it would undo the
+many-to-many a joint account needs, which is the case 0019 exists for.
+
+**"Not in wimm" becomes its own fact, and it is reversible.** An account is
+**left out** or it is not — `accounts.left_out_at`, null or a time. Leaving an
+account out stops every read of it, removes it from every list and every total
+belonging to every member who is not an owner, and leaves them no trace of it.
+Its owners keep a row saying it is left out, with no balance on it and a way to
+bring it back.
+
+This is ADR 0018's privacy affordance kept, with the boundary moved for the
+second time. 0018 drew it at *unshared*; 0019 moved it to *unowned and
+ungranted*; it is now *left out*. The guarantee itself has not moved once: wimm
+knows an account exists and does not know what is in it.
+
+**A left-out account's transactions stop being listed, for everyone.** This is
+deliberately unlike a bank being disconnected, where what was already read stays
+on screen for the members who could see it. Disconnecting ends wimm's access to
+a bank; leaving an account out is a member saying that account is not in wimm,
+and a ledger still listing it would contradict them. Nothing is deleted either
+way, and bringing the account back brings its rows back with it.
+
+**Grants survive being left out, and bringing an account back says who will see
+it.** Dropping the grants would make a reversible act destructive and would make
+the member re-grant from memory. Keeping them means an account can come back and
+re-expose itself to somebody who is not in the room, so the member bringing it
+back is told which members will see it again and at what level, before it
+happens. This is the only confirmation in the flow, and it is there because the
+consequence lands on somebody else.
+
+**The escape hatches come out.** `requireOwner` and `requireOwnerOnConnection`
+lose their orphan branches, and the tests that pinned them become tests of the
+refusal. A branch that grants authority in a state that can no longer occur is
+not dead code; it is authority waiting for the invariant to break.
+
+**Existing orphans are brought back rather than left.** Each becomes owned by
+the member who connected its bank, and left out. The migration asserts no
+ownerless account remains and fails if one does, because a backfill that half
+worked is worse than one that did not run.

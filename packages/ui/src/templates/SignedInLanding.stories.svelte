@@ -105,6 +105,64 @@
 	{/snippet}
 </Story>
 
+<!-- Medium: the rail. The same destinations, icon-only, because labels do not
+     fit beside a content column at this width (`WMlvF`). -->
+<Story
+	name="Medium is the rail"
+	globals={{ viewport: { value: 'medium' } }}
+	args={{ destinations: destinations('/transactions') }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const nav = canvas.getByRole('navigation', { name: 'Sections' });
+		const transactions = within(nav).getByRole('link', { name: 'Transactions' });
+		await expect(transactions).toBeVisible();
+		await expect(transactions).toHaveAttribute('aria-current', 'page');
+		await expect(within(nav).queryByText('Transactions', { selector: 'span' })).toBeNull();
+	}}
+>
+	{#snippet template(args)}
+		<SignedInLanding {...args}>
+			<EmptyState title="Transactions" elevated>There is nothing here yet.</EmptyState>
+		</SignedInLanding>
+	{/snippet}
+</Story>
+
+<!-- Wide: the labelled sidebar at 264. -->
+<Story
+	name="Wide is the labelled sidebar"
+	globals={{ viewport: { value: 'wide' } }}
+	play={async ({ canvasElement }) => {
+		await expect(
+			within(canvasElement).getByRole('navigation', { name: 'Sections' })
+		).toBeVisible();
+	}}
+>
+	{#snippet template(args)}
+		<SignedInLanding {...args}>
+			<EmptyState title="Signed in as Ana Reis" elevated>There is nothing here yet.</EmptyState>
+		</SignedInLanding>
+	{/snippet}
+</Story>
+
+<!-- Ultra: the same labelled sidebar, at 288 (`NEIet`). No inspector region is
+     filled — nothing in wimm opens a drawer yet, so the extra width goes to
+     the page. -->
+<Story
+	name="Ultra widens the sidebar"
+	globals={{ viewport: { value: 'ultra' } }}
+	play={async ({ canvasElement }) => {
+		await expect(
+			within(canvasElement).getByRole('navigation', { name: 'Sections' })
+		).toBeVisible();
+	}}
+>
+	{#snippet template(args)}
+		<SignedInLanding {...args}>
+			<EmptyState title="Signed in as Ana Reis" elevated>There is nothing here yet.</EmptyState>
+		</SignedInLanding>
+	{/snippet}
+</Story>
+
 <Story name="Empty body" tags={['!test']}>
 	{#snippet template(args)}
 		<SignedInLanding {...args} />

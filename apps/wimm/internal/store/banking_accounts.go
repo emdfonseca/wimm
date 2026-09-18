@@ -4,9 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 // VisibleAccount is one account as one member may see it. The level is what
@@ -69,6 +71,10 @@ func (db *DB) SetAccountOwners(ctx context.Context, accountID string, memberIDs 
 		}
 	}
 	if err := tx.Commit(ctx); err != nil {
+		var pg *pgconn.PgError
+		if errors.As(err, &pg) && strings.Contains(pg.Message, "would be left with no owner") {
+			return ErrAccountWouldHaveNoOwner
+		}
 		return fmt.Errorf("setting owners: %w", err)
 	}
 	return nil
@@ -153,6 +159,11 @@ func (db *DB) MemberOwnsAccount(ctx context.Context, accountID, memberID string)
 // forgetting a filter. Ownership is coalesced to details because an owner sees
 // their account in full.
 //
+// A left-out account reaches only its owners: a grant survives being left out
+// (ADR 0022) so the grantee half of the join is additionally gated on
+// left_out_at, while an owner's is not — bringing the account back is exactly
+// how a grantee is meant to see it again, on purpose rather than by accident.
+//
 // The connection is joined left, not inner. An account is a thing the household
 // has; being sourced from a bank is a property some accounts have and others do
 // not, and an inner join here would silently make every future account kind
@@ -169,15 +180,16 @@ const visibleAccountsQuery = `
 	       case when o.member_id is not null then 'details' else g.level end as level,
 	       c.id, c.bank_id, c.bank_name, coalesce(c.bank_logo_url, ''), c.connected_by,
 	       c.consent_expires_at,
-	       (c.expired_at is null and c.disconnected_at is null) as live
+	       (c.expired_at is null and c.disconnected_at is null) as live,
+	       coalesce(a.household_name, ''), a.left_out_at
 	from accounts a
 	left join bank_connections c on c.id = a.connection_id
 	left join account_owners o on o.account_id = a.id and o.member_id = $1
 	left join account_grants g on g.account_id = a.id and g.member_id = $1
 	where (c.id is null or c.disconnected_at is null)
-	  and (o.member_id is not null or g.member_id is not null)
+	  and (o.member_id is not null or (g.member_id is not null and a.left_out_at is null))
 	  and ($2::uuid is null or a.connection_id = $2)
-	order by coalesce(c.bank_name, ''), a.name`
+	order by coalesce(c.bank_name, ''), coalesce(a.household_name, a.name)`
 
 // VisibleAccounts returns every account a member may see, at the level they may
 // see it. Pass an empty connectionID for every bank.
@@ -204,7 +216,7 @@ func (db *DB) VisibleAccounts(ctx context.Context, memberID, connectionID string
 			&v.Name, &v.NumberSuffix, &v.AccountType, &v.HolderName, &v.Currency,
 			&v.BalanceMinor, &v.BalanceReadAt, &v.Owned, &level,
 			&connID, &bankID, &bankName, &conn.BankLogoURL, &connectedBy,
-			&consentExpires, &live,
+			&consentExpires, &live, &v.HouseholdName, &v.LeftOutAt,
 		); err != nil {
 			return nil, fmt.Errorf("reading visible accounts: %w", err)
 		}
@@ -226,15 +238,17 @@ func (db *DB) VisibleAccounts(ctx context.Context, memberID, connectionID string
 }
 
 // AccountsForConnection lists every account on a connection regardless of who
-// may see it. This is the chooser's read and the reader's own ownership is not
-// what decides it, so the caller must have established that they own something
-// here first.
+// may see it, including one left out: this is the chooser's read, which is also
+// where an owner brings a left-out account back, and the reader's own ownership
+// is not what decides it, so the caller must have established that they own
+// something here first.
 func (db *DB) AccountsForConnection(ctx context.Context, connectionID string) ([]Account, error) {
 	const query = `
 		select id, source, connection_id, coalesce(gateway_ref, ''), gateway_uid_sealed, coalesce(key_id, ''),
 		       coalesce(name, ''), coalesce(number_suffix, ''), coalesce(account_type, ''),
-		       coalesce(holder_name, ''), currency, balance_minor, balance_read_at
-		from accounts where connection_id = $1 order by name`
+		       coalesce(holder_name, ''), currency, balance_minor, balance_read_at,
+		       coalesce(household_name, ''), left_out_at
+		from accounts where connection_id = $1 order by coalesce(household_name, name)`
 
 	rows, err := db.pool.Query(ctx, query, connectionID)
 	if err != nil {
@@ -247,7 +261,7 @@ func (db *DB) AccountsForConnection(ctx context.Context, connectionID string) ([
 		var a Account
 		if err := rows.Scan(&a.ID, &a.Source, &a.ConnectionID, &a.GatewayRef, &a.GatewayUID.Ciphertext,
 			&a.GatewayUID.KeyID, &a.Name, &a.NumberSuffix, &a.AccountType, &a.HolderName,
-			&a.Currency, &a.BalanceMinor, &a.BalanceReadAt); err != nil {
+			&a.Currency, &a.BalanceMinor, &a.BalanceReadAt, &a.HouseholdName, &a.LeftOutAt); err != nil {
 			return nil, fmt.Errorf("reading accounts: %w", err)
 		}
 		out = append(out, a)
@@ -255,19 +269,21 @@ func (db *DB) AccountsForConnection(ctx context.Context, connectionID string) ([
 	return out, rows.Err()
 }
 
-// ReadableAccounts lists the accounts a balance may be read for: those with at
-// least one owner or one grant. An account nobody may see is never read, which
-// is what makes disowning it meaningful rather than cosmetic (ADR 0019).
+// ReadableAccounts lists the accounts a balance may be read for: those not left
+// out. An account always has an owner (ADR 0022), so the two-part
+// owner-or-grant test that used to decide this reduces to one column; a
+// left-out account is never read, which is what makes leaving one out
+// meaningful rather than cosmetic.
 func (db *DB) ReadableAccounts(ctx context.Context, connectionID string) ([]Account, error) {
 	const query = `
 		select a.id, a.source, a.connection_id, coalesce(a.gateway_ref, ''), a.gateway_uid_sealed, coalesce(a.key_id, ''),
 		       coalesce(a.name, ''), coalesce(a.number_suffix, ''), coalesce(a.account_type, ''),
-		       coalesce(a.holder_name, ''), a.currency, a.balance_minor, a.balance_read_at
+		       coalesce(a.holder_name, ''), a.currency, a.balance_minor, a.balance_read_at,
+		       coalesce(a.household_name, ''), a.left_out_at
 		from accounts a
 		where ($1::uuid is null or a.connection_id = $1)
-		  and (exists (select 1 from account_owners o where o.account_id = a.id)
-		    or exists (select 1 from account_grants g where g.account_id = a.id))
-		order by a.name`
+		  and a.left_out_at is null
+		order by coalesce(a.household_name, a.name)`
 
 	rows, err := db.pool.Query(ctx, query, nullString(connectionID))
 	if err != nil {
@@ -280,7 +296,7 @@ func (db *DB) ReadableAccounts(ctx context.Context, connectionID string) ([]Acco
 		var a Account
 		if err := rows.Scan(&a.ID, &a.Source, &a.ConnectionID, &a.GatewayRef, &a.GatewayUID.Ciphertext,
 			&a.GatewayUID.KeyID, &a.Name, &a.NumberSuffix, &a.AccountType, &a.HolderName,
-			&a.Currency, &a.BalanceMinor, &a.BalanceReadAt); err != nil {
+			&a.Currency, &a.BalanceMinor, &a.BalanceReadAt, &a.HouseholdName, &a.LeftOutAt); err != nil {
 			return nil, fmt.Errorf("reading readable accounts: %w", err)
 		}
 		out = append(out, a)
@@ -308,13 +324,15 @@ func (db *DB) AccountByID(ctx context.Context, id string) (Account, error) {
 	const query = `
 		select id, source, connection_id, coalesce(gateway_ref, ''), gateway_uid_sealed, coalesce(key_id, ''),
 		       coalesce(name, ''), coalesce(number_suffix, ''), coalesce(account_type, ''),
-		       coalesce(holder_name, ''), currency, balance_minor, balance_read_at
+		       coalesce(holder_name, ''), currency, balance_minor, balance_read_at,
+		       coalesce(household_name, ''), left_out_at
 		from accounts where id = $1`
 
 	var a Account
 	err := db.pool.QueryRow(ctx, query, id).Scan(&a.ID, &a.Source, &a.ConnectionID, &a.GatewayRef,
 		&a.GatewayUID.Ciphertext, &a.GatewayUID.KeyID, &a.Name, &a.NumberSuffix,
-		&a.AccountType, &a.HolderName, &a.Currency, &a.BalanceMinor, &a.BalanceReadAt)
+		&a.AccountType, &a.HolderName, &a.Currency, &a.BalanceMinor, &a.BalanceReadAt,
+		&a.HouseholdName, &a.LeftOutAt)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Account{}, ErrNotFound
 	}
@@ -322,6 +340,36 @@ func (db *DB) AccountByID(ctx context.Context, id string) (Account, error) {
 		return Account{}, fmt.Errorf("reading an account: %w", err)
 	}
 	return a, nil
+}
+
+// SetAccountLeftOut leaves an account out of wimm, or brings it back. Grants
+// survive either way (ADR 0022): leaving one out is reversible, and dropping
+// them would make the member re-grant from memory.
+func (db *DB) SetAccountLeftOut(ctx context.Context, accountID string, leftOut bool) error {
+	const update = `update accounts set left_out_at = case when $2 then now() else null end where id = $1`
+	tag, err := db.pool.Exec(ctx, update, accountID, leftOut)
+	if err != nil {
+		return fmt.Errorf("setting left out: %w", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+
+// SetAccountName sets the household's own name for an account, or clears it
+// back to the bank's own name with an empty string. It never touches name,
+// which the gateway upsert writes and a member never does (ADR 0022).
+func (db *DB) SetAccountName(ctx context.Context, accountID, householdName string) error {
+	const update = `update accounts set household_name = nullif($2, '') where id = $1`
+	tag, err := db.pool.Exec(ctx, update, accountID, householdName)
+	if err != nil {
+		return fmt.Errorf("setting a household name: %w", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return ErrNotFound
+	}
+	return nil
 }
 
 // ReplaceConnectionAccounts is what a restore writes. Accounts are matched on

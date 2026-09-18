@@ -49,24 +49,24 @@ LIBRARY = {
 }
 
 
-def journey(overrides: dict) -> dict:
+def journey(overrides: dict, name: str = "J09.A / 01 · Example / A state") -> dict:
     """One drawn screen whose component instance overrides its innards."""
     return {
         "nodes": [
             {
-                "name": "J09.A / 01 · Example / A state",
+                "name": name,
                 "children": [{"ref": "ui:WFSg5", "descendants": overrides}],
             }
         ]
     }
 
 
-def extract(overrides: dict) -> list[str]:
+def extract(overrides: dict, name: str = "J09.A / 01 · Example / A state") -> list[str]:
     with tempfile.TemporaryDirectory() as raw:
         library = Path(raw) / "product-ui.lib.pen"
         library.write_text(json.dumps(LIBRARY))
         names = gen.library_names(library)
-        found = gen.static_copy(journey(overrides), names=names)
+        found = gen.static_copy(journey(overrides, name), names=names)
         return next(iter(found.values()), [])
 
 
@@ -92,6 +92,16 @@ def main() -> int:
             "a sentence holding a spelled-out count",
             {"ui:NAIMe": {"content": "Its three accounts are no longer shown."}},
             ["Its {count} accounts are no longer shown."],
+        ),
+        (
+            "a digit width, which is copy rather than a count fixture",
+            {"ui:NAIMe": {"content": "The last four digits of its number."}},
+            ["The last four digits of its number."],
+        ),
+        (
+            "a second fixture bank and member sharing a sentence with an account name",
+            {"ui:NAIMe": {"content": "Montepio calls it Conta à Ordem. Grace can hand it back."}},
+            ["{bank} calls it {account}. {member} can hand it back."],
         ),
         (
             "a member's name, which is a fixture and not copy",
@@ -131,9 +141,32 @@ def main() -> int:
         ),
     ]
 
+    named_checks = [
+        (
+            "a frame named like the connect flow's happy path",
+            "J03.A / 02 · Choose a bank / Wide / Default",
+            {"ui:NAIMe": {"content": "Pick a bank to connect."}},
+            ["Pick a bank to connect."],
+        ),
+        (
+            "a frame named like the access journey's",
+            "J02.A / 01 · Sign in / Compact / Default",
+            {"ui:NAIMe": {"content": "Sign in with your passkey."}},
+            ["Sign in with your passkey."],
+        ),
+    ]
+
     failed = 0
     for name, overrides, wanted in checks:
         got = extract(overrides)
+        if got == wanted:
+            print(f"  ok    {name}")
+        else:
+            print(f"  FAIL  {name}\n        wanted {wanted}\n        got    {got}", file=sys.stderr)
+            failed += 1
+
+    for name, frame_name, overrides, wanted in named_checks:
+        got = extract(overrides, frame_name)
         if got == wanted:
             print(f"  ok    {name}")
         else:
@@ -144,7 +177,7 @@ def main() -> int:
         print(f"\n{failed} case(s) extracted the wrong copy", file=sys.stderr)
         return 1
 
-    print(f"\n{len(checks)} extraction case(s) hold")
+    print(f"\n{len(checks) + len(named_checks)} extraction case(s) hold")
     return 0
 
 

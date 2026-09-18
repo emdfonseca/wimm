@@ -84,6 +84,8 @@
 	import InfoNotice from '../molecules/InfoNotice.svelte';
 	import LedgerRow from '../molecules/LedgerRow.svelte';
 	import SeekPager from '../molecules/SeekPager.svelte';
+	import PageScrubber, { type ScrubberPage } from '../molecules/PageScrubber.svelte';
+	import Page from '../templates/Page.svelte';
 
 	interface Props {
 		days?: LedgerDay[];
@@ -96,11 +98,21 @@
 		freshness?: string;
 		/** The dates on this page. */
 		span?: string;
-		olderHref?: string;
-		newerHref?: string;
 		/** The oldest page has been reached, so the screen says there is nothing
 		 *  older rather than offering a control that would do nothing. */
 		atOldest?: boolean;
+
+		/** Every real page the ledger holds for this scope, newest first, each
+		 *  carrying where choosing it goes — never a calendar month standing
+		 *  in for one (ADR 0021, extended). */
+		pages?: ScrubberPage[];
+		/** Which of those pages this one is, by its key, or null on a page
+		 *  reached some other way (paging one at a time). */
+		currentPage?: string | null;
+		/** Where jumping to the newest page goes. Absent on the newest page. */
+		newestHref?: string;
+		/** Where jumping to the oldest page goes. Absent on the oldest page. */
+		oldestHref?: string;
 
 		/** The account the list is narrowed to, named on screen. */
 		filterAccount?: string;
@@ -119,7 +131,10 @@
 
 		refreshing?: boolean;
 		onrefresh?: () => void;
-		/** Compact stacks each row into two lines. */
+		/** Compact stacks each row into two lines. Left unset, the screen reads
+		 *  its own regime — nothing above it knows about layout breakpoints,
+		 *  and this is the one screen whose layout genuinely differs in
+		 *  structure rather than only in CSS. */
 		compact?: boolean;
 	}
 
@@ -128,9 +143,11 @@
 		count = 0,
 		freshness,
 		span,
-		olderHref,
-		newerHref,
 		atOldest = false,
+		pages = [],
+		currentPage = null,
+		newestHref,
+		oldestHref,
 		filterAccount,
 		showAllHref = '/transactions',
 		narrow = [],
@@ -140,8 +157,24 @@
 		connectHref = '/connect',
 		refreshing = false,
 		onrefresh,
-		compact = false
+		compact: compactProp
 	}: Props = $props();
+
+	/** `768px` is the declared Compact/Medium boundary (ADR 0002). Read
+	 *  directly rather than passed down, because every caller would otherwise
+	 *  need to know a layout breakpoint that is this screen's concern alone. */
+	let autoCompact = $state(false);
+
+	$effect(() => {
+		if (typeof window === 'undefined' || !window.matchMedia) return;
+		const query = window.matchMedia('(max-width: 767px)');
+		autoCompact = query.matches;
+		const onchange = (e: MediaQueryListEvent) => (autoCompact = e.matches);
+		query.addEventListener('change', onchange);
+		return () => query.removeEventListener('change', onchange);
+	});
+
+	const compact = $derived(compactProp ?? autoCompact);
 
 	const hasRows = $derived(days.some((day) => day.entries.length > 0));
 
@@ -231,21 +264,22 @@
 	{/if}
 {/snippet}
 
-<main class="screen" class:compact>
-	<header class="head">
-		<div class="heading">
-			<h1 tabindex="-1">Transactions</h1>
-			<p class="lede">{hasRows ? heading : 'Nothing to show yet.'}</p>
-			{#if compact && freshness}
-				<p class="helper">{freshness}</p>
-			{/if}
-		</div>
+<Page title="Transactions">
+	{#snippet action()}
 		{#if hasRows || problems.length > 0 || refreshing}
 			<Button onclick={onrefresh} disabled={refreshing}>
 				{refreshing ? 'Refreshing…' : 'Refresh'}
 			</Button>
 		{/if}
-	</header>
+	{/snippet}
+
+	<div class="screen" class:compact>
+		<div class="heading">
+			<p class="lede">{hasRows ? heading : 'Nothing to show yet.'}</p>
+			{#if compact && freshness}
+				<p class="helper">{freshness}</p>
+			{/if}
+		</div>
 
 	{#if filterAccount}
 		<!-- A filter is not containment: the account is named, there is no
@@ -321,28 +355,44 @@
 				</div>
 			{/if}
 
-			{#each days as day (day.date + day.entries[0]?.id)}
-				<h3 class="day">{dayLabel(day.date)}</h3>
-				{#each day.entries as entry (entry.id)}
-					<LedgerRow
-						description={entry.description}
-						account={entry.account}
-						amount={entry.amount}
-						date={entry.date}
-						negative={entry.negative}
-						unsettled={entry.unsettled}
-						initials={entry.initials}
-						{compact}
-					/>
+			<!-- Only this scrolls: the ledger's own height never exceeds the
+			     screen, and the toolbar, columns and pager stay put around
+			     whatever part of the list is on screen. -->
+			<div class="rows">
+				{#each days as day (day.date + day.entries[0]?.id)}
+					<h3 class="day">{dayLabel(day.date)}</h3>
+					{#each day.entries as entry (entry.id)}
+						<LedgerRow
+							description={entry.description}
+							account={entry.account}
+							amount={entry.amount}
+							date={entry.date}
+							negative={entry.negative}
+							unsettled={entry.unsettled}
+							initials={entry.initials}
+							{compact}
+						/>
+					{/each}
 				{/each}
-			{/each}
+			</div>
 
-			{#if span && (olderHref || newerHref)}
-				<SeekPager {span} {olderHref} {newerHref} {nothingOlder} />
+			<!-- One row, not two: the span says where the member is and the
+			     scrubber is how they move, and neither needs a whole row to
+			     itself. -->
+			{#if span || pages.length > 0}
+				<div class="pager">
+					{#if span}
+						<SeekPager {span} {nothingOlder} />
+					{/if}
+					{#if pages.length > 0}
+						<PageScrubber {pages} current={currentPage} {newestHref} {oldestHref} />
+					{/if}
+				</div>
 			{/if}
 		</section>
 	{/if}
-</main>
+	</div>
+</Page>
 
 <style>
 	/* Fills the slot and packs content to the top, as the frame's Page does.
@@ -351,6 +401,7 @@
 		display: flex;
 		flex: 1;
 		flex-direction: column;
+		min-block-size: 0;
 		gap: var(--space-6);
 		inline-size: 100%;
 		font-family: var(--type-family-body);
@@ -360,41 +411,10 @@
 		gap: var(--space-4);
 	}
 
-	.head {
-		display: flex;
-		align-items: center;
-		gap: var(--space-4);
-		inline-size: 100%;
-	}
-
-	.compact .head {
-		flex-direction: column;
-		align-items: stretch;
-		gap: var(--space-3);
-	}
-
 	.heading {
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
-		flex: 1 1 auto;
-		min-inline-size: 0;
-	}
-
-	h1 {
-		margin: 0;
-		color: var(--color-text-primary);
-		font-size: var(--type-size-page-title);
-		font-weight: 700;
-	}
-
-	.compact h1 {
-		font-size: var(--type-size-heading-lg);
-	}
-
-	h1:focus-visible {
-		outline: var(--focus-ring-width) solid var(--color-focus-ring);
-		outline-offset: var(--focus-ring-offset);
 	}
 
 	.lede {
@@ -456,12 +476,20 @@
 
 	.ledger {
 		display: flex;
+		flex: 1;
 		flex-direction: column;
+		min-block-size: 0;
 		inline-size: 100%;
 		border: 1px solid var(--color-border-default);
 		border-radius: var(--radius-lg);
 		background: var(--color-bg-elevated);
 		overflow: hidden;
+	}
+
+	.rows {
+		flex: 1;
+		min-block-size: 0;
+		overflow-y: auto;
 	}
 
 	.toolbar {
@@ -470,6 +498,14 @@
 		gap: 12px;
 		block-size: 48px;
 		padding-inline: var(--density-cell-padding-x);
+	}
+
+	.pager {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		background: var(--color-bg-surface);
 	}
 
 	.count {
@@ -514,7 +550,7 @@
 	}
 
 	.col-date {
-		inline-size: 52px;
+		inline-size: 72px;
 		text-align: end;
 	}
 
@@ -528,12 +564,14 @@
 		display: flex;
 		align-items: center;
 		margin: 0;
-		block-size: 32px;
+		block-size: 20px;
 		padding-inline: var(--density-cell-padding-x);
 		background: var(--color-bg-subtle);
 		color: var(--color-text-secondary);
-		font-size: 11px;
+		font-size: 10px;
 		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.02em;
 	}
 
 	.sr-only {

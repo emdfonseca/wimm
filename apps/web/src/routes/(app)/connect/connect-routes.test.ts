@@ -19,6 +19,8 @@ const completeConnection = vi.fn();
 const listConnectionAccounts = vi.fn();
 const setAccountOwners = vi.fn();
 const setAccountLevel = vi.fn();
+const setAccountLeftOut = vi.fn();
+const setAccountName = vi.fn();
 const getCurrentMember = vi.fn();
 
 vi.mock('$lib/server/banking', () => ({
@@ -28,7 +30,9 @@ vi.mock('$lib/server/banking', () => ({
 		completeConnection: (...args: unknown[]) => completeConnection(...args),
 		listConnectionAccounts: (...args: unknown[]) => listConnectionAccounts(...args),
 		setAccountOwners: (...args: unknown[]) => setAccountOwners(...args),
-		setAccountLevel: (...args: unknown[]) => setAccountLevel(...args)
+		setAccountLevel: (...args: unknown[]) => setAccountLevel(...args),
+		setAccountLeftOut: (...args: unknown[]) => setAccountLeftOut(...args),
+		setAccountName: (...args: unknown[]) => setAccountName(...args)
 	}
 }));
 
@@ -320,6 +324,7 @@ describe('/connect/[bank]/accounts', () => {
 					name: 'Conta à Ordem',
 					numberSuffix: '0538',
 					owned: true,
+					owners: [{ id: 'ada', displayName: 'Ada' }],
 					connection: { bankName: 'Montepio' },
 					balance: { money: { minor: 420010n, currency: 'EUR' } }
 				}
@@ -475,6 +480,74 @@ describe('/connect/[bank]/accounts', () => {
 
 		expect(setAccountOwners).toHaveBeenCalledWith(
 			{ accountId: 'a1', memberIds: [] },
+			expect.anything()
+		);
+	});
+
+	// The last owner cannot step back (ADR 0022): the database's refusal
+	// surfaces as FailedPrecondition, and the route reports it as a 409 with a
+	// reason the screen recognises, distinct from a plain failure or a
+	// permission refusal.
+	it('reports the last-owner refusal distinctly from a permission refusal', async () => {
+		setAccountOwners.mockRejectedValue(
+			new ConnectError('would have no owner', Code.FailedPrecondition)
+		);
+
+		const { actions } = await import('./[bank]/accounts/[connection]/+page.server');
+		const form = new FormData();
+		form.set('accountId', 'a1');
+
+		const result = (await actions.owners!({
+			cookies,
+			request: { formData: async () => form }
+		} as never)) as { status: number; data: { reason: string } };
+
+		expect(result.status).toBe(409);
+		expect(result.data.reason).toBe('last-owner');
+	});
+
+	it('leaves an account out', async () => {
+		setAccountLeftOut.mockResolvedValue({});
+
+		const { actions } = await import('./[bank]/accounts/[connection]/+page.server');
+		const form = new FormData();
+		form.set('accountId', 'a1');
+
+		await actions.leaveOut!({ cookies, request: { formData: async () => form } } as never);
+
+		expect(setAccountLeftOut).toHaveBeenCalledWith(
+			{ accountId: 'a1', leftOut: true },
+			expect.anything()
+		);
+	});
+
+	it('brings an account back', async () => {
+		setAccountLeftOut.mockResolvedValue({});
+
+		const { actions } = await import('./[bank]/accounts/[connection]/+page.server');
+		const form = new FormData();
+		form.set('accountId', 'a1');
+
+		await actions.bringBack!({ cookies, request: { formData: async () => form } } as never);
+
+		expect(setAccountLeftOut).toHaveBeenCalledWith(
+			{ accountId: 'a1', leftOut: false },
+			expect.anything()
+		);
+	});
+
+	it('renames an account', async () => {
+		setAccountName.mockResolvedValue({});
+
+		const { actions } = await import('./[bank]/accounts/[connection]/+page.server');
+		const form = new FormData();
+		form.set('accountId', 'a1');
+		form.set('householdName', 'Rent');
+
+		await actions.rename!({ cookies, request: { formData: async () => form } } as never);
+
+		expect(setAccountName).toHaveBeenCalledWith(
+			{ accountId: 'a1', householdName: 'Rent' },
 			expect.anything()
 		);
 	});

@@ -34,6 +34,13 @@ describe('formatMoney', () => {
 	it('is undefined when there is no amount', () => {
 		expect(formatMoney(undefined)).toBeUndefined();
 	});
+
+	it('is undefined for a multi-currency wallet reported as no currency', () => {
+		// A gateway's own "cannot express as one currency" sentinel, not a
+		// real zero balance — PayPal, aggregated as one account, is the case
+		// this exists for.
+		expect(formatMoney({ minor: 0n, currency: 'XXX' })).toBeUndefined();
+	});
 });
 
 describe('isNegative', () => {

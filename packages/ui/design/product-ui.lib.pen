@@ -20414,6 +20414,157 @@
               ]
             }
           ]
+        },
+        {
+          "type": "frame",
+          "id": "C9DT1w",
+          "name": "Navigation progress",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "Fjlli",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vWchn",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Navigation progress",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "wu8mv",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "A 3 px bar along the very top of the viewport, showing that a navigation has been taken and not yet finished. One per app, in the root shell, never per screen. It is fixed to the viewport and reserves no space, so nothing already on screen moves when it appears — a member mid-click must not end up clicking something else.\n\nIt uses the accent, not the primary action. The brand green means “this is a thing you press” everywhere else in the product, and this is not pressable. The accent is already the colour of system attention: links, selection and focus.\n\nTimings are part of the contract, not decoration. It waits 150 ms before appearing, so a fast screen shows nothing at all, and stays at least 400 ms once it has appeared, so a screen that arrives just after it does not produce a flash. Under reduced motion it still appears and does not move: the segment fills the track instead of travelling along it.\n\nThe bar is the visible half. The announcement is the other half and cannot be drawn. It is recorded as a contract in the change's canvas record.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "yP7CN",
+              "name": "Specimens",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 18,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pW5uY",
+                  "name": "Cell",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "u2LND",
+                      "name": "Slot",
+                      "width": 560,
+                      "height": 24,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Mdi1X",
+                          "name": "Navigation progress",
+                          "reusable": true,
+                          "width": 560,
+                          "height": 3,
+                          "fill": "$color-bg-subtle",
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "yM5hL",
+                              "x": 96,
+                              "y": 0,
+                              "name": "Segment",
+                              "fill": "$color-accent",
+                              "width": 220,
+                              "height": 3
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "j25FCo",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "content": "waiting · the segment travels left to right",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "juGNi",
+                  "name": "Cell",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "k97wd2",
+                      "name": "Slot",
+                      "width": 560,
+                      "height": 24,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "id": "e3Gcms",
+                          "type": "ref",
+                          "ref": "Mdi1X",
+                          "name": "Reduced motion",
+                          "width": 560,
+                          "height": 3,
+                          "descendants": {
+                            "yM5hL": {
+                              "x": 0,
+                              "width": 560
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "BvvqZ",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "content": "reduced motion · the segment fills the track and does not move",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -25415,6 +25566,38 @@
                       "fill": "$color-amount-negative"
                     }
                   }
+                },
+                {
+                  "id": "NZhzh",
+                  "type": "ref",
+                  "ref": "vHJTa",
+                  "name": "Account left out",
+                  "width": "fill_container",
+                  "fill": "$color-bg-subtle",
+                  "descendants": {
+                    "vaLOy/rv5n0": {
+                      "content": "SV"
+                    },
+                    "egfCw": {
+                      "content": "Savings",
+                      "fill": "$color-text-secondary"
+                    },
+                    "kELqu": {
+                      "content": "Monzo · •••• 8842"
+                    },
+                    "JEiqn": {
+                      "enabled": false
+                    },
+                    "l4je2": {
+                      "enabled": false
+                    },
+                    "g16O5": {
+                      "enabled": true
+                    },
+                    "g16O5/HnFBv": {
+                      "content": "Left out"
+                    }
+                  }
                 }
               ]
             }
@@ -26843,6 +27026,16 @@
                           "name": "Mine"
                         },
                         {
+                          "type": "text",
+                          "id": "hbN3e",
+                          "name": "Mine label",
+                          "fill": "$color-text-primary",
+                          "content": "Mine",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
                           "id": "PjOIR",
                           "type": "ref",
                           "ref": "Z2oYAy",
@@ -26914,6 +27107,98 @@
                     },
                     {
                       "type": "frame",
+                      "id": "o0Tc2",
+                      "name": "Owners",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "FAAY0",
+                          "name": "Who",
+                          "fill": "$color-text-secondary",
+                          "content": "Also owned by",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": "$type-size-body-sm",
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "k1LjV",
+                          "name": "Co-owner",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "l6Tt4",
+                              "type": "ref",
+                              "ref": "UEy2Z",
+                              "name": "Box"
+                            },
+                            {
+                              "type": "text",
+                              "id": "M8DgyN",
+                              "name": "Who",
+                              "fill": "$color-text-primary",
+                              "content": "Grace",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "VkJJl",
+                          "name": "Co-owner",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "itMyw",
+                              "type": "ref",
+                              "ref": "UEy2Z",
+                              "name": "Box"
+                            },
+                            {
+                              "type": "text",
+                              "id": "w636KL",
+                              "name": "Who",
+                              "fill": "$color-text-primary",
+                              "content": "Alan",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "RqAyy",
+                          "name": "Spacer",
+                          "width": "fill_container",
+                          "height": 1
+                        },
+                        {
+                          "id": "iKNWA",
+                          "type": "ref",
+                          "ref": "W2gOKx",
+                          "name": "Leave out",
+                          "height": 28,
+                          "fill": "#FFFFFF00",
+                          "descendants": {
+                            "iYHDG": {
+                              "content": "Leave out",
+                              "fill": "$color-accent",
+                              "fontSize": 13
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
                       "id": "k981b",
                       "name": "Levels",
                       "width": "fill_container",
@@ -26977,6 +27262,973 @@
                           ]
                         }
                       ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "EJBTW",
+          "name": "Step indicator",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "TKqzi",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "u5BzW",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Step indicator",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "qri5F",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Where a member is in a flow that has a fixed number of steps, and how many there are. Connecting a bank has two steps inside wimm and then sends the member to their bank, so knowing that one more screen stands between them and that hand-off is the difference between reading it and clicking past it.\n\nOnly for a flow whose length is known in advance. A list that grows, or a wizard whose steps depend on earlier answers, gets no count — a number that changes under the member is worse than no number.\n\nChoosing who sees an account is not one of the steps. It is reachable at any time from the household's accounts and is not something a member passes through to finish connecting a bank, so counting it here would promise a flow that does not end where it says it does.\n\nIt uses the accent rather than the primary action, like Navigation progress, because it reports where you are and is not something you press. The track segments are 3 px, the same height, so the two read as one family.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dDmP2",
+              "name": "Specimens",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 18,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "uIIGD",
+                  "name": "Cell",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "fqrrY",
+                      "name": "Slot",
+                      "width": 360,
+                      "height": 40,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "W8V14",
+                          "name": "Step indicator",
+                          "reusable": true,
+                          "width": 360,
+                          "layout": "vertical",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "rl3Y7",
+                              "name": "Track",
+                              "width": "fill_container",
+                              "height": 3,
+                              "gap": 4,
+                              "children": [
+                                {
+                                  "type": "rectangle",
+                                  "id": "XY28Q",
+                                  "name": "Step 1",
+                                  "fill": "$color-accent",
+                                  "width": "fill_container",
+                                  "height": 3
+                                },
+                                {
+                                  "type": "rectangle",
+                                  "id": "V3uCY",
+                                  "name": "Step 2",
+                                  "fill": "$color-border-default",
+                                  "width": "fill_container",
+                                  "height": 3
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "pgi4O",
+                              "name": "Label",
+                              "fill": "$color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Step 1 of 2",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": "$type-size-body-sm",
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "tUNVf",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "content": "step 2 of 4 · two done, one current, one to come",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "WtWrj",
+                  "name": "Cell",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "f1mHBI",
+                      "name": "Slot",
+                      "width": 360,
+                      "height": 40,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "id": "erVdH",
+                          "type": "ref",
+                          "ref": "W8V14",
+                          "name": "Last step",
+                          "width": 360,
+                          "descendants": {
+                            "V3uCY": {
+                              "fill": "$color-accent"
+                            },
+                            "pgi4O": {
+                              "content": "Step 2 of 2"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "F7ONp",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "content": "the last step before the member leaves wimm",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Onn81",
+          "name": "Step actions",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "pqbKi",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "RoSeR",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Step actions",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "UpJrx",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The row of actions at the foot of a step. One arrangement for every step of every flow, so a member who has learned where the way forward is does not have to learn it again on the next screen.\n\nThe lesser action comes first and the primary last, which is the order Dialog already uses. At Compact the pair stacks and the primary goes on top: a column reverses which end is nearest the thumb, and reading order should put the main action first.\n\nThe primary names what it does rather than saying Continue. On the step that hands the member to their bank it names the bank, because that is the click that takes them out of wimm.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "g4yvP",
+              "name": "Specimens",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 18,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "FhlEn",
+                  "name": "Cell",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "R5obt",
+                      "name": "Slot",
+                      "width": 560,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "o1elL",
+                          "name": "Step actions",
+                          "reusable": true,
+                          "width": "fill_container",
+                          "gap": 10,
+                          "justifyContent": "end",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "JIMmx",
+                              "type": "ref",
+                              "ref": "W2gOKx",
+                              "name": "Lesser",
+                              "height": 36,
+                              "fill": "$color-action-secondary",
+                              "stroke": "$color-control-border",
+                              "strokeWidth": 1,
+                              "strokeAlignment": "inner",
+                              "descendants": {
+                                "iYHDG": {
+                                  "content": "Cancel",
+                                  "fill": "$color-text-primary"
+                                }
+                              }
+                            },
+                            {
+                              "id": "h8Rx7y",
+                              "type": "ref",
+                              "ref": "W2gOKx",
+                              "name": "Primary",
+                              "height": 36,
+                              "descendants": {
+                                "iYHDG": {
+                                  "content": "Continue to Monzo"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "w4EdPE",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "content": "wide · lesser first, primary last, right-aligned",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LosX6",
+                  "name": "Cell",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "hyAyJ",
+                      "name": "Slot",
+                      "width": 358,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "prZYD",
+                          "name": "Step actions/compact",
+                          "reusable": true,
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 10,
+                          "children": [
+                            {
+                              "id": "jwqbo",
+                              "type": "ref",
+                              "ref": "W2gOKx",
+                              "name": "Primary",
+                              "width": "fill_container",
+                              "height": 44,
+                              "descendants": {
+                                "iYHDG": {
+                                  "content": "Continue to Monzo"
+                                }
+                              }
+                            },
+                            {
+                              "id": "N8yQL",
+                              "type": "ref",
+                              "ref": "W2gOKx",
+                              "name": "Lesser",
+                              "width": "fill_container",
+                              "height": 44,
+                              "fill": "$color-action-secondary",
+                              "stroke": "$color-control-border",
+                              "strokeWidth": 1,
+                              "strokeAlignment": "inner",
+                              "descendants": {
+                                "iYHDG": {
+                                  "content": "Cancel",
+                                  "fill": "$color-text-primary"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "j0Brmr",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "content": "compact · stacked, full width, primary on top",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "PD8Hj",
+          "name": "Density control",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "r0ZDLg",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "CB8wX",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Density control",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "ey50Y",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "A preset of Segmented control that sets how tall a row is. Two options and no third: comfortable is the default and compact is the one a member asks for when they are reconciling a month and want to see it without scrolling.\n\nIt is absent where a pointer is coarse, not disabled. Compact rows are smaller than a finger reliably hits, so on a touch device the product stays comfortable and there is nothing here to work out how to enable — ADR 0004.\n\nA member's choice is their own and survives between visits. It has to be in force before the first paint, or the product appears comfortable and then rearranges itself, which is worse than not offering the setting.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "F4jrIw",
+              "name": "Specimens",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 18,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "buNKk",
+                  "name": "Cell",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "FjKpJ",
+                      "name": "Slot",
+                      "width": 280,
+                      "height": 44,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Yt1rq",
+                          "name": "Density control",
+                          "reusable": true,
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "id": "udlvI",
+                              "type": "ref",
+                              "ref": "hcT3D",
+                              "name": "Control",
+                              "height": 36,
+                              "descendants": {
+                                "O8W7Vo": {
+                                  "content": "Comfortable"
+                                },
+                                "s1fWHC": {
+                                  "content": "Compact"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "MAHu6",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "content": "pointer is fine · comfortable selected",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ggCvV",
+          "name": "Account name",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "rxV8e",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "VrNmt",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Account name",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "tpwC3",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "An owner giving an account the name the household actually uses for it. A bank that names three accounts the same thing is the case this exists for, and so is a bank that renames its products.\n\nThe bank's own name stays beneath the field rather than being replaced, so the record of what the bank said survives and a member can tell which account they are looking at while they rename it. Clearing the field returns the account to the bank's name; it does not leave it blank.\n\nEverybody who may see the account sees the household's name, including a member granted only the balance. It reveals nothing the bank's name did not.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "jc4ec",
+              "name": "Specimens",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 18,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "aMVRV",
+                  "name": "Cell",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "EgTh7",
+                      "name": "Slot",
+                      "width": 420,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "FguRX",
+                          "name": "Account name",
+                          "reusable": true,
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "d0tHEY",
+                              "name": "Label",
+                              "fill": "$color-text-primary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "What we call this account",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": "$type-size-body-sm",
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "mrav1",
+                              "name": "Row",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "ECIS3",
+                                  "type": "ref",
+                                  "ref": "U5GuDg",
+                                  "name": "Field",
+                                  "width": "fill_container",
+                                  "height": 36,
+                                  "descendants": {
+                                    "ndIcN": {
+                                      "enabled": false
+                                    },
+                                    "seqIX": {
+                                      "enabled": false
+                                    },
+                                    "Iv0pS": {
+                                      "content": "Joint account",
+                                      "fill": "$color-text-primary"
+                                    },
+                                    "USPm2": {
+                                      "enabled": false
+                                    }
+                                  }
+                                },
+                                {
+                                  "id": "Y0CDm",
+                                  "type": "ref",
+                                  "ref": "W2gOKx",
+                                  "name": "Save",
+                                  "height": 36,
+                                  "descendants": {
+                                    "iYHDG": {
+                                      "content": "Save"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "vOLZ1",
+                              "name": "Helper",
+                              "fill": "$color-text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Monzo calls it Current Account. Clear this to go back to that.",
+                              "fontFamily": "$type-family-body",
+                              "fontSize": "$type-size-body-sm",
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "w14cH",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "content": "renaming · the bank's name stays underneath",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Z2ra6",
+          "name": "Month scrubber",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "XRxB7",
+              "name": "Spec header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "hcZl6",
+                  "name": "Name",
+                  "fill": "$color-text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Month scrubber",
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-heading-sm",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "kvOV6",
+                  "name": "Contract",
+                  "fill": "$color-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The three moves a seek can make that Newer and Older cannot: to the newest page, to the oldest, and to a month. It sits above Seek pager and does not replace it — walking a page at a time is still how most reading happens.\n\nThe months are the months that hold transactions, newest first, built from the rows themselves rather than from a calendar. A month with nothing in it is never offered, because a control that does nothing is worse than no control. Where the ledger is narrowed to one account the months are that account's.\n\nA month is a place to start reading, not a filter. Choosing one lands on that month's newest page and paging older from there runs into the month before it. Nothing is cut out of the list, which is why there is no way to clear it.\n\nStill no page numbers. A seek does not know how many pages there are without a second count that would be stale before it rendered, and this is the control that would have carried one.\n\nThe strip scrolls horizontally rather than wrapping, and it is the one place in the product where movement is the point: the strip slides to bring the chosen month under the pointer, so a member can see which way they travelled. Under reduced motion it jumps.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$type-family-body",
+                  "fontSize": "$type-size-body-sm",
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "S4jKck",
+              "name": "Specimens",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 18,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "jvZhP",
+                  "name": "Cell",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "VPu0n",
+                      "name": "Slot",
+                      "width": 760,
+                      "fill": "$color-bg-elevated",
+                      "cornerRadius": "$radius-md",
+                      "layout": "vertical",
+                      "padding": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "W8ig0",
+                          "name": "Month scrubber",
+                          "reusable": true,
+                          "clip": true,
+                          "width": "fill_container",
+                          "height": 44,
+                          "fill": "$color-bg-surface",
+                          "cornerRadius": "$radius-sm",
+                          "gap": 8,
+                          "padding": [
+                            0,
+                            "$density-cell-padding-x"
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "F98EBZ",
+                              "type": "ref",
+                              "ref": "W2gOKx",
+                              "name": "Newest",
+                              "height": 28,
+                              "fill": "$color-action-secondary",
+                              "stroke": "$color-control-border",
+                              "strokeWidth": 1,
+                              "strokeAlignment": "inner",
+                              "descendants": {
+                                "iYHDG": {
+                                  "content": "Newest",
+                                  "fill": "$color-text-primary",
+                                  "fontSize": 13
+                                }
+                              }
+                            },
+                            {
+                              "type": "frame",
+                              "id": "EaIMm",
+                              "name": "Months",
+                              "clip": true,
+                              "width": "fill_container",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "eBKRC",
+                                  "type": "ref",
+                                  "ref": "RnpZH",
+                                  "name": "Month",
+                                  "height": 28,
+                                  "fill": "$color-accent-subtle",
+                                  "descendants": {
+                                    "T2Bn1H": {
+                                      "enabled": false
+                                    },
+                                    "s8h3Wo": {
+                                      "content": "September 2026",
+                                      "fill": "$color-accent",
+                                      "fontWeight": "600"
+                                    }
+                                  }
+                                },
+                                {
+                                  "id": "s99IAH",
+                                  "type": "ref",
+                                  "ref": "RnpZH",
+                                  "name": "Month",
+                                  "height": 28,
+                                  "fill": "$color-bg-subtle",
+                                  "descendants": {
+                                    "T2Bn1H": {
+                                      "enabled": false
+                                    },
+                                    "s8h3Wo": {
+                                      "content": "August 2026",
+                                      "fill": "$color-text-primary",
+                                      "fontWeight": "500"
+                                    }
+                                  }
+                                },
+                                {
+                                  "id": "IegKg",
+                                  "type": "ref",
+                                  "ref": "RnpZH",
+                                  "name": "Month",
+                                  "height": 28,
+                                  "fill": "$color-bg-subtle",
+                                  "descendants": {
+                                    "T2Bn1H": {
+                                      "enabled": false
+                                    },
+                                    "s8h3Wo": {
+                                      "content": "July 2026",
+                                      "fill": "$color-text-primary",
+                                      "fontWeight": "500"
+                                    }
+                                  }
+                                },
+                                {
+                                  "id": "ZimXV",
+                                  "type": "ref",
+                                  "ref": "RnpZH",
+                                  "name": "Month",
+                                  "height": 28,
+                                  "fill": "$color-bg-subtle",
+                                  "descendants": {
+                                    "T2Bn1H": {
+                                      "enabled": false
+                                    },
+                                    "s8h3Wo": {
+                                      "content": "June 2026",
+                                      "fill": "$color-text-primary",
+                                      "fontWeight": "500"
+                                    }
+                                  }
+                                },
+                                {
+                                  "id": "A8qu0",
+                                  "type": "ref",
+                                  "ref": "RnpZH",
+                                  "name": "Month",
+                                  "height": 28,
+                                  "fill": "$color-bg-subtle",
+                                  "descendants": {
+                                    "T2Bn1H": {
+                                      "enabled": false
+                                    },
+                                    "s8h3Wo": {
+                                      "content": "May 2026",
+                                      "fill": "$color-text-primary",
+                                      "fontWeight": "500"
+                                    }
+                                  }
+                                },
+                                {
+                                  "id": "s5fPx",
+                                  "type": "ref",
+                                  "ref": "RnpZH",
+                                  "name": "Month",
+                                  "height": 28,
+                                  "fill": "$color-bg-subtle",
+                                  "descendants": {
+                                    "T2Bn1H": {
+                                      "enabled": false
+                                    },
+                                    "s8h3Wo": {
+                                      "content": "April 2026",
+                                      "fill": "$color-text-primary",
+                                      "fontWeight": "500"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "id": "sjiYV",
+                              "type": "ref",
+                              "ref": "W2gOKx",
+                              "name": "Oldest",
+                              "height": 28,
+                              "fill": "$color-action-secondary",
+                              "stroke": "$color-control-border",
+                              "strokeWidth": 1,
+                              "strokeAlignment": "inner",
+                              "descendants": {
+                                "iYHDG": {
+                                  "content": "Oldest",
+                                  "fill": "$color-text-primary",
+                                  "fontSize": 13
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "hVQvW",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "content": "the newest month is where the member is · the strip scrolls, it does not wrap",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "m8Tyd",
+                  "name": "Cell",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "YFtos",
+                      "name": "Slot",
+                      "width": 760,
+                      "fill": "$color-bg-elevated",
+                      "cornerRadius": "$radius-md",
+                      "layout": "vertical",
+                      "padding": 8,
+                      "children": [
+                        {
+                          "id": "QSRAF",
+                          "type": "ref",
+                          "ref": "W8ig0",
+                          "name": "One month only",
+                          "width": "fill_container",
+                          "descendants": {
+                            "F98EBZ": {
+                              "enabled": false
+                            },
+                            "s99IAH": {
+                              "enabled": false
+                            },
+                            "IegKg": {
+                              "enabled": false
+                            },
+                            "ZimXV": {
+                              "enabled": false
+                            },
+                            "A8qu0": {
+                              "enabled": false
+                            },
+                            "s5fPx": {
+                              "enabled": false
+                            },
+                            "sjiYV": {
+                              "enabled": false
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "zs9rn",
+                      "name": "Caption",
+                      "fill": "$color-text-secondary",
+                      "content": "one month holds everything · nowhere to go, so nothing is offered",
+                      "fontFamily": "$type-family-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -32231,6 +33483,57 @@
                                   "fontSize": 11,
                                   "fontWeight": "600",
                                   "fill": "$color-accent"
+                                },
+                                "dcsRs": {
+                                  "enabled": false
+                                },
+                                "SZZfP": {
+                                  "enabled": false
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "wCboc",
+                          "name": "Tab",
+                          "width": "fill_container",
+                          "height": 60,
+                          "layout": "vertical",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "H0gal",
+                              "type": "ref",
+                              "ref": "rEOk1",
+                              "name": "Settings",
+                              "layout": "vertical",
+                              "gap": 3,
+                              "padding": [
+                                0,
+                                4
+                              ],
+                              "width": "fill_container",
+                              "height": 52,
+                              "fill": "#FFFFFF00",
+                              "alignItems": "center",
+                              "justifyContent": "center",
+                              "descendants": {
+                                "TVqlB": {
+                                  "icon": "settings",
+                                  "width": 20,
+                                  "height": 20,
+                                  "fill": "$color-text-secondary"
+                                },
+                                "KfRDI": {
+                                  "content": "Settings",
+                                  "textGrowth": "auto",
+                                  "textAlign": "center",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal",
+                                  "fill": "$color-text-secondary"
                                 },
                                 "dcsRs": {
                                   "enabled": false
@@ -40848,6 +42151,403 @@
               "fontFamily": "$type-family-body",
               "fontSize": 11,
               "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "l2sxLb",
+          "name": "Caption",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": 1240,
+          "content": "Page — what fills a shell's Main column on every signed-in screen. It owns the page header, the gutter, the gap between sections and the measure cap, so a screen does not carry six copies of the same container rule that disagree about four of them. The subsection card and the inspector are slots, off unless a screen passes one.",
+          "lineHeight": 1.45,
+          "fontFamily": "$type-family-body",
+          "fontSize": "$type-size-body-sm",
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "BPW3V",
+          "name": "Page",
+          "reusable": true,
+          "clip": true,
+          "width": 1176,
+          "height": 620,
+          "fill": "$color-bg-canvas",
+          "cornerRadius": "$radius-lg",
+          "stroke": "$color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "z1A0pq",
+              "type": "ref",
+              "ref": "s2VNo8",
+              "name": "Page header",
+              "width": "fill_container",
+              "descendants": {
+                "UCVHe/d0eDYj": {
+                  "enabled": false
+                },
+                "UCVHe/YKiLb": {
+                  "content": "Overview"
+                },
+                "UCVHe/mgAmK/iYHDG": {
+                  "content": "Connect a bank"
+                },
+                "UCVHe/B307MH": {
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "uIv7S",
+              "name": "Body",
+              "width": "fill_container",
+              "height": "fill_container",
+              "gap": 24,
+              "padding": "$layout-page-gutter",
+              "children": [
+                {
+                  "id": "iZh7w",
+                  "type": "ref",
+                  "ref": "L0hfW",
+                  "name": "Sections",
+                  "width": 212,
+                  "height": "fit_content",
+                  "enabled": false
+                },
+                {
+                  "type": "frame",
+                  "id": "S1QlJ",
+                  "name": "Content",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": "$layout-section-gap",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "zjuzB",
+                      "name": "CONTENT SLOT",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "$color-bg-subtle",
+                      "cornerRadius": "$radius-md",
+                      "stroke": "$color-border-strong",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 5,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "MYZCn",
+                          "name": "Label",
+                          "fill": "$color-text-secondary",
+                          "content": "CONTENT SLOT",
+                          "fontFamily": "$type-family-mono",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "tHx8s",
+                          "name": "Note",
+                          "fill": "$color-text-secondary",
+                          "content": "the screen fills this — a table region, a list of banks, a form panel, an empty state",
+                          "fontFamily": "$type-family-body",
+                          "fontSize": "$type-size-body-sm",
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "j0Cjwx",
+                  "type": "ref",
+                  "ref": "yhPTP",
+                  "name": "Inspector",
+                  "width": 400,
+                  "height": 572,
+                  "enabled": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "e9XDwa",
+          "name": "Caption",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": 1240,
+          "content": "Signed-in landing / rail — the Medium shell. The rail is the primary navigation between 768 and 1200: labels do not fit beside a content column at this width and a bottom bar wastes a row of it. Every destination the labelled sidebar reaches, the rail reaches.",
+          "lineHeight": 1.45,
+          "fontFamily": "$type-family-body",
+          "fontSize": "$type-size-body-sm",
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "WMlvF",
+          "name": "Signed-in landing / rail",
+          "theme": {
+            "device": "medium"
+          },
+          "reusable": true,
+          "clip": true,
+          "width": 1024,
+          "height": 760,
+          "fill": "$color-bg-canvas",
+          "cornerRadius": "$radius-lg",
+          "stroke": "$color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "children": [
+            {
+              "id": "DpWec",
+              "type": "ref",
+              "ref": "UwIRb",
+              "name": "Rail",
+              "width": 72,
+              "height": "fill_container",
+              "cornerRadius": 0,
+              "strokeWidth": {
+                "right": 1
+              },
+              "descendants": {
+                "vGy5F": {
+                  "enabled": false
+                },
+                "gbMe3": {
+                  "enabled": false
+                },
+                "K82JD": {
+                  "fill": "$color-accent-subtle"
+                },
+                "K82JD/Tv4pz": {
+                  "fill": "$color-accent"
+                },
+                "wShyF": {
+                  "enabled": false
+                },
+                "VOLdR": {
+                  "enabled": false
+                },
+                "dHzDj": {
+                  "enabled": false
+                },
+                "fsycE": {
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "p7mXC",
+              "name": "Main",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "$color-bg-canvas",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "kwcdh",
+                  "name": "Body",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "padding": "$layout-page-gutter",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "NqRvd",
+                      "type": "ref",
+                      "ref": "w5ZouR",
+                      "name": "Empty state",
+                      "fill": "$color-bg-elevated",
+                      "stroke": "$color-border-default",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "descendants": {
+                        "e0t45q": {
+                          "icon": "user-round-check"
+                        },
+                        "WIXtr": {
+                          "content": "Signed in as Ana Reis"
+                        },
+                        "HViAc": {
+                          "content": "There is nothing here yet."
+                        },
+                        "MkvyB": {
+                          "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "Sp4yf",
+          "name": "Caption",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": 1240,
+          "content": "Signed-in landing / ultra — the same labelled sidebar at 288, the wider gutter, and the extra width given to the page. The inspector pane Drawer describes is not here: nothing in wimm opens a drawer yet, so there is nothing to promote, and a 400 px region held open by a placeholder would draw a product nobody agreed to build.",
+          "lineHeight": 1.45,
+          "fontFamily": "$type-family-body",
+          "fontSize": "$type-size-body-sm",
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "NEIet",
+          "name": "Signed-in landing / ultra",
+          "theme": {
+            "device": "ultra"
+          },
+          "reusable": true,
+          "clip": true,
+          "width": 1920,
+          "height": 860,
+          "fill": "$color-bg-canvas",
+          "cornerRadius": "$radius-lg",
+          "stroke": "$color-border-default",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "children": [
+            {
+              "id": "CpZPm",
+              "type": "ref",
+              "ref": "q7dY7c",
+              "name": "Sidebar",
+              "width": 288,
+              "height": "fill_container",
+              "descendants": {
+                "W4cIE8/PwD8Z": {
+                  "fill": "#FFFFFF00"
+                },
+                "W4cIE8/PwD8Z/TVqlB": {
+                  "fill": "$color-text-secondary"
+                },
+                "W4cIE8/PwD8Z/KfRDI": {
+                  "fill": "$color-text-primary",
+                  "fontWeight": "500"
+                },
+                "W4cIE8/Nc5C5": {
+                  "enabled": false
+                },
+                "W4cIE8/u5RU0": {
+                  "enabled": false
+                },
+                "W4cIE8/l4tOM": {
+                  "enabled": true,
+                  "fill": "$color-accent-subtle"
+                },
+                "W4cIE8/l4tOM/TVqlB": {
+                  "fill": "$color-accent"
+                },
+                "W4cIE8/l4tOM/KfRDI": {
+                  "fill": "$color-accent",
+                  "fontWeight": "600"
+                },
+                "W4cIE8/e9JS0V": {
+                  "enabled": false
+                },
+                "W4cIE8/B8M5f": {
+                  "enabled": false
+                },
+                "W4cIE8/A0RiHq": {
+                  "enabled": false
+                },
+                "W4cIE8/N6xsc": {
+                  "enabled": false
+                },
+                "W4cIE8/zVJvb": {
+                  "enabled": false
+                },
+                "W4cIE8/FJLeG/zeY31/rv5n0": {
+                  "content": "AR"
+                },
+                "W4cIE8/FJLeG/X91ry": {
+                  "content": "Ana Reis"
+                },
+                "W4cIE8/FJLeG/vS0wl": {
+                  "enabled": false
+                },
+                "W4cIE8/ZpGH4": {
+                  "name": "Sign out"
+                },
+                "W4cIE8/ZpGH4/heS79": {
+                  "icon": "log-out",
+                  "fill": "$color-text-secondary",
+                  "width": 16,
+                  "height": 16
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "FK0ct",
+              "name": "Main",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "$color-bg-canvas",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "g0HWMH",
+                  "name": "Body",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "padding": "$layout-page-gutter",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "DG5so",
+                      "type": "ref",
+                      "ref": "w5ZouR",
+                      "name": "Empty state",
+                      "fill": "$color-bg-elevated",
+                      "stroke": "$color-border-default",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "descendants": {
+                        "e0t45q": {
+                          "icon": "user-round-check"
+                        },
+                        "WIXtr": {
+                          "content": "Signed in as Ana Reis"
+                        },
+                        "HViAc": {
+                          "content": "There is nothing here yet."
+                        },
+                        "MkvyB": {
+                          "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }

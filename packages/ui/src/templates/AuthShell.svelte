@@ -216,9 +216,12 @@
 		line-height: var(--type-line-normal);
 	}
 
-	/* Wide and Ultra: the band becomes a 560 column and the card takes its
-	   480 measure, both inside 64 of page padding. */
-	@media (min-width: 1024px) {
+	/* Medium, Wide and Ultra: the band becomes a 560 column and the card takes
+	   its 480 measure, both inside 64 of page padding. Identical across all
+	   three — every screen here is Auth shell, a centred card with no
+	   navigation, and there is nothing about it that changes between 768 and
+	   1800. */
+	@media (min-width: 768px) {
 		.shell {
 			flex-direction: row;
 		}
