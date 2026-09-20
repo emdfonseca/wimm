@@ -1,220 +1,226 @@
 import type { Cookies, ServerLoad } from '@sveltejs/kit';
-import type { Connection } from '@wimm/contracts/banking';
 import { banking } from '$lib/server/banking';
 import { call } from '$lib/server/call';
-import { takeHandoff } from '$lib/server/handoff';
 import { formatMoney, isNegative } from '$lib/money';
-import { Failure } from '@wimm/contracts/banking';
+import {
+	CHART_COVERAGE,
+	chartSummary,
+	dayRange,
+	isQuiet,
+	monthSection,
+	readAt,
+	shortDay
+} from '$lib/overview';
+import {
+	AccountGroup,
+	type Account,
+	type CurrencyMonth,
+	type CurrencyTrend,
+	type GetBalanceTrendResponse,
+	type GetMonthSummaryResponse,
+	type ListAccountsResponse,
+	type Transaction
+} from '@wimm/contracts/banking';
+import type {
+	AccountEntry,
+	AccountGroups,
+	ChartData,
+	CurrencySection,
+	Merchant,
+	RecentTransaction
+} from '@wimm/ui';
 
 /**
- * The landing page, behind a session.
- *
- * Someone without one is sent to sign in rather than shown a dead end, and the
- * path they were trying to reach travels as a query parameter only so far as
- * the sign-in route; wimmd records it against the attempt and ignores anything
- * a client supplies later.
+ * Overview: household money and the member's own, the month so far, the
+ * balance chart, top spending, a read-only accounts list and a recent slice of
+ * the member's own transactions (`banking/overview`). Account management
+ * lives on Accounts; this load carries none of its outcome/handoff wiring.
  */
-/**
- * The banks behind the accounts a member can see.
- *
- * `manageable` is whether they own at least one account on it — the same rule
- * the chooser enforces — so a control that would be refused is not offered.
- */
-function banksFrom(accounts: { connection?: Connection; owned: boolean }[]) {
-	const byConnection = new Map<string, ReturnType<typeof bankOf>>();
-
-	for (const account of accounts) {
-		const connection = account.connection;
-		if (!connection) continue;
-
-		const existing = byConnection.get(connection.id);
-		if (existing) {
-			existing.accountCount += 1;
-			existing.manageable ||= account.owned;
-			continue;
-		}
-		byConnection.set(connection.id, bankOf(connection, account.owned));
-	}
-
-	return [...byConnection.values()];
-}
-
-function bankOf(connection: Connection, owned: boolean) {
-	return {
-		connectionId: connection.id,
-		bankId: connection.bankId,
-		bankName: connection.bankName,
-		// A uuid is not an answer to "who connected this bank".
-		connectedBy: connection.connectedBy?.displayName || 'someone else',
-		accessEndsOn: connection.consentExpiresAt
-			? new Date(Number(connection.consentExpiresAt.seconds) * 1000).toLocaleDateString(undefined, {
-					day: 'numeric',
-					month: 'long',
-					year: 'numeric'
-				})
-			: '',
-		live: connection.live,
-		accountCount: 1,
-		manageable: owned
-	};
-}
-
-/**
- * Overview's own data. Who the member is comes from the layout; this load is
- * the accounts they may see.
- */
-export const load: ServerLoad = async ({ cookies, depends, url }) => {
-	// Named so the page can re-read the accounts alone once the arrival's
-	// balance read lands, without re-running the layout's session check.
+export const load: ServerLoad = async ({ cookies, depends }) => {
+	// Named so the page can re-read this data alone once the arrival's balance
+	// read lands, without re-running the layout's session check.
 	depends('wimm:accounts');
 
-	const view = await accounts(cookies);
-
-	// What the last hand-off produced, if the member has just come back from
-	// one. Every one of these redirected here and said nothing, which is how a
-	// bank that granted access and exposed no accounts looked like nothing
-	// happening at all.
-	//
-	// Which bank it was about, and whether there was a hand-off at all. Spent
-	// on read: the outcome lives in the URL, so without this a member who
-	// reloads Overview — or returns to it from history — is told again that a
-	// bank exposed no accounts, weeks after connecting three others.
-	const handoff = takeHandoff(cookies);
-
-	const outcome = handoff ? outcomeOf(url.searchParams.get('outcome')) : undefined;
-
-	return {
-		...view,
-		// A restore and a first connection return through the same route and
-		// produce the same response; only the outgoing record tells them
-		// apart, and the frames draw them as different notices.
-		outcome: outcome === 'connected' && handoff?.restoring ? 'restored' : outcome,
-		outcomeBank: handoff?.bankName || undefined,
-		// The notice for a restored bank names the date access now runs to,
-		// which is the bank's own limit and not a wimm policy.
-		outcomeAccessEndsOn: view.banks?.find((bank) => bank.bankName === handoff?.bankName)
-			?.accessEndsOn
-	};
+	return await overview(cookies);
 };
 
-/** Only outcomes this app produces. A query parameter is not a message. */
-function outcomeOf(raw: string | null): Outcome | undefined {
-	switch (raw) {
-		case 'connected':
-		case 'declined':
-		case 'no-accounts':
-		case 'bank-unavailable':
-		case 'already-connected':
-			return raw;
-		default:
-			return undefined;
-	}
-}
-
-export type Outcome =
-	| 'connected'
-	// Not produced by a query parameter: the return says "connected" and the
-	// outgoing record says it was a restore.
-	| 'restored'
-	| 'disconnected'
-	| 'declined'
-	| 'no-accounts'
-	| 'bank-unavailable'
-	| 'already-connected';
-
 /**
- * The banking half of the landing page.
- *
- * Banking is optional: an instance with no gateway configured answers
- * Unimplemented, and the screen shows its empty state rather than an error —
- * which is what lets this deploy before anyone holds gateway credentials.
- *
- * **It never asks a bank.** A load function blocks navigation until it returns,
- * and reading balances is a round trip per account — so reading here means
- * clicking Overview and watching the previous page until every bank has
- * answered. The figures already held render with the time they were read, which
- * is the contract the spec actually makes, and the page reads behind that
- * arrival.
+ * **It never asks a bank.** A load function blocks navigation until it
+ * returns, and reading balances is a round trip per account — so reading here
+ * means clicking Overview and watching the previous page until every bank has
+ * answered. The figures already held render with the time they were read, and
+ * the page reads behind that arrival (`+page.svelte`'s own `read-balances`
+ * call).
  */
-async function accounts(cookies: Cookies) {
+async function overview(cookies: Cookies) {
 	try {
-		const view = await call(cookies, (options) => banking.listAccounts({ skipRead: true }, options));
+		const [accountsView, transactionsView, trendView, monthView] = await Promise.all([
+			call(cookies, (options) => banking.listAccounts({ skipRead: true }, options)),
+			// Stored rows only: a sync is Transactions' own concern, bound to its
+			// own interval, and Overview's slice does not drive it.
+			call(cookies, (options) =>
+				banking.listTransactions({ accountId: '', skipSync: true }, options)
+			),
+			// Reads no bank; computed in wimmd from the same stored ledger
+			// (design.md: "the trend is computed in wimmd").
+			call(cookies, (options) => banking.getBalanceTrend({}, options)),
+			call(cookies, (options) => banking.getMonthSummary({}, options))
+		]);
+
+		const ledger = transactionsView.ledger;
+		// A member who owns no account, or whose owned accounts have no
+		// transactions read yet, sees no section at all — never one stating
+		// there is nothing, which would tell an owner-less member something
+		// they are not owed.
+		const ownsNothing = ledger?.ownsNoAccount ?? false;
+		const transactions = ledger?.transactions ?? [];
 
 		return {
-			accounts: view.accounts.map((account) => ({
-				id: account.id,
-				// Which bank's card this row belongs under. Without it every
-				// account fell through the "no bank behind it" branch and the
-				// grouping the frame draws never rendered at all.
-				connectionId: account.connection?.id,
-				// The household's own name, where an owner set one; the bank's
-				// stays available beside it in the chooser (ADR 0022).
-				name: account.householdName || account.name,
-				bank: account.connection?.bankName ?? '',
-				// Absent at balance level, because the server sent none.
-				numberSuffix: account.numberSuffix || undefined,
-				balance: formatMoney(account.balance?.money),
-				readAt: account.balance?.readAt ? relative(account.balance.readAt.seconds) : undefined,
-				stale: account.balance?.stale ?? false,
-				notUpdating: account.connection ? !account.connection.live : false,
-				negative: isNegative(account.balance?.money),
-				leftOut: Boolean(account.leftOutAt)
-			})),
-			totals: view.totals.map((total) => ({
-				total: formatMoney(total.total) ?? '',
-				currency: total.total?.currency ?? ''
-			})),
-			// One entry per connection the member can see something of. Derived
-			// from the accounts rather than fetched separately: a bank they can
-			// see no account of must not appear, because its existence is
-			// itself something they were not told.
-			banks: banksFrom(view.accounts),
-			problems: view.failures.map((failure) => ({
-				connectionId: failure.connectionId,
-				bankName: failure.bankName,
-				kind: problemKind(failure.failure),
-				// The clock time the frame draws, not a duration: "possible
-				// after 14:20" is something a member can act on without doing
-				// arithmetic against when they happened to load the page.
-				retryAfter:
-					failure.retryAfterSeconds > 0n
-						? new Date(Date.now() + Number(failure.retryAfterSeconds) * 1000)
-								.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
-						: undefined
-			}))
+			// Before any bank is connected, or a member who may see no account:
+			// both are an empty accounts list, and both get Overview's own
+			// explanation rather than a total of zero.
+			hasAccounts: accountsView.accounts.length > 0,
+			ownsNothing,
+			currencies: currenciesFrom(accountsView, trendView, monthView),
+			accounts: groupAccounts(accountsView.accounts),
+			recentTransactions:
+				!ownsNothing && transactions.length > 0
+					? transactions.slice(0, 5).map((transaction) => entryOf(transaction, false))
+					: []
 		};
 	} catch {
 		// No gateway, or the service behind it is down. Either way the member
-		// sees the accounts screen with nothing on it rather than a failure.
-		return { accounts: [], totals: [], problems: [], banks: [] };
+		// sees Overview's own empty explanation rather than a failure.
+		return { hasAccounts: false, ownsNothing: false, currencies: [], accounts: {}, recentTransactions: [] };
 	}
 }
 
-/**
- * Access having run out routes to restoring; everything else is transient and
- * routes to "could not be updated".
- */
-function problemKind(failure: Failure): 'unreachable' | 'rate-limited' | 'access-ended' {
-	if (failure === Failure.CONSENT_EXPIRED) return 'access-ended';
-	if (failure === Failure.RATE_LIMITED) return 'rate-limited';
-	return 'unreachable';
+/** One section per currency in use. Household and own figures come from
+ *  wimmd already grouped; a currency with zero figures, no trend and no
+ *  month summary is dropped here, the one place holding all three. */
+function currenciesFrom(
+	accountsView: ListAccountsResponse,
+	trendView: GetBalanceTrendResponse,
+	monthView: GetMonthSummaryResponse
+): CurrencySection[] {
+	const household = new Map(accountsView.householdTotals.map((t) => [t.total?.currency ?? '', t]));
+	const own = new Map(accountsView.ownTotals.map((t) => [t.total?.currency ?? '', t]));
+	const trends = new Map(trendView.trends.map((t) => [t.currency, t]));
+	const months = new Map(monthView.months.map((m) => [m.currency, m]));
+	const today = new Date();
+
+	const codes = new Set([...household.keys(), ...own.keys(), ...trends.keys(), ...months.keys()]);
+	const sections: { section: CurrencySection; weight: number }[] = [];
+
+	for (const currency of codes) {
+		if (!currency) continue;
+		const h = household.get(currency)?.total;
+		const o = own.get(currency)?.total;
+		const trend = trends.get(currency);
+		const month = months.get(currency);
+		if (isQuiet([h, o], Boolean(trend), Boolean(month))) continue;
+
+		sections.push({
+			weight: Math.abs(Number(h?.minor ?? 0n)) + Math.abs(Number(o?.minor ?? 0n)),
+			section: {
+				currency,
+				household: household.has(currency) ? formatMoney(h) : undefined,
+				own: own.has(currency) ? formatMoney(o) : undefined,
+				month: month ? monthSection(month, today) : undefined,
+				chart: trend ? chartOf(trend, trendView.partialCoverage) : undefined,
+				merchants: month ? merchantsOf(month) : undefined,
+				merchantsSpan: month
+					? month.countedFrom
+						? dayRange(new Date(Number(month.countedFrom.seconds) * 1000), today)
+						: dayRange(new Date(Number(month.monthStart?.seconds ?? 0n) * 1000), today)
+					: undefined,
+				largestPayments: month?.largestPayments.map((transaction) => entryOf(transaction, true))
+			}
+		});
+	}
+
+	return sections.sort((a, b) => b.weight - a.weight).map(({ section }) => section);
 }
 
-/**
- * A read time as a phrase, because "when did wimm ask" is the contract.
- *
- * Takes the protobuf timestamp's seconds directly rather than pulling in
- * `@bufbuild/protobuf` for one conversion: the web app does not otherwise
- * depend on the protobuf runtime, and keeping it that way is the point of
- * ADR 0001's rule that the browser never speaks Connect.
- */
-function relative(epochSeconds: bigint): string {
-	const seconds = Math.round(Date.now() / 1000 - Number(epochSeconds));
-	if (seconds < 60) return 'just now';
-	const minutes = Math.round(seconds / 60);
-	if (minutes < 60) return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
-	const hours = Math.round(minutes / 60);
-	if (hours < 24) return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
-	const days = Math.round(hours / 24);
-	return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+function chartOf(trend: CurrencyTrend, partialCoverage: boolean): ChartData {
+	if (trend.shortHistory || trend.points.length === 0) return { shortHistory: true };
+
+	const points = trend.points.map((point) => ({
+		date: shortDay(point.date?.seconds ?? 0n),
+		value: Number(point.balance?.minor ?? 0n),
+		amount: formatMoney(point.balance) ?? ''
+	}));
+	const values = points.map((p) => p.value);
+	const at = (value: number) => trend.points.find((p) => Number(p.balance?.minor ?? 0n) === value)?.balance;
+
+	return {
+		span: `${points[0]?.date} to ${points[points.length - 1]?.date}`,
+		points,
+		high: formatMoney(at(Math.max(...values)), { whole: true }),
+		low: formatMoney(at(Math.min(...values)), { whole: true }),
+		summary: chartSummary(points),
+		coverage: partialCoverage ? CHART_COVERAGE : undefined
+	};
+}
+
+function merchantsOf(month: CurrencyMonth): Merchant[] {
+	const top = Number(month.topMerchants[0]?.total?.minor ?? 0n);
+	return month.topMerchants.map((merchant) => ({
+		name: merchant.name,
+		value: `${formatMoney(merchant.total)} · ${merchant.payments} ${merchant.payments === 1 ? 'payment' : 'payments'}`,
+		proportion: top > 0 ? Number(merchant.total?.minor ?? 0n) / top : 0
+	}));
+}
+
+/** The groups are wimmd's decision (`Account.group`); this only sorts them
+ *  into the three lists and formats what each row shows. */
+function groupAccounts(accounts: Account[]): AccountGroups {
+	const groups: Record<'household' | 'own' | 'shared', AccountEntry[]> = {
+		household: [],
+		own: [],
+		shared: []
+	};
+	const key = {
+		[AccountGroup.HOUSEHOLD]: 'household',
+		[AccountGroup.OWN]: 'own',
+		[AccountGroup.SHARED]: 'shared'
+	} as Partial<Record<AccountGroup, 'household' | 'own' | 'shared'>>;
+
+	for (const account of accounts) {
+		const group = key[account.group];
+		if (!group || account.leftOutAt) continue;
+		groups[group].push({
+			id: account.id,
+			name: account.householdName || account.name,
+			bank: account.connection?.bankName ?? '',
+			balance: formatMoney(account.balance?.money) ?? '',
+			readAt: account.balance?.readAt ? readAt(account.balance.readAt.seconds) : '',
+			negative: isNegative(account.balance?.money),
+			stale: account.balance?.stale ?? false,
+			notUpdating: account.connection ? !account.connection.live : false,
+			href: '/accounts'
+		});
+	}
+
+	return {
+		household: groups.household.length ? groups.household : undefined,
+		own: groups.own.length ? groups.own : undefined,
+		shared: groups.shared.length ? groups.shared : undefined
+	};
+}
+
+/** A transaction as Overview lists it: the merchant name wimmd derived, and
+ *  the account with its bank when `withBank`. */
+function entryOf(transaction: Transaction, withBank: boolean): RecentTransaction {
+	return {
+		id: transaction.id,
+		date: transaction.bookingDate ? shortDay(transaction.bookingDate.seconds) : '',
+		description: transaction.displayName,
+		amount: formatMoney(transaction.amount, { signed: true }) ?? '',
+		account:
+			withBank && transaction.bankName
+				? `${transaction.accountName} · ${transaction.bankName}`
+				: transaction.accountName,
+		negative: isNegative(transaction.amount)
+	};
 }

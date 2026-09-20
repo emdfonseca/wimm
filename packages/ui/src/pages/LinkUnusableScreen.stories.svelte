@@ -17,6 +17,7 @@
      than none. -->
 <Story
 	name="Default"
+	tags={['kind-outcome']}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByRole('heading', { level: 1 })).toHaveFocus();

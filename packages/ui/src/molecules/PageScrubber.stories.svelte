@@ -1,6 +1,6 @@
 <script module lang="ts">
 	import { defineMeta } from '@storybook/addon-svelte-csf';
-	import { expect, fn, within } from 'storybook/test';
+	import { expect, fn, waitFor, within } from 'storybook/test';
 	import PageScrubber from './PageScrubber.svelte';
 
 	const pages = [
@@ -56,5 +56,27 @@
 	args={{
 		pages: [pages[0]!],
 		current: '2026-09-15'
+	}}
+/>
+
+<!-- The span beside the scrubber names the current page, so the scrubber
+     itself shows no label until a page is pointed at or focused. -->
+<Story
+	name="No label at rest"
+	args={{ current: '2026-07-11' }}
+	play={async ({ canvasElement }) => {
+		await expect(canvasElement.querySelectorAll('.flag')).toHaveLength(0);
+		await expect(canvasElement.querySelector('.current')).toBeNull();
+	}}
+/>
+
+<Story
+	name="Label under the pointer"
+	args={{ current: '2026-07-11' }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		canvas.getByRole('link', { name: '3 Sep to 20 Aug, 2026' }).focus();
+		await waitFor(() => expect(canvasElement.querySelectorAll('.flag')).toHaveLength(1));
+		await expect(canvasElement.querySelector('.flag')).toHaveTextContent('3 Sep to 20 Aug, 2026');
 	}}
 />

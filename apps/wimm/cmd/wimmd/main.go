@@ -131,7 +131,7 @@ func bankingRoute(
 	}
 
 	bankingSvc := banking.NewService(db, gateway, keys, log,
-		cfg.EnableBankingRedirectURL, cfg.BalanceStaleAfter,
+		cfg.EnableBankingRedirectURL, cfg.BalanceStaleAfter, cfg.ConnectableBanks,
 		banking.LedgerOptions{
 			Overlap:      cfg.TransactionOverlap,
 			SyncInterval: cfg.TransactionSyncInterval,

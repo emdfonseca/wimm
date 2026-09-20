@@ -131,7 +131,7 @@ describe('/connect/return', () => {
 			} as never)
 		);
 
-		expect(location).toBe('/?outcome=connected');
+		expect(location).toBe('/accounts?outcome=connected');
 		// The assertion that matters: neither value survives into the address.
 		expect(location).not.toContain('secret-state');
 		expect(location).not.toContain('secret-code');
@@ -139,14 +139,14 @@ describe('/connect/return', () => {
 		expect(location).not.toContain('code=');
 	});
 
-	// Straight to Overview, with no stop in between.
+	// Straight to Accounts, with no stop in between.
 	//
 	// ADR 0018 put a chooser here because a `shared` flag meant connecting a
 	// bank to share a joint account exposed every personal account at it. Under
 	// ADR 0019 accounts arrive owned by the connecting member with nobody else
 	// granted anything, so the question that screen asked has a correct answer
 	// already filled in.
-	it('lands on Overview rather than a sharing step', async () => {
+	it('lands on Accounts rather than a sharing step', async () => {
 		completeConnection.mockResolvedValue({
 			connection: { id: 'conn-42', bankId: 'PT:Montepio' }
 		});
@@ -159,8 +159,7 @@ describe('/connect/return', () => {
 			} as never)
 		);
 
-		expect(location).toBe('/?outcome=connected');
-		expect(location).not.toContain('/accounts');
+		expect(location).toBe('/accounts?outcome=connected');
 	});
 
 	it('passes the callback through to wimmd rather than interpreting it', async () => {
@@ -191,7 +190,7 @@ describe('/connect/return', () => {
 			GET!({ cookies, url: new URL('http://localhost/connect/return?state=s&error=denied') } as never)
 		);
 
-		expect(location).toBe('/?outcome=declined');
+		expect(location).toBe('/accounts?outcome=declined');
 	});
 
 	it('sends an expired or unknown return back to the picker', async () => {

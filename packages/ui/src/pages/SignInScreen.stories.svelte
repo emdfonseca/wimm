@@ -22,6 +22,7 @@
      there is nothing to type and nothing to look up. -->
 <Story
 	name="Default"
+	tags={['kind-state']}
 	play={async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByRole('heading', { level: 1 })).toHaveFocus();
@@ -36,6 +37,7 @@
 
 <Story
 	name="Signing in"
+	tags={['kind-waiting']}
 	args={{ state: 'signing-in' }}
 	play={async ({ canvasElement }) => {
 		await expect(
@@ -46,6 +48,7 @@
 
 <Story
 	name="Prompt dismissed"
+	tags={['kind-error']}
 	args={{ state: 'dismissed' }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -58,6 +61,7 @@
 <!-- Arrival context, above the heading: why they are here this time. -->
 <Story
 	name="Session expired"
+	tags={['kind-outcome']}
 	args={{ state: 'expired' }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -73,6 +77,7 @@
      wrong passkey is recovered by offering another one. -->
 <Story
 	name="Passkey not recognised"
+	tags={['kind-error']}
 	args={{ state: 'not-recognised' }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);

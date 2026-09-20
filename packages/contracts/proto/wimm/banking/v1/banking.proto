@@ -61,6 +61,15 @@ service BankingService {
   // Bring the transactions up to date again, because the member asked.
   // Deadline: 30s.
   rpc RefreshTransactions(RefreshTransactionsRequest) returns (RefreshTransactionsResponse);
+
+  // The calling member's balance trend, per currency, walked from their owned
+  // accounts' booked transactions. Reads no bank. Deadline: 10s.
+  rpc GetBalanceTrend(GetBalanceTrendRequest) returns (GetBalanceTrendResponse);
+
+  // The calling member's month so far per currency, set against the same days
+  // of last month, with where the most money went. Drawn from their owned
+  // accounts' booked transactions. Reads no bank. Deadline: 10s.
+  rpc GetMonthSummary(GetMonthSummaryRequest) returns (GetMonthSummaryResponse);
 }
 
 // What one member may see of one account they do not own.
@@ -170,6 +179,21 @@ message Account {
   // it (ADR 0022). Reaches only an owner — visibleAccountsQuery returns a
   // left-out account to nobody else — and its balance is absent even for them.
   google.protobuf.Timestamp left_out_at = 13;
+
+  // What the account counts towards for the calling member. Decided in wimmd
+  // and never recomputed by a client: a group worked out in two places is two
+  // answers waiting to differ.
+  AccountGroup group = 14;
+}
+
+// What an account counts towards for one member. Household money is the
+// accounts every member owns or has *details* on; own is what the member owns
+// beyond that; shared is everything else they may see, counted in no figure.
+enum AccountGroup {
+  ACCOUNT_GROUP_UNSPECIFIED = 0;
+  ACCOUNT_GROUP_HOUSEHOLD = 1;
+  ACCOUNT_GROUP_OWN = 2;
+  ACCOUNT_GROUP_SHARED = 3;
 }
 
 // A live or ended connection to one bank.
@@ -328,10 +352,17 @@ message ListAccountsRequest {
 }
 
 message ListAccountsResponse {
+  reserved 2;
+  reserved "totals";
+
   repeated Account accounts = 1;
-  // One per currency present. Empty when the member may see nothing, rather
-  // than a total of zero.
-  repeated CurrencyTotal totals = 2;
+  // Household money, one per currency: the accounts every member owns or has
+  // *details* on. The same for every member. Absent where there are none,
+  // rather than a total of zero.
+  repeated CurrencyTotal household_totals = 4;
+  // The calling member's own money, one per currency: what they own that is not
+  // household money. Absent where there is none.
+  repeated CurrencyTotal own_totals = 5;
   // Banks that did not answer. The readings already on screen stay, with their
   // original times; this says which could not be brought up to date.
   repeated BankFailure failures = 3;
@@ -340,8 +371,12 @@ message ListAccountsResponse {
 message RefreshBalancesRequest {}
 
 message RefreshBalancesResponse {
+  reserved 2;
+  reserved "totals";
+
   repeated Account accounts = 1;
-  repeated CurrencyTotal totals = 2;
+  repeated CurrencyTotal household_totals = 4;
+  repeated CurrencyTotal own_totals = 5;
   repeated BankFailure failures = 3;
 }
 
@@ -409,8 +444,11 @@ message Transaction {
   // Who it was with, where the bank named them. Empty where it did not: wimm
   // shows what the bank gave and never invents a name.
   string counterparty_name = 8;
-  // The description the bank carried.
+  // The description the bank carried, exactly as the bank wrote it.
   string remittance = 9;
+  // The name wimm shows: the merchant or person it was with, with the bank's
+  // own bookkeeping removed. Never empty. Derived on read, never stored.
+  string display_name = 10;
 }
 
 // Where a page starts. It is the sort key itself rather than an offset, because
@@ -516,4 +554,79 @@ message PageMarker {
   LedgerCursor cursor = 1;
   google.protobuf.Timestamp newest = 2;
   google.protobuf.Timestamp oldest = 3;
+}
+
+message GetBalanceTrendRequest {}
+
+message GetBalanceTrendResponse {
+  // One entry per currency the calling member's owned accounts hold, oldest
+  // point first. Absent for a currency with no transaction access at all —
+  // never an empty or flat line standing in for it.
+  repeated CurrencyTrend trends = 1;
+  // True when an account contributing to the total was excluded here because
+  // its connection was never granted transaction access — `banking/overview`:
+  // wimm says the trend does not cover every account rather than drawing a
+  // line as if it did.
+  bool partial_coverage = 2;
+}
+
+// One currency's balance history, derived from booked transactions — the same
+// rows `banking/transactions` already stores, never a separate reading kept
+// for this purpose.
+message CurrencyTrend {
+  string currency = 1;
+  // One per UTC day, end of day, oldest first, the last being now. At most 90.
+  // Empty when short_history is set.
+  repeated TrendPoint points = 2;
+  // True when no contributing account's ledger reaches back a week, so there is
+  // no chart to draw. Distinct from a currency with no transaction access,
+  // which gets no entry at all.
+  bool short_history = 3;
+}
+
+// The household's summed balance, in one currency, on one date.
+message TrendPoint {
+  google.protobuf.Timestamp date = 1;
+  Money balance = 2;
+}
+
+message GetMonthSummaryRequest {}
+
+message GetMonthSummaryResponse {
+  // One per currency in which the calling member has a booked transaction this
+  // month, the currency with the most money out first. No entry for a quiet
+  // currency, and none at all for a member who owns nothing.
+  repeated CurrencyMonth months = 1;
+}
+
+// One currency's month so far, from the 1st to today.
+message CurrencyMonth {
+  string currency = 1;
+  // Money in and out are both positive; net is in minus out.
+  Money in = 2;
+  Money out = 3;
+  Money net = 4;
+  // The same figures for the same days of last month. Unset unless every
+  // contributing account's ledger reaches back to the first of last month.
+  Money prior_in = 5;
+  Money prior_out = 6;
+  Money prior_net = 7;
+  // Set when a contributing ledger begins after the 1st, so the screen can say
+  // which date it counts from rather than passing itself off as the whole
+  // month so far.
+  google.protobuf.Timestamp counted_from = 8;
+  // The first of the month, for the link to Transactions.
+  google.protobuf.Timestamp month_start = 9;
+  // The five merchants the most money went to, largest first.
+  repeated MerchantTotal top_merchants = 10;
+  // The five largest single payments, largest first.
+  repeated Transaction largest_payments = 11;
+}
+
+// Money out to one merchant this month.
+message MerchantTotal {
+  string name = 1;
+  // Positive.
+  Money total = 2;
+  int32 payments = 3;
 }

@@ -8,7 +8,10 @@
  *
  * `Intl` already knows the exponent, so it is asked rather than tabulated here.
  */
-export function formatMoney(money?: { minor: bigint | number; currency: string }): string | undefined {
+export function formatMoney(
+	money?: { minor: bigint | number; currency: string },
+	options: { signed?: boolean; whole?: boolean } = {}
+): string | undefined {
 	if (!money) return undefined;
 
 	// ISO 4217's own "no currency" code. A gateway reports it for an account
@@ -23,7 +26,18 @@ export function formatMoney(money?: { minor: bigint | number; currency: string }
 	});
 	const digits = format.resolvedOptions().maximumFractionDigits ?? 2;
 
-	return format.format(Number(money.minor) / 10 ** digits);
+	// `signed` puts a `+` on money arriving and leaves zero bare; `whole` drops
+	// the minor units, for a chart's scale where cents are noise.
+	const shown = options.signed || options.whole
+		? new Intl.NumberFormat(undefined, {
+				style: 'currency',
+				currency: money.currency,
+				...(options.signed ? { signDisplay: 'exceptZero' as const } : {}),
+				...(options.whole ? { maximumFractionDigits: 0, minimumFractionDigits: 0 } : {})
+			})
+		: format;
+
+	return shown.format(Number(money.minor) / 10 ** digits);
 }
 
 /** True when an amount is below zero, so the sign carries direction. */

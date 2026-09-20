@@ -43,26 +43,26 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 
 		// Declined at the bank. Nothing was connected, and a connection they
 		// were restoring is exactly as it was.
-		if (problem.code === Code.PermissionDenied) redirect(303, '/?outcome=declined');
+		if (problem.code === Code.PermissionDenied) redirect(303, '/accounts?outcome=declined');
 
 		if (problem.code === Code.NotFound) redirect(303, '/connect?return-expired');
 
 		// A return that was already exchanged. The connection it made exists;
 		// saying "this never happened" would be false.
-		if (problem.code === Code.AlreadyExists) redirect(303, '/?outcome=already-connected');
+		if (problem.code === Code.AlreadyExists) redirect(303, '/accounts?outcome=already-connected');
 
 		// Access granted that exposes nothing, and consent that has already
 		// run out. Both are FailedPrecondition and both need saying: a bank
 		// that grants access and offers no accounts otherwise looks like
 		// nothing happened at all.
 		if (problem.code === Code.FailedPrecondition) {
-			redirect(303, '/?outcome=no-accounts');
+			redirect(303, '/accounts?outcome=no-accounts');
 		}
 
-		redirect(303, '/?outcome=bank-unavailable');
+		redirect(303, '/accounts?outcome=bank-unavailable');
 	}
 
-	// Overview, not the chooser.
+	// Accounts, not the chooser.
 	//
 	// ADR 0018 put a chooser here because a `shared` flag meant connecting a
 	// bank to share a joint account exposed every personal account at it. Under
@@ -71,6 +71,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	// chooser asked at this point has a correct answer already filled in, and
 	// asking it is a step that protects nothing.
 	//
-	// Who sees what is a later, separate action, reached from Overview.
-	redirect(303, '/?outcome=connected');
+	// Who sees what is a later, separate action, reached from Accounts — every
+	// connection action lives there now, not on Overview.
+	redirect(303, '/accounts?outcome=connected');
 };

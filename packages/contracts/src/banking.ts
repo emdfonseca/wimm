@@ -7,6 +7,7 @@ export {
 	Failure,
 	RestoreReason,
 	TransactionStatus,
+	AccountGroup,
 	type Bank,
 	type Member,
 	type Money,
@@ -48,5 +49,13 @@ export {
 	type ListTransactionsRequest,
 	type ListTransactionsResponse,
 	type RefreshTransactionsRequest,
-	type RefreshTransactionsResponse
+	type RefreshTransactionsResponse,
+	type GetBalanceTrendRequest,
+	type GetBalanceTrendResponse,
+	type CurrencyTrend,
+	type TrendPoint,
+	type GetMonthSummaryRequest,
+	type GetMonthSummaryResponse,
+	type CurrencyMonth,
+	type MerchantTotal
 } from '../gen/ts/wimm/banking/v1/banking_pb.js';

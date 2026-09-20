@@ -122,6 +122,10 @@ func (s *BankingServer) ListConnectionAccounts(
 	if err != nil {
 		return nil, toConnectError(err)
 	}
+	owners, err := s.banking.OwnersOnConnection(ctx, m.ID, req.Msg.GetConnectionId())
+	if err != nil {
+		return nil, toConnectError(err)
+	}
 
 	protoMembers := make([]*bankingv1.Member, 0, len(members))
 	for _, other := range members {
@@ -134,8 +138,23 @@ func (s *BankingServer) ListConnectionAccounts(
 		})
 	}
 
+	who := s.names(ctx)
+	protoAccounts := toProtoAccounts(visible, who)
+	// toProtoAccount has no owners list to draw from — VisibleAccount only
+	// carries whether the calling member owns the row, not who else does — so
+	// the full set is matched in by account id here instead.
+	byAccount := make(map[string][]*bankingv1.Member, len(protoAccounts))
+	for _, o := range owners {
+		if member := who.member(o.MemberID); member != nil {
+			byAccount[o.AccountID] = append(byAccount[o.AccountID], member)
+		}
+	}
+	for _, a := range protoAccounts {
+		a.Owners = byAccount[a.Id]
+	}
+
 	return connect.NewResponse(&bankingv1.ListConnectionAccountsResponse{
-		Accounts: toProtoAccounts(visible, s.names(ctx)), Members: protoMembers, Grants: protoGrants,
+		Accounts: protoAccounts, Members: protoMembers, Grants: protoGrants,
 	}), nil
 }
 
@@ -252,9 +271,10 @@ func (s *BankingServer) ListAccounts(
 		return nil, toConnectError(err)
 	}
 	return connect.NewResponse(&bankingv1.ListAccountsResponse{
-		Accounts: toProtoAccounts(view.Accounts, s.names(ctx)),
-		Totals:   toProtoTotals(view.Totals),
-		Failures: toProtoFailures(view.Failures),
+		Accounts:        toProtoGroupedAccounts(view, s.names(ctx)),
+		HouseholdTotals: toProtoTotals(view.HouseholdTotals),
+		OwnTotals:       toProtoTotals(view.OwnTotals),
+		Failures:        toProtoFailures(view.Failures),
 	}), nil
 }
 
@@ -272,9 +292,10 @@ func (s *BankingServer) RefreshBalances(
 		return nil, toConnectError(err)
 	}
 	return connect.NewResponse(&bankingv1.RefreshBalancesResponse{
-		Accounts: toProtoAccounts(view.Accounts, s.names(ctx)),
-		Totals:   toProtoTotals(view.Totals),
-		Failures: toProtoFailures(view.Failures),
+		Accounts:        toProtoGroupedAccounts(view, s.names(ctx)),
+		HouseholdTotals: toProtoTotals(view.HouseholdTotals),
+		OwnTotals:       toProtoTotals(view.OwnTotals),
+		Failures:        toProtoFailures(view.Failures),
 	}), nil
 }
 
@@ -360,6 +381,83 @@ func (s *BankingServer) RefreshTransactions(
 	return connect.NewResponse(&bankingv1.RefreshTransactionsResponse{Ledger: toProtoLedger(ledger)}), nil
 }
 
+// GetBalanceTrend returns the calling member's balance trend, per currency.
+// Reads no bank.
+func (s *BankingServer) GetBalanceTrend(
+	ctx context.Context, req *connect.Request[bankingv1.GetBalanceTrendRequest],
+) (*connect.Response[bankingv1.GetBalanceTrendResponse], error) {
+	m, err := s.member(ctx, req.Header())
+	if err != nil {
+		return nil, toConnectError(err)
+	}
+
+	trend, err := s.banking.BalanceTrend(ctx, m.ID)
+	if err != nil {
+		return nil, toConnectError(err)
+	}
+	return connect.NewResponse(&bankingv1.GetBalanceTrendResponse{
+		Trends:          toProtoTrends(trend.Currencies),
+		PartialCoverage: trend.PartialCoverage,
+	}), nil
+}
+
+// GetMonthSummary returns the calling member's month so far per currency, and
+// where the most money went. Reads no bank.
+func (s *BankingServer) GetMonthSummary(
+	ctx context.Context, req *connect.Request[bankingv1.GetMonthSummaryRequest],
+) (*connect.Response[bankingv1.GetMonthSummaryResponse], error) {
+	m, err := s.member(ctx, req.Header())
+	if err != nil {
+		return nil, toConnectError(err)
+	}
+
+	summary, err := s.banking.MonthSummary(ctx, m.ID)
+	if err != nil {
+		return nil, toConnectError(err)
+	}
+	return connect.NewResponse(toProtoMonthSummary(summary)), nil
+}
+
+func toProtoMoney(m banking.Money) *bankingv1.Money {
+	return &bankingv1.Money{Minor: m.Minor, Currency: m.Currency}
+}
+
+func toProtoMoneyPtr(m *banking.Money) *bankingv1.Money {
+	if m == nil {
+		return nil
+	}
+	return toProtoMoney(*m)
+}
+
+func toProtoMonthSummary(summary banking.MonthSummary) *bankingv1.GetMonthSummaryResponse {
+	out := &bankingv1.GetMonthSummaryResponse{Months: make([]*bankingv1.CurrencyMonth, 0, len(summary.Months))}
+	for _, c := range summary.Months {
+		month := &bankingv1.CurrencyMonth{
+			Currency:   c.Currency,
+			In:         toProtoMoney(c.In),
+			Out:        toProtoMoney(c.Out),
+			Net:        toProtoMoney(c.Net),
+			PriorIn:    toProtoMoneyPtr(c.PriorIn),
+			PriorOut:   toProtoMoneyPtr(c.PriorOut),
+			PriorNet:   toProtoMoneyPtr(c.PriorNet),
+			MonthStart: timestamppb.New(c.MonthStart),
+		}
+		if c.CountedFrom != nil {
+			month.CountedFrom = timestamppb.New(*c.CountedFrom)
+		}
+		for _, m := range c.TopMerchants {
+			month.TopMerchants = append(month.TopMerchants, &bankingv1.MerchantTotal{
+				Name: m.Name, Total: toProtoMoney(m.Total), Payments: int32(m.Payments),
+			})
+		}
+		for _, t := range c.LargestPayments {
+			month.LargestPayments = append(month.LargestPayments, toProtoTransaction(t, summary.Labels[t.AccountID]))
+		}
+		out.Months = append(out.Months, month)
+	}
+	return out
+}
+
 func fromProtoCursor(c *bankingv1.LedgerCursor) store.Cursor {
 	if c == nil || c.GetTransactionId() == "" {
 		return store.Cursor{}
@@ -411,18 +509,7 @@ func toProtoLedger(l banking.Ledger) *bankingv1.Ledger {
 	}
 
 	for _, t := range l.Page.Transactions {
-		label := l.Accounts[t.AccountID]
-		out.Transactions = append(out.Transactions, &bankingv1.Transaction{
-			Id:               t.ID,
-			AccountId:        t.AccountID,
-			AccountName:      label.Name,
-			BankName:         label.BankName,
-			Status:           toProtoTransactionStatus(t.Status),
-			Amount:           &bankingv1.Money{Minor: t.AmountMinor, Currency: t.Currency},
-			BookingDate:      timestamppb.New(t.BookingDate),
-			CounterpartyName: t.CounterpartyName,
-			Remittance:       t.Remittance,
-		})
+		out.Transactions = append(out.Transactions, toProtoTransaction(t, l.Accounts[t.AccountID]))
 	}
 
 	// A span with no transactions in it is no span. Left absent rather than
@@ -438,6 +525,23 @@ func toProtoLedger(l banking.Ledger) *bankingv1.Ledger {
 		out.ReachesBackTo = timestamppb.New(*l.ReachesBack)
 	}
 	return out
+}
+
+// toProtoTransaction carries both the derived name and the bank's line: a name
+// wimm derived has to stay checkable against the statement it came from.
+func toProtoTransaction(t store.Transaction, label store.AccountLabel) *bankingv1.Transaction {
+	return &bankingv1.Transaction{
+		Id:               t.ID,
+		AccountId:        t.AccountID,
+		AccountName:      label.Name,
+		BankName:         label.BankName,
+		Status:           toProtoTransactionStatus(t.Status),
+		Amount:           &bankingv1.Money{Minor: t.AmountMinor, Currency: t.Currency},
+		BookingDate:      timestamppb.New(t.BookingDate),
+		CounterpartyName: t.CounterpartyName,
+		Remittance:       t.Remittance,
+		DisplayName:      banking.MerchantName(t.CounterpartyName, t.Remittance),
+	}
 }
 
 func toProtoNarrow(narrow []store.NarrowConnection) []*bankingv1.NarrowConnection {
@@ -539,6 +643,29 @@ func toProtoConnection(accounts []store.VisibleAccount, who names) *bankingv1.Co
 	return nil
 }
 
+// toProtoGroupedAccounts renders a member's view with each account's group,
+// which wimmd decides and no client recomputes.
+func toProtoGroupedAccounts(view banking.View, who names) []*bankingv1.Account {
+	out := toProtoAccounts(view.Accounts, who)
+	for _, a := range out {
+		a.Group = toProtoGroup(view.Groups[a.GetId()])
+	}
+	return out
+}
+
+func toProtoGroup(g banking.Group) bankingv1.AccountGroup {
+	switch g {
+	case banking.GroupHousehold:
+		return bankingv1.AccountGroup_ACCOUNT_GROUP_HOUSEHOLD
+	case banking.GroupOwn:
+		return bankingv1.AccountGroup_ACCOUNT_GROUP_OWN
+	case banking.GroupShared:
+		return bankingv1.AccountGroup_ACCOUNT_GROUP_SHARED
+	default:
+		return bankingv1.AccountGroup_ACCOUNT_GROUP_UNSPECIFIED
+	}
+}
+
 func toProtoTotals(totals []banking.Total) []*bankingv1.CurrencyTotal {
 	out := make([]*bankingv1.CurrencyTotal, 0, len(totals))
 	for _, t := range totals {
@@ -546,6 +673,21 @@ func toProtoTotals(totals []banking.Total) []*bankingv1.CurrencyTotal {
 			Total:        &bankingv1.Money{Minor: t.Money.Minor, Currency: t.Money.Currency},
 			AccountCount: int32(t.AccountCount),
 		})
+	}
+	return out
+}
+
+func toProtoTrends(trends []banking.CurrencyTrend) []*bankingv1.CurrencyTrend {
+	out := make([]*bankingv1.CurrencyTrend, 0, len(trends))
+	for _, t := range trends {
+		points := make([]*bankingv1.TrendPoint, 0, len(t.Points))
+		for _, p := range t.Points {
+			points = append(points, &bankingv1.TrendPoint{
+				Date:    timestamppb.New(p.Date),
+				Balance: &bankingv1.Money{Minor: p.Money.Minor, Currency: p.Money.Currency},
+			})
+		}
+		out = append(out, &bankingv1.CurrencyTrend{Currency: t.Currency, Points: points, ShortHistory: t.ShortHistory})
 	}
 	return out
 }

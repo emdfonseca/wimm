@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Accepted; totals superseded by 0024
 
 Supersedes the sharing half of ADR 0018: "Everything the bank returns is stored,
 and the member chooses what is shared", "Accounts are household-visible once

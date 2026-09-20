@@ -237,8 +237,7 @@
 					<div class="refusal">
 						<Notice title="An account has to belong to somebody">
 							You are its only owner, so this would leave it with nobody. Leave it out of wimm
-							instead: nothing already read is deleted, and you can bring it back whenever you
-							like.
+							instead: nothing already read is deleted, and you can bring it back whenever you like.
 						</Notice>
 						<Button variant="secondary" size="sm" onclick={() => openDialog(account)}>
 							Leave it out
@@ -273,8 +272,8 @@
 				The accounts you already chose kept their owners and levels.
 			{:else if unread.length > 0}
 				{unread.length}
-				{unread.length === 1 ? 'account is' : 'accounts are'} nobody's. wimm will not read a
-				balance for {unread.length === 1 ? 'it' : 'them'}.
+				{unread.length === 1 ? 'account is' : 'accounts are'} nobody's. wimm will not read a balance for
+				{unread.length === 1 ? 'it' : 'them'}.
 			{:else}
 				Leaving everything as it is keeps these accounts to yourself. You can change any of this
 				later.

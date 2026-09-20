@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file wimm/banking/v1/banking.proto.
  */
 export const file_wimm_banking_v1_banking: GenFile = /*@__PURE__*/
-  fileDesc("Ch13aW1tL2JhbmtpbmcvdjEvYmFua2luZy5wcm90bxIPd2ltbS5iYW5raW5nLnYxIjIKBU1vbmV5Eg0KBW1pbm9yGAEgASgDEhoKCGN1cnJlbmN5GAIgASgJQgi6SAVyA5gBAyJgCgRCYW5rEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHY291bnRyeRgDIAEoCRIQCghsb2dvX3VybBgEIAEoCRIbChNtYXhfY29uc2VudF9zZWNvbmRzGAUgASgDIioKBk1lbWJlchIKCgJpZBgBIAEoCRIUCgxkaXNwbGF5X25hbWUYAiABKAkibAoHQmFsYW5jZRIlCgVtb25leRgBIAEoCzIWLndpbW0uYmFua2luZy52MS5Nb25leRIrCgdyZWFkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBINCgVzdGFsZRgDIAEoCCKZAwoHQWNjb3VudBIKCgJpZBgBIAEoCRIuCgZzb3VyY2UYAiABKA4yHi53aW1tLmJhbmtpbmcudjEuQWNjb3VudFNvdXJjZRIlCgVsZXZlbBgDIAEoDjIWLndpbW0uYmFua2luZy52MS5MZXZlbBINCgVvd25lZBgEIAEoCBInCgZvd25lcnMYBSADKAsyFy53aW1tLmJhbmtpbmcudjEuTWVtYmVyEgwKBG5hbWUYBiABKAkSFgoOaG91c2Vob2xkX25hbWUYDCABKAkSKQoHYmFsYW5jZRgHIAEoCzIYLndpbW0uYmFua2luZy52MS5CYWxhbmNlEhUKDW51bWJlcl9zdWZmaXgYCCABKAkSFAoMYWNjb3VudF90eXBlGAkgASgJEhMKC2hvbGRlcl9uYW1lGAogASgJEi8KCmNvbm5lY3Rpb24YCyABKAsyGy53aW1tLmJhbmtpbmcudjEuQ29ubmVjdGlvbhIvCgtsZWZ0X291dF9hdBgNIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiyAEKCkNvbm5lY3Rpb24SCgoCaWQYASABKAkSDwoHYmFua19pZBgCIAEoCRIRCgliYW5rX25hbWUYAyABKAkSFQoNYmFua19sb2dvX3VybBgEIAEoCRItCgxjb25uZWN0ZWRfYnkYBSABKAsyFy53aW1tLmJhbmtpbmcudjEuTWVtYmVyEjYKEmNvbnNlbnRfZXhwaXJlc19hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDAoEbGl2ZRgHIAEoCCJNCg1DdXJyZW5jeVRvdGFsEiUKBXRvdGFsGAEgASgLMhYud2ltbS5iYW5raW5nLnYxLk1vbmV5EhUKDWFjY291bnRfY291bnQYAiABKAUifwoLQmFua0ZhaWx1cmUSFQoNY29ubmVjdGlvbl9pZBgBIAEoCRIRCgliYW5rX25hbWUYAiABKAkSKQoHZmFpbHVyZRgDIAEoDjIYLndpbW0uYmFua2luZy52MS5GYWlsdXJlEhsKE3JldHJ5X2FmdGVyX3NlY29uZHMYBCABKAMiLQoQTGlzdEJhbmtzUmVxdWVzdBIZCgdjb3VudHJ5GAEgASgJQgi6SAVyA5gBAiI5ChFMaXN0QmFua3NSZXNwb25zZRIkCgViYW5rcxgBIAMoCzIVLndpbW0uYmFua2luZy52MS5CYW5rIjIKFkJlZ2luQ29ubmVjdGlvblJlcXVlc3QSGAoHYmFua19pZBgBIAEoCUIHukgEcgIQASJmChdCZWdpbkNvbm5lY3Rpb25SZXNwb25zZRITCgtoYW5kb2ZmX3VybBgBIAEoCRI2ChJjb25zZW50X2V4cGlyZXNfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIlAKGUNvbXBsZXRlQ29ubmVjdGlvblJlcXVlc3QSFgoFc3RhdGUYASABKAlCB7pIBHICEAESDAoEY29kZRgCIAEoCRINCgVlcnJvchgDIAEoCSKaAQoaQ29tcGxldGVDb25uZWN0aW9uUmVzcG9uc2USLwoKY29ubmVjdGlvbhgBIAEoCzIbLndpbW0uYmFua2luZy52MS5Db25uZWN0aW9uEioKCGFjY291bnRzGAIgAygLMhgud2ltbS5iYW5raW5nLnYxLkFjY291bnQSHwoXd2l0aGRyYXduX2FjY291bnRfbmFtZXMYAyADKAkiPwodTGlzdENvbm5lY3Rpb25BY2NvdW50c1JlcXVlc3QSHgoNY29ubmVjdGlvbl9pZBgBIAEoCUIHukgEcgIQASKlAQoeTGlzdENvbm5lY3Rpb25BY2NvdW50c1Jlc3BvbnNlEioKCGFjY291bnRzGAEgAygLMhgud2ltbS5iYW5raW5nLnYxLkFjY291bnQSKAoHbWVtYmVycxgCIAMoCzIXLndpbW0uYmFua2luZy52MS5NZW1iZXISLQoGZ3JhbnRzGAMgAygLMh0ud2ltbS5iYW5raW5nLnYxLkFjY291bnRHcmFudCJcCgxBY2NvdW50R3JhbnQSEgoKYWNjb3VudF9pZBgBIAEoCRIRCgltZW1iZXJfaWQYAiABKAkSJQoFbGV2ZWwYAyABKA4yFi53aW1tLmJhbmtpbmcudjEuTGV2ZWwiVAoXU2V0QWNjb3VudE93bmVyc1JlcXVlc3QSGwoKYWNjb3VudF9pZBgBIAEoCUIHukgEcgIQARIcCgptZW1iZXJfaWRzGAIgAygJQgi6SAWSAQIIASJFChhTZXRBY2NvdW50T3duZXJzUmVzcG9uc2USKQoHYWNjb3VudBgBIAEoCzIYLndpbW0uYmFua2luZy52MS5BY2NvdW50IngKFlNldEFjY291bnRMZXZlbFJlcXVlc3QSGwoKYWNjb3VudF9pZBgBIAEoCUIHukgEcgIQARIaCgltZW1iZXJfaWQYAiABKAlCB7pIBHICEAESJQoFbGV2ZWwYAyABKA4yFi53aW1tLmJhbmtpbmcudjEuTGV2ZWwiRAoXU2V0QWNjb3VudExldmVsUmVzcG9uc2USKQoHYWNjb3VudBgBIAEoCzIYLndpbW0uYmFua2luZy52MS5BY2NvdW50IkwKFVNldEFjY291bnROYW1lUmVxdWVzdBIbCgphY2NvdW50X2lkGAEgASgJQge6SARyAhABEhYKDmhvdXNlaG9sZF9uYW1lGAIgASgJIkMKFlNldEFjY291bnROYW1lUmVzcG9uc2USKQoHYWNjb3VudBgBIAEoCzIYLndpbW0uYmFua2luZy52MS5BY2NvdW50IkkKGFNldEFjY291bnRMZWZ0T3V0UmVxdWVzdBIbCgphY2NvdW50X2lkGAEgASgJQge6SARyAhABEhAKCGxlZnRfb3V0GAIgASgIIkYKGVNldEFjY291bnRMZWZ0T3V0UmVzcG9uc2USKQoHYWNjb3VudBgBIAEoCzIYLndpbW0uYmFua2luZy52MS5BY2NvdW50IigKE0xpc3RBY2NvdW50c1JlcXVlc3QSEQoJc2tpcF9yZWFkGAEgASgIIqIBChRMaXN0QWNjb3VudHNSZXNwb25zZRIqCghhY2NvdW50cxgBIAMoCzIYLndpbW0uYmFua2luZy52MS5BY2NvdW50Ei4KBnRvdGFscxgCIAMoCzIeLndpbW0uYmFua2luZy52MS5DdXJyZW5jeVRvdGFsEi4KCGZhaWx1cmVzGAMgAygLMhwud2ltbS5iYW5raW5nLnYxLkJhbmtGYWlsdXJlIhgKFlJlZnJlc2hCYWxhbmNlc1JlcXVlc3QipQEKF1JlZnJlc2hCYWxhbmNlc1Jlc3BvbnNlEioKCGFjY291bnRzGAEgAygLMhgud2ltbS5iYW5raW5nLnYxLkFjY291bnQSLgoGdG90YWxzGAIgAygLMh4ud2ltbS5iYW5raW5nLnYxLkN1cnJlbmN5VG90YWwSLgoIZmFpbHVyZXMYAyADKAsyHC53aW1tLmJhbmtpbmcudjEuQmFua0ZhaWx1cmUiagoYUmVzdG9yZUNvbm5lY3Rpb25SZXF1ZXN0Eh4KDWNvbm5lY3Rpb25faWQYASABKAlCB7pIBHICEAESLgoGcmVhc29uGAIgASgOMh4ud2ltbS5iYW5raW5nLnYxLlJlc3RvcmVSZWFzb24iaAoZUmVzdG9yZUNvbm5lY3Rpb25SZXNwb25zZRITCgtoYW5kb2ZmX3VybBgBIAEoCRI2ChJjb25zZW50X2V4cGlyZXNfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIjcKFURpc2Nvbm5lY3RCYW5rUmVxdWVzdBIeCg1jb25uZWN0aW9uX2lkGAEgASgJQge6SARyAhABIhgKFkRpc2Nvbm5lY3RCYW5rUmVzcG9uc2UikwIKC1RyYW5zYWN0aW9uEgoKAmlkGAEgASgJEhIKCmFjY291bnRfaWQYAiABKAkSFAoMYWNjb3VudF9uYW1lGAMgASgJEhEKCWJhbmtfbmFtZRgEIAEoCRIyCgZzdGF0dXMYBSABKA4yIi53aW1tLmJhbmtpbmcudjEuVHJhbnNhY3Rpb25TdGF0dXMSJgoGYW1vdW50GAYgASgLMhYud2ltbS5iYW5raW5nLnYxLk1vbmV5EjAKDGJvb2tpbmdfZGF0ZRgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASGQoRY291bnRlcnBhcnR5X25hbWUYCCABKAkSEgoKcmVtaXR0YW5jZRgJIAEoCSJYCgxMZWRnZXJDdXJzb3ISMAoMYm9va2luZ19kYXRlGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIWCg50cmFuc2FjdGlvbl9pZBgCIAEoCSI8ChBOYXJyb3dDb25uZWN0aW9uEhUKDWNvbm5lY3Rpb25faWQYASABKAkSEQoJYmFua19uYW1lGAIgASgJIsEBChdMaXN0VHJhbnNhY3Rpb25zUmVxdWVzdBISCgphY2NvdW50X2lkGAEgASgJEi0KBmN1cnNvchgCIAEoCzIdLndpbW0uYmFua2luZy52MS5MZWRnZXJDdXJzb3ISDQoFb2xkZXIYAyABKAgSEQoJc2tpcF9zeW5jGAQgASgIEg4KBm9sZGVzdBgFIAEoCBIxCgpwYWdlX3N0YXJ0GAYgASgLMh0ud2ltbS5iYW5raW5nLnYxLkxlZGdlckN1cnNvciIwChpSZWZyZXNoVHJhbnNhY3Rpb25zUmVxdWVzdBISCgphY2NvdW50X2lkGAEgASgJIkMKGExpc3RUcmFuc2FjdGlvbnNSZXNwb25zZRInCgZsZWRnZXIYASABKAsyFy53aW1tLmJhbmtpbmcudjEuTGVkZ2VyIkYKG1JlZnJlc2hUcmFuc2FjdGlvbnNSZXNwb25zZRInCgZsZWRnZXIYASABKAsyFy53aW1tLmJhbmtpbmcudjEuTGVkZ2VyIvcDCgZMZWRnZXISMgoMdHJhbnNhY3Rpb25zGAEgAygLMhwud2ltbS5iYW5raW5nLnYxLlRyYW5zYWN0aW9uEjIKDm9sZGVzdF9vbl9wYWdlGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIyCg5uZXdlc3Rfb25fcGFnZRgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEQoJaGFzX29sZGVyGAQgASgIEhEKCWhhc19uZXdlchgFIAEoCBITCgt0b3RhbF9jb3VudBgGIAEoBRItCglzeW5jZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKD3JlYWNoZXNfYmFja190bxgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASPQoSbmFycm93X2Nvbm5lY3Rpb25zGAkgAygLMiEud2ltbS5iYW5raW5nLnYxLk5hcnJvd0Nvbm5lY3Rpb24SLgoIZmFpbHVyZXMYCiADKAsyHC53aW1tLmJhbmtpbmcudjEuQmFua0ZhaWx1cmUSFwoPb3duc19ub19hY2NvdW50GAsgASgIEioKBXBhZ2VzGAwgAygLMhsud2ltbS5iYW5raW5nLnYxLlBhZ2VNYXJrZXIikwEKClBhZ2VNYXJrZXISLQoGY3Vyc29yGAEgASgLMh0ud2ltbS5iYW5raW5nLnYxLkxlZGdlckN1cnNvchIqCgZuZXdlc3QYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEioKBm9sZGVzdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAqVgoFTGV2ZWwSFQoRTEVWRUxfVU5TUEVDSUZJRUQQABIQCgxMRVZFTF9ISURERU4QARIRCg1MRVZFTF9CQUxBTkNFEAISEQoNTEVWRUxfREVUQUlMUxADKmYKDUFjY291bnRTb3VyY2USHgoaQUNDT1VOVF9TT1VSQ0VfVU5TUEVDSUZJRUQQABIaChZBQ0NPVU5UX1NPVVJDRV9HQVRFV0FZEAESGQoVQUNDT1VOVF9TT1VSQ0VfTUFOVUFMEAIqzwEKB0ZhaWx1cmUSFwoTRkFJTFVSRV9VTlNQRUNJRklFRBAAEhwKGEZBSUxVUkVfQkFOS19VTkFWQUlMQUJMRRABEh8KG0ZBSUxVUkVfU0VSVklDRV9VTkFWQUlMQUJMRRACEhwKGEZBSUxVUkVfQ09OU0VOVF9ERUNMSU5FRBADEhsKF0ZBSUxVUkVfQ09OU0VOVF9FWFBJUkVEEAQSFwoTRkFJTFVSRV9OT19BQ0NPVU5UUxAFEhgKFEZBSUxVUkVfUkFURV9MSU1JVEVEEAYqcAoNUmVzdG9yZVJlYXNvbhIeChpSRVNUT1JFX1JFQVNPTl9VTlNQRUNJRklFRBAAEh8KG1JFU1RPUkVfUkVBU09OX0FDQ0VTU19FTkRFRBABEh4KGlJFU1RPUkVfUkVBU09OX1dJREVOX1NDT1BFEAIqdgoRVHJhbnNhY3Rpb25TdGF0dXMSIgoeVFJBTlNBQ1RJT05fU1RBVFVTX1VOU1BFQ0lGSUVEEAASHQoZVFJBTlNBQ1RJT05fU1RBVFVTX0JPT0tFRBABEh4KGlRSQU5TQUNUSU9OX1NUQVRVU19QRU5ESU5HEAIyvwsKDkJhbmtpbmdTZXJ2aWNlElIKCUxpc3RCYW5rcxIhLndpbW0uYmFua2luZy52MS5MaXN0QmFua3NSZXF1ZXN0GiIud2ltbS5iYW5raW5nLnYxLkxpc3RCYW5rc1Jlc3BvbnNlEmQKD0JlZ2luQ29ubmVjdGlvbhInLndpbW0uYmFua2luZy52MS5CZWdpbkNvbm5lY3Rpb25SZXF1ZXN0Gigud2ltbS5iYW5raW5nLnYxLkJlZ2luQ29ubmVjdGlvblJlc3BvbnNlEm0KEkNvbXBsZXRlQ29ubmVjdGlvbhIqLndpbW0uYmFua2luZy52MS5Db21wbGV0ZUNvbm5lY3Rpb25SZXF1ZXN0Gisud2ltbS5iYW5raW5nLnYxLkNvbXBsZXRlQ29ubmVjdGlvblJlc3BvbnNlEnkKFkxpc3RDb25uZWN0aW9uQWNjb3VudHMSLi53aW1tLmJhbmtpbmcudjEuTGlzdENvbm5lY3Rpb25BY2NvdW50c1JlcXVlc3QaLy53aW1tLmJhbmtpbmcudjEuTGlzdENvbm5lY3Rpb25BY2NvdW50c1Jlc3BvbnNlEmcKEFNldEFjY291bnRPd25lcnMSKC53aW1tLmJhbmtpbmcudjEuU2V0QWNjb3VudE93bmVyc1JlcXVlc3QaKS53aW1tLmJhbmtpbmcudjEuU2V0QWNjb3VudE93bmVyc1Jlc3BvbnNlEmQKD1NldEFjY291bnRMZXZlbBInLndpbW0uYmFua2luZy52MS5TZXRBY2NvdW50TGV2ZWxSZXF1ZXN0Gigud2ltbS5iYW5raW5nLnYxLlNldEFjY291bnRMZXZlbFJlc3BvbnNlEmoKEVNldEFjY291bnRMZWZ0T3V0Eikud2ltbS5iYW5raW5nLnYxLlNldEFjY291bnRMZWZ0T3V0UmVxdWVzdBoqLndpbW0uYmFua2luZy52MS5TZXRBY2NvdW50TGVmdE91dFJlc3BvbnNlEmEKDlNldEFjY291bnROYW1lEiYud2ltbS5iYW5raW5nLnYxLlNldEFjY291bnROYW1lUmVxdWVzdBonLndpbW0uYmFua2luZy52MS5TZXRBY2NvdW50TmFtZVJlc3BvbnNlElsKDExpc3RBY2NvdW50cxIkLndpbW0uYmFua2luZy52MS5MaXN0QWNjb3VudHNSZXF1ZXN0GiUud2ltbS5iYW5raW5nLnYxLkxpc3RBY2NvdW50c1Jlc3BvbnNlEmQKD1JlZnJlc2hCYWxhbmNlcxInLndpbW0uYmFua2luZy52MS5SZWZyZXNoQmFsYW5jZXNSZXF1ZXN0Gigud2ltbS5iYW5raW5nLnYxLlJlZnJlc2hCYWxhbmNlc1Jlc3BvbnNlEmoKEVJlc3RvcmVDb25uZWN0aW9uEikud2ltbS5iYW5raW5nLnYxLlJlc3RvcmVDb25uZWN0aW9uUmVxdWVzdBoqLndpbW0uYmFua2luZy52MS5SZXN0b3JlQ29ubmVjdGlvblJlc3BvbnNlEmEKDkRpc2Nvbm5lY3RCYW5rEiYud2ltbS5iYW5raW5nLnYxLkRpc2Nvbm5lY3RCYW5rUmVxdWVzdBonLndpbW0uYmFua2luZy52MS5EaXNjb25uZWN0QmFua1Jlc3BvbnNlEmcKEExpc3RUcmFuc2FjdGlvbnMSKC53aW1tLmJhbmtpbmcudjEuTGlzdFRyYW5zYWN0aW9uc1JlcXVlc3QaKS53aW1tLmJhbmtpbmcudjEuTGlzdFRyYW5zYWN0aW9uc1Jlc3BvbnNlEnAKE1JlZnJlc2hUcmFuc2FjdGlvbnMSKy53aW1tLmJhbmtpbmcudjEuUmVmcmVzaFRyYW5zYWN0aW9uc1JlcXVlc3QaLC53aW1tLmJhbmtpbmcudjEuUmVmcmVzaFRyYW5zYWN0aW9uc1Jlc3BvbnNlQswBChNjb20ud2ltbS5iYW5raW5nLnYxQgxCYW5raW5nUHJvdG9QAVpJZ2l0aHViLmNvbS94dXVpZC93aW1tL3BhY2thZ2VzL2NvbnRyYWN0cy9nZW4vZ28vd2ltbS9iYW5raW5nL3YxO2Jhbmtpbmd2MaICA1dCWKoCD1dpbW0uQmFua2luZy5WMcoCD1dpbW1cQmFua2luZ1xWMeICG1dpbW1cQmFua2luZ1xWMVxHUEJNZXRhZGF0YeoCEVdpbW06OkJhbmtpbmc6OlYxYgZwcm90bzM", [file_buf_validate_validate, file_google_protobuf_timestamp]);
+  fileDesc("Ch13aW1tL2JhbmtpbmcvdjEvYmFua2luZy5wcm90bxIPd2ltbS5iYW5raW5nLnYxIjIKBU1vbmV5Eg0KBW1pbm9yGAEgASgDEhoKCGN1cnJlbmN5GAIgASgJQgi6SAVyA5gBAyJgCgRCYW5rEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSDwoHY291bnRyeRgDIAEoCRIQCghsb2dvX3VybBgEIAEoCRIbChNtYXhfY29uc2VudF9zZWNvbmRzGAUgASgDIioKBk1lbWJlchIKCgJpZBgBIAEoCRIUCgxkaXNwbGF5X25hbWUYAiABKAkibAoHQmFsYW5jZRIlCgVtb25leRgBIAEoCzIWLndpbW0uYmFua2luZy52MS5Nb25leRIrCgdyZWFkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBINCgVzdGFsZRgDIAEoCCLHAwoHQWNjb3VudBIKCgJpZBgBIAEoCRIuCgZzb3VyY2UYAiABKA4yHi53aW1tLmJhbmtpbmcudjEuQWNjb3VudFNvdXJjZRIlCgVsZXZlbBgDIAEoDjIWLndpbW0uYmFua2luZy52MS5MZXZlbBINCgVvd25lZBgEIAEoCBInCgZvd25lcnMYBSADKAsyFy53aW1tLmJhbmtpbmcudjEuTWVtYmVyEgwKBG5hbWUYBiABKAkSFgoOaG91c2Vob2xkX25hbWUYDCABKAkSKQoHYmFsYW5jZRgHIAEoCzIYLndpbW0uYmFua2luZy52MS5CYWxhbmNlEhUKDW51bWJlcl9zdWZmaXgYCCABKAkSFAoMYWNjb3VudF90eXBlGAkgASgJEhMKC2hvbGRlcl9uYW1lGAogASgJEi8KCmNvbm5lY3Rpb24YCyABKAsyGy53aW1tLmJhbmtpbmcudjEuQ29ubmVjdGlvbhIvCgtsZWZ0X291dF9hdBgNIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLAoFZ3JvdXAYDiABKA4yHS53aW1tLmJhbmtpbmcudjEuQWNjb3VudEdyb3VwIsgBCgpDb25uZWN0aW9uEgoKAmlkGAEgASgJEg8KB2JhbmtfaWQYAiABKAkSEQoJYmFua19uYW1lGAMgASgJEhUKDWJhbmtfbG9nb191cmwYBCABKAkSLQoMY29ubmVjdGVkX2J5GAUgASgLMhcud2ltbS5iYW5raW5nLnYxLk1lbWJlchI2ChJjb25zZW50X2V4cGlyZXNfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEgwKBGxpdmUYByABKAgiTQoNQ3VycmVuY3lUb3RhbBIlCgV0b3RhbBgBIAEoCzIWLndpbW0uYmFua2luZy52MS5Nb25leRIVCg1hY2NvdW50X2NvdW50GAIgASgFIn8KC0JhbmtGYWlsdXJlEhUKDWNvbm5lY3Rpb25faWQYASABKAkSEQoJYmFua19uYW1lGAIgASgJEikKB2ZhaWx1cmUYAyABKA4yGC53aW1tLmJhbmtpbmcudjEuRmFpbHVyZRIbChNyZXRyeV9hZnRlcl9zZWNvbmRzGAQgASgDIi0KEExpc3RCYW5rc1JlcXVlc3QSGQoHY291bnRyeRgBIAEoCUIIukgFcgOYAQIiOQoRTGlzdEJhbmtzUmVzcG9uc2USJAoFYmFua3MYASADKAsyFS53aW1tLmJhbmtpbmcudjEuQmFuayIyChZCZWdpbkNvbm5lY3Rpb25SZXF1ZXN0EhgKB2JhbmtfaWQYASABKAlCB7pIBHICEAEiZgoXQmVnaW5Db25uZWN0aW9uUmVzcG9uc2USEwoLaGFuZG9mZl91cmwYASABKAkSNgoSY29uc2VudF9leHBpcmVzX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJQChlDb21wbGV0ZUNvbm5lY3Rpb25SZXF1ZXN0EhYKBXN0YXRlGAEgASgJQge6SARyAhABEgwKBGNvZGUYAiABKAkSDQoFZXJyb3IYAyABKAkimgEKGkNvbXBsZXRlQ29ubmVjdGlvblJlc3BvbnNlEi8KCmNvbm5lY3Rpb24YASABKAsyGy53aW1tLmJhbmtpbmcudjEuQ29ubmVjdGlvbhIqCghhY2NvdW50cxgCIAMoCzIYLndpbW0uYmFua2luZy52MS5BY2NvdW50Eh8KF3dpdGhkcmF3bl9hY2NvdW50X25hbWVzGAMgAygJIj8KHUxpc3RDb25uZWN0aW9uQWNjb3VudHNSZXF1ZXN0Eh4KDWNvbm5lY3Rpb25faWQYASABKAlCB7pIBHICEAEipQEKHkxpc3RDb25uZWN0aW9uQWNjb3VudHNSZXNwb25zZRIqCghhY2NvdW50cxgBIAMoCzIYLndpbW0uYmFua2luZy52MS5BY2NvdW50EigKB21lbWJlcnMYAiADKAsyFy53aW1tLmJhbmtpbmcudjEuTWVtYmVyEi0KBmdyYW50cxgDIAMoCzIdLndpbW0uYmFua2luZy52MS5BY2NvdW50R3JhbnQiXAoMQWNjb3VudEdyYW50EhIKCmFjY291bnRfaWQYASABKAkSEQoJbWVtYmVyX2lkGAIgASgJEiUKBWxldmVsGAMgASgOMhYud2ltbS5iYW5raW5nLnYxLkxldmVsIlQKF1NldEFjY291bnRPd25lcnNSZXF1ZXN0EhsKCmFjY291bnRfaWQYASABKAlCB7pIBHICEAESHAoKbWVtYmVyX2lkcxgCIAMoCUIIukgFkgECCAEiRQoYU2V0QWNjb3VudE93bmVyc1Jlc3BvbnNlEikKB2FjY291bnQYASABKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudCJ4ChZTZXRBY2NvdW50TGV2ZWxSZXF1ZXN0EhsKCmFjY291bnRfaWQYASABKAlCB7pIBHICEAESGgoJbWVtYmVyX2lkGAIgASgJQge6SARyAhABEiUKBWxldmVsGAMgASgOMhYud2ltbS5iYW5raW5nLnYxLkxldmVsIkQKF1NldEFjY291bnRMZXZlbFJlc3BvbnNlEikKB2FjY291bnQYASABKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudCJMChVTZXRBY2NvdW50TmFtZVJlcXVlc3QSGwoKYWNjb3VudF9pZBgBIAEoCUIHukgEcgIQARIWCg5ob3VzZWhvbGRfbmFtZRgCIAEoCSJDChZTZXRBY2NvdW50TmFtZVJlc3BvbnNlEikKB2FjY291bnQYASABKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudCJJChhTZXRBY2NvdW50TGVmdE91dFJlcXVlc3QSGwoKYWNjb3VudF9pZBgBIAEoCUIHukgEcgIQARIQCghsZWZ0X291dBgCIAEoCCJGChlTZXRBY2NvdW50TGVmdE91dFJlc3BvbnNlEikKB2FjY291bnQYASABKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudCIoChNMaXN0QWNjb3VudHNSZXF1ZXN0EhEKCXNraXBfcmVhZBgBIAEoCCLuAQoUTGlzdEFjY291bnRzUmVzcG9uc2USKgoIYWNjb3VudHMYASADKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudBI4ChBob3VzZWhvbGRfdG90YWxzGAQgAygLMh4ud2ltbS5iYW5raW5nLnYxLkN1cnJlbmN5VG90YWwSMgoKb3duX3RvdGFscxgFIAMoCzIeLndpbW0uYmFua2luZy52MS5DdXJyZW5jeVRvdGFsEi4KCGZhaWx1cmVzGAMgAygLMhwud2ltbS5iYW5raW5nLnYxLkJhbmtGYWlsdXJlSgQIAhADUgZ0b3RhbHMiGAoWUmVmcmVzaEJhbGFuY2VzUmVxdWVzdCLxAQoXUmVmcmVzaEJhbGFuY2VzUmVzcG9uc2USKgoIYWNjb3VudHMYASADKAsyGC53aW1tLmJhbmtpbmcudjEuQWNjb3VudBI4ChBob3VzZWhvbGRfdG90YWxzGAQgAygLMh4ud2ltbS5iYW5raW5nLnYxLkN1cnJlbmN5VG90YWwSMgoKb3duX3RvdGFscxgFIAMoCzIeLndpbW0uYmFua2luZy52MS5DdXJyZW5jeVRvdGFsEi4KCGZhaWx1cmVzGAMgAygLMhwud2ltbS5iYW5raW5nLnYxLkJhbmtGYWlsdXJlSgQIAhADUgZ0b3RhbHMiagoYUmVzdG9yZUNvbm5lY3Rpb25SZXF1ZXN0Eh4KDWNvbm5lY3Rpb25faWQYASABKAlCB7pIBHICEAESLgoGcmVhc29uGAIgASgOMh4ud2ltbS5iYW5raW5nLnYxLlJlc3RvcmVSZWFzb24iaAoZUmVzdG9yZUNvbm5lY3Rpb25SZXNwb25zZRITCgtoYW5kb2ZmX3VybBgBIAEoCRI2ChJjb25zZW50X2V4cGlyZXNfYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIjcKFURpc2Nvbm5lY3RCYW5rUmVxdWVzdBIeCg1jb25uZWN0aW9uX2lkGAEgASgJQge6SARyAhABIhgKFkRpc2Nvbm5lY3RCYW5rUmVzcG9uc2UiqQIKC1RyYW5zYWN0aW9uEgoKAmlkGAEgASgJEhIKCmFjY291bnRfaWQYAiABKAkSFAoMYWNjb3VudF9uYW1lGAMgASgJEhEKCWJhbmtfbmFtZRgEIAEoCRIyCgZzdGF0dXMYBSABKA4yIi53aW1tLmJhbmtpbmcudjEuVHJhbnNhY3Rpb25TdGF0dXMSJgoGYW1vdW50GAYgASgLMhYud2ltbS5iYW5raW5nLnYxLk1vbmV5EjAKDGJvb2tpbmdfZGF0ZRgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASGQoRY291bnRlcnBhcnR5X25hbWUYCCABKAkSEgoKcmVtaXR0YW5jZRgJIAEoCRIUCgxkaXNwbGF5X25hbWUYCiABKAkiWAoMTGVkZ2VyQ3Vyc29yEjAKDGJvb2tpbmdfZGF0ZRgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFgoOdHJhbnNhY3Rpb25faWQYAiABKAkiPAoQTmFycm93Q29ubmVjdGlvbhIVCg1jb25uZWN0aW9uX2lkGAEgASgJEhEKCWJhbmtfbmFtZRgCIAEoCSLBAQoXTGlzdFRyYW5zYWN0aW9uc1JlcXVlc3QSEgoKYWNjb3VudF9pZBgBIAEoCRItCgZjdXJzb3IYAiABKAsyHS53aW1tLmJhbmtpbmcudjEuTGVkZ2VyQ3Vyc29yEg0KBW9sZGVyGAMgASgIEhEKCXNraXBfc3luYxgEIAEoCBIOCgZvbGRlc3QYBSABKAgSMQoKcGFnZV9zdGFydBgGIAEoCzIdLndpbW0uYmFua2luZy52MS5MZWRnZXJDdXJzb3IiMAoaUmVmcmVzaFRyYW5zYWN0aW9uc1JlcXVlc3QSEgoKYWNjb3VudF9pZBgBIAEoCSJDChhMaXN0VHJhbnNhY3Rpb25zUmVzcG9uc2USJwoGbGVkZ2VyGAEgASgLMhcud2ltbS5iYW5raW5nLnYxLkxlZGdlciJGChtSZWZyZXNoVHJhbnNhY3Rpb25zUmVzcG9uc2USJwoGbGVkZ2VyGAEgASgLMhcud2ltbS5iYW5raW5nLnYxLkxlZGdlciL3AwoGTGVkZ2VyEjIKDHRyYW5zYWN0aW9ucxgBIAMoCzIcLndpbW0uYmFua2luZy52MS5UcmFuc2FjdGlvbhIyCg5vbGRlc3Rfb25fcGFnZRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMgoObmV3ZXN0X29uX3BhZ2UYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhEKCWhhc19vbGRlchgEIAEoCBIRCgloYXNfbmV3ZXIYBSABKAgSEwoLdG90YWxfY291bnQYBiABKAUSLQoJc3luY2VkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIzCg9yZWFjaGVzX2JhY2tfdG8YCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEj0KEm5hcnJvd19jb25uZWN0aW9ucxgJIAMoCzIhLndpbW0uYmFua2luZy52MS5OYXJyb3dDb25uZWN0aW9uEi4KCGZhaWx1cmVzGAogAygLMhwud2ltbS5iYW5raW5nLnYxLkJhbmtGYWlsdXJlEhcKD293bnNfbm9fYWNjb3VudBgLIAEoCBIqCgVwYWdlcxgMIAMoCzIbLndpbW0uYmFua2luZy52MS5QYWdlTWFya2VyIpMBCgpQYWdlTWFya2VyEi0KBmN1cnNvchgBIAEoCzIdLndpbW0uYmFua2luZy52MS5MZWRnZXJDdXJzb3ISKgoGbmV3ZXN0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIqCgZvbGRlc3QYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIhgKFkdldEJhbGFuY2VUcmVuZFJlcXVlc3QiYwoXR2V0QmFsYW5jZVRyZW5kUmVzcG9uc2USLgoGdHJlbmRzGAEgAygLMh4ud2ltbS5iYW5raW5nLnYxLkN1cnJlbmN5VHJlbmQSGAoQcGFydGlhbF9jb3ZlcmFnZRgCIAEoCCJlCg1DdXJyZW5jeVRyZW5kEhAKCGN1cnJlbmN5GAEgASgJEisKBnBvaW50cxgCIAMoCzIbLndpbW0uYmFua2luZy52MS5UcmVuZFBvaW50EhUKDXNob3J0X2hpc3RvcnkYAyABKAgiXwoKVHJlbmRQb2ludBIoCgRkYXRlGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBInCgdiYWxhbmNlGAIgASgLMhYud2ltbS5iYW5raW5nLnYxLk1vbmV5IhgKFkdldE1vbnRoU3VtbWFyeVJlcXVlc3QiSQoXR2V0TW9udGhTdW1tYXJ5UmVzcG9uc2USLgoGbW9udGhzGAEgAygLMh4ud2ltbS5iYW5raW5nLnYxLkN1cnJlbmN5TW9udGgi4QMKDUN1cnJlbmN5TW9udGgSEAoIY3VycmVuY3kYASABKAkSIgoCaW4YAiABKAsyFi53aW1tLmJhbmtpbmcudjEuTW9uZXkSIwoDb3V0GAMgASgLMhYud2ltbS5iYW5raW5nLnYxLk1vbmV5EiMKA25ldBgEIAEoCzIWLndpbW0uYmFua2luZy52MS5Nb25leRIoCghwcmlvcl9pbhgFIAEoCzIWLndpbW0uYmFua2luZy52MS5Nb25leRIpCglwcmlvcl9vdXQYBiABKAsyFi53aW1tLmJhbmtpbmcudjEuTW9uZXkSKQoJcHJpb3JfbmV0GAcgASgLMhYud2ltbS5iYW5raW5nLnYxLk1vbmV5EjAKDGNvdW50ZWRfZnJvbRgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLwoLbW9udGhfc3RhcnQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjUKDXRvcF9tZXJjaGFudHMYCiADKAsyHi53aW1tLmJhbmtpbmcudjEuTWVyY2hhbnRUb3RhbBI2ChBsYXJnZXN0X3BheW1lbnRzGAsgAygLMhwud2ltbS5iYW5raW5nLnYxLlRyYW5zYWN0aW9uIlYKDU1lcmNoYW50VG90YWwSDAoEbmFtZRgBIAEoCRIlCgV0b3RhbBgCIAEoCzIWLndpbW0uYmFua2luZy52MS5Nb25leRIQCghwYXltZW50cxgDIAEoBSpWCgVMZXZlbBIVChFMRVZFTF9VTlNQRUNJRklFRBAAEhAKDExFVkVMX0hJRERFThABEhEKDUxFVkVMX0JBTEFOQ0UQAhIRCg1MRVZFTF9ERVRBSUxTEAMqZgoNQWNjb3VudFNvdXJjZRIeChpBQ0NPVU5UX1NPVVJDRV9VTlNQRUNJRklFRBAAEhoKFkFDQ09VTlRfU09VUkNFX0dBVEVXQVkQARIZChVBQ0NPVU5UX1NPVVJDRV9NQU5VQUwQAip7CgxBY2NvdW50R3JvdXASHQoZQUNDT1VOVF9HUk9VUF9VTlNQRUNJRklFRBAAEhsKF0FDQ09VTlRfR1JPVVBfSE9VU0VIT0xEEAESFQoRQUNDT1VOVF9HUk9VUF9PV04QAhIYChRBQ0NPVU5UX0dST1VQX1NIQVJFRBADKs8BCgdGYWlsdXJlEhcKE0ZBSUxVUkVfVU5TUEVDSUZJRUQQABIcChhGQUlMVVJFX0JBTktfVU5BVkFJTEFCTEUQARIfChtGQUlMVVJFX1NFUlZJQ0VfVU5BVkFJTEFCTEUQAhIcChhGQUlMVVJFX0NPTlNFTlRfREVDTElORUQQAxIbChdGQUlMVVJFX0NPTlNFTlRfRVhQSVJFRBAEEhcKE0ZBSUxVUkVfTk9fQUNDT1VOVFMQBRIYChRGQUlMVVJFX1JBVEVfTElNSVRFRBAGKnAKDVJlc3RvcmVSZWFzb24SHgoaUkVTVE9SRV9SRUFTT05fVU5TUEVDSUZJRUQQABIfChtSRVNUT1JFX1JFQVNPTl9BQ0NFU1NfRU5ERUQQARIeChpSRVNUT1JFX1JFQVNPTl9XSURFTl9TQ09QRRACKnYKEVRyYW5zYWN0aW9uU3RhdHVzEiIKHlRSQU5TQUNUSU9OX1NUQVRVU19VTlNQRUNJRklFRBAAEh0KGVRSQU5TQUNUSU9OX1NUQVRVU19CT09LRUQQARIeChpUUkFOU0FDVElPTl9TVEFUVVNfUEVORElORxACMosNCg5CYW5raW5nU2VydmljZRJSCglMaXN0QmFua3MSIS53aW1tLmJhbmtpbmcudjEuTGlzdEJhbmtzUmVxdWVzdBoiLndpbW0uYmFua2luZy52MS5MaXN0QmFua3NSZXNwb25zZRJkCg9CZWdpbkNvbm5lY3Rpb24SJy53aW1tLmJhbmtpbmcudjEuQmVnaW5Db25uZWN0aW9uUmVxdWVzdBooLndpbW0uYmFua2luZy52MS5CZWdpbkNvbm5lY3Rpb25SZXNwb25zZRJtChJDb21wbGV0ZUNvbm5lY3Rpb24SKi53aW1tLmJhbmtpbmcudjEuQ29tcGxldGVDb25uZWN0aW9uUmVxdWVzdBorLndpbW0uYmFua2luZy52MS5Db21wbGV0ZUNvbm5lY3Rpb25SZXNwb25zZRJ5ChZMaXN0Q29ubmVjdGlvbkFjY291bnRzEi4ud2ltbS5iYW5raW5nLnYxLkxpc3RDb25uZWN0aW9uQWNjb3VudHNSZXF1ZXN0Gi8ud2ltbS5iYW5raW5nLnYxLkxpc3RDb25uZWN0aW9uQWNjb3VudHNSZXNwb25zZRJnChBTZXRBY2NvdW50T3duZXJzEigud2ltbS5iYW5raW5nLnYxLlNldEFjY291bnRPd25lcnNSZXF1ZXN0Gikud2ltbS5iYW5raW5nLnYxLlNldEFjY291bnRPd25lcnNSZXNwb25zZRJkCg9TZXRBY2NvdW50TGV2ZWwSJy53aW1tLmJhbmtpbmcudjEuU2V0QWNjb3VudExldmVsUmVxdWVzdBooLndpbW0uYmFua2luZy52MS5TZXRBY2NvdW50TGV2ZWxSZXNwb25zZRJqChFTZXRBY2NvdW50TGVmdE91dBIpLndpbW0uYmFua2luZy52MS5TZXRBY2NvdW50TGVmdE91dFJlcXVlc3QaKi53aW1tLmJhbmtpbmcudjEuU2V0QWNjb3VudExlZnRPdXRSZXNwb25zZRJhCg5TZXRBY2NvdW50TmFtZRImLndpbW0uYmFua2luZy52MS5TZXRBY2NvdW50TmFtZVJlcXVlc3QaJy53aW1tLmJhbmtpbmcudjEuU2V0QWNjb3VudE5hbWVSZXNwb25zZRJbCgxMaXN0QWNjb3VudHMSJC53aW1tLmJhbmtpbmcudjEuTGlzdEFjY291bnRzUmVxdWVzdBolLndpbW0uYmFua2luZy52MS5MaXN0QWNjb3VudHNSZXNwb25zZRJkCg9SZWZyZXNoQmFsYW5jZXMSJy53aW1tLmJhbmtpbmcudjEuUmVmcmVzaEJhbGFuY2VzUmVxdWVzdBooLndpbW0uYmFua2luZy52MS5SZWZyZXNoQmFsYW5jZXNSZXNwb25zZRJqChFSZXN0b3JlQ29ubmVjdGlvbhIpLndpbW0uYmFua2luZy52MS5SZXN0b3JlQ29ubmVjdGlvblJlcXVlc3QaKi53aW1tLmJhbmtpbmcudjEuUmVzdG9yZUNvbm5lY3Rpb25SZXNwb25zZRJhCg5EaXNjb25uZWN0QmFuaxImLndpbW0uYmFua2luZy52MS5EaXNjb25uZWN0QmFua1JlcXVlc3QaJy53aW1tLmJhbmtpbmcudjEuRGlzY29ubmVjdEJhbmtSZXNwb25zZRJnChBMaXN0VHJhbnNhY3Rpb25zEigud2ltbS5iYW5raW5nLnYxLkxpc3RUcmFuc2FjdGlvbnNSZXF1ZXN0Gikud2ltbS5iYW5raW5nLnYxLkxpc3RUcmFuc2FjdGlvbnNSZXNwb25zZRJwChNSZWZyZXNoVHJhbnNhY3Rpb25zEisud2ltbS5iYW5raW5nLnYxLlJlZnJlc2hUcmFuc2FjdGlvbnNSZXF1ZXN0Giwud2ltbS5iYW5raW5nLnYxLlJlZnJlc2hUcmFuc2FjdGlvbnNSZXNwb25zZRJkCg9HZXRCYWxhbmNlVHJlbmQSJy53aW1tLmJhbmtpbmcudjEuR2V0QmFsYW5jZVRyZW5kUmVxdWVzdBooLndpbW0uYmFua2luZy52MS5HZXRCYWxhbmNlVHJlbmRSZXNwb25zZRJkCg9HZXRNb250aFN1bW1hcnkSJy53aW1tLmJhbmtpbmcudjEuR2V0TW9udGhTdW1tYXJ5UmVxdWVzdBooLndpbW0uYmFua2luZy52MS5HZXRNb250aFN1bW1hcnlSZXNwb25zZULMAQoTY29tLndpbW0uYmFua2luZy52MUIMQmFua2luZ1Byb3RvUAFaSWdpdGh1Yi5jb20veHV1aWQvd2ltbS9wYWNrYWdlcy9jb250cmFjdHMvZ2VuL2dvL3dpbW0vYmFua2luZy92MTtiYW5raW5ndjGiAgNXQliqAg9XaW1tLkJhbmtpbmcuVjHKAg9XaW1tXEJhbmtpbmdcVjHiAhtXaW1tXEJhbmtpbmdcVjFcR1BCTWV0YWRhdGHqAhFXaW1tOjpCYW5raW5nOjpWMWIGcHJvdG8z", [file_buf_validate_validate, file_google_protobuf_timestamp]);
 
 /**
  * A signed amount in minor units with its currency. Never a float and never a
@@ -242,6 +242,15 @@ export type Account = Message<"wimm.banking.v1.Account"> & {
    * @generated from field: google.protobuf.Timestamp left_out_at = 13;
    */
   leftOutAt?: Timestamp | undefined;
+
+  /**
+   * What the account counts towards for the calling member. Decided in wimmd
+   * and never recomputed by a client: a group worked out in two places is two
+   * answers waiting to differ.
+   *
+   * @generated from field: wimm.banking.v1.AccountGroup group = 14;
+   */
+  group: AccountGroup;
 };
 
 /**
@@ -795,12 +804,21 @@ export type ListAccountsResponse = Message<"wimm.banking.v1.ListAccountsResponse
   accounts: Account[];
 
   /**
-   * One per currency present. Empty when the member may see nothing, rather
-   * than a total of zero.
+   * Household money, one per currency: the accounts every member owns or has
+   * *details* on. The same for every member. Absent where there are none,
+   * rather than a total of zero.
    *
-   * @generated from field: repeated wimm.banking.v1.CurrencyTotal totals = 2;
+   * @generated from field: repeated wimm.banking.v1.CurrencyTotal household_totals = 4;
    */
-  totals: CurrencyTotal[];
+  householdTotals: CurrencyTotal[];
+
+  /**
+   * The calling member's own money, one per currency: what they own that is not
+   * household money. Absent where there is none.
+   *
+   * @generated from field: repeated wimm.banking.v1.CurrencyTotal own_totals = 5;
+   */
+  ownTotals: CurrencyTotal[];
 
   /**
    * Banks that did not answer. The readings already on screen stay, with their
@@ -841,9 +859,14 @@ export type RefreshBalancesResponse = Message<"wimm.banking.v1.RefreshBalancesRe
   accounts: Account[];
 
   /**
-   * @generated from field: repeated wimm.banking.v1.CurrencyTotal totals = 2;
+   * @generated from field: repeated wimm.banking.v1.CurrencyTotal household_totals = 4;
    */
-  totals: CurrencyTotal[];
+  householdTotals: CurrencyTotal[];
+
+  /**
+   * @generated from field: repeated wimm.banking.v1.CurrencyTotal own_totals = 5;
+   */
+  ownTotals: CurrencyTotal[];
 
   /**
    * @generated from field: repeated wimm.banking.v1.BankFailure failures = 3;
@@ -998,11 +1021,19 @@ export type Transaction = Message<"wimm.banking.v1.Transaction"> & {
   counterpartyName: string;
 
   /**
-   * The description the bank carried.
+   * The description the bank carried, exactly as the bank wrote it.
    *
    * @generated from field: string remittance = 9;
    */
   remittance: string;
+
+  /**
+   * The name wimm shows: the merchant or person it was with, with the bank's
+   * own bookkeeping removed. Never empty. Derived on read, never stored.
+   *
+   * @generated from field: string display_name = 10;
+   */
+  displayName: string;
 };
 
 /**
@@ -1318,6 +1349,261 @@ export const PageMarkerSchema: GenMessage<PageMarker> = /*@__PURE__*/
   messageDesc(file_wimm_banking_v1_banking, 41);
 
 /**
+ * @generated from message wimm.banking.v1.GetBalanceTrendRequest
+ */
+export type GetBalanceTrendRequest = Message<"wimm.banking.v1.GetBalanceTrendRequest"> & {
+};
+
+/**
+ * Describes the message wimm.banking.v1.GetBalanceTrendRequest.
+ * Use `create(GetBalanceTrendRequestSchema)` to create a new message.
+ */
+export const GetBalanceTrendRequestSchema: GenMessage<GetBalanceTrendRequest> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 42);
+
+/**
+ * @generated from message wimm.banking.v1.GetBalanceTrendResponse
+ */
+export type GetBalanceTrendResponse = Message<"wimm.banking.v1.GetBalanceTrendResponse"> & {
+  /**
+   * One entry per currency the calling member's owned accounts hold, oldest
+   * point first. Absent for a currency with no transaction access at all —
+   * never an empty or flat line standing in for it.
+   *
+   * @generated from field: repeated wimm.banking.v1.CurrencyTrend trends = 1;
+   */
+  trends: CurrencyTrend[];
+
+  /**
+   * True when an account contributing to the total was excluded here because
+   * its connection was never granted transaction access — `banking/overview`:
+   * wimm says the trend does not cover every account rather than drawing a
+   * line as if it did.
+   *
+   * @generated from field: bool partial_coverage = 2;
+   */
+  partialCoverage: boolean;
+};
+
+/**
+ * Describes the message wimm.banking.v1.GetBalanceTrendResponse.
+ * Use `create(GetBalanceTrendResponseSchema)` to create a new message.
+ */
+export const GetBalanceTrendResponseSchema: GenMessage<GetBalanceTrendResponse> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 43);
+
+/**
+ * One currency's balance history, derived from booked transactions — the same
+ * rows `banking/transactions` already stores, never a separate reading kept
+ * for this purpose.
+ *
+ * @generated from message wimm.banking.v1.CurrencyTrend
+ */
+export type CurrencyTrend = Message<"wimm.banking.v1.CurrencyTrend"> & {
+  /**
+   * @generated from field: string currency = 1;
+   */
+  currency: string;
+
+  /**
+   * One per UTC day, end of day, oldest first, the last being now. At most 90.
+   * Empty when short_history is set.
+   *
+   * @generated from field: repeated wimm.banking.v1.TrendPoint points = 2;
+   */
+  points: TrendPoint[];
+
+  /**
+   * True when no contributing account's ledger reaches back a week, so there is
+   * no chart to draw. Distinct from a currency with no transaction access,
+   * which gets no entry at all.
+   *
+   * @generated from field: bool short_history = 3;
+   */
+  shortHistory: boolean;
+};
+
+/**
+ * Describes the message wimm.banking.v1.CurrencyTrend.
+ * Use `create(CurrencyTrendSchema)` to create a new message.
+ */
+export const CurrencyTrendSchema: GenMessage<CurrencyTrend> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 44);
+
+/**
+ * The household's summed balance, in one currency, on one date.
+ *
+ * @generated from message wimm.banking.v1.TrendPoint
+ */
+export type TrendPoint = Message<"wimm.banking.v1.TrendPoint"> & {
+  /**
+   * @generated from field: google.protobuf.Timestamp date = 1;
+   */
+  date?: Timestamp | undefined;
+
+  /**
+   * @generated from field: wimm.banking.v1.Money balance = 2;
+   */
+  balance?: Money | undefined;
+};
+
+/**
+ * Describes the message wimm.banking.v1.TrendPoint.
+ * Use `create(TrendPointSchema)` to create a new message.
+ */
+export const TrendPointSchema: GenMessage<TrendPoint> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 45);
+
+/**
+ * @generated from message wimm.banking.v1.GetMonthSummaryRequest
+ */
+export type GetMonthSummaryRequest = Message<"wimm.banking.v1.GetMonthSummaryRequest"> & {
+};
+
+/**
+ * Describes the message wimm.banking.v1.GetMonthSummaryRequest.
+ * Use `create(GetMonthSummaryRequestSchema)` to create a new message.
+ */
+export const GetMonthSummaryRequestSchema: GenMessage<GetMonthSummaryRequest> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 46);
+
+/**
+ * @generated from message wimm.banking.v1.GetMonthSummaryResponse
+ */
+export type GetMonthSummaryResponse = Message<"wimm.banking.v1.GetMonthSummaryResponse"> & {
+  /**
+   * One per currency in which the calling member has a booked transaction this
+   * month, the currency with the most money out first. No entry for a quiet
+   * currency, and none at all for a member who owns nothing.
+   *
+   * @generated from field: repeated wimm.banking.v1.CurrencyMonth months = 1;
+   */
+  months: CurrencyMonth[];
+};
+
+/**
+ * Describes the message wimm.banking.v1.GetMonthSummaryResponse.
+ * Use `create(GetMonthSummaryResponseSchema)` to create a new message.
+ */
+export const GetMonthSummaryResponseSchema: GenMessage<GetMonthSummaryResponse> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 47);
+
+/**
+ * One currency's month so far, from the 1st to today.
+ *
+ * @generated from message wimm.banking.v1.CurrencyMonth
+ */
+export type CurrencyMonth = Message<"wimm.banking.v1.CurrencyMonth"> & {
+  /**
+   * @generated from field: string currency = 1;
+   */
+  currency: string;
+
+  /**
+   * Money in and out are both positive; net is in minus out.
+   *
+   * @generated from field: wimm.banking.v1.Money in = 2;
+   */
+  in?: Money | undefined;
+
+  /**
+   * @generated from field: wimm.banking.v1.Money out = 3;
+   */
+  out?: Money | undefined;
+
+  /**
+   * @generated from field: wimm.banking.v1.Money net = 4;
+   */
+  net?: Money | undefined;
+
+  /**
+   * The same figures for the same days of last month. Unset unless every
+   * contributing account's ledger reaches back to the first of last month.
+   *
+   * @generated from field: wimm.banking.v1.Money prior_in = 5;
+   */
+  priorIn?: Money | undefined;
+
+  /**
+   * @generated from field: wimm.banking.v1.Money prior_out = 6;
+   */
+  priorOut?: Money | undefined;
+
+  /**
+   * @generated from field: wimm.banking.v1.Money prior_net = 7;
+   */
+  priorNet?: Money | undefined;
+
+  /**
+   * Set when a contributing ledger begins after the 1st, so the screen can say
+   * which date it counts from rather than passing itself off as the whole
+   * month so far.
+   *
+   * @generated from field: google.protobuf.Timestamp counted_from = 8;
+   */
+  countedFrom?: Timestamp | undefined;
+
+  /**
+   * The first of the month, for the link to Transactions.
+   *
+   * @generated from field: google.protobuf.Timestamp month_start = 9;
+   */
+  monthStart?: Timestamp | undefined;
+
+  /**
+   * The five merchants the most money went to, largest first.
+   *
+   * @generated from field: repeated wimm.banking.v1.MerchantTotal top_merchants = 10;
+   */
+  topMerchants: MerchantTotal[];
+
+  /**
+   * The five largest single payments, largest first.
+   *
+   * @generated from field: repeated wimm.banking.v1.Transaction largest_payments = 11;
+   */
+  largestPayments: Transaction[];
+};
+
+/**
+ * Describes the message wimm.banking.v1.CurrencyMonth.
+ * Use `create(CurrencyMonthSchema)` to create a new message.
+ */
+export const CurrencyMonthSchema: GenMessage<CurrencyMonth> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 48);
+
+/**
+ * Money out to one merchant this month.
+ *
+ * @generated from message wimm.banking.v1.MerchantTotal
+ */
+export type MerchantTotal = Message<"wimm.banking.v1.MerchantTotal"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * Positive.
+   *
+   * @generated from field: wimm.banking.v1.Money total = 2;
+   */
+  total?: Money | undefined;
+
+  /**
+   * @generated from field: int32 payments = 3;
+   */
+  payments: number;
+};
+
+/**
+ * Describes the message wimm.banking.v1.MerchantTotal.
+ * Use `create(MerchantTotalSchema)` to create a new message.
+ */
+export const MerchantTotalSchema: GenMessage<MerchantTotal> = /*@__PURE__*/
+  messageDesc(file_wimm_banking_v1_banking, 49);
+
+/**
  * What one member may see of one account they do not own.
  *
  * The zero value is UNSPECIFIED because buf requires it, and the server treats
@@ -1398,6 +1684,41 @@ export const AccountSourceSchema: GenEnum<AccountSource> = /*@__PURE__*/
   enumDesc(file_wimm_banking_v1_banking, 1);
 
 /**
+ * What an account counts towards for one member. Household money is the
+ * accounts every member owns or has *details* on; own is what the member owns
+ * beyond that; shared is everything else they may see, counted in no figure.
+ *
+ * @generated from enum wimm.banking.v1.AccountGroup
+ */
+export enum AccountGroup {
+  /**
+   * @generated from enum value: ACCOUNT_GROUP_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: ACCOUNT_GROUP_HOUSEHOLD = 1;
+   */
+  HOUSEHOLD = 1,
+
+  /**
+   * @generated from enum value: ACCOUNT_GROUP_OWN = 2;
+   */
+  OWN = 2,
+
+  /**
+   * @generated from enum value: ACCOUNT_GROUP_SHARED = 3;
+   */
+  SHARED = 3,
+}
+
+/**
+ * Describes the enum wimm.banking.v1.AccountGroup.
+ */
+export const AccountGroupSchema: GenEnum<AccountGroup> = /*@__PURE__*/
+  enumDesc(file_wimm_banking_v1_banking, 2);
+
+/**
  * Why something a member tried did not work. Routed off the kind alone; no
  * gateway status code reaches the browser.
  *
@@ -1444,7 +1765,7 @@ export enum Failure {
  * Describes the enum wimm.banking.v1.Failure.
  */
 export const FailureSchema: GenEnum<Failure> = /*@__PURE__*/
-  enumDesc(file_wimm_banking_v1_banking, 2);
+  enumDesc(file_wimm_banking_v1_banking, 3);
 
 /**
  * Why a connection is being handed back to the bank. The bank and the accounts
@@ -1481,7 +1802,7 @@ export enum RestoreReason {
  * Describes the enum wimm.banking.v1.RestoreReason.
  */
 export const RestoreReasonSchema: GenEnum<RestoreReason> = /*@__PURE__*/
-  enumDesc(file_wimm_banking_v1_banking, 3);
+  enumDesc(file_wimm_banking_v1_banking, 4);
 
 /**
  * Whether the bank has settled a transaction.
@@ -1512,7 +1833,7 @@ export enum TransactionStatus {
  * Describes the enum wimm.banking.v1.TransactionStatus.
  */
 export const TransactionStatusSchema: GenEnum<TransactionStatus> = /*@__PURE__*/
-  enumDesc(file_wimm_banking_v1_banking, 4);
+  enumDesc(file_wimm_banking_v1_banking, 5);
 
 /**
  * Connecting a bank, choosing who sees each account, and reading balances.
@@ -1672,6 +1993,29 @@ export const BankingService: GenService<{
     methodKind: "unary";
     input: typeof RefreshTransactionsRequestSchema;
     output: typeof RefreshTransactionsResponseSchema;
+  },
+  /**
+   * The calling member's balance trend, per currency, walked from their owned
+   * accounts' booked transactions. Reads no bank. Deadline: 10s.
+   *
+   * @generated from rpc wimm.banking.v1.BankingService.GetBalanceTrend
+   */
+  getBalanceTrend: {
+    methodKind: "unary";
+    input: typeof GetBalanceTrendRequestSchema;
+    output: typeof GetBalanceTrendResponseSchema;
+  },
+  /**
+   * The calling member's month so far per currency, set against the same days
+   * of last month, with where the most money went. Drawn from their owned
+   * accounts' booked transactions. Reads no bank. Deadline: 10s.
+   *
+   * @generated from rpc wimm.banking.v1.BankingService.GetMonthSummary
+   */
+  getMonthSummary: {
+    methodKind: "unary";
+    input: typeof GetMonthSummaryRequestSchema;
+    output: typeof GetMonthSummaryResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_wimm_banking_v1_banking, 0);

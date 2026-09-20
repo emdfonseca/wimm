@@ -1,7 +1,10 @@
 <script lang="ts">
 	/**
-	 * Origin `hHYs5`. Height 56 to match the account row it sits beside,
-	 * `radius-sm`, 10 of horizontal padding, no fill of its own at rest.
+	 * Origin `hHYs5`. Height 64, grown from the origin's 56 to hold a 48px-tall
+	 * mark — a bank's own logo is what a member recognises it by, and this
+	 * row is never shown beside an AccountRow, so decoupling the two heights
+	 * costs nothing. `radius-sm`, 10 of horizontal padding, no fill of its
+	 * own at rest.
 	 *
 	 * One selectable bank in a list. It is a button rather than a link: picking
 	 * a bank begins a hand-off out of the product, which is an action, and a
@@ -57,7 +60,7 @@
 		align-items: center;
 		gap: 12px;
 		inline-size: 100%;
-		block-size: 56px;
+		block-size: 64px;
 		padding-inline: 10px;
 		border: none;
 		border-radius: var(--radius-sm);
@@ -69,13 +72,17 @@
 
 	/* The library has an Avatar origin but no Svelte component yet, so the mark
 	   is inline here. It moves behind an Avatar import the moment that atom
-	   exists, and the geometry below is the origin's. */
+	   exists. A bank's own mark is what a member recognises it by. Wide
+	   rather than square: most banks' marks are wordmarks, and a square box
+	   letterboxes them down to a sliver — 120×48 gives a wordmark almost the
+	   full box while still holding a square or tall mark without clipping.
+	   The row grows to 64px to hold it. */
 	.mark {
 		flex: 0 0 auto;
-		inline-size: 32px;
-		block-size: 32px;
+		inline-size: 120px;
+		block-size: 48px;
 		border-radius: var(--radius-sm);
-		object-fit: cover;
+		object-fit: contain;
 	}
 
 	.initials {
@@ -85,7 +92,7 @@
 		background: var(--color-bg-subtle);
 		color: var(--color-text-secondary);
 		font-family: var(--type-family-body);
-		font-size: 12px;
+		font-size: 20px;
 		font-weight: 500;
 	}
 

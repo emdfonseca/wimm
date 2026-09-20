@@ -25,6 +25,11 @@ const (
 
 func newService(t *testing.T) (*banking.Service, *bankingtest.Gateway, *memStore) {
 	t.Helper()
+	return newServiceWithBanks(t, "Montepio")
+}
+
+func newServiceWithBanks(t *testing.T, connectable ...string) (*banking.Service, *bankingtest.Gateway, *memStore) {
+	t.Helper()
 
 	keys, err := banking.NewKeyring([]banking.Key{{ID: "k1", Material: testKey(3)}})
 	if err != nil {
@@ -34,7 +39,7 @@ func newService(t *testing.T) (*banking.Service, *bankingtest.Gateway, *memStore
 	st := newMemStore()
 
 	svc := banking.NewService(st, gw, keys, slog.New(slog.NewTextHandler(io.Discard, nil)),
-		"https://localhost:8765/psd2/callback", 24*time.Hour, testLedgerOptions())
+		"https://localhost:8765/psd2/callback", 24*time.Hour, connectable, testLedgerOptions())
 	return svc, gw, st
 }
 
@@ -83,12 +88,13 @@ func TestConnectingOwnsEveryAccountAndGrantsNobody(t *testing.T) {
 	if len(view.Accounts) != 0 {
 		t.Errorf("a member who was granted nothing sees %d accounts", len(view.Accounts))
 	}
-	if len(view.Totals) != 0 {
+	if len(view.HouseholdTotals) != 0 || len(view.OwnTotals) != 0 {
 		t.Error("a member who sees nothing was given a total")
 	}
 }
 
-// 6.3: two members, one household, different views and different totals.
+// Two members, one household: the owner's figure holds the account, and a
+// member granted only its balance has it listed and in no figure.
 func TestTwoMembersSeeDifferentTotals(t *testing.T) {
 	svc, gw, st := newService(t)
 	gw.AddBank(montepio(),
@@ -114,11 +120,12 @@ func TestTwoMembersSeeDifferentTotals(t *testing.T) {
 		t.Fatalf("Accounts(grace): %v", err)
 	}
 
-	if len(adaView.Totals) != 1 || adaView.Totals[0].Money.Minor != 500_000 {
-		t.Errorf("ada's total = %+v, want 500000", adaView.Totals)
+	if len(adaView.OwnTotals) != 1 || adaView.OwnTotals[0].Money.Minor != 500_000 {
+		t.Errorf("ada's own = %+v, want 500000", adaView.OwnTotals)
 	}
-	if len(graceView.Totals) != 1 || graceView.Totals[0].Money.Minor != 400_000 {
-		t.Errorf("grace's total = %+v, want only the joint account", graceView.Totals)
+	if len(graceView.OwnTotals) != 0 || len(graceView.HouseholdTotals) != 0 {
+		t.Errorf("grace's figures = %+v %+v, want none: the account is shared with her at balance",
+			graceView.OwnTotals, graceView.HouseholdTotals)
 	}
 	if len(graceView.Accounts) != 1 {
 		t.Errorf("grace sees %d accounts, want 1", len(graceView.Accounts))
@@ -176,8 +183,8 @@ func TestTheTotalDropsByALeftOutAccountsBalance(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Accounts before leaving out: %v", err)
 	}
-	if len(before.Totals) != 1 || before.Totals[0].Money.Minor != 500_000 || before.Totals[0].AccountCount != 2 {
-		t.Fatalf("total before leaving out = %+v, want 500000 across 2 accounts", before.Totals)
+	if len(before.OwnTotals) != 1 || before.OwnTotals[0].Money.Minor != 500_000 || before.OwnTotals[0].AccountCount != 2 {
+		t.Fatalf("total before leaving out = %+v, want 500000 across 2 accounts", before.OwnTotals)
 	}
 
 	if err := svc.SetLeftOut(ctx, ada, personal.ID, true); err != nil {
@@ -188,8 +195,8 @@ func TestTheTotalDropsByALeftOutAccountsBalance(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Accounts after leaving out: %v", err)
 	}
-	if len(after.Totals) != 1 || after.Totals[0].Money.Minor != 400_000 || after.Totals[0].AccountCount != 1 {
-		t.Errorf("total after leaving out = %+v, want 400000 across 1 account", after.Totals)
+	if len(after.OwnTotals) != 1 || after.OwnTotals[0].Money.Minor != 400_000 || after.OwnTotals[0].AccountCount != 1 {
+		t.Errorf("total after leaving out = %+v, want 400000 across 1 account", after.OwnTotals)
 	}
 }
 
@@ -211,8 +218,8 @@ func TestAnAccountWithNoCurrencyCarriesNoTotal(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Accounts: %v", err)
 	}
-	if len(view.Totals) != 1 || view.Totals[0].Money.Currency != "EUR" || view.Totals[0].Money.Minor != 400_000 {
-		t.Errorf("totals = %+v, want only the EUR total", view.Totals)
+	if len(view.OwnTotals) != 1 || view.OwnTotals[0].Money.Currency != "EUR" || view.OwnTotals[0].Money.Minor != 400_000 {
+		t.Errorf("totals = %+v, want only the EUR total", view.OwnTotals)
 	}
 }
 
@@ -310,10 +317,10 @@ func TestCurrenciesAreTotalledSeparately(t *testing.T) {
 		t.Fatalf("Accounts: %v", err)
 	}
 
-	if len(view.Totals) != 2 {
-		t.Fatalf("got %d totals, want one per currency", len(view.Totals))
+	if len(view.OwnTotals) != 2 {
+		t.Fatalf("got %d totals, want one per currency", len(view.OwnTotals))
 	}
-	for _, total := range view.Totals {
+	for _, total := range view.OwnTotals {
 		switch total.Money.Currency {
 		case "EUR":
 			if total.Money.Minor != 400_000 {
@@ -424,5 +431,92 @@ func TestAStrangerToTheConnectionIsStillRefused(t *testing.T) {
 	// Grace neither owns this account nor connected the bank.
 	if _, err := svc.ConnectionAccounts(ctx, grace, done.Connection.ID); !errors.Is(err, banking.ErrNotOwner) {
 		t.Errorf("ConnectionAccounts = %v, want ErrNotOwner", err)
+	}
+}
+
+func revolut() banking.Bank {
+	return banking.Bank{ID: "PT:Revolut", Name: "Revolut", Country: "PT", MaxConsent: 90 * 24 * time.Hour}
+}
+
+// Banks offers only wimm's curated set; a bank outside it is treated the same
+// as one the gateway does not offer at all (design.md - Decisions).
+func TestBanksOffersOnlyTheConfiguredSet(t *testing.T) {
+	svc, gw, _ := newServiceWithBanks(t, "montepio") // case-insensitive
+	gw.AddBank(montepio())
+	gw.AddBank(revolut())
+
+	banks, err := svc.Banks(context.Background(), "PT")
+	if err != nil {
+		t.Fatalf("Banks: %v", err)
+	}
+	if len(banks) != 1 || banks[0].Name != "Montepio" {
+		t.Errorf("Banks = %v, want only Montepio", banks)
+	}
+}
+
+// A bank later dropped from the curated set must not orphan a connection
+// already restoring against it: RestoreConnection keeps resolving any bank
+// the gateway knows.
+func TestRestoreConnectionResolvesABankNoLongerConnectable(t *testing.T) {
+	svc, gw, _ := newServiceWithBanks(t, "Montepio")
+	gw.AddBank(revolut(), banking.Account{Ref: "hash-1", Name: "Personal", Currency: "EUR"})
+
+	if _, err := svc.BeginConnection(context.Background(), ada, revolut().ID); err != nil {
+		t.Fatalf("BeginConnection: %v", err)
+	}
+	done, err := svc.CompleteConnection(context.Background(), ada, banking.Callback{Code: "code", State: gw.LastState})
+	if err != nil {
+		t.Fatalf("CompleteConnection: %v", err)
+	}
+
+	// Revolut is not in the curated set, so it would not appear in the picker...
+	banks, err := svc.Banks(context.Background(), "PT")
+	if err != nil {
+		t.Fatalf("Banks: %v", err)
+	}
+	for _, b := range banks {
+		if b.Name == "Revolut" {
+			t.Fatalf("Banks includes Revolut, which is outside the curated set")
+		}
+	}
+
+	// ...but restoring the existing connection still works.
+	if _, err := svc.RestoreConnection(context.Background(), ada, done.Connection.ID); err != nil {
+		t.Fatalf("RestoreConnection: %v", err)
+	}
+}
+
+// OwnersOnConnection is what the chooser's "Also owned by" checkboxes read.
+// It must report every owner of every account on the connection, not only
+// the calling member's own ownership — the gap that let a co-owner added
+// through SetOwners never show as checked again.
+func TestOwnersOnConnectionReportsEveryAccountsFullOwnerSet(t *testing.T) {
+	svc, gw, st := newService(t)
+	gw.AddBank(montepio(),
+		banking.Account{Ref: "hash-1", Name: "Joint", Currency: "EUR"},
+		banking.Account{Ref: "hash-2", Name: "Personal", Currency: "EUR"})
+
+	done := connectBank(t, svc, gw, st)
+	joint, personal := done.Accounts[0].ID, done.Accounts[1].ID
+	ctx := context.Background()
+
+	if err := svc.SetOwners(ctx, ada, joint, []string{ada, grace}); err != nil {
+		t.Fatalf("SetOwners: %v", err)
+	}
+
+	owners, err := svc.OwnersOnConnection(ctx, ada, done.Connection.ID)
+	if err != nil {
+		t.Fatalf("OwnersOnConnection: %v", err)
+	}
+
+	got := map[string][]string{}
+	for _, o := range owners {
+		got[o.AccountID] = append(got[o.AccountID], o.MemberID)
+	}
+	if !slices.Contains(got[joint], ada) || !slices.Contains(got[joint], grace) {
+		t.Errorf("joint account owners = %v, want both ada and grace", got[joint])
+	}
+	if slices.Contains(got[personal], grace) {
+		t.Errorf("personal account owners = %v, want grace absent", got[personal])
 	}
 }

@@ -94,8 +94,8 @@
 		{#if autoCompact}
 			Pick your bank. You confirm at the bank itself.
 		{:else}
-			Pick the bank you want wimm to read. You confirm at the bank itself, and wimm never sees
-			your banking password.
+			Pick the bank you want wimm to read. You confirm at the bank itself, and wimm never sees your
+			banking password.
 		{/if}
 	</p>
 

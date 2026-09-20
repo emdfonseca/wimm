@@ -10,6 +10,14 @@
 		argTypes: { disabled: { control: 'boolean' } },
 		args: { name: 'Caixa Económica Montepio Geral', onselect: fn() }
 	});
+
+	// A wide wordmark, deliberately not square — the shape the logo fix has
+	// to letterbox rather than crop.
+	const wideLogo =
+		'data:image/svg+xml,' +
+		encodeURIComponent(
+			'<svg xmlns="http://www.w3.org/2000/svg" width="240" height="48"><rect width="240" height="48" fill="steelblue"/></svg>'
+		);
 </script>
 
 <Story name="Rest" />
@@ -85,3 +93,38 @@
 		</div>
 	{/snippet}
 </Story>
+
+<!-- A wide wordmark beside a square logo: neither is cropped, and both names
+     start at the same horizontal position (specs/banking/bank-connections:
+     "A bank's logo renders whole, whatever its shape"). -->
+<Story name="A wide logo next to a square one" tags={['!test']}>
+	{#snippet template(args)}
+		<div style="display: flex; flex-direction: column; inline-size: 360px;">
+			<BankRow {...args} name="Wide Wordmark Bank" logoUrl={wideLogo} />
+			<BankRow {...args} name="Square Bank" />
+		</div>
+	{/snippet}
+</Story>
+
+<Story
+	name="Neither logo is cropped, and names stay aligned"
+	tags={['!autodocs']}
+	play={async ({ canvasElement }) => {
+		const marks = canvasElement.querySelectorAll<HTMLElement>('.mark');
+		const names = canvasElement.querySelectorAll<HTMLElement>('.name');
+		await expect(marks).toHaveLength(2);
+		for (const mark of marks) {
+			await expect(getComputedStyle(mark).objectFit).toBe('contain');
+		}
+		const [firstLeft, secondLeft] = Array.from(names).map((n) => n.getBoundingClientRect().left);
+		await expect(firstLeft).toBe(secondLeft);
+	}}
+>
+	{#snippet template(args)}
+		<div style="display: flex; flex-direction: column; inline-size: 360px;">
+			<BankRow {...args} name="Wide Wordmark Bank" logoUrl={wideLogo} />
+			<BankRow {...args} name="Square Bank" />
+		</div>
+	{/snippet}
+</Story>
+

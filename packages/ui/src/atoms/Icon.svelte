@@ -2,9 +2,9 @@
 	/**
 	 * The lucide glyphs the canvas names, at the sizes it draws them.
 	 *
-	 * Inlined rather than pulled from a package: nine glyphs across this whole
-	 * change, against a dependency whose tree-shaking is a build concern to
-	 * verify. Each `d` is lucide's own, unchanged.
+	 * Inlined rather than pulled from a package: a handful of glyphs against a
+	 * dependency whose tree-shaking is a build concern to verify. Each `d` is
+	 * lucide's own, unchanged.
 	 */
 	type Name =
 		| 'circle-help'
@@ -17,7 +17,11 @@
 		| 'arrow-left-right'
 		| 'settings'
 		| 'chevron-left'
-		| 'chevron-right';
+		| 'chevron-right'
+		| 'wallet'
+		| 'landmark'
+		| 'arrow-up-right'
+		| 'arrow-down-right';
 
 	interface Props {
 		name: Name;
@@ -63,7 +67,21 @@
 			'M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z'
 		],
 		'chevron-left': ['m15 18-6-6 6-6'],
-		'chevron-right': ['m9 18 6-6-6-6']
+		'chevron-right': ['m9 18 6-6-6-6'],
+		wallet: [
+			'M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1',
+			'M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4'
+		],
+		landmark: [
+			'M10 18v-7',
+			'M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z',
+			'M14 18v-7',
+			'M18 18v-7',
+			'M3 22h18',
+			'M6 18v-7'
+		],
+		'arrow-up-right': ['M7 7h10v10', 'M7 17 17 7'],
+		'arrow-down-right': ['m7 7 10 10', 'M17 7v10H7']
 	};
 
 	const circle = $derived(circles[name]);

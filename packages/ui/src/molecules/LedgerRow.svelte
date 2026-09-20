@@ -14,7 +14,7 @@
 	interface Props {
 		/** What it was. Empty where the bank named nobody — never invented. */
 		description: string;
-		/** Which of the member's accounts it came from, and its bank. */
+		/** Which of the member's accounts it came from. */
 		account: string;
 		/** Already formatted, carrying its currency and its sign. */
 		amount: string;
@@ -27,8 +27,18 @@
 		unsettled?: boolean;
 		/** Two letters for the mark. Derived from the description otherwise. */
 		initials?: string;
-		/** Compact stacks the row into two lines; wide lays it out in columns. */
+		/** Compact stacks the row into lines; wide lays it out in columns. */
 		compact?: boolean;
+		/** The statement text as the bank wrote it. Shown under the name only
+		 *  where it differs from it: a name wimm derived has to be checkable
+		 *  against the statement it came from. */
+		banksLine?: string;
+		/** Transactions files a row under a day header, so the row itself
+		 *  carries no date in columns. Compact keeps it in the second line. */
+		hideDate?: boolean;
+		/** Overview's lists have no settled marker, so the description takes
+		 *  the width the marker's slot would hold. */
+		hideStatus?: boolean;
 	}
 
 	let {
@@ -39,13 +49,17 @@
 		negative = false,
 		unsettled = false,
 		initials,
-		compact = false
+		compact = false,
+		banksLine,
+		hideDate = false,
+		hideStatus = false
 	}: Props = $props();
 
 	const mark = $derived(initials ?? (description.slice(0, 2).toUpperCase() || '—'));
+	const line = $derived(banksLine && banksLine !== description ? banksLine : undefined);
 </script>
 
-<div class="ledger-row" class:compact>
+<div class="ledger-row" class:compact class:with-line={compact && !!line}>
 	<span class="mark" aria-hidden="true">{mark}</span>
 
 	{#if compact}
@@ -62,16 +76,28 @@
 					<span class="badge">Not settled</span>
 				{/if}
 			</span>
-		</span>
-	{:else}
-		<span class="description">{description}</span>
-		<span class="account">{account}</span>
-		<span class="status">
-			{#if unsettled}
-				<span class="badge">Not settled</span>
+			{#if line}
+				<span class="banks-line" title={line}>{line}</span>
 			{/if}
 		</span>
-		<span class="date">{date}</span>
+	{:else}
+		<span class="named">
+			<span class="description">{description}</span>
+			{#if line}
+				<span class="banks-line" title={line}>{line}</span>
+			{/if}
+		</span>
+		<span class="account">{account}</span>
+		{#if !hideStatus}
+			<span class="status">
+				{#if unsettled}
+					<span class="badge">Not settled</span>
+				{/if}
+			</span>
+		{/if}
+		{#if !hideDate}
+			<span class="date">{date}</span>
+		{/if}
 		<span class="amount" class:negative>{amount}</span>
 	{/if}
 </div>
@@ -107,10 +133,39 @@
 		font-weight: 600;
 	}
 
+	.compact.with-line {
+		block-size: 80px;
+	}
+
 	.compact .mark {
 		inline-size: 32px;
 		block-size: 32px;
 		font-size: 12px;
+	}
+
+	/* Sized from its words unless the caller says otherwise. In a table the
+	   caller sets --ledger-name-basis to 0 so the name takes what the columns
+	   leave: sized from a long bank's line it pushes the account out of its
+	   column, and the rows of a Medium table stop lining up. */
+	.named {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		flex: 1 1 var(--ledger-name-basis, auto);
+		min-inline-size: 0;
+	}
+
+	.named .description {
+		flex: 0 1 auto;
+	}
+
+	.banks-line {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		color: var(--color-text-placeholder);
+		font-family: var(--type-family-body);
+		font-size: 11px;
 	}
 
 	.description {
@@ -125,9 +180,13 @@
 		font-weight: 500;
 	}
 
+	/* In a table the account is a column and holds its width so rows line up.
+	   A caller whose rows are too narrow for that column, where it squeezes the
+	   name to "Pingo D…" beside the account's own empty space, sets
+	   --ledger-account-basis to auto and the account is as wide as its words. */
 	.account {
-		flex: 0 0 auto;
-		inline-size: 220px;
+		flex: 0 1 var(--ledger-account-basis, 220px);
+		min-inline-size: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;

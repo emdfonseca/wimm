@@ -24,6 +24,7 @@
 
 <Story
 	name="Default"
+	tags={['kind-state']}
 	play={async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getAllByRole('button')).toHaveLength(5);
@@ -39,6 +40,7 @@
      a member's fingers is a change they cannot see if they are not looking. -->
 <Story
 	name="Narrowed"
+	tags={['kind-state']}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await userEvent.type(canvas.getByRole('searchbox'), 'caixa');
@@ -49,6 +51,7 @@
 
 <Story
 	name="One match is singular"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await userEvent.type(canvas.getByRole('searchbox'), 'revolut');
@@ -60,6 +63,7 @@
      searching for a spelling that would work. -->
 <Story
 	name="No match"
+	tags={['kind-state']}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await userEvent.type(canvas.getByRole('searchbox'), 'zzz');
@@ -70,6 +74,7 @@
 
 <Story
 	name="Loading"
+	tags={['kind-waiting']}
 	args={{ state: 'loading', banks: [] }}
 	play={async ({ canvasElement }) => {
 		await expect(within(canvasElement).getByText('Loading banks…')).toBeInTheDocument();
@@ -78,6 +83,7 @@
 
 <Story
 	name="List unavailable"
+	tags={['kind-error']}
 	args={{ state: 'unavailable', banks: [] }}
 	play={async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -90,6 +96,7 @@
 <!-- The page says who the member confirms with, before they choose. -->
 <Story
 	name="It says wimm never sees a password"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement }) => {
 		await expect(
 			within(canvasElement).getByText(/wimm never sees your banking password/)

@@ -42,6 +42,10 @@
 		initials?: string;
 		/** The account is left out of wimm. Reaches only an owner. */
 		leftOut?: boolean;
+		/** Makes the whole row one link and nothing else: a read-only row, as
+		 *  Overview lists accounts. Absent, the row is plain and its owner
+		 *  places controls beside it. */
+		href?: string;
 	}
 
 	let {
@@ -54,14 +58,21 @@
 		notUpdating = false,
 		negative = false,
 		initials,
-		leftOut = false
+		leftOut = false,
+		href
 	}: Props = $props();
 
 	const mark = $derived(initials ?? bank.slice(0, 2).toUpperCase());
 	const meta = $derived(numberSuffix ? `${bank} · •••• ${numberSuffix}` : bank);
 </script>
 
-<div class="account-row" class:left-out={leftOut}>
+<svelte:element
+	this={href ? 'a' : 'div'}
+	class="account-row"
+	class:left-out={leftOut}
+	class:link={!!href}
+	{href}
+>
 	<span class="mark" aria-hidden="true">{mark}</span>
 
 	<span class="identity">
@@ -87,7 +98,7 @@
 			{/if}
 		</span>
 	{/if}
-</div>
+</svelte:element>
 
 <style>
 	.account-row {
@@ -98,6 +109,20 @@
 		block-size: 56px;
 		padding-inline: 10px;
 		border-radius: var(--radius-sm);
+	}
+
+	.link {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.link:hover {
+		background: var(--color-bg-hover);
+	}
+
+	.link:focus-visible {
+		outline: var(--focus-ring-width) solid var(--color-focus-ring);
+		outline-offset: var(--focus-ring-offset);
 	}
 
 	.mark {
@@ -176,7 +201,9 @@
 		flex-direction: column;
 		gap: 2px;
 		flex: 0 0 auto;
-		inline-size: 108px;
+		/* A floor, so short figures still line up down a list; "Read yesterday at
+		   18:04" is wider than it and must not wrap beside an empty row. */
+		min-inline-size: 108px;
 		text-align: end;
 	}
 
@@ -193,6 +220,7 @@
 	}
 
 	.reading {
+		white-space: nowrap;
 		color: var(--color-text-secondary);
 		font-family: var(--type-family-body);
 		font-size: 11px;

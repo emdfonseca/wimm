@@ -48,7 +48,7 @@ export const load: ServerLoad = async ({ cookies, params, url }) => {
 				readOnly: true
 			};
 		}
-		redirect(303, '/');
+		redirect(303, '/accounts');
 	}
 
 	// Who is asking. The chooser needs it to claim an account for the member

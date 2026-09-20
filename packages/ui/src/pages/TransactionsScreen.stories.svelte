@@ -3,26 +3,18 @@
 	import { expect, within } from 'storybook/test';
 	import TransactionsScreen, { type LedgerDay } from './TransactionsScreen.svelte';
 
-	/**
-	 * The two newest days, relative to whenever the story runs. The screen
-	 * computes "Today" and "Yesterday" from the date it is given, so a fixture
-	 * pinned to a calendar date would render as a plain date the moment that
-	 * date passed.
-	 */
-	function daysAgo(n: number): string {
-		const d = new Date();
-		d.setDate(d.getDate() - n);
-		return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-	}
+	/** Pinned, so "Today" reads `Today, 17 September` whenever the story runs. */
+	const today = '2026-09-17';
 
 	const days: LedgerDay[] = [
 		{
-			date: daysAgo(0),
+			date: '2026-09-17',
 			entries: [
 				{
 					id: '1',
 					description: 'Pingo Doce',
-					account: 'Current account',
+					banksLine: 'COMPRA PINGO DOCE LISBOA 230002268342127',
+					account: 'Current account · Monzo',
 					amount: '−€42.18',
 					date: '17 Sep',
 					negative: true,
@@ -31,7 +23,8 @@
 				{
 					id: '2',
 					description: 'Transfer to Ana Reis',
-					account: 'Joint savings',
+					banksLine: 'Transfer to Ana Reis',
+					account: 'Joint savings · Montepio',
 					amount: '−€60.00',
 					date: '17 Sep',
 					negative: true,
@@ -41,12 +34,13 @@
 			]
 		},
 		{
-			date: daysAgo(1),
+			date: '2026-09-16',
 			entries: [
 				{
 					id: '3',
 					description: 'Galp',
-					account: 'Current account',
+					banksLine: 'COMPRA GALP A5 OEIRAS 230002270158934',
+					account: 'Current account · Monzo',
 					amount: '−€71.40',
 					date: '16 Sep',
 					negative: true,
@@ -55,7 +49,8 @@
 				{
 					id: '4',
 					description: 'Salary',
-					account: 'Current account',
+					banksLine: 'Salary',
+					account: 'Current account · Monzo',
 					amount: '+€2,180.00',
 					date: '16 Sep',
 					initials: 'SA'
@@ -63,9 +58,10 @@
 				{
 					id: '5',
 					description: 'NOS',
-					account: 'Joint savings',
+					banksLine: 'DD NOS COMUNICACOES SA 000000234058260',
+					account: 'Joint savings · Montepio',
 					amount: '−€39.99',
-					date: '15 Sep',
+					date: '16 Sep',
 					negative: true,
 					initials: 'NO'
 				}
@@ -113,6 +109,13 @@
 	];
 
 	const freshness = 'Updated at 09:14. Reaching back to 4 June 2026.';
+	const span = '17 September to 15 September 2026';
+
+	const pages = [
+		{ key: 'p1', label: '17 September to 15 September 2026', href: '/transactions?page=p1' },
+		{ key: 'p2', label: '12 August to 3 August 2026', href: '/transactions?page=p2' },
+		{ key: 'p3', label: '2 August to 4 June 2026', href: '/transactions?page=p3' }
+	];
 
 	const { Story } = defineMeta({
 		title: 'Pages/TransactionsScreen',
@@ -123,7 +126,8 @@
 			days,
 			count: 382,
 			freshness,
-			span: '17 September to 15 September 2026'
+			span,
+			today
 		}
 	});
 </script>
@@ -131,21 +135,56 @@
 <!-- J07.A / 01 -->
 <Story
 	name="AsItOpens"
+	tags={['kind-state']}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(
 			canvas.getByRole('heading', { name: 'Transactions', level: 1 })
 		).toBeInTheDocument();
+		await expect(canvas.getByText('Every account you own, newest first.')).toBeInTheDocument();
+		await expect(canvas.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
 		await expect(canvas.getByText('382 transactions')).toBeInTheDocument();
-		await expect(canvas.getByText('Today')).toBeInTheDocument();
-		await expect(canvas.getByText('Yesterday')).toBeInTheDocument();
+		await expect(canvas.getByText(freshness)).toBeInTheDocument();
+
+		for (const heading of ['Description', 'Account', 'Amount']) {
+			await expect(canvas.getByText(heading)).toBeInTheDocument();
+		}
+		await expect(canvas.queryByText('Date')).not.toBeInTheDocument();
+
+		// The date lives in the day header, not in every row.
+		await expect(canvas.getByText('Today, 17 September')).toBeInTheDocument();
+		await expect(canvas.getByText('Yesterday, 16 September')).toBeInTheDocument();
+		await expect(canvas.queryByText('17 Sep')).not.toBeInTheDocument();
+
+		// The bank's line sits under a name that differs from it.
+		for (const [name, line, amount] of [
+			['Pingo Doce', 'COMPRA PINGO DOCE LISBOA 230002268342127', '−€42.18'],
+			['Galp', 'COMPRA GALP A5 OEIRAS 230002270158934', '−€71.40'],
+			['NOS', 'DD NOS COMUNICACOES SA 000000234058260', '−€39.99']
+		] as const) {
+			const row = canvas.getByText(line).closest('.ledger-row') as HTMLElement;
+			await expect(row).toHaveTextContent(name);
+			await expect(row).toHaveTextContent(amount);
+		}
+		await expect(
+			canvas.getByText('Pingo Doce').closest('.ledger-row') as HTMLElement
+		).toHaveTextContent('Current account · Monzo');
+
+		// Where the bank's line is the name, nothing is said twice.
+		await expect(canvas.getAllByText('Transfer to Ana Reis')).toHaveLength(1);
 		await expect(canvas.getByText('Not settled')).toBeInTheDocument();
+		await expect(canvas.getByText('−€60.00')).toBeInTheDocument();
+		await expect(canvas.getAllByText('Salary')).toHaveLength(1);
+		await expect(canvas.getByText('+€2,180.00')).toBeInTheDocument();
+
+		await expect(canvas.getAllByText(span)).toHaveLength(1);
 	}}
 />
 
 <!-- J07.A / 02 -->
 <Story
 	name="OneAccount"
+	tags={['kind-state']}
 	args={{ count: 204, filterAccount: 'Current account · Monzo' }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -159,33 +198,59 @@
 <!-- J07.A / 03 — a day that straddled the boundary is named again. -->
 <Story
 	name="AnOlderPage"
+	tags={['kind-state']}
 	args={{
 		days: olderDays,
-		span: '4 August to 31 July 2026'
+		span: '12 August to 3 August 2026',
+		pages,
+		currentPage: 'p2',
+		newestHref: '/transactions',
+		oldestHref: '/transactions?page=p3'
 	}}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		// The day heading and the span of dates both name it.
-		await expect(canvas.getAllByText(/August.*2026/).length).toBeGreaterThan(0);
+		await expect(canvas.getByText('4 August 2026')).toBeInTheDocument();
+		// The dots carry the same words as accessible names, so the footer's own
+		// span is counted where it lives.
+		await expect(
+			within(canvas.getByRole('navigation', { name: 'Pages of transactions' })).getAllByText(
+				'12 August to 3 August 2026'
+			)
+		).toHaveLength(1);
+		await expect(canvas.getByRole('link', { name: 'Oldest' })).toBeInTheDocument();
+		await expect(canvas.getByRole('link', { name: 'Newest' })).toBeInTheDocument();
 	}}
 />
 
 <!-- J07.A / 04 -->
 <Story
 	name="TheOldestPage"
+	tags={['kind-state']}
 	args={{
 		days: [olderDays[1]!],
 		span: '4 June 2026',
-		atOldest: true
+		atOldest: true,
+		pages,
+		currentPage: 'p3',
+		newestHref: '/transactions'
 	}}
 	play={async ({ canvasElement }) => {
-		await expect(within(canvasElement).getByText(/Nothing older/)).toBeInTheDocument();
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText(/Nothing older/)).toBeInTheDocument();
+		await expect(
+			within(canvas.getByRole('navigation', { name: 'Pages of transactions' })).getAllByText(
+				'4 June 2026'
+			)
+		).toHaveLength(1);
+		await expect(canvas.getByRole('button', { name: 'Oldest' })).toBeDisabled();
+		await expect(canvas.getByRole('link', { name: 'Newest' })).toBeInTheDocument();
 	}}
 />
 
 <!-- J07.B / 01 -->
 <Story
 	name="NoBankConnected"
+	tags={['kind-state']}
 	args={{ days: [], count: 0, freshness: undefined, span: undefined, noBank: true }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -197,6 +262,7 @@
 <!-- J07.B / 02 — the bank is not broken, and is never described as broken. -->
 <Story
 	name="BankNotSendingTransactions"
+	tags={['kind-state']}
 	args={{
 		days: [],
 		count: 0,
@@ -216,6 +282,7 @@
 <!-- J07.B / 03 -->
 <Story
 	name="OwnsNoAccount"
+	tags={['kind-state']}
 	args={{
 		days: [],
 		count: 0,
@@ -236,6 +303,7 @@
      the bank answers rather than showing an empty list that looks settled. -->
 <Story
 	name="SyncingOnArrival"
+	tags={['kind-waiting']}
 	args={{
 		days: [],
 		count: 0,
@@ -257,6 +325,7 @@
      the list, and nothing moves when it lands. -->
 <Story
 	name="SyncingWithRowsAlreadyHeld"
+	tags={['kind-waiting']}
 	args={{ refreshing: true }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -269,6 +338,7 @@
 <!-- J07.B / 04 — no period is promised before the first read. -->
 <Story
 	name="ReadingForTheFirstTime"
+	tags={['kind-waiting']}
 	args={{
 		days: [],
 		count: 0,
@@ -289,6 +359,7 @@
 <!-- J07.C / 01 — the rows stay, with their original time. -->
 <Story
 	name="RefreshRefused"
+	tags={['kind-error']}
 	args={{
 		problems: [
 			{ connectionId: 'c1', bankName: 'Monzo', kind: 'rate-limited' as const, retryAfter: '11:20' }
@@ -310,6 +381,7 @@
 <!-- J07.C / 02 -->
 <Story
 	name="OneBankDidNotAnswer"
+	tags={['kind-error']}
 	args={{
 		problems: [
 			{
@@ -331,6 +403,7 @@
 <!-- J07.D / 01 — the history stays, and the way back is offered. -->
 <Story
 	name="AccessHasRunOut"
+	tags={['kind-error']}
 	args={{
 		problems: [
 			{
@@ -352,6 +425,7 @@
 <!-- J07.D / 02 — disconnecting ends access; it does not destroy the record. -->
 <Story
 	name="BankDisconnected"
+	tags={['kind-outcome']}
 	args={{
 		problems: [{ connectionId: 'c1', bankName: 'Monzo', kind: 'disconnected' as const }]
 	}}
@@ -370,6 +444,7 @@
      offered — the pager keeps the span rather than disappearing (5.5). -->
 <Story
 	name="EverythingFitsOnOnePage"
+	tags={['kind-behaviour']}
 	args={{ count: 5 }}
 	play={async ({ canvasElement }) => {
 		await expect(
@@ -381,25 +456,33 @@
 <!-- J07.A / 01 · Compact — the rows stack; the bar is the shell's sibling. -->
 <Story
 	name="Compact"
+	tags={['kind-state', 'size-compact']}
 	args={{ compact: true }}
 	globals={{ viewport: { value: 'compact' } }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Every account you own, newest first.')).toBeInTheDocument();
 		await expect(canvas.getByText(freshness)).toBeInTheDocument();
+		await expect(canvas.getByText('382 transactions')).toBeInTheDocument();
+		await expect(canvas.queryByText('Description')).not.toBeInTheDocument();
+		await expect(canvas.getByText('Today, 17 September')).toBeInTheDocument();
+		await expect(canvas.getByText('DD NOS COMUNICACOES SA 000000234058260')).toBeInTheDocument();
 		await expect(canvas.getByText('NOS')).toBeInTheDocument();
+		await expect(canvas.getAllByText(span)).toHaveLength(1);
 	}}
 />
 
 <!-- J07.A / 02 · Compact -->
 <Story
 	name="CompactOneAccount"
+	tags={['kind-state', 'size-compact']}
 	args={{ compact: true, count: 204, filterAccount: 'Current account · Monzo' }}
 	globals={{ viewport: { value: 'compact' } }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Newest first.')).toBeInTheDocument();
 		await expect(canvas.getByText('Showing one account')).toBeInTheDocument();
-		await expect(canvas.getByText('Current account · Monzo')).toBeInTheDocument();
+		await expect(canvas.getAllByText('Current account · Monzo').length).toBeGreaterThan(0);
 		await expect(canvas.getByRole('link', { name: 'Show all accounts' })).toBeInTheDocument();
 		await expect(canvas.getByText(freshness)).toBeInTheDocument();
 	}}
@@ -408,6 +491,7 @@
 <!-- J08.A / 02 — the bank was widened and is sending now. -->
 <Story
 	name="BankNowIncluded"
+	tags={['kind-outcome']}
 	args={{
 		problems: [{ connectionId: 'c1', bankName: 'Monzo', kind: 'widened' as const }]
 	}}

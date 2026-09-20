@@ -22,6 +22,7 @@
      under before being asked to create anything. -->
 <Story
 	name="Default"
+	tags={['kind-state']}
 	play={async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByRole('heading', { level: 1 })).toHaveFocus();
@@ -37,6 +38,7 @@
      says so. -->
 <Story
 	name="Creating"
+	tags={['kind-waiting']}
 	args={{ state: 'creating' }}
 	play={async ({ canvasElement, args }) => {
 		const button = within(canvasElement).getByRole('button', {
@@ -52,6 +54,7 @@
      from a native prompt. -->
 <Story
 	name="Passkey not saved"
+	tags={['kind-error']}
 	args={{ state: 'not-saved' }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -72,6 +75,7 @@
 <!-- Closing the prompt changed nothing, so it waits rather than interrupts. -->
 <Story
 	name="Prompt dismissed"
+	tags={['kind-error']}
 	args={{ state: 'dismissed' }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);

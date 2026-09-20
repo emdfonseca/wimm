@@ -1,7 +1,7 @@
 <script module lang="ts">
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import { expect, fn, userEvent, within } from 'storybook/test';
-	import AccountsOverview from './AccountsOverview.svelte';
+	import AccountsScreen from './AccountsScreen.svelte';
 
 	const current = {
 		id: 'a1',
@@ -23,10 +23,10 @@
 	};
 
 	const { Story } = defineMeta({
-		title: 'Pages/AccountsOverview',
-		component: AccountsOverview,
+		title: 'Pages/AccountsScreen',
+		component: AccountsScreen,
 		tags: ['autodocs'],
-		parameters: { layout: 'fullscreen' },
+		parameters: { layout: 'fullscreen', shell: '/accounts' },
 		args: {
 			banks: [
 				{
@@ -41,7 +41,6 @@
 				}
 			],
 			accounts: [current, savings],
-			totals: [{ total: '€16,130.10', currency: 'EUR' }],
 			problems: [],
 			onrefresh: fn(),
 			onconnect: fn(),
@@ -50,13 +49,21 @@
 	});
 </script>
 
-<Story name="Connected" />
+<Story
+	name="Connected"
+	tags={['kind-state']}
+	play={async ({ canvasElement }) => {
+		await expect(
+			within(canvasElement).getByRole('heading', { name: 'Accounts' })
+		).toBeInTheDocument();
+	}}
+/>
 
-<!-- No total over nothing: a total of zero would say the household has no
-     money rather than that wimm has not been told about any. -->
+<!-- Accounts shows no total at all. -->
 <Story
 	name="Empty"
-	args={{ accounts: [], totals: [] }}
+	tags={['kind-state']}
+	args={{ accounts: [] }}
 	play={async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.queryByText(/€0/)).not.toBeInTheDocument();
@@ -68,31 +75,11 @@
 	}}
 />
 
-<!-- wimm holds no rates, so currencies are never added and the screen says so. -->
-<Story
-	name="Two currencies"
-	args={{
-		accounts: [current, { ...savings, bank: 'Revolut', balance: '£2,500.00', id: 'a3' }],
-		totals: [
-			{ total: '€4,200.10', currency: 'EUR' },
-			{ total: '£2,500.00', currency: 'GBP' }
-		]
-	}}
-	play={async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		// Scoped to the totals: the EUR total and the one EUR account carry the
-		// same string, and a bare getByText would match both.
-		const totals = within(canvas.getByRole('region', { name: 'Totals' }));
-		await expect(totals.getByText('€4,200.10')).toBeInTheDocument();
-		await expect(totals.getByText('£2,500.00')).toBeInTheDocument();
-		await expect(canvas.getByText(/does not convert between them/)).toBeInTheDocument();
-	}}
-/>
-
 <!-- The readings already on screen stay, with their original times: losing the
      previous number is the one thing that must not happen. -->
 <Story
 	name="Refresh refused"
+	tags={['kind-error']}
 	args={{
 		accounts: [
 			{ ...current, stale: true },
@@ -109,11 +96,13 @@
 	}}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		// Scoped to the banner: the same words are also in the live region that
-		// announces the outcome, and a bare getByText matches both.
 		const banner = within(canvasElement.querySelector('.banner') as HTMLElement);
 		await expect(banner.getByText(/limits how often wimm may read balances/)).toBeInTheDocument();
 		await expect(banner.getByText(/14:20/)).toBeInTheDocument();
+		await expect(canvas.getByText('Balances cannot be refreshed yet')).toBeInTheDocument();
+		await expect(
+			canvas.getByText(/The balances below are the ones already read, at\s+the times shown/)
+		).toBeInTheDocument();
 		await expect(canvas.getByText('€4,200.10')).toBeInTheDocument();
 	}}
 />
@@ -122,26 +111,24 @@
      an instruction. -->
 <Story
 	name="Rate limited with no retry time"
+	tags={['kind-error']}
 	args={{
 		accounts: [{ ...current, stale: true }],
 		problems: [{ connectionId: 'c1', bankName: 'Montepio', kind: 'rate-limited' as const }]
 	}}
 	play={async ({ canvasElement }) => {
 		const banner = within(canvasElement.querySelector('.banner') as HTMLElement);
-		await expect(
-			banner.getByText(/did not say when the next one is possible/)
-		).toBeInTheDocument();
+		await expect(banner.getByText(/did not say when the next one is possible/)).toBeInTheDocument();
 	}}
 />
 
 <!-- One bank failing leaves the other's figures untouched. -->
 <Story
 	name="One bank not answering"
+	tags={['kind-error']}
 	args={{
 		accounts: [current, { ...savings, bank: 'ActivoBank', stale: true, id: 'a4' }],
-		problems: [
-			{ connectionId: 'c2', bankName: 'ActivoBank', kind: 'unreachable' as const }
-		]
+		problems: [{ connectionId: 'c2', bankName: 'ActivoBank', kind: 'unreachable' as const }]
 	}}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -154,6 +141,7 @@
      At ActivoBank's one-day consent this is the normal resting state. -->
 <Story
 	name="Access run out"
+	tags={['kind-error']}
 	args={{
 		accounts: [{ ...current, bank: 'ActivoBank', notUpdating: true }],
 		problems: [{ connectionId: 'c3', bankName: 'ActivoBank', kind: 'access-ended' as const }]
@@ -170,10 +158,8 @@
      none. -->
 <Story
 	name="An account seen at balance level"
-	args={{
-		accounts: [{ ...current, numberSuffix: undefined }],
-		totals: [{ total: '€4,200.10', currency: 'EUR' }]
-	}}
+	tags={['kind-state']}
+	args={{ accounts: [{ ...current, numberSuffix: undefined }] }}
 	play={async ({ canvasElement }) => {
 		await expect(within(canvasElement).queryByText(/••••/)).not.toBeInTheDocument();
 	}}
@@ -181,6 +167,7 @@
 
 <Story
 	name="Refreshing"
+	tags={['kind-waiting']}
 	args={{ refreshing: true }}
 	play={async ({ canvasElement, args }) => {
 		const button = within(canvasElement).getByRole('button', { name: 'Refreshing…' });
@@ -192,19 +179,20 @@
 
 <Story
 	name="Refreshing on request"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement, args }) => {
-		await userEvent.click(
-			within(canvasElement).getByRole('button', { name: 'Refresh balances' })
-		);
+		await userEvent.click(within(canvasElement).getByRole('button', { name: 'Refresh balances' }));
 		await expect(args.onrefresh).toHaveBeenCalledOnce();
 	}}
 />
 
 <Story
 	name="An overdrawn account"
-	args={{
-		accounts: [{ ...current, balance: '−€312.40', negative: true }],
-		totals: [{ total: '−€312.40', currency: 'EUR' }]
+	tags={['kind-state']}
+	args={{ accounts: [{ ...current, balance: '−€312.40', negative: true }] }}
+	play={async ({ canvasElement }) => {
+		// The sign is what carries direction, never the colour alone (ADR 0006).
+		await expect(within(canvasElement).getAllByText('−€312.40').length).toBeGreaterThan(0);
 	}}
 />
 
@@ -213,6 +201,7 @@
      exactly what a stale reading looks like. -->
 <Story
 	name="Focus lands on the banner"
+	tags={['kind-behaviour']}
 	args={{
 		accounts: [{ ...current, stale: true }],
 		problems: [{ connectionId: 'c1', bankName: 'Montepio', kind: 'unreachable' as const }]
@@ -227,6 +216,7 @@
      so a member not watching them has no other way to know it finished. -->
 <Story
 	name="A refusal is announced"
+	tags={['kind-behaviour']}
 	args={{
 		accounts: [{ ...current, stale: true }],
 		problems: [
@@ -250,6 +240,7 @@
 
 <Story
 	name="Which bank did not answer is announced"
+	tags={['kind-behaviour']}
 	args={{
 		accounts: [current],
 		problems: [{ connectionId: 'c2', bankName: 'ActivoBank', kind: 'unreachable' as const }]
@@ -265,6 +256,7 @@
 
 <Story
 	name="Refreshing is announced while it runs"
+	tags={['kind-behaviour']}
 	args={{ refreshing: true }}
 	play={async ({ canvasElement }) => {
 		const announced = within(canvasElement)
@@ -280,6 +272,7 @@
      an unchanged screen with no explanation. -->
 <Story
 	name="A bank that offered no accounts"
+	tags={['kind-outcome']}
 	args={{ outcome: 'no-accounts' as const }}
 	play={async ({ canvasElement }) => {
 		await expect(
@@ -290,6 +283,7 @@
 
 <Story
 	name="Consent declined"
+	tags={['kind-outcome']}
 	args={{ outcome: 'declined' as const }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -300,11 +294,10 @@
 
 <Story
 	name="A return that was already used"
+	tags={['kind-outcome']}
 	args={{ outcome: 'already-connected' as const }}
 	play={async ({ canvasElement }) => {
-		await expect(
-			within(canvasElement).getByText(/already connected/)
-		).toBeInTheDocument();
+		await expect(within(canvasElement).getByText(/already connected/)).toBeInTheDocument();
 	}}
 />
 
@@ -312,6 +305,7 @@
      connection, so without this it was announced as one. -->
 <Story
 	name="Access restored"
+	tags={['kind-outcome']}
 	args={{
 		outcome: 'restored' as const,
 		outcomeBank: 'Montepio',
@@ -328,6 +322,7 @@
 <!-- Frame J05.A / 02, which counts the accounts that went. -->
 <Story
 	name="Disconnected"
+	tags={['kind-outcome']}
 	args={{ outcome: 'disconnected' as const, outcomeBank: 'Montepio', outcomeAccountCount: 3 }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -338,9 +333,15 @@
 
 <Story
 	name="A bank that could not be connected"
+	tags={['kind-outcome']}
 	args={{ outcome: 'bank-unavailable' as const }}
 	play={async ({ canvasElement }) => {
 		await expect(within(canvasElement).getByText(/could not be reached/)).toBeInTheDocument();
+		await expect(
+			within(canvasElement).getByText(
+				/wimm could not finish connecting, so nothing was added\. This is not something you did/
+			)
+		).toBeInTheDocument();
 	}}
 />
 
@@ -348,6 +349,7 @@
      told about a hand-off they did not make. -->
 <Story
 	name="No outcome is silent"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.queryByText(/nothing was added to the household/)).not.toBeInTheDocument();
@@ -359,6 +361,7 @@
      notice says they are yours and nobody else's yet. -->
 <Story
 	name="Just connected"
+	tags={['kind-outcome']}
 	args={{
 		outcome: 'connected' as const,
 		banks: [
@@ -381,10 +384,10 @@
 	}}
 />
 
-<!-- Who connected a bank and when its access ends, which the spec requires and
-     Overview showed nowhere. -->
+<!-- Who connected a bank and when its access ends. -->
 <Story
 	name="Connected banks"
+	tags={['kind-state']}
 	args={{
 		banks: [
 			{
@@ -413,7 +416,6 @@
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText(/Connected by Emanuel/)).toBeInTheDocument();
 		await expect(canvas.getByText(/access ends 16 December 2026/)).toBeInTheDocument();
-		// The frame's wording for a dead connection: "access ran out <date>".
 		await expect(canvas.getByText(/access ran out tomorrow/)).toBeInTheDocument();
 	}}
 />
@@ -421,6 +423,7 @@
 <!-- Disconnect was unreachable: the dialog existed and nothing opened it. -->
 <Story
 	name="Disconnect is reachable"
+	tags={['kind-behaviour']}
 	args={{
 		banks: [
 			{
@@ -452,6 +455,7 @@
      one that would be refused is not shown. -->
 <Story
 	name="A bank the member cannot manage"
+	tags={['kind-state']}
 	args={{
 		banks: [
 			{
@@ -474,63 +478,44 @@
 />
 
 <!-- Frame J05.A / 01: accounts sit inside their bank's card, under a header
-     naming the bank and who connected it. They were rendering as bare rows on
-     the page background because nothing set connectionId, so the grouping never
-     ran at all. -->
+     naming the bank and who connected it. -->
 <Story
 	name="Accounts sit under their bank"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 
 		const card = canvas.getByRole('region', { name: 'Caixa Económica Montepio Geral' });
 		await expect(card).toBeInTheDocument();
 
-		// Both rows are inside the card, not siblings of it.
 		await expect(within(card).getByText('Conta à Ordem')).toBeInTheDocument();
 		await expect(within(card).getByText('Poupança')).toBeInTheDocument();
 
-		// And the header the frame draws is there with them.
 		await expect(within(card).getByText(/Connected by Emanuel/)).toBeInTheDocument();
 		await expect(within(card).getByRole('button', { name: 'Disconnect' })).toBeInTheDocument();
-	}}
-/>
-
-<!-- The frame's tile is labelled "Household total". -->
-<Story
-	name="The total is a labelled tile"
-	play={async ({ canvasElement }) => {
-		const totals = within(
-			within(canvasElement).getByRole('region', { name: 'Totals' })
-		);
-		await expect(totals.getByText('Household total')).toBeInTheDocument();
-		await expect(totals.getByText('€16,130.10')).toBeInTheDocument();
 	}}
 />
 
 <!-- A reading says it was read: "Read just now", not a bare "just now". -->
 <Story
 	name="A reading says it was read"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement }) => {
-		await expect(
-			within(canvasElement).getAllByText(/Read 2 minutes ago/)[0]
-		).toBeInTheDocument();
+		await expect(within(canvasElement).getAllByText(/Read 2 minutes ago/)[0]).toBeInTheDocument();
 	}}
 />
 
-<!-- J09.A / 05: an account left out stays on Overview, marked, with no figure
-     — an owner who cannot see it has no way back to it. The total passed in
-     is already the household's, excluding it: that arithmetic is the
-     backend's (ADR 0022), this only asserts the row itself. -->
+<!-- J09.A / 05: an account left out stays on Accounts, marked, with no figure
+     — an owner who cannot see it has no way back to it. -->
 <Story
 	name="An account left out"
+	tags={['kind-state']}
 	args={{
-		accounts: [current, { ...savings, leftOut: true, balance: undefined, readAt: undefined }],
-		totals: [{ total: '€4,200.10', currency: 'EUR' }]
+		accounts: [current, { ...savings, leftOut: true, balance: undefined, readAt: undefined }]
 	}}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Left out')).toBeInTheDocument();
 		await expect(canvas.queryByText('€11,930.00')).not.toBeInTheDocument();
-		await expect(canvas.getAllByText('€4,200.10')).toHaveLength(2);
 	}}
 />

@@ -20,6 +20,9 @@
 		negative?: boolean;
 		unsettled?: boolean;
 		initials?: string;
+		/** The statement text as the bank wrote it. Shown under `description`
+		 *  only where it differs from it. */
+		banksLine?: string;
 	}
 
 	/** One day's transactions under the heading that names it. */
@@ -32,25 +35,30 @@
 		entries: LedgerEntry[];
 	}
 
-	/** The words above a day's transactions. */
-	export function dayLabel(date: string, today = new Date()): string {
-		const iso = (d: Date) =>
-			`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+	function localIso(d: Date): string {
+		return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+	}
 
-		if (date === iso(today)) return 'Today';
-
-		const yesterday = new Date(today);
-		yesterday.setDate(yesterday.getDate() - 1);
-		if (date === iso(yesterday)) return 'Yesterday';
-
+	/** The words above a day's transactions, which is where a row's date
+	 *  lives: `Today, 17 September`, `Yesterday, 16 September`, or an older
+	 *  day with its year. `today` is `YYYY-MM-DD`. */
+	export function dayLabel(date: string, today = localIso(new Date())): string {
 		const [year, month, day] = date.split('-').map(Number);
-		if (!year || !month || !day) return date;
-		return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString(undefined, {
-			day: 'numeric',
-			month: 'long',
-			year: 'numeric',
-			timeZone: 'UTC'
-		});
+		const [ty, tm, td] = today.split('-').map(Number);
+		if (!year || !month || !day || !ty || !tm || !td) return date;
+
+		const long = (options: Intl.DateTimeFormatOptions) =>
+			new Date(Date.UTC(year, month - 1, day)).toLocaleDateString('en-GB', {
+				...options,
+				timeZone: 'UTC'
+			});
+
+		if (date === today) return `Today, ${long({ day: 'numeric', month: 'long' })}`;
+
+		const yesterday = new Date(Date.UTC(ty, tm - 1, td - 1)).toISOString().slice(0, 10);
+		if (date === yesterday) return `Yesterday, ${long({ day: 'numeric', month: 'long' })}`;
+
+		return long({ day: 'numeric', month: 'long', year: 'numeric' });
 	}
 
 	/** A bank connected before wimm could read transactions. */
@@ -65,7 +73,8 @@
 	export interface LedgerProblem {
 		connectionId: string;
 		bankName: string;
-		kind: 'unreachable' | 'rate-limited' | 'access-ended' | 'disconnected' | 'first-read' | 'widened';
+		kind:
+			'unreachable' | 'rate-limited' | 'access-ended' | 'disconnected' | 'first-read' | 'widened';
 		/** Only for rate-limited, and only when the bank said. */
 		retryAfter?: string;
 		/** Only for unreachable: when that bank's rows were last read. */
@@ -129,6 +138,10 @@
 		/** Where connecting a first bank starts. */
 		connectHref?: string;
 
+		/** The date the screen calls Today, as `YYYY-MM-DD`. Left unset it is the
+		 *  device's. Fixed by a story so its words do not move with the calendar. */
+		today?: string;
+
 		refreshing?: boolean;
 		onrefresh?: () => void;
 		/** Compact stacks each row into two lines. Left unset, the screen reads
@@ -155,6 +168,7 @@
 		noBank = false,
 		ownsNothing = false,
 		connectHref = '/connect',
+		today,
 		refreshing = false,
 		onrefresh,
 		compact: compactProp
@@ -242,8 +256,8 @@
 		</ErrorNotice>
 	{:else if problem.kind === 'access-ended'}
 		<ErrorNotice title="{problem.bankName} has stopped sending transactions" live="polite">
-			The access you gave {problem.bankName} has run out. What is below stays here, and nothing new
-			arrives until you confirm again at the bank.
+			The access you gave {problem.bankName} has run out. What is below stays here, and nothing new arrives
+			until you confirm again at the bank.
 			<a class="inline-action" href={problem.restoreHref ?? '/'}>Restore {problem.bankName}</a>
 		</ErrorNotice>
 	{:else if problem.kind === 'disconnected'}
@@ -253,13 +267,13 @@
 		</InfoNotice>
 	{:else if problem.kind === 'first-read'}
 		<InfoNotice title="Reading your transactions">
-			{problem.bankName} is sending them now. This is the first time, so it can take a moment. How
-			far back they reach is whatever {problem.bankName} gives.
+			{problem.bankName} is sending them now. This is the first time, so it can take a moment. How far
+			back they reach is whatever {problem.bankName} gives.
 		</InfoNotice>
 	{:else if problem.kind === 'widened'}
 		<InfoNotice title="{problem.bankName} is sending transactions now">
-			This is the first read, so it goes back as far as {problem.bankName} will give. Nothing about
-			who owns these accounts has changed.
+			This is the first read, so it goes back as far as {problem.bankName} will give. Nothing about who
+			owns these accounts has changed.
 		</InfoNotice>
 	{/if}
 {/snippet}
@@ -281,116 +295,123 @@
 			{/if}
 		</div>
 
-	{#if filterAccount}
-		<!-- A filter is not containment: the account is named, there is no
+		{#if filterAccount}
+			<!-- A filter is not containment: the account is named, there is no
 		     breadcrumb, and removing it widens the same list. -->
-		<div class="filter">
-			<span class="filter-label">Showing one account</span>
-			<span class="chip">{filterAccount}</span>
-			<a class="show-all" href={showAllHref} onclick={() => listHeading?.focus()}>
-				Show all accounts
-			</a>
-		</div>
-	{/if}
+			<div class="filter">
+				<span class="filter-label">Showing one account</span>
+				<span class="chip">{filterAccount}</span>
+				<a class="show-all" href={showAllHref} onclick={() => listHeading?.focus()}>
+					Show all accounts
+				</a>
+			</div>
+		{/if}
 
-	<!-- A bank that cannot be read for transactions is an alert on that bank,
+		<!-- A bank that cannot be read for transactions is an alert on that bank,
 	     never a page banner: a household with one narrow bank and two current
 	     ones would otherwise be warned about the whole product, daily. -->
-	{#each narrow as bank (bank.connectionId)}
-		<InfoNotice title="{bank.bankName} is not sending transactions yet">
-			This bank was connected before wimm could read transactions. Confirm once more at {bank.bankName}
-			and they will start arriving. Your balances are unaffected.
-			<a class="inline-action" href={bank.widenHref}>Widen at {bank.bankName}</a>
-		</InfoNotice>
-	{/each}
+		{#each narrow as bank (bank.connectionId)}
+			<InfoNotice title="{bank.bankName} is not sending transactions yet">
+				This bank was connected before wimm could read transactions. Confirm once more at {bank.bankName}
+				and they will start arriving. Your balances are unaffected.
+				<a class="inline-action" href={bank.widenHref}>Widen at {bank.bankName}</a>
+			</InfoNotice>
+		{/each}
 
-	{#each problems as problem (problem.connectionId)}
-		{@render problemNotice(problem)}
-	{/each}
+		{#each problems as problem (problem.connectionId)}
+			{@render problemNotice(problem)}
+		{/each}
 
-	<p class="sr-only" role="status" aria-live="polite">{refreshOutcome}</p>
+		<p class="sr-only" role="status" aria-live="polite">{refreshOutcome}</p>
 
-	{#if !hasRows}
-		{#if emptyReason === 'no-bank'}
-			<EmptyState title="No transactions yet" elevated>
-				Connect a bank and wimm will read what happens on your accounts. Nobody else in the
-				household sees any of it until you say so.
-				{#snippet action()}
-					<a class="inline-action" href={connectHref}>Connect a bank</a>
-				{/snippet}
-			</EmptyState>
-		{:else if emptyReason === 'owns-nothing'}
-			<EmptyState title="You do not own any accounts" elevated>
-				Transactions are shown for accounts that are yours. Ask whoever connected the bank to make
-				you an owner of one.
-			</EmptyState>
-		{:else if emptyReason === 'narrow'}
-			<EmptyState title="Nothing read from {narrowBank}" elevated>
-				There is nothing to show until the bank starts sending transactions.
-			</EmptyState>
-		{:else if emptyReason === 'first-read'}
-			<EmptyState title="Nothing read yet" elevated>The list fills as the bank answers.</EmptyState>
-		{:else}
-			<EmptyState title="Nothing read yet" elevated>The list fills as the bank answers.</EmptyState>
-		{/if}
-	{:else}
-		<section class="ledger" aria-labelledby="ledger-heading">
-			<div class="toolbar">
-				<h2 id="ledger-heading" class="count" tabindex="-1" bind:this={listHeading}>
-					{count} transactions
-				</h2>
-				{#if !compact && freshness}
-					<p class="helper">{freshness}</p>
-				{/if}
-			</div>
-
-			{#if !compact}
-				<div class="columns" aria-hidden="true">
-					<span class="col-gap"></span>
-					<span class="col-description">Description</span>
-					<span class="col-account">Account</span>
-					<span class="col-status"></span>
-					<span class="col-date">Date</span>
-					<span class="col-amount">Amount</span>
-				</div>
+		{#if !hasRows}
+			{#if emptyReason === 'no-bank'}
+				<EmptyState title="No transactions yet" elevated>
+					Connect a bank and wimm will read what happens on your accounts. Nobody else in the
+					household sees any of it until you say so.
+					{#snippet action()}
+						<a class="inline-action" href={connectHref}>Connect a bank</a>
+					{/snippet}
+				</EmptyState>
+			{:else if emptyReason === 'owns-nothing'}
+				<EmptyState title="You do not own any accounts" elevated>
+					Transactions are shown for accounts that are yours. Ask whoever connected the bank to make
+					you an owner of one.
+				</EmptyState>
+			{:else if emptyReason === 'narrow'}
+				<EmptyState title="Nothing read from {narrowBank}" elevated>
+					There is nothing to show until the bank starts sending transactions.
+				</EmptyState>
+			{:else if emptyReason === 'first-read'}
+				<EmptyState title="Nothing read yet" elevated
+					>The list fills as the bank answers.</EmptyState
+				>
+			{:else}
+				<EmptyState title="Nothing read yet" elevated
+					>The list fills as the bank answers.</EmptyState
+				>
 			{/if}
+		{:else}
+			<section class="ledger" aria-labelledby="ledger-heading">
+				<div class="toolbar">
+					<h2 id="ledger-heading" class="count" tabindex="-1" bind:this={listHeading}>
+						{count} transactions
+					</h2>
+					{#if !compact && freshness}
+						<p class="helper">{freshness}</p>
+					{/if}
+				</div>
 
-			<!-- Only this scrolls: the ledger's own height never exceeds the
+				{#if !compact}
+					<div class="columns" aria-hidden="true">
+						<span class="col-gap"></span>
+						<span class="col-description">Description</span>
+						<span class="col-account">Account</span>
+						<span class="col-status"></span>
+						<span class="col-amount">Amount</span>
+					</div>
+				{/if}
+
+				<!-- Only this scrolls: the ledger's own height never exceeds the
 			     screen, and the toolbar, columns and pager stay put around
 			     whatever part of the list is on screen. -->
-			<div class="rows">
-				{#each days as day (day.date + day.entries[0]?.id)}
-					<h3 class="day">{dayLabel(day.date)}</h3>
-					{#each day.entries as entry (entry.id)}
-						<LedgerRow
-							description={entry.description}
-							account={entry.account}
-							amount={entry.amount}
-							date={entry.date}
-							negative={entry.negative}
-							unsettled={entry.unsettled}
-							initials={entry.initials}
-							{compact}
-						/>
+				<!-- The list scrolls, so a keyboard has to be able to reach it. -->
+				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+				<div class="rows" role="region" aria-label="Transactions" tabindex="0">
+					{#each days as day (day.date + day.entries[0]?.id)}
+						<h3 class="day">{dayLabel(day.date, today)}</h3>
+						{#each day.entries as entry (entry.id)}
+							<LedgerRow
+								description={entry.description}
+								account={entry.account}
+								amount={entry.amount}
+								date={entry.date}
+								negative={entry.negative}
+								unsettled={entry.unsettled}
+								initials={entry.initials}
+								banksLine={entry.banksLine}
+								hideDate={!compact}
+								{compact}
+							/>
+						{/each}
 					{/each}
-				{/each}
-			</div>
+				</div>
 
-			<!-- One row, not two: the span says where the member is and the
+				<!-- One row, not two: the span says where the member is and the
 			     scrubber is how they move, and neither needs a whole row to
 			     itself. -->
-			{#if span || pages.length > 0}
-				<div class="pager">
-					{#if span}
-						<SeekPager {span} {nothingOlder} />
-					{/if}
-					{#if pages.length > 0}
-						<PageScrubber {pages} current={currentPage} {newestHref} {oldestHref} />
-					{/if}
-				</div>
-			{/if}
-		</section>
-	{/if}
+				{#if span || pages.length > 0}
+					<div class="pager" class:compact>
+						{#if span}
+							<SeekPager {span} {nothingOlder} />
+						{/if}
+						{#if pages.length > 0}
+							<PageScrubber {pages} current={currentPage} {newestHref} {oldestHref} />
+						{/if}
+					</div>
+				{/if}
+			</section>
+		{/if}
 	</div>
 </Page>
 
@@ -487,9 +508,16 @@
 	}
 
 	.rows {
+		/* The rows are a table: the name takes what the columns leave. */
+		--ledger-name-basis: 0px;
 		flex: 1;
 		min-block-size: 0;
 		overflow-y: auto;
+	}
+
+	.rows:focus-visible {
+		outline: var(--focus-ring-width) solid var(--color-focus-ring);
+		outline-offset: calc(var(--focus-ring-offset) * -1);
 	}
 
 	.toolbar {
@@ -500,12 +528,21 @@
 		padding-inline: var(--density-cell-padding-x);
 	}
 
+	/* The span fills the left and the scrubber sits right. Compact stacks
+	   them, span above scrubber. */
 	.pager {
 		display: flex;
 		align-items: center;
-		flex-wrap: wrap;
 		justify-content: space-between;
+		block-size: 56px;
 		background: var(--color-bg-surface);
+	}
+
+	.pager.compact {
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: center;
+		block-size: 92px;
 	}
 
 	.count {
@@ -549,14 +586,21 @@
 		inline-size: 92px;
 	}
 
-	.col-date {
-		inline-size: 72px;
-		text-align: end;
-	}
-
 	.col-amount {
 		inline-size: 112px;
 		text-align: end;
+	}
+
+	/* At Medium the columns leave the name about 180, which cuts a bank's line
+	   short. The account gives up the room it was not using. */
+	@media (min-width: 768px) and (max-width: 1199px) {
+		.rows {
+			--ledger-account-basis: 168px;
+		}
+
+		.col-account {
+			inline-size: 168px;
+		}
 	}
 
 	/* A day repeated at the top of a page is the same heading, not a new one. */

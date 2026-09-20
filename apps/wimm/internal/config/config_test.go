@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -329,5 +330,29 @@ func TestEveryBankingProblemIsReportedAtOnce(t *testing.T) {
 		if !strings.Contains(err.Error(), want) {
 			t.Errorf("error does not mention %q: %v", want, err)
 		}
+	}
+}
+
+func TestConnectableBanksDefaultsWhenUnset(t *testing.T) {
+	c, err := config.Load(env(valid()))
+	if err != nil {
+		t.Fatalf("valid configuration was refused: %v", err)
+	}
+	if !slices.Equal(c.ConnectableBanks, config.DefaultConnectableBanks) {
+		t.Errorf("ConnectableBanks = %v, want %v", c.ConnectableBanks, config.DefaultConnectableBanks)
+	}
+}
+
+func TestConnectableBanksParsesCustomList(t *testing.T) {
+	e := valid()
+	e["WIMM_BANKING_CONNECTABLE_BANKS"] = "Revolut, N26 ,  , Wise"
+
+	c, err := config.Load(env(e))
+	if err != nil {
+		t.Fatalf("valid overrides were refused: %v", err)
+	}
+	want := []string{"Revolut", "N26", "Wise"}
+	if !slices.Equal(c.ConnectableBanks, want) {
+		t.Errorf("ConnectableBanks = %v, want %v", c.ConnectableBanks, want)
 	}
 }

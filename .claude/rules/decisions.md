@@ -722,7 +722,7 @@ it, and it confers no authority over who sees what.
 **The full account number is never stored.** Only enough trailing characters to
 tell two accounts at one bank apart, which is all the behaviour requires.
 
-## 0019 · Accounts have owners, and each member sees a level — Accepted
+## 0019 · Accounts have owners, and each member sees a level — Accepted; totals superseded by 0024
 
 **An account has owners, and an owner sees it in full.** Ownership is
 many-to-many: a joint account is owned by both partners, which is the case the
@@ -1028,3 +1028,21 @@ are deleted. Commit `38355d1` is the last that holds the `.pen` files;
 This supersedes ADRs 0020, 0009, 0010 and 0011 whole, the drawing in 0008, and
 the library clause of 0003. 0008's artifact, its conditional skip and its
 components-before-screens rule stand.
+
+## 0024 · Household money and a member's own money — Accepted
+
+Wherever wimm shows a total it shows two, per currency, and never one that mixes
+them. Household money is the sum of accounts that every member owns or holds a
+details grant on, with two or more members in the household. Own money is the sum
+of accounts the calling member owns that are not household money. The two are
+disjoint. Any other account the member may see is listed and counted in neither;
+a left-out account is counted nowhere.
+
+The group of each account is decided once, in `wimmd`, from one query counting the
+members who own or hold a details grant on it against the household's size, and
+is sent as `Account.group`. `ListAccountsResponse` and `RefreshBalancesResponse`
+carry `household_totals` and `own_totals` in place of `totals`. No client
+classifies an account or sums a figure.
+
+A flag was rejected: it restates what the grants already say and drifts the first
+time a level changes.

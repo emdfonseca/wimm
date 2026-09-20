@@ -1,12 +1,11 @@
 <script lang="ts" module>
 	/**
-	 * J04 · Overview. The screen a member lands on after signing in, and the
-	 * only destination in this change.
+	 * J03 · Accounts. The account list and every connection action — connect,
+	 * restore, disconnect, choose who sees an account. Never shows a total: that
+	 * moved to Overview (`banking/household-accounts`: "Before any bank is
+	 * connected, Accounts says so").
 	 *
-	 * Everything here is **that member's own view**: the accounts they may see,
-	 * and a total of exactly those. Two members of one household land on this
-	 * screen and correctly see different numbers, and neither is told what the
-	 * other sees.
+	 * Everything here is **that member's own view**: the accounts they may see.
 	 */
 	export interface OverviewAccount {
 		id: string;
@@ -26,12 +25,6 @@
 		leftOut?: boolean;
 	}
 
-	export interface CurrencyTotal {
-		/** Already formatted, carrying its currency. */
-		total: string;
-		currency: string;
-	}
-
 	/**
 	 * What the last hand-off produced, for a member who has just come back
 	 * from one. Distinct from BankProblem: that is a bank wimm already has and
@@ -49,11 +42,6 @@
 
 	/**
 	 * A bank the household has connected, as the viewing member sees it.
-	 *
-	 * Overview showed accounts and nothing about where they came from, which
-	 * left two specified things missing and one capability unreachable: who
-	 * connected a bank, when its access ends, and any way to open the chooser
-	 * or disconnect it.
 	 */
 	export interface ConnectedBank {
 		connectionId: string;
@@ -97,7 +85,6 @@
 		outcomeAccessEndsOn?: string;
 		banks?: ConnectedBank[];
 		accounts?: OverviewAccount[];
-		totals?: CurrencyTotal[];
 		problems?: BankProblem[];
 		refreshing?: boolean;
 		onrefresh?: () => void;
@@ -116,7 +103,6 @@
 		outcomeAccessEndsOn = '',
 		banks = [],
 		accounts = [],
-		totals = [],
 		problems = [],
 		refreshing = false,
 		onrefresh,
@@ -195,9 +181,9 @@
 		</InfoNotice>
 	{:else if outcome === 'no-accounts'}
 		<ErrorNotice title="No accounts came back from {outcomeBank}" live="polite">
-			{outcomeBank} granted access but offered no accounts wimm can read. The bank was not
-			connected. If you hold accounts at {outcomeBank}, check whether they are covered by the
-			access you granted.
+			{outcomeBank} granted access but offered no accounts wimm can read. The bank was not connected.
+			If you hold accounts at {outcomeBank}, check whether they are covered by the access you
+			granted.
 		</ErrorNotice>
 	{:else if outcome === 'already-connected'}
 		<InfoNotice title="{outcomeBank} is already connected">
@@ -221,7 +207,7 @@
 	{/if}
 {/snippet}
 
-<Page title="Overview">
+<Page title="Accounts">
 	{#snippet action()}
 		{#if accounts.length > 0}
 			<!-- Primary in the frame: it is the one thing a member comes back to
@@ -232,13 +218,12 @@
 		{/if}
 	{/snippet}
 
-	<!-- Under the page header, not above it: J04.B / 01 draws Overview, then
-	     Refresh balances, then the notice, then the total. -->
+	<!-- Under the page header, not above it: J04.B / 01 draws Accounts, then
+	     Refresh balances, then the notice, then the account list. -->
 	{@render outcomeNotice()}
 
 	{#if accounts.length === 0}
-		<!-- No total over nothing: a total of zero would claim a household has
-		     no money rather than that wimm has not been told. -->
+		<!-- No total over nothing: Accounts never shows one at all now. -->
 		<EmptyState title="No banks connected">
 			Connect a bank and wimm shows the household's accounts and balances here.
 		</EmptyState>
@@ -256,8 +241,8 @@
 						The access {bankOf(problem)?.connectedBy ?? 'someone else'} granted ran out on {bankOf(
 							problem
 						)?.accessEndsOn ?? 'an earlier date'}, so these balances are the last ones read.
-						Restoring takes a moment at {problem.bankName} and keeps the accounts the household is
-						already sharing.
+						Restoring takes a moment at {problem.bankName} and keeps the accounts the household is already
+						sharing.
 					</InfoNotice>
 					<Button variant="secondary" onclick={() => onrestore?.(problem.connectionId)}>
 						Restore access
@@ -270,13 +255,12 @@
 						     limit it is and when it lifts rather than "try later". -->
 						<ErrorNotice title="Balances cannot be refreshed yet" live="polite">
 							{#if problem.retryAfter}
-								{problem.bankName} limits how often wimm may read balances. The next refresh is
-								possible after {problem.retryAfter}. The balances below are the ones already read, at
-								the times shown.
+								{problem.bankName} limits how often wimm may read balances. The next refresh is possible
+								after {problem.retryAfter}. The balances below are the ones already read, at the
+								times shown.
 							{:else}
-								{problem.bankName} limits how often wimm may read balances, and did not say when the
-								next one is possible. The balances below are the ones already read, at the times
-								shown.
+								{problem.bankName} limits how often wimm may read balances, and did not say when the next
+								one is possible. The balances below are the ones already read, at the times shown.
 							{/if}
 						</ErrorNotice>
 					{:else}
@@ -286,30 +270,6 @@
 					{/if}
 				{/each}
 			</div>
-		{/if}
-
-		{#if totals.length > 0}
-			<!-- Frame J05.A / 01: a labelled tile at 300, then a spacer. Not a
-			     bare figure. -->
-			<section class="totals" aria-label="Totals">
-				<div class="tiles">
-					{#each totals as total (total.currency)}
-						<div class="total">
-							<span class="total-label">
-								{totals.length > 1
-									? `Household total · ${total.currency}`
-									: 'Household total'}
-							</span>
-							<span class="total-value">{total.total}</span>
-						</div>
-					{/each}
-				</div>
-				{#if totals.length > 1}
-					<!-- wimm holds no rates, and a converted figure would invent the
-					     number a household trusts most. -->
-					<p class="no-conversion">Shown per currency. wimm does not convert between them.</p>
-				{/if}
-			</section>
 		{/if}
 
 		<!-- One section per bank: a card header naming it, who connected it and
@@ -356,7 +316,7 @@
 
 		<!-- Anything not rendered above: an account with no bank behind it, and
 		     an account whose bank is missing from `banks`.
-		     
+
 		     The second case is the important one. When this screen stopped
 		     being passed `banks`, every account had a connectionId matching
 		     nothing, so none rendered here either and the page came up empty.
@@ -386,57 +346,8 @@
 </Page>
 
 <style>
-	/* Frame J05.A / 01: a labelled tile at 300, in a row with a spacer. */
-	.totals {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-		align-items: flex-start;
-	}
-
-	.tiles {
-		display: flex;
-		gap: 16px;
-		flex-wrap: wrap;
-	}
-
-	.total {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-		inline-size: 300px;
-		max-inline-size: 100%;
-		padding: 16px;
-		background: var(--color-bg-surface);
-		border: 1px solid var(--color-border-subtle);
-		border-radius: var(--radius-md);
-	}
-
-	.total-label {
-		color: var(--color-text-secondary);
-		font-family: var(--type-family-body);
-		font-size: var(--type-size-body-sm);
-	}
-
-	.total-value {
-		color: var(--color-text-primary);
-		font-family: var(--type-family-mono);
-		font-size: var(--type-size-display-sm);
-		font-weight: 600;
-	}
-
-	.no-conversion {
-		margin: 0;
-		color: var(--color-text-secondary);
-		font-family: var(--type-family-body);
-		font-size: var(--type-size-body-sm);
-	}
-
 	/* A bank and its accounts are one block: the card header names the bank,
 	   the rows beneath it are that bank's. */
-	/* Frame J05.A / 01: one card per bank, its header and its rows inside the
-	   same border. The rows were floating on the page background with no card
-	   and no header at all. */
 	.bank {
 		display: flex;
 		flex-direction: column;
@@ -493,9 +404,6 @@
 		.card-header {
 			flex-wrap: wrap;
 			padding-block: 8px;
-		}
-		.total {
-			inline-size: 100%;
 		}
 	}
 

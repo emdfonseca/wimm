@@ -96,6 +96,24 @@
 	}}
 />
 
+<!-- Overview's form: the whole row is one link to Accounts, Balance over
+     Reading, and nothing in it that changes anything. -->
+<Story
+	name="ReadOnlyLink"
+	args={{ name: 'Joint account', bank: 'Monzo', numberSuffix: undefined, balance: '€6,698.00', readAt: 'just now', href: '/accounts' }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const link = canvas.getByRole('link');
+		await expect(link).toHaveAttribute('href', '/accounts');
+		await expect(link).toHaveTextContent('Joint account');
+		await expect(link).toHaveTextContent('Monzo');
+		await expect(link).toHaveTextContent('€6,698.00');
+		await expect(link).toHaveTextContent('Read just now');
+		await expect(link.getBoundingClientRect().height).toBe(56);
+		await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
+	}}
+/>
+
 <Story name="A list" tags={['!test']}>
 	{#snippet template(args)}
 		<div style="display: flex; flex-direction: column; inline-size: 520px;">

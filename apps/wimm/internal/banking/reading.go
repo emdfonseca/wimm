@@ -8,15 +8,20 @@ import (
 	"github.com/xuuid/wimm/apps/wimm/internal/store"
 )
 
-// View is what a member sees: the accounts they may see, a total per currency
-// of exactly those, and the banks that could not be brought up to date.
+// View is what a member sees: the accounts they may see, which figure each
+// counts towards, the two figures, and the banks that could not be brought up
+// to date.
 //
-// Two members of one household get different Views of the same data, and each
-// total agrees with the accounts beside it.
+// Household money is the same for every member. Own money differs, and each
+// figure agrees with the accounts in its group (ADR 0024).
 type View struct {
 	Accounts []store.VisibleAccount
-	Totals   []Total
-	Failures []BankFailure
+	// Groups is keyed by account id. A left-out account has none: it counts
+	// towards nothing.
+	Groups          map[string]Group
+	HouseholdTotals []Total
+	OwnTotals       []Total
+	Failures        []BankFailure
 }
 
 // Total is one currency's sum. Currencies are never added together: wimm holds
@@ -70,7 +75,18 @@ func (s *Service) Accounts(ctx context.Context, memberID string, skipRead bool) 
 		}
 	}
 
-	return View{Accounts: visible, Totals: totals(visible), Failures: shown}, nil
+	groups, err := s.groupAccounts(ctx, visible)
+	if err != nil {
+		return View{}, err
+	}
+
+	return View{
+		Accounts:        visible,
+		Groups:          groups,
+		HouseholdTotals: totals(visible, groups, GroupHousehold),
+		OwnTotals:       totals(visible, groups, GroupOwn),
+		Failures:        shown,
+	}, nil
 }
 
 // readAll reads every live connection's readable accounts, and returns what
@@ -182,11 +198,11 @@ func preferred(balances []Balance) (Balance, bool) {
 	return balances[0], true
 }
 
-// totals sums per currency, over exactly the accounts the member may see —
-// and a left-out account is never in that sum, however stale a balance it
-// still holds underneath: the total agrees with what the member is shown,
-// and a left-out account shows no balance at all (ADR 0022).
-func totals(accounts []store.VisibleAccount) []Total {
+// totals sums per currency, over the accounts in one group — and a left-out
+// account is in no group, however stale a balance it still holds underneath:
+// the total agrees with what the member is shown, and a left-out account shows
+// no balance at all (ADR 0022).
+func totals(accounts []store.VisibleAccount, groups map[string]Group, group Group) []Total {
 	order := make([]string, 0, 4)
 	sums := map[string]*Total{}
 
@@ -195,7 +211,7 @@ func totals(accounts []store.VisibleAccount) []Total {
 		// account it cannot express as a single currency (a multi-currency
 		// wallet aggregated as one account), and 0 minor units alongside it is
 		// not a real balance to sum.
-		if a.BalanceMinor == nil || a.LeftOut() || a.Currency == "XXX" {
+		if a.BalanceMinor == nil || a.LeftOut() || a.Currency == "XXX" || groups[a.ID] != group {
 			continue
 		}
 		t, ok := sums[a.Currency]
@@ -293,6 +309,16 @@ func (s *Service) GrantsOnConnection(ctx context.Context, memberID, connectionID
 		return nil, err
 	}
 	return s.store.GrantsForConnection(ctx, connectionID)
+}
+
+// OwnersOnConnection is who owns each of that connection's accounts, so the
+// chooser can render "Also owned by" against every co-owner, not just the
+// calling member's own ownership.
+func (s *Service) OwnersOnConnection(ctx context.Context, memberID, connectionID string) ([]store.Owner, error) {
+	if err := s.requireOwnerOnConnection(ctx, memberID, connectionID); err != nil {
+		return nil, err
+	}
+	return s.store.OwnersForConnection(ctx, connectionID)
 }
 
 // HouseholdMembers lists who a level can be granted to.

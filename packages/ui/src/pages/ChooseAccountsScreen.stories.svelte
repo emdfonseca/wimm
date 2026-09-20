@@ -64,6 +64,7 @@
      granted anything. -->
 <Story
 	name="As it opens"
+	tags={['kind-state']}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		for (const box of canvas.getAllByRole('checkbox', { name: /is mine/ })) {
@@ -77,6 +78,7 @@
      disabled. This is the behaviour that changed with the ownership model. -->
 <Story
 	name="Finish is always enabled"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement, args }) => {
 		const finish = within(canvasElement).getByRole('button', { name: 'Finish' });
 		await expect(finish).toBeEnabled();
@@ -87,6 +89,7 @@
 
 <Story
 	name="One granted at balance"
+	tags={['kind-state']}
 	args={{ levels: { a1: { grace: 'balance' } } }}
 	play={async ({ canvasElement }) => {
 		const group = within(canvasElement).getByRole('radiogroup', {
@@ -98,6 +101,7 @@
 
 <Story
 	name="Two members at different levels"
+	tags={['kind-state']}
 	args={{ levels: { a1: { grace: 'details', alan: 'balance' } } }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -112,6 +116,7 @@
      read for it — which is what makes disowning meaningful. -->
 <Story
 	name="One disowned"
+	tags={['kind-state']}
 	args={{ accounts: [current, savings, { ...personal, owned: false }] }}
 	play={async ({ canvasElement }) => {
 		await expect(
@@ -123,6 +128,7 @@
 <!-- A level change is announced by name and level, not as a running count. -->
 <Story
 	name="Changing a level is announced"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		const group = canvas.getByRole('radiogroup', { name: 'What Grace sees of Poupança' });
@@ -137,6 +143,7 @@
 
 <Story
 	name="Disowning is announced"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(canvas.getByRole('checkbox', { name: 'Conta Pessoal is mine' }));
@@ -149,6 +156,7 @@
 <!-- Reopened later, showing the choice as it stands rather than as it started. -->
 <Story
 	name="Reopened with an existing choice"
+	tags={['kind-state']}
 	args={{ levels: { a1: { grace: 'balance' }, a2: { alan: 'details' } } }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -164,6 +172,7 @@
      surfaced rather than quietly added. -->
 <Story
 	name="Restoring with something new"
+	tags={['kind-state']}
 	args={{
 		restoring: true,
 		accounts: [
@@ -194,6 +203,7 @@
 <!-- A member who owns none of these may look and change nothing. -->
 <Story
 	name="A member who owns none of it"
+	tags={['kind-state']}
 	args={{ readOnly: true, levels: { a1: { grace: 'balance' } } }}
 	play={async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -210,6 +220,7 @@
      that says the accounts are theirs. -->
 <Story
 	name="A household of one"
+	tags={['kind-state']}
 	args={{ members: [] }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -227,6 +238,7 @@
      reader lands at the top of a page it has already announced. -->
 <Story
 	name="Focus lands on the heading"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement }) => {
 		await expect(within(canvasElement).getByRole('heading', { level: 1 })).toHaveFocus();
 	}}
@@ -236,6 +248,7 @@
      replacement list — the fix for the defect the single "Mine" checkbox had. -->
 <Story
 	name="Making an owner"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement, args }) => {
 		await userEvent.click(within(canvasElement).getAllByRole('checkbox', { name: 'Grace' })[0]!);
 		await expect(args.onownerchange).toHaveBeenCalledWith('a1', 'grace', true);
@@ -244,6 +257,7 @@
 
 <Story
 	name="Handed on"
+	tags={['kind-state']}
 	args={{ owners: { a1: { grace: true } } }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -259,6 +273,7 @@
      account out as the way to the same end. -->
 <Story
 	name="The last owner cannot step back"
+	tags={['kind-error']}
 	args={{ refusedAccountId: 'a1' }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -271,6 +286,7 @@
      the account. -->
 <Story
 	name="Leaving an account out"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await userEvent.click(canvas.getAllByRole('button', { name: /Leave out|Bring back/ })[0]!);
@@ -283,11 +299,27 @@
 	}}
 />
 
+<!-- The confirmation itself, left open: what a member reads before an account
+     leaves wimm. -->
+<Story
+	name="The leave-out confirmation"
+	tags={['kind-state']}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getAllByRole('button', { name: /Leave out|Bring back/ })[0]!);
+		await expect(
+			canvas.getByRole('heading', { name: 'Leave Conta à Ordem out of wimm?' })
+		).toBeInTheDocument();
+		await expect(canvas.getByRole('button', { name: 'Leave it out' })).toBeInTheDocument();
+	}}
+/>
+
 <!-- J09.A / 05, 06: bringing an account back is required rather than offered,
      and names every member who will see it again and at what level — they
      were given that before it was left out and nobody is asking them again. -->
 <Story
 	name="Bringing it back"
+	tags={['kind-state']}
 	args={{
 		accounts: [{ ...current, leftOut: true }, savings, personal],
 		levels: { a1: { grace: 'balance', alan: 'details' } }
@@ -309,10 +341,30 @@
 	}}
 />
 
+<!-- The confirmation left open: who will see the account again, and at what
+     level, before it happens. -->
+<Story
+	name="The bring-back confirmation"
+	tags={['kind-state']}
+	args={{
+		accounts: [{ ...current, leftOut: true }, savings, personal],
+		levels: { a1: { grace: 'balance', alan: 'details' } }
+	}}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getByRole('button', { name: 'Bring back' }));
+		await expect(
+			canvas.getByRole('heading', { name: 'Bring Conta à Ordem back?' })
+		).toBeInTheDocument();
+		await expect(canvas.getByRole('button', { name: 'Bring it back' })).toBeInTheDocument();
+	}}
+/>
+
 <!-- J10.A / 01: naming an account, inline and ephemeral, on the row it
      belongs to. -->
 <Story
 	name="Naming an account"
+	tags={['kind-behaviour']}
 	args={{ onrename: fn() }}
 	play={async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
@@ -323,5 +375,19 @@
 		await userEvent.click(canvas.getByRole('button', { name: 'Save' }));
 
 		await expect(args.onrename).toHaveBeenCalledWith('a1', 'Rent');
+	}}
+/>
+
+<!-- The rename field left open on its row, with a name typed and not yet saved. -->
+<Story
+	name="The rename field"
+	tags={['kind-state']}
+	args={{ onrename: fn() }}
+	play={async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		await userEvent.click(canvas.getAllByRole('button', { name: 'Rename' })[0]!);
+		await userEvent.type(canvas.getByRole('textbox'), 'Rent');
+		await expect(canvas.getByRole('button', { name: 'Save' })).toBeInTheDocument();
+		await expect(args.onrename).not.toHaveBeenCalled();
 	}}
 />

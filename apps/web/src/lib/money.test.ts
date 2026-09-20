@@ -51,3 +51,11 @@ describe('isNegative', () => {
 		expect(isNegative(undefined)).toBe(false);
 	});
 });
+
+describe('formatMoney signed', () => {
+	it('puts + on money arriving, not on zero, and keeps the minus', () => {
+		expect(formatMoney({ minor: 15_199n, currency: 'EUR' }, { signed: true })).toMatch(/^\+.*151[.,]99/);
+		expect(formatMoney({ minor: -15_199n, currency: 'EUR' }, { signed: true })).toMatch(/^[-−].*151[.,]99/);
+		expect(formatMoney({ minor: 0n, currency: 'EUR' }, { signed: true })).not.toMatch(/[+\-−]/);
+	});
+});

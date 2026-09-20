@@ -14,6 +14,7 @@
 
 <Story
 	name="Widening"
+	tags={['kind-state']}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(
@@ -28,6 +29,7 @@
      expired or failing: it is reading everything it was ever granted. -->
 <Story
 	name="NeverDescribedAsBroken"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement }) => {
 		await expect(
 			within(canvasElement).queryByText(/broken|expired|failed|failing/i)
@@ -39,6 +41,7 @@
      back rather than a destructive action. -->
 <Story
 	name="DecliningIsALinkBack"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement }) => {
 		await expect(within(canvasElement).getByRole('link', { name: 'Not now' })).toHaveAttribute(
 			'href',
@@ -51,6 +54,7 @@
      letting it read as a wimm policy. -->
 <Story
 	name="AShortLivedConsent"
+	tags={['kind-behaviour']}
 	args={{ bankName: 'ActivoBank', accessEndsOn: '19 September 2026' }}
 	play={async ({ canvasElement }) => {
 		await expect(
@@ -61,6 +65,7 @@
 
 <Story
 	name="Compact"
+	tags={['kind-state', 'size-compact']}
 	globals={{ viewport: { value: 'compact' } }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);

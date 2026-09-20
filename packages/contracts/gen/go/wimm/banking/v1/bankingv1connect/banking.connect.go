@@ -75,6 +75,12 @@ const (
 	// BankingServiceRefreshTransactionsProcedure is the fully-qualified name of the BankingService's
 	// RefreshTransactions RPC.
 	BankingServiceRefreshTransactionsProcedure = "/wimm.banking.v1.BankingService/RefreshTransactions"
+	// BankingServiceGetBalanceTrendProcedure is the fully-qualified name of the BankingService's
+	// GetBalanceTrend RPC.
+	BankingServiceGetBalanceTrendProcedure = "/wimm.banking.v1.BankingService/GetBalanceTrend"
+	// BankingServiceGetMonthSummaryProcedure is the fully-qualified name of the BankingService's
+	// GetMonthSummary RPC.
+	BankingServiceGetMonthSummaryProcedure = "/wimm.banking.v1.BankingService/GetMonthSummary"
 )
 
 // BankingServiceClient is a client for the wimm.banking.v1.BankingService service.
@@ -115,6 +121,13 @@ type BankingServiceClient interface {
 	// Bring the transactions up to date again, because the member asked.
 	// Deadline: 30s.
 	RefreshTransactions(context.Context, *connect.Request[v1.RefreshTransactionsRequest]) (*connect.Response[v1.RefreshTransactionsResponse], error)
+	// The calling member's balance trend, per currency, walked from their owned
+	// accounts' booked transactions. Reads no bank. Deadline: 10s.
+	GetBalanceTrend(context.Context, *connect.Request[v1.GetBalanceTrendRequest]) (*connect.Response[v1.GetBalanceTrendResponse], error)
+	// The calling member's month so far per currency, set against the same days
+	// of last month, with where the most money went. Drawn from their owned
+	// accounts' booked transactions. Reads no bank. Deadline: 10s.
+	GetMonthSummary(context.Context, *connect.Request[v1.GetMonthSummaryRequest]) (*connect.Response[v1.GetMonthSummaryResponse], error)
 }
 
 // NewBankingServiceClient constructs a client for the wimm.banking.v1.BankingService service. By
@@ -212,6 +225,18 @@ func NewBankingServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(bankingServiceMethods.ByName("RefreshTransactions")),
 			connect.WithClientOptions(opts...),
 		),
+		getBalanceTrend: connect.NewClient[v1.GetBalanceTrendRequest, v1.GetBalanceTrendResponse](
+			httpClient,
+			baseURL+BankingServiceGetBalanceTrendProcedure,
+			connect.WithSchema(bankingServiceMethods.ByName("GetBalanceTrend")),
+			connect.WithClientOptions(opts...),
+		),
+		getMonthSummary: connect.NewClient[v1.GetMonthSummaryRequest, v1.GetMonthSummaryResponse](
+			httpClient,
+			baseURL+BankingServiceGetMonthSummaryProcedure,
+			connect.WithSchema(bankingServiceMethods.ByName("GetMonthSummary")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -231,6 +256,8 @@ type bankingServiceClient struct {
 	disconnectBank         *connect.Client[v1.DisconnectBankRequest, v1.DisconnectBankResponse]
 	listTransactions       *connect.Client[v1.ListTransactionsRequest, v1.ListTransactionsResponse]
 	refreshTransactions    *connect.Client[v1.RefreshTransactionsRequest, v1.RefreshTransactionsResponse]
+	getBalanceTrend        *connect.Client[v1.GetBalanceTrendRequest, v1.GetBalanceTrendResponse]
+	getMonthSummary        *connect.Client[v1.GetMonthSummaryRequest, v1.GetMonthSummaryResponse]
 }
 
 // ListBanks calls wimm.banking.v1.BankingService.ListBanks.
@@ -303,6 +330,16 @@ func (c *bankingServiceClient) RefreshTransactions(ctx context.Context, req *con
 	return c.refreshTransactions.CallUnary(ctx, req)
 }
 
+// GetBalanceTrend calls wimm.banking.v1.BankingService.GetBalanceTrend.
+func (c *bankingServiceClient) GetBalanceTrend(ctx context.Context, req *connect.Request[v1.GetBalanceTrendRequest]) (*connect.Response[v1.GetBalanceTrendResponse], error) {
+	return c.getBalanceTrend.CallUnary(ctx, req)
+}
+
+// GetMonthSummary calls wimm.banking.v1.BankingService.GetMonthSummary.
+func (c *bankingServiceClient) GetMonthSummary(ctx context.Context, req *connect.Request[v1.GetMonthSummaryRequest]) (*connect.Response[v1.GetMonthSummaryResponse], error) {
+	return c.getMonthSummary.CallUnary(ctx, req)
+}
+
 // BankingServiceHandler is an implementation of the wimm.banking.v1.BankingService service.
 type BankingServiceHandler interface {
 	// Banks connectable in a country, each carrying how long its consent lasts.
@@ -341,6 +378,13 @@ type BankingServiceHandler interface {
 	// Bring the transactions up to date again, because the member asked.
 	// Deadline: 30s.
 	RefreshTransactions(context.Context, *connect.Request[v1.RefreshTransactionsRequest]) (*connect.Response[v1.RefreshTransactionsResponse], error)
+	// The calling member's balance trend, per currency, walked from their owned
+	// accounts' booked transactions. Reads no bank. Deadline: 10s.
+	GetBalanceTrend(context.Context, *connect.Request[v1.GetBalanceTrendRequest]) (*connect.Response[v1.GetBalanceTrendResponse], error)
+	// The calling member's month so far per currency, set against the same days
+	// of last month, with where the most money went. Drawn from their owned
+	// accounts' booked transactions. Reads no bank. Deadline: 10s.
+	GetMonthSummary(context.Context, *connect.Request[v1.GetMonthSummaryRequest]) (*connect.Response[v1.GetMonthSummaryResponse], error)
 }
 
 // NewBankingServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -434,6 +478,18 @@ func NewBankingServiceHandler(svc BankingServiceHandler, opts ...connect.Handler
 		connect.WithSchema(bankingServiceMethods.ByName("RefreshTransactions")),
 		connect.WithHandlerOptions(opts...),
 	)
+	bankingServiceGetBalanceTrendHandler := connect.NewUnaryHandler(
+		BankingServiceGetBalanceTrendProcedure,
+		svc.GetBalanceTrend,
+		connect.WithSchema(bankingServiceMethods.ByName("GetBalanceTrend")),
+		connect.WithHandlerOptions(opts...),
+	)
+	bankingServiceGetMonthSummaryHandler := connect.NewUnaryHandler(
+		BankingServiceGetMonthSummaryProcedure,
+		svc.GetMonthSummary,
+		connect.WithSchema(bankingServiceMethods.ByName("GetMonthSummary")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/wimm.banking.v1.BankingService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case BankingServiceListBanksProcedure:
@@ -464,6 +520,10 @@ func NewBankingServiceHandler(svc BankingServiceHandler, opts ...connect.Handler
 			bankingServiceListTransactionsHandler.ServeHTTP(w, r)
 		case BankingServiceRefreshTransactionsProcedure:
 			bankingServiceRefreshTransactionsHandler.ServeHTTP(w, r)
+		case BankingServiceGetBalanceTrendProcedure:
+			bankingServiceGetBalanceTrendHandler.ServeHTTP(w, r)
+		case BankingServiceGetMonthSummaryProcedure:
+			bankingServiceGetMonthSummaryHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -527,4 +587,12 @@ func (UnimplementedBankingServiceHandler) ListTransactions(context.Context, *con
 
 func (UnimplementedBankingServiceHandler) RefreshTransactions(context.Context, *connect.Request[v1.RefreshTransactionsRequest]) (*connect.Response[v1.RefreshTransactionsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("wimm.banking.v1.BankingService.RefreshTransactions is not implemented"))
+}
+
+func (UnimplementedBankingServiceHandler) GetBalanceTrend(context.Context, *connect.Request[v1.GetBalanceTrendRequest]) (*connect.Response[v1.GetBalanceTrendResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("wimm.banking.v1.BankingService.GetBalanceTrend is not implemented"))
+}
+
+func (UnimplementedBankingServiceHandler) GetMonthSummary(context.Context, *connect.Request[v1.GetMonthSummaryRequest]) (*connect.Response[v1.GetMonthSummaryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("wimm.banking.v1.BankingService.GetMonthSummary is not implemented"))
 }

@@ -525,6 +525,39 @@ type Grant struct {
 	Level     Level
 }
 
+// Owner is one member's ownership of one account.
+type Owner struct {
+	AccountID string
+	MemberID  string
+}
+
+// OwnersForConnection lists every owner of every account on a connection, for
+// the chooser's "Also owned by" checkboxes.
+func (db *DB) OwnersForConnection(ctx context.Context, connectionID string) ([]Owner, error) {
+	const query = `
+		select o.account_id, o.member_id
+		from account_owners o
+		join accounts a on a.id = o.account_id
+		where a.connection_id = $1
+		order by o.account_id, o.member_id`
+
+	rows, err := db.pool.Query(ctx, query, connectionID)
+	if err != nil {
+		return nil, fmt.Errorf("reading owners: %w", err)
+	}
+	defer rows.Close()
+
+	var out []Owner
+	for rows.Next() {
+		var o Owner
+		if err := rows.Scan(&o.AccountID, &o.MemberID); err != nil {
+			return nil, fmt.Errorf("reading owners: %w", err)
+		}
+		out = append(out, o)
+	}
+	return out, rows.Err()
+}
+
 // GrantsForConnection lists every grant on a connection's accounts, for the
 // chooser. Hidden pairs are absent, because hidden is the absence of a row.
 func (db *DB) GrantsForConnection(ctx context.Context, connectionID string) ([]Grant, error) {
@@ -550,6 +583,37 @@ func (db *DB) GrantsForConnection(ctx context.Context, connectionID string) ([]G
 		}
 		g.Level = Level(level)
 		out = append(out, g)
+	}
+	return out, rows.Err()
+}
+
+// FullAccessCounts is, per account, how many distinct members own it or hold a
+// details grant on it — the members who see it in full. An account is
+// household money when that equals the household's size (ADR 0024).
+func (db *DB) FullAccessCounts(ctx context.Context) (map[string]int, error) {
+	const query = `
+		select account_id, count(distinct member_id)
+		from (
+			select account_id, member_id from account_owners
+			union all
+			select account_id, member_id from account_grants where level = 'details'
+		) full_access
+		group by account_id`
+
+	rows, err := db.pool.Query(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("counting members with full access: %w", err)
+	}
+	defer rows.Close()
+
+	out := map[string]int{}
+	for rows.Next() {
+		var id string
+		var n int
+		if err := rows.Scan(&id, &n); err != nil {
+			return nil, fmt.Errorf("counting members with full access: %w", err)
+		}
+		out[id] = n
 	}
 	return out, rows.Err()
 }

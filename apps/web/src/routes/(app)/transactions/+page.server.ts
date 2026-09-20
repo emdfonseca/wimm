@@ -213,9 +213,12 @@ function group(transactions: Transaction[]): LedgerDay[] {
 
 		const entry = {
 			id: transaction.id,
-			description: transaction.counterpartyName || transaction.remittance || 'Card payment',
-			account: `${transaction.accountName}${bankOf(transaction)}`,
-			amount: formatMoney(transaction.amount) ?? '',
+			description: transaction.displayName,
+			// The bank's line, as the bank wrote it; the screen shows it only
+			// where it differs from the name.
+			banksLine: transaction.remittance || undefined,
+			account: transaction.accountName,
+			amount: formatMoney(transaction.amount, { signed: true }) ?? '',
 			date: shortDate(seconds),
 			negative: isNegative(transaction.amount),
 			unsettled: transaction.status === TransactionStatus.PENDING

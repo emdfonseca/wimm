@@ -112,20 +112,9 @@
 	}
 
 	const hoveredPage = $derived(ordered.find((p) => p.key === hovered) ?? null);
-
-	/** What the track is showing without hovering or focusing anything — the
-	 *  page a member is actually on, stated plainly rather than left to a
-	 *  slightly bigger dot to communicate on its own. */
-	const currentLabel = $derived(
-		current ? (ordered.find((p) => p.key === current)?.label ?? null) : null
-	);
 </script>
 
 <div class="scrubber">
-	{#if !hoveredPage && currentLabel}
-		<span class="current">{currentLabel}</span>
-	{/if}
-
 	{#if oldestHref}
 		<a class="jump" href={oldestHref} aria-label="Oldest"><Icon name="chevron-left" size={14} /></a>
 	{:else if onOldest}
@@ -222,14 +211,6 @@
 		inline-size: fit-content;
 		max-inline-size: 100%;
 		padding-inline: 8px;
-	}
-
-	.current {
-		flex: none;
-		color: var(--color-text-secondary);
-		font-family: var(--type-family-mono);
-		font-size: 12px;
-		white-space: nowrap;
 	}
 
 	.track {

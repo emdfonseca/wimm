@@ -43,9 +43,11 @@
 		padding-inline: var(--density-cell-padding-x);
 	}
 
+	/* The span is a date or two and stays on one line; at 390 wide it is the
+	   longer sentence beside it that wraps, not "4 June / 2026". */
 	.span {
-		flex: 1 1 auto;
-		min-inline-size: 0;
+		flex: 1 0 auto;
+		white-space: nowrap;
 		color: var(--color-text-secondary);
 		font-family: var(--type-family-body);
 		font-size: 12px;
@@ -60,5 +62,4 @@
 		font-family: var(--type-family-body);
 		font-size: var(--type-size-body-sm);
 	}
-
 </style>

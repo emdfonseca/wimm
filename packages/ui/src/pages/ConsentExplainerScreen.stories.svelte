@@ -18,6 +18,7 @@
 
 <Story
 	name="Default"
+	tags={['kind-state']}
 	play={async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('wimm will read your Monzo accounts')).toBeInTheDocument();
@@ -30,6 +31,7 @@
 <!-- What is read, and the two things that are not. -->
 <Story
 	name="It states what is and is not read"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText(/last four digits of its number/)).toBeInTheDocument();
@@ -43,6 +45,7 @@
      longer change what they granted here. -->
 <Story
 	name="It says who can see it"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Only you can see these accounts')).toBeInTheDocument();
@@ -52,6 +55,7 @@
 
 <Story
 	name="It says the member is about to leave"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement }) => {
 		await expect(
 			within(canvasElement).getByText('You will leave wimm and come back here when Monzo is done.')
@@ -61,6 +65,7 @@
 
 <Story
 	name="Cancelling"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement, args }) => {
 		await userEvent.click(within(canvasElement).getByRole('button', { name: 'Cancel' }));
 		await expect(args.oncancel).toHaveBeenCalledOnce();
@@ -72,6 +77,7 @@
      of this screen whose words change with the regime. -->
 <Story
 	name="Compact"
+	tags={['kind-state', 'size-compact']}
 	globals={{ viewport: { value: 'compact' } }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);

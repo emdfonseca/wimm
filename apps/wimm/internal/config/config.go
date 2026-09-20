@@ -79,6 +79,9 @@ type Config struct {
 	// EnableBankingRedirectURL must match one registered in the gateway's
 	// control panel, or every hand-off is refused at the bank.
 	EnableBankingRedirectURL string
+	// ConnectableBanks is the wimm-curated set of bank names the picker
+	// offers, matched case-insensitively against what the gateway returns.
+	ConnectableBanks []string
 
 	// BalanceStaleAfter is how old a reading may be before it is shown as
 	// stale. It never hides a reading: a figure with its age is the contract.
@@ -141,6 +144,17 @@ const (
 	DefaultRevokedSessionRetention = 7 * 24 * time.Hour
 )
 
+// DefaultConnectableBanks is the picker's set when
+// WIMM_BANKING_CONNECTABLE_BANKS is unset — the exact strings Enable
+// Banking's /aspsps returns as name, so an operator copying a name they see
+// in the picker gets a working entry.
+var DefaultConnectableBanks = []string{
+	"Caixa Económica Montepio Geral",
+	"Revolut",
+	"PayPal",
+	"Activo Bank",
+}
+
 // Load reads the environment and validates it. It returns every problem it
 // finds, not only the first, so one restart is enough to see them all.
 func Load(env func(string) string) (Config, error) {
@@ -164,6 +178,7 @@ func Load(env func(string) string) (Config, error) {
 		EnableBankingApplicationID:  env("WIMM_ENABLEBANKING_APPLICATION_ID"),
 		EnableBankingPrivateKeyPath: env("WIMM_ENABLEBANKING_PRIVATE_KEY"),
 		EnableBankingRedirectURL:    env("WIMM_ENABLEBANKING_REDIRECT_URL"),
+		ConnectableBanks:            splitConnectableBanks(env("WIMM_BANKING_CONNECTABLE_BANKS")),
 		BalanceStaleAfter:           DefaultBalanceStaleAfter,
 
 		TransactionOverlap:      DefaultTransactionOverlap,
@@ -286,6 +301,21 @@ func splitOrigins(v string) []string {
 	for _, part := range strings.Split(v, ",") {
 		if p := strings.TrimSpace(part); p != "" {
 			out = append(out, strings.TrimRight(p, "/"))
+		}
+	}
+	return out
+}
+
+// splitConnectableBanks parses WIMM_BANKING_CONNECTABLE_BANKS, falling back
+// to DefaultConnectableBanks when unset.
+func splitConnectableBanks(v string) []string {
+	if v == "" {
+		return DefaultConnectableBanks
+	}
+	var out []string
+	for _, part := range strings.Split(v, ",") {
+		if p := strings.TrimSpace(part); p != "" {
+			out = append(out, p)
 		}
 	}
 	return out

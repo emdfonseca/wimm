@@ -24,6 +24,9 @@ type memStore struct {
 	owners      map[string]map[string]bool // account -> member
 	grants      map[string]map[string]store.Level
 
+	// members is the household; nil means Ada and Grace.
+	members []store.Member
+
 	scopes        map[string]store.ConnectionScope
 	transactions  map[string][]store.Transaction
 	syncedThrough map[string]*time.Time
@@ -382,6 +385,9 @@ func (m *memStore) SetAccountSecret(_ context.Context, accountID string, sealed 
 }
 
 func (m *memStore) Members(context.Context) ([]store.Member, error) {
+	if m.members != nil {
+		return m.members, nil
+	}
 	return []store.Member{
 		{ID: ada, FirstName: "Ada", LastName: "Lovelace"},
 		{ID: grace, FirstName: "Grace", LastName: "Hopper"},
@@ -400,6 +406,26 @@ func (m *memStore) GrantsForConnection(_ context.Context, connectionID string) (
 		}
 	}
 	slices.SortFunc(out, func(a, b store.Grant) int {
+		if c := cmpString(a.AccountID, b.AccountID); c != 0 {
+			return c
+		}
+		return cmpString(a.MemberID, b.MemberID)
+	})
+	return out, nil
+}
+
+func (m *memStore) OwnersForConnection(_ context.Context, connectionID string) ([]store.Owner, error) {
+	var out []store.Owner
+	for accountID, byMember := range m.owners {
+		a, ok := m.accounts[accountID]
+		if !ok || a.ConnectionID == nil || *a.ConnectionID != connectionID {
+			continue
+		}
+		for memberID := range byMember {
+			out = append(out, store.Owner{AccountID: accountID, MemberID: memberID})
+		}
+	}
+	slices.SortFunc(out, func(a, b store.Owner) int {
 		if c := cmpString(a.AccountID, b.AccountID); c != 0 {
 			return c
 		}
@@ -695,5 +721,146 @@ func (m *memStore) OwnedAccountLabels(_ context.Context, memberID string) (map[s
 		}
 		out[id] = label
 	}
+	return out, nil
+}
+
+// OwnedAccountsForTrend mirrors the SQL's own filter: owned, not left out,
+// and not at a disconnected connection — expired is fine, the same as
+// totals().
+func (m *memStore) OwnedAccountsForTrend(_ context.Context, memberID string) ([]store.TrendAccount, error) {
+	var out []store.TrendAccount
+	for _, id := range m.ownedBy(memberID, "") {
+		a := m.accounts[id]
+		var scope store.ConnectionScope
+		if a.ConnectionID != nil {
+			c, ok := m.connections[*a.ConnectionID]
+			if !ok || c.DisconnectedAt != nil {
+				continue
+			}
+			scope = m.scopeOf(c.ID)
+		}
+		out = append(out, store.TrendAccount{
+			ID: id, Currency: a.Currency, BalanceMinor: a.BalanceMinor,
+			Oldest: m.oldestBooked(id), Scope: scope,
+		})
+	}
+	return out, nil
+}
+
+// oldestBooked is the earliest booked transaction an account holds, nil if
+// it holds none — mirrors the real SQL's min(booking_date), never the
+// synced-through watermark (which an exhausted sync sets to today, however
+// far back the history it exhausted actually reaches).
+func (m *memStore) oldestBooked(accountID string) *time.Time {
+	var oldest *time.Time
+	for _, t := range m.transactions[accountID] {
+		if t.Status != store.StatusBooked {
+			continue
+		}
+		if oldest == nil || t.BookingDate.Before(*oldest) {
+			d := t.BookingDate
+			oldest = &d
+		}
+	}
+	return oldest
+}
+
+func (m *memStore) TransactionsSince(_ context.Context, accountID string, since time.Time) ([]store.Transaction, error) {
+	var out []store.Transaction
+	for _, t := range m.transactions[accountID] {
+		if t.Status == store.StatusBooked && !t.BookingDate.Before(since) {
+			out = append(out, t)
+		}
+	}
+	slices.SortFunc(out, func(a, b store.Transaction) int {
+		switch {
+		case a.BookingDate.Before(b.BookingDate):
+			return -1
+		case a.BookingDate.After(b.BookingDate):
+			return 1
+		default:
+			return 0
+		}
+	})
+	return out, nil
+}
+
+// FullAccessCounts mirrors the SQL: per account, the members who own it or
+// hold a details grant on it, each counted once.
+func (m *memStore) FullAccessCounts(context.Context) (map[string]int, error) {
+	out := map[string]int{}
+	for id := range m.accounts {
+		full := map[string]bool{}
+		for member := range m.owners[id] {
+			full[member] = true
+		}
+		for member, level := range m.grants[id] {
+			if level == store.LevelDetails {
+				full[member] = true
+			}
+		}
+		if len(full) > 0 {
+			out[id] = len(full)
+		}
+	}
+	return out, nil
+}
+
+func (m *memStore) ownedNotDisconnected(memberID string) []string {
+	var out []string
+	for _, id := range m.ownedBy(memberID, "") {
+		if a := m.accounts[id]; a.ConnectionID != nil {
+			if c, ok := m.connections[*a.ConnectionID]; !ok || c.DisconnectedAt != nil {
+				continue
+			}
+		}
+		out = append(out, id)
+	}
+	return out
+}
+
+func (m *memStore) OwnedWindowSums(_ context.Context, memberID string, from, to time.Time) ([]store.WindowSum, error) {
+	byCurrency := map[string]*store.WindowSum{}
+	for _, id := range m.ownedNotDisconnected(memberID) {
+		for _, t := range m.transactions[id] {
+			if t.Status != store.StatusBooked || t.BookingDate.Before(from) || !t.BookingDate.Before(to) {
+				continue
+			}
+			w, ok := byCurrency[t.Currency]
+			if !ok {
+				w = &store.WindowSum{Currency: t.Currency}
+				byCurrency[t.Currency] = w
+			}
+			if t.AmountMinor > 0 {
+				w.InMinor += t.AmountMinor
+			} else {
+				w.OutMinor -= t.AmountMinor
+			}
+			w.Rows++
+		}
+	}
+	var out []store.WindowSum
+	for _, w := range byCurrency {
+		out = append(out, *w)
+	}
+	slices.SortFunc(out, func(a, b store.WindowSum) int { return cmpString(a.Currency, b.Currency) })
+	return out, nil
+}
+
+func (m *memStore) OwnedOutgoing(_ context.Context, memberID string, from, to time.Time) ([]store.Transaction, error) {
+	var out []store.Transaction
+	for _, id := range m.ownedNotDisconnected(memberID) {
+		for _, t := range m.transactions[id] {
+			if t.Status == store.StatusBooked && t.AmountMinor < 0 && !t.BookingDate.Before(from) && t.BookingDate.Before(to) {
+				out = append(out, t)
+			}
+		}
+	}
+	slices.SortFunc(out, func(a, b store.Transaction) int {
+		if c := b.BookingDate.Compare(a.BookingDate); c != 0 {
+			return c
+		}
+		return cmpString(b.ID, a.ID)
+	})
 	return out, nil
 }

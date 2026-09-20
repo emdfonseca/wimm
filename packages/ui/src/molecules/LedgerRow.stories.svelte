@@ -7,9 +7,12 @@
 		title: 'Molecules/LedgerRow',
 		component: LedgerRow,
 		tags: ['autodocs'],
+		// A row fills the list it is in. Centred, it shrinks to fit and its
+		// columns squeeze the name to "S…", which no list ever shows.
+		parameters: { layout: 'padded' },
 		args: {
 			description: 'Pingo Doce',
-			account: 'Current account · Monzo',
+			account: 'Current account',
 			amount: '−€42.18',
 			date: '17 Sep',
 			negative: true
@@ -35,7 +38,7 @@
 	name="NotSettled"
 	args={{
 		description: 'Transfer to Ana Reis',
-		account: 'Joint savings · Montepio',
+		account: 'Joint savings',
 		amount: '−€60.00',
 		unsettled: true
 	}}
@@ -71,7 +74,7 @@
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Pingo Doce')).toBeInTheDocument();
-		await expect(canvas.getByText('Current account · Monzo')).toBeInTheDocument();
+		await expect(canvas.getByText('Current account')).toBeInTheDocument();
 	}}
 />
 
@@ -86,7 +89,55 @@
 	name="LongContent"
 	args={{
 		description: 'Standing order to the management company for the building maintenance fund',
-		account: 'Joint savings · Montepio'
+		account: 'Joint savings'
+	}}
+/>
+
+<!-- The name is wimm's; the line under it is the bank's, exactly as written,
+     so a derived name can be checked against the statement. -->
+<Story
+	name="BanksLineShown"
+	args={{ banksLine: 'COMPRA PINGO DOCE LISBOA 230002268342127', hideDate: true }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Pingo Doce')).toBeInTheDocument();
+		await expect(canvas.getByText('COMPRA PINGO DOCE LISBOA 230002268342127')).toBeInTheDocument();
+		await expect(canvasElement.querySelector('.ledger-row')!.getBoundingClientRect().height).toBe(
+			56
+		);
+	}}
+/>
+
+<!-- Where the bank's line is the name, saying it twice is noise. -->
+<Story
+	name="BanksLineSameAsName"
+	args={{
+		description: 'Salary',
+		amount: '+€2,180.00',
+		negative: false,
+		banksLine: 'Salary',
+		hideDate: true
+	}}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getAllByText('Salary')).toHaveLength(1);
+		await expect(canvasElement.querySelector('.ledger-row')!.getBoundingClientRect().height).toBe(
+			56
+		);
+	}}
+/>
+
+<Story
+	name="CompactBanksLineShown"
+	args={{ compact: true, banksLine: 'COMPRA PINGO DOCE LISBOA 230002268342127' }}
+	globals={{ viewport: { value: 'compact' } }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Pingo Doce')).toBeInTheDocument();
+		await expect(canvas.getByText('COMPRA PINGO DOCE LISBOA 230002268342127')).toBeInTheDocument();
+		await expect(canvasElement.querySelector('.ledger-row')!.getBoundingClientRect().height).toBe(
+			80
+		);
 	}}
 />
 
@@ -97,11 +148,17 @@
 			<LedgerRow
 				{...args}
 				description="Transfer to Ana Reis"
-				account="Joint savings · Montepio"
+				account="Joint savings"
 				amount="−€60.00"
 				unsettled
 			/>
-			<LedgerRow {...args} description="Salary" amount="+€2,180.00" negative={false} date="16 Sep" />
+			<LedgerRow
+				{...args}
+				description="Salary"
+				amount="+€2,180.00"
+				negative={false}
+				date="16 Sep"
+			/>
 		</div>
 	{/snippet}
 </Story>

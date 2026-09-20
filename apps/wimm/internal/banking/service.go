@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/xuuid/wimm/apps/wimm/internal/store"
@@ -32,6 +33,9 @@ type Store interface {
 	Now(ctx context.Context) (store.Time, error)
 
 	VisibleAccounts(ctx context.Context, memberID, connectionID string) ([]store.VisibleAccount, error)
+	// FullAccessCounts is, per account, how many members own it or hold a
+	// details grant on it. An account nobody has full access to is absent.
+	FullAccessCounts(ctx context.Context) (map[string]int, error)
 	AccountsForConnection(ctx context.Context, connectionID string) ([]store.Account, error)
 	ReadableAccounts(ctx context.Context, connectionID string) ([]store.Account, error)
 	AccountByID(ctx context.Context, id string) (store.Account, error)
@@ -47,6 +51,7 @@ type Store interface {
 	// owning row's id, and that id does not exist until the row does.
 	Members(ctx context.Context) ([]store.Member, error)
 	GrantsForConnection(ctx context.Context, connectionID string) ([]store.Grant, error)
+	OwnersForConnection(ctx context.Context, connectionID string) ([]store.Owner, error)
 
 	SetConnectionSecret(ctx context.Context, connectionID string, sealed store.Sealed) error
 	SetAccountSecret(ctx context.Context, accountID string, sealed store.Sealed) error
@@ -64,6 +69,17 @@ type Store interface {
 	OwnedAccountLabels(ctx context.Context, memberID string) (map[string]store.AccountLabel, error)
 	SetConnectionScope(ctx context.Context, connectionID string, scope store.ConnectionScope) error
 	BankConnectionScope(ctx context.Context, connectionID string) (store.ConnectionScope, error)
+
+	// The trend. OwnedAccountsForTrend is scoped to ownership, never level:
+	// a trend is drawn from the same accounts that feed the total, not from
+	// everything a member may merely see.
+	OwnedAccountsForTrend(ctx context.Context, memberID string) ([]store.TrendAccount, error)
+	TransactionsSince(ctx context.Context, accountID string, since time.Time) ([]store.Transaction, error)
+
+	// The month. Both windows are the caller's arguments and never a clock of
+	// the store's own.
+	OwnedWindowSums(ctx context.Context, memberID string, from, to time.Time) ([]store.WindowSum, error)
+	OwnedOutgoing(ctx context.Context, memberID string, from, to time.Time) ([]store.Transaction, error)
 }
 
 // LedgerOptions bounds the ledger. Every one of them is configuration with a
@@ -110,6 +126,11 @@ type Service struct {
 	// staleAfter is how old a reading may be before it is shown as stale. It
 	// never hides a reading.
 	staleAfter time.Duration
+	// connectableBanks is the wimm-curated set of bank names Banks offers,
+	// matched case-insensitively. BeginConnection and RestoreConnection
+	// resolve any bank the gateway knows, unfiltered — only the picker is
+	// curated.
+	connectableBanks []string
 
 	overlap      time.Duration
 	syncInterval time.Duration
@@ -120,21 +141,42 @@ type Service struct {
 // NewService wires the domain.
 func NewService(
 	s Store, g Gateway, keys *Keyring, log *slog.Logger,
-	redirectURL string, staleAfter time.Duration, ledger LedgerOptions,
+	redirectURL string, staleAfter time.Duration, connectableBanks []string, ledger LedgerOptions,
 ) *Service {
 	return &Service{
 		store: s, gateway: g, keys: keys, log: log,
 		redirectURL: redirectURL, staleAfter: staleAfter,
-		overlap:      ledger.Overlap,
-		syncInterval: ledger.SyncInterval,
-		maxPages:     ledger.MaxPages,
-		pageSize:     ledger.PageSize,
+		connectableBanks: connectableBanks,
+		overlap:          ledger.Overlap,
+		syncInterval:     ledger.SyncInterval,
+		maxPages:         ledger.MaxPages,
+		pageSize:         ledger.PageSize,
 	}
 }
 
-// Banks lists what can be connected.
+// Banks lists what can be connected: the gateway's country list, filtered to
+// wimm's configured set. BeginConnection and RestoreConnection resolve any
+// bank the gateway knows, unfiltered, so a restore never orphans over a
+// shrunk allowlist (see design.md - Decisions).
 func (s *Service) Banks(ctx context.Context, country string) ([]Bank, error) {
-	return s.gateway.Banks(ctx, country)
+	banks, err := s.gateway.Banks(ctx, country)
+	if err != nil {
+		return nil, err
+	}
+	return filterConnectable(banks, s.connectableBanks), nil
+}
+
+func filterConnectable(banks []Bank, connectable []string) []Bank {
+	out := make([]Bank, 0, len(banks))
+	for _, b := range banks {
+		for _, name := range connectable {
+			if strings.EqualFold(b.Name, name) {
+				out = append(out, b)
+				break
+			}
+		}
+	}
+	return out
 }
 
 // ConsentHandoff is where to send a member and when their access would end.

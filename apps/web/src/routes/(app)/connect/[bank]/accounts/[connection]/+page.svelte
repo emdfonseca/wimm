@@ -103,7 +103,7 @@
 	onleaveout={(accountId) => post('leaveOut', { accountId }, accountId)}
 	onbringback={(accountId) => post('bringBack', { accountId }, accountId)}
 	onrename={(accountId, householdName) => post('rename', { accountId, householdName }, accountId)}
-	onfinish={() => goto(resolve('/(app)'))}
+	onfinish={() => goto(resolve('/(app)/accounts'))}
 />
 
 <style>

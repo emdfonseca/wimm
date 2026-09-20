@@ -79,7 +79,7 @@ func TestAgainstTheSandboxBanks(t *testing.T) {
 	// on restoring can be revisited.
 	t.Logf("%d banks in PT", len(banks))
 	for _, b := range banks {
-		if want := map[string]bool{"ActivoBank": true, "Montepio": true, "Revolut": true}[b.Name]; want {
+		if want := map[string]bool{"Activo Bank": true, "Caixa Económica Montepio Geral": true, "Revolut": true}[b.Name]; want {
 			t.Logf("%-24s consent %s", b.Name, b.MaxConsent)
 		}
 	}

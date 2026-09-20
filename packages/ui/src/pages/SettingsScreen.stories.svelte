@@ -14,6 +14,7 @@
 
 <Story
 	name="Default"
+	tags={['kind-state']}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByRole('heading', { name: 'Settings', level: 1 })).toBeInTheDocument();
@@ -25,6 +26,7 @@
 
 <Story
 	name="Choosing a theme"
+	tags={['kind-state']}
 	play={async ({ canvasElement, args }) => {
 		const group = within(canvasElement).getByRole('radiogroup', { name: 'Theme' });
 		await userEvent.click(within(group).getByRole('radio', { name: 'Dark' }));
@@ -34,6 +36,7 @@
 
 <Story
 	name="Choosing row height"
+	tags={['kind-state']}
 	play={async ({ canvasElement, args }) => {
 		const group = within(canvasElement).getByRole('radiogroup', { name: 'Rows' });
 		await userEvent.click(within(group).getByRole('radio', { name: 'Compact' }));
@@ -49,6 +52,7 @@
      reveal. -->
 <Story
 	name="On a touch screen (see the rule in SettingsScreen.svelte)"
+	tags={['kind-behaviour']}
 	play={async ({ canvasElement }) => {
 		await expect(
 			within(canvasElement).getByText(

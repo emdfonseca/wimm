@@ -734,3 +734,175 @@ func (db *DB) OwnedAccountLabels(ctx context.Context, memberID string) (map[stri
 	}
 	return out, rows.Err()
 }
+
+// TrendAccount is one owned account's current balance and how far back its
+// ledger actually reaches — what a balance trend needs per account, distinct
+// from VisibleAccount because a trend cares about ownership and history
+// reach, never about level.
+type TrendAccount struct {
+	ID           string
+	Currency     string
+	BalanceMinor *int64
+	// Oldest is the earliest booked transaction this account actually holds,
+	// nil where it holds none. Deliberately not transactions_synced_through:
+	// that column is a forward completeness watermark (an exhausted sync
+	// sets it to today, however far back the history it exhausted actually
+	// reaches — syncedThroughFor in ledger.go), never a "reaches back to"
+	// marker. Oldest is the same min(booking_date) LedgerState/AccountSync
+	// already read for that reason.
+	Oldest *time.Time
+	// Scope is empty for an account no gateway sources.
+	Scope ConnectionScope
+}
+
+// OwnedAccountsForTrend lists every account a member owns, left-out and
+// disconnected-connection accounts excluded — the same set toProtoTotals sums
+// (visibleAccountsQuery's own filter, restricted to ownership), so a trend's
+// endpoint agrees with the total it is drawn beside.
+func (db *DB) OwnedAccountsForTrend(ctx context.Context, memberID string) ([]TrendAccount, error) {
+	const query = `
+		select a.id, a.currency, a.balance_minor,
+		       (select min(t.booking_date) from transactions t
+		        where t.account_id = a.id and t.status = 'booked'),
+		       coalesce(c.scope, '')
+		from accounts a
+		join account_owners o on o.account_id = a.id and o.member_id = $1
+		left join bank_connections c on c.id = a.connection_id
+		where a.left_out_at is null
+		  and (c.id is null or c.disconnected_at is null)`
+
+	rows, err := db.pool.Query(ctx, query, memberID)
+	if err != nil {
+		return nil, fmt.Errorf("listing owned accounts for a trend: %w", err)
+	}
+	defer rows.Close()
+
+	var out []TrendAccount
+	for rows.Next() {
+		var t TrendAccount
+		if err := rows.Scan(&t.ID, &t.Currency, &t.BalanceMinor, &t.Oldest, &t.Scope); err != nil {
+			return nil, fmt.Errorf("listing owned accounts for a trend: %w", err)
+		}
+		out = append(out, t)
+	}
+	return out, rows.Err()
+}
+
+// TransactionsSince returns every booked transaction on one account, booked on
+// or after since, oldest first — the whole window a trend walks backward
+// over, not a page a screen scrolls through. Pending rows are excluded: they
+// are replaced whole on every sync (ADR 0021) and have no stable identity for
+// a walk to undo later.
+func (db *DB) TransactionsSince(ctx context.Context, accountID string, since time.Time) ([]Transaction, error) {
+	const query = `
+		select id, account_id, status, dedup_key, occurrence, amount_minor, currency,
+		       booking_date, value_date, transaction_date,
+		       coalesce(counterparty_name, ''), coalesce(remittance, ''),
+		       first_seen_at, last_seen_at
+		from transactions
+		where account_id = $1 and status = 'booked' and booking_date >= $2
+		order by booking_date asc, id asc`
+
+	rows, err := db.pool.Query(ctx, query, accountID, since)
+	if err != nil {
+		return nil, fmt.Errorf("reading transactions for a trend: %w", err)
+	}
+	defer rows.Close()
+
+	out := make([]Transaction, 0, 64)
+	for rows.Next() {
+		t, err := scanTransaction(rows)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, t)
+	}
+	return out, rows.Err()
+}
+
+// WindowSum is one currency's booked money in and out over a window, both as
+// positive minor units.
+type WindowSum struct {
+	Currency string
+	InMinor  int64
+	OutMinor int64
+	// Rows is how many booked transactions the window holds.
+	Rows int
+}
+
+// OwnedWindowSums sums the booked transactions of every account a member owns
+// over [from, to), per currency. Both bounds are arguments: the store never
+// reads a clock of its own, so a window is whatever database time the caller
+// took it from (ADR 0017). Pending rows are excluded — they are replaced whole
+// on every sync (ADR 0021) — and so are left-out and disconnected accounts,
+// the same set OwnedAccountsForTrend lists.
+func (db *DB) OwnedWindowSums(ctx context.Context, memberID string, from, to time.Time) ([]WindowSum, error) {
+	const query = `
+		select t.currency,
+		       coalesce(sum(t.amount_minor) filter (where t.amount_minor > 0), 0)::bigint,
+		       coalesce(-sum(t.amount_minor) filter (where t.amount_minor < 0), 0)::bigint,
+		       count(*)::int
+		from transactions t
+		join accounts a on a.id = t.account_id
+		join account_owners o on o.account_id = a.id and o.member_id = $1
+		left join bank_connections c on c.id = a.connection_id
+		where a.left_out_at is null
+		  and (c.id is null or c.disconnected_at is null)
+		  and t.status = 'booked'
+		  and t.booking_date >= $2 and t.booking_date < $3
+		group by t.currency
+		order by t.currency`
+
+	rows, err := db.pool.Query(ctx, query, memberID, from, to)
+	if err != nil {
+		return nil, fmt.Errorf("summing a window: %w", err)
+	}
+	defer rows.Close()
+
+	var out []WindowSum
+	for rows.Next() {
+		var w WindowSum
+		if err := rows.Scan(&w.Currency, &w.InMinor, &w.OutMinor, &w.Rows); err != nil {
+			return nil, fmt.Errorf("summing a window: %w", err)
+		}
+		out = append(out, w)
+	}
+	return out, rows.Err()
+}
+
+// OwnedOutgoing is every booked payment — money going out — on the accounts a
+// member owns over [from, to), newest first. Rows come back whole because the
+// merchant name they are grouped by is derived in Go, and the rows that most
+// need grouping are the ones where counterparty_name is empty.
+func (db *DB) OwnedOutgoing(ctx context.Context, memberID string, from, to time.Time) ([]Transaction, error) {
+	const query = `
+		select t.id, t.account_id, t.status, t.dedup_key, t.occurrence, t.amount_minor, t.currency,
+		       t.booking_date, t.value_date, t.transaction_date,
+		       coalesce(t.counterparty_name, ''), coalesce(t.remittance, ''),
+		       t.first_seen_at, t.last_seen_at
+		from transactions t
+		join accounts a on a.id = t.account_id
+		join account_owners o on o.account_id = a.id and o.member_id = $1
+		left join bank_connections c on c.id = a.connection_id
+		where a.left_out_at is null
+		  and (c.id is null or c.disconnected_at is null)
+		  and t.status = 'booked' and t.amount_minor < 0
+		  and t.booking_date >= $2 and t.booking_date < $3
+		order by t.booking_date desc, t.id desc`
+
+	rows, err := db.pool.Query(ctx, query, memberID, from, to)
+	if err != nil {
+		return nil, fmt.Errorf("reading outgoing payments: %w", err)
+	}
+	defer rows.Close()
+
+	var out []Transaction
+	for rows.Next() {
+		t, err := scanTransaction(rows)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, t)
+	}
+	return out, rows.Err()
+}
