@@ -108,7 +108,8 @@ Ultra is a fourth regime, see ADR 0002. It earns its place because one structure
 genuinely changes: the editing drawer stops being an overlay and becomes a
 persistent inspector pane, so a transaction can be edited without losing the list.
 
-`just canvas` shows every screen and its state stories at all four regimes.
+`just canvas` shows one screen at a time with its state stories, at compact and
+wide unless `?sizes=` names others; its sidebar lists every screen.
 
 **Structural change points (CSS px)**
 768 — Compact stacked layout becomes the shell with sidebar.

@@ -20,6 +20,32 @@ export default defineConfig({
 	server: { fs: { allow: [resolve(import.meta.dirname, '../..')] } },
 	test: {
 		projects: [
+			// Pure functions for the design canvas page, which has no DOM of its
+			// own worth a browser: node is enough and far faster.
+			{
+				test: {
+					name: 'unit',
+					environment: 'node',
+					include: ['canvas/**/*.test.js'],
+					exclude: ['canvas/**/*.browser.test.js']
+				}
+			},
+			// Pointing reads what Svelte's dev build leaves on real elements, so
+			// its one test needs a real browser and a compiled component.
+			{
+				extends: true,
+				plugins: [sveltekit()],
+				test: {
+					name: 'browser',
+					include: ['canvas/**/*.browser.test.js'],
+					browser: {
+						enabled: true,
+						headless: true,
+						provider: playwright(),
+						instances: [{ browser: 'chromium' }]
+					}
+				}
+			},
 			{
 				extends: true,
 				plugins: [

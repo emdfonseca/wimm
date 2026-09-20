@@ -5,6 +5,9 @@ import type { Preview } from '@storybook/sveltekit';
 import '@wimm/ui/base.css';
 import { DENSITY_KEY, THEME_KEY } from '@wimm/ui';
 
+import ShellDecorator from './ShellDecorator.svelte';
+import { viewportOptions } from '../canvas/viewports.js';
+
 /**
  * Theme, device and density are globals, not stories. A frame resolves one
  * value from each axis at a time; multiplying stories by theme × viewport is
@@ -17,14 +20,7 @@ const preview: Preview = {
 		// decorating a panel nobody opens.
 		a11y: { test: 'error' },
 		controls: { expanded: true },
-		viewport: {
-			options: {
-				compact: { name: 'Compact', styles: { width: '390px', height: '844px' } },
-				medium: { name: 'Medium', styles: { width: '834px', height: '1112px' } },
-				wide: { name: 'Wide', styles: { width: '1440px', height: '900px' } },
-				ultra: { name: 'Ultra', styles: { width: '1920px', height: '1080px' } }
-			}
-		}
+		viewport: { options: viewportOptions }
 	},
 
 	initialGlobals: {
@@ -71,6 +67,41 @@ const preview: Preview = {
 	},
 
 	decorators: [
+		// Innermost, so the shell wraps the screen that already has its callbacks.
+		// Inert unless the design canvas asked to hear some: every test and every
+		// ordinary visit passes through untouched.
+		(story, context) => {
+			const params = new URLSearchParams(location.search);
+			if (!params.has('play')) return story();
+			const asked = (params.get('play') ?? '').split(',').filter(Boolean);
+			// Every callback the story wires is heard, mapped or not, so a screen
+			// with nowhere to go can say so instead of going quiet.
+			const names = new Set([
+				...asked,
+				...Object.keys(context.args).filter(
+					(k) => /^on/.test(k) && typeof context.args[k] === 'function'
+				)
+			]);
+			const args: Record<string, unknown> = { ...context.args };
+			for (const name of names) {
+				const original = context.args[name];
+				args[name] = (...rest: unknown[]) => {
+					const result = typeof original === 'function' ? original(...rest) : undefined;
+					// A story's own play function dispatches synthetic events, which
+					// never grant user activation. Only a person's click does.
+					if (navigator.userActivation?.isActive) {
+						window.parent.postMessage({ type: 'wimm-canvas-callback', name }, location.origin);
+					}
+					return result;
+				};
+			}
+			return story({ args });
+		},
+		// A signed-in screen is seen inside the shell the real app puts around it.
+		(story, context) =>
+			context.parameters.shell
+				? { Component: ShellDecorator, props: { current: String(context.parameters.shell) } }
+				: story(),
 		(story, context) => {
 			// The tokens stylesheet keys off these two attributes on the root, so
 			// the globals are applied where the real page applies them.

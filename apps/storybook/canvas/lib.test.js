@@ -14,6 +14,7 @@ import {
 	routeFor,
 	nearestLocation,
 	sitemapFrom,
+	sizesFor,
 	relativeToRepo,
 	screenUrl,
 	storyUrl
@@ -561,5 +562,42 @@ describe('kinds', () => {
 		};
 		const [board] = artboardsFrom(tagged, new URLSearchParams('title=Pages/A&sizes=wide'));
 		expect(board.kind).toBe('waiting');
+	});
+});
+
+describe('sizesFor', () => {
+	it('draws a story at the sizes the view asks for', () => {
+		expect(sizesFor({ tags: ['kind-state'] }, ['compact', 'wide'])).toEqual(['compact', 'wide']);
+	});
+
+	it('draws a story that pins its viewport at that size only, whatever the view asks for', () => {
+		expect(sizesFor({ tags: ['kind-state', 'size-compact'] }, ['compact', 'wide'])).toEqual([
+			'compact'
+		]);
+		expect(sizesFor({ tags: ['size-compact'] }, ['wide'])).toEqual(['compact']);
+	});
+
+	it('gives a pinned story one artboard on a screen and on a flow', () => {
+		const pinned = {
+			entries: {
+				'pages-a--compact': {
+					id: 'pages-a--compact',
+					type: 'story',
+					title: 'Pages/A',
+					name: 'Compact',
+					tags: ['kind-state', 'size-compact']
+				}
+			}
+		};
+		const query = new URLSearchParams('title=Pages/A&sizes=compact,wide');
+		expect(artboardsFrom(pinned, query).map((b) => b.size)).toEqual(['compact']);
+		const flow = { title: 'Tour', steps: ['pages-a--compact'], transitions: [] };
+		expect(flowBoards(pinned, flow, query).map((b) => [b.step, b.size])).toEqual([[0, 'compact']]);
+	});
+
+	it('refuses a size tag naming no size', () => {
+		expect(kindProblems([{ id: 'a--one', tags: ['kind-state', 'size-huge'] }])).toEqual([
+			'"a--one" has the unknown size tag "size-huge"; sizes are compact, medium, wide, ultra'
+		]);
 	});
 });

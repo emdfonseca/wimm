@@ -34,6 +34,25 @@ export const KINDS = /** @type {const} */ ({
 });
 
 const KIND_TAG = 'kind-';
+const SIZE_TAG = 'size-';
+
+/** @param {{ tags?: string[] }} entry */
+const sizeTags = (entry) => (entry.tags ?? []).filter((t) => t.startsWith(SIZE_TAG));
+
+/**
+ * The sizes one story is drawn at. A story that pins its own viewport says so
+ * with a tag, `size-compact`, and is drawn at that size whatever the view asks
+ * for: its compact form stretched across a wide artboard is a page no member
+ * sees.
+ * @param {{ tags?: string[] }} entry
+ * @param {string[]} sizes the sizes the view asked for
+ */
+export function sizesFor(entry, sizes) {
+	const own = sizeTags(entry)
+		.map((t) => t.slice(SIZE_TAG.length))
+		.filter((size) => size in viewportOptions);
+	return own.length > 0 ? own : sizes;
+}
 
 /** @param {{ tags?: string[] }} entry */
 const kindTags = (entry) => (entry.tags ?? []).filter((t) => t.startsWith(KIND_TAG));
@@ -60,6 +79,13 @@ export function kindProblems(pages) {
 		if (tags.length === 0) problems.push(`"${entry.id}" has no kind tag`);
 		if (tags.length > 1)
 			problems.push(`"${entry.id}" has more than one kind tag: ${tags.join(', ')}`);
+		for (const tag of sizeTags(entry)) {
+			if (!(tag.slice(SIZE_TAG.length) in viewportOptions)) {
+				problems.push(
+					`"${entry.id}" has the unknown size tag "${tag}"; sizes are ${Object.keys(viewportOptions).join(', ')}`
+				);
+			}
+		}
 		for (const tag of tags) {
 			if (!(tag.slice(KIND_TAG.length) in KINDS)) {
 				problems.push(
@@ -86,7 +112,7 @@ export function artboardsFrom(index, query) {
 				(title ? e.title === title : e.title.split('/')[0]?.toLowerCase() === layer)
 		)
 		.flatMap((e) =>
-			sizes.map((size) => ({
+			sizesFor(e, sizes).map((size) => ({
 				id: e.id,
 				title: e.title,
 				name: e.name,
@@ -121,9 +147,17 @@ export function screenUrl(query, title, id) {
  */
 export function flowBoards(index, flow, query) {
 	const { theme, density, sizes } = viewFrom(query);
-	return flow.steps.flatMap((id) => {
+	return flow.steps.flatMap((id, step) => {
 		const e = index.entries[id];
-		return sizes.map((size) => ({ id, title: e.title, name: e.name, size, theme, density }));
+		return sizesFor(e, sizes).map((size) => ({
+			id,
+			step,
+			title: e.title,
+			name: e.name,
+			size,
+			theme,
+			density
+		}));
 	});
 }
 
@@ -141,7 +175,14 @@ export function branchBoards(index, flow, query) {
 		return {
 			from,
 			outcome,
-			boards: sizes.map((size) => ({ id: to, title: e.title, name: e.name, size, theme, density }))
+			boards: sizesFor(e, sizes).map((size) => ({
+				id: to,
+				title: e.title,
+				name: e.name,
+				size,
+				theme,
+				density
+			}))
 		};
 	});
 }

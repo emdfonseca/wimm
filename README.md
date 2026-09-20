@@ -24,6 +24,23 @@ http://localhost:9469    Storybook, the design system in isolation
 127.0.0.1:9468           wimmd's operator listener, loopback only
 ```
 
+`just canvas` opens the design canvas: one screen at a time, its state stories
+at real sizes, one row per kind of story: States, Waiting, Errors, Outcomes,
+then Behaviour for the stories that only assert something. A page story says
+which with one tag, `tags={['kind-error']}`; the kinds are defined in
+`apps/storybook/canvas/lib.js`, and `just check apps/storybook` fails for a page
+story with none. A story that pins its own viewport adds `size-compact` and is
+drawn at that size only. Pan and zoom as usual. The sidebar lists every screen and
+story, and `/` finds one. Alt-click an element to copy its source location. It
+needs `just up` running and starts nothing itself. Append `?flow=connect-a-bank`
+to `/canvas/index.html` to see a flow as a map: its happy path left to right, and
+under each step the ways off it, or `?play=connect-a-bank` to click through the
+happy path; play mode swaps fixture screens and runs no route, load function or
+bank. Flows are declared in `apps/storybook/canvas/flows.js`, one per journey a
+member would name. Every page story that shows something is on a flow or on that
+file's `unplaced` list, and `just check apps/storybook` fails for one that is on
+neither; a `kind-behaviour` story only asserts something and is on neither.
+
 Postgres listens on a Unix socket under `.devbox/`, not a port, so it cannot
 collide with a system-wide install or another checkout of this repo.
 

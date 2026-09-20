@@ -626,13 +626,12 @@ function drawFlow(flow, boards, branches) {
 	row.append(heading, strip);
 	world.append(row);
 	const labels = connectorLabels(flow);
-	const perStep = boards.length / flow.steps.length;
 	for (const [i, id] of flow.steps.entries()) {
 		const step = document.createElement('div');
 		step.className = 'step';
 		const happy = document.createElement('div');
 		happy.className = 'boards';
-		happy.append(...boards.slice(i * perStep, (i + 1) * perStep).map(artboard));
+		happy.append(...boards.filter((b) => b.step === i).map(artboard));
 		step.append(happy);
 		for (const branch of branches.filter((b) => b.from === id)) {
 			const off = document.createElement('div');

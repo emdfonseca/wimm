@@ -46,6 +46,15 @@ ci: adr-index-check db-up (all "check")
 up *args:
     @devbox services up {{args}}
 
+# Open the design canvas: a screen's state stories side by side. Starts nothing.
+canvas:
+    @port="${WIMM_STORYBOOK_PORT:-9469}"; \
+    if curl -fs -o /dev/null "http://localhost:$port/index.json"; then \
+        open "http://localhost:$port/canvas/index.html"; \
+    else \
+        echo "run \`just up\` first: Storybook is not answering on port $port" >&2; exit 1; \
+    fi
+
 # Stop it.
 down:
     @devbox services stop || true
