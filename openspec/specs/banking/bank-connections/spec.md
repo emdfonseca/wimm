@@ -13,20 +13,26 @@ protection of anything wimm keeps that could reach the bank afterwards.
 ### Requirement: Choosing a bank to connect
 **Story**: S1
 A member SHALL be able to start connecting a bank by choosing it from a list of
-banks wimm can reach. The list SHALL be searchable by name, because a member
-knows the name of their bank and not its position in an alphabetical list.
+banks wimm can reach. That list SHALL be the set wimm has configured as
+connectable, not the gateway's full list of every institution in the country —
+a bank absent from wimm's configured set is treated the same as a bank the
+gateway does not offer at all. The list SHALL be searchable by name, because a
+member knows the name of their bank and not its position in an alphabetical
+list.
 
 #### Scenario: Picking a bank from the list
 - **WHEN** a signed-in member starts connecting a bank
-- **THEN** they are shown a list of banks they can connect, each identified by
-  a name and logo they would recognise from their own banking app
+- **THEN** they are shown a list of the banks wimm has configured as
+  connectable, each identified by a name and logo they would recognise from
+  their own banking app
 
 #### Scenario: Finding a bank by typing its name
 - **WHEN** a member types part of their bank's name
 - **THEN** the list narrows to matching banks
 
 #### Scenario: The bank is not in the list
-- **WHEN** a member's search matches no bank
+- **WHEN** a member's search matches no bank, whether because the gateway does
+  not offer it or because wimm has not configured it as connectable
 - **THEN** they are told plainly that wimm cannot connect that bank yet, rather
   than being shown an empty list with no explanation
 
@@ -34,6 +40,74 @@ knows the name of their bank and not its position in an alphabetical list.
 - **WHEN** wimm cannot reach the service that supplies the list of banks
 - **THEN** the member is told that connecting a bank is unavailable right now
   and invited to try again, and no partly-made connection is left behind
+
+### Requirement: A bank's logo renders whole, whatever its shape
+**Story**: S2
+Every bank's logo in the list SHALL render in full, without cropping any part
+of it, regardless of the logo's own width-to-height proportions. Every row's
+bank name SHALL start at the same horizontal position as every other row's,
+whether that row's logo is wide, narrow, or square.
+
+#### Scenario: A wide logo next to a square one
+- **WHEN** the list shows one bank whose logo is a wide wordmark and another
+  whose logo is roughly square
+- **THEN** both logos are shown whole, with none of either one cut off, and
+  both banks' names begin at the same horizontal position
+
+#### Scenario: A tall or narrow logo
+- **WHEN** a bank's logo is taller than it is wide
+- **THEN** it is shown whole rather than cropped to a square, and its bank's
+  name still begins at the same horizontal position as every other row's
+
+### Requirement: The steps of connecting a bank read as one flow
+**Story**: S6
+Connecting a bank SHALL read as one flow with a beginning and an end, not as a
+run of unrelated pages. At every step before the hand-off the member SHALL be
+able to see which step they are on and how many there are, SHALL find the way
+forward in the same place with the same emphasis each time, and SHALL be able to
+go back a step without losing what they have already chosen.
+
+The step that commits the member — the hand-off to the bank — SHALL say what
+happens next in its own label, rather than being a generic word for continuing,
+because it is the point at which the member leaves wimm.
+
+Restoring access and widening what a bank shares SHALL follow the same pattern.
+They are shorter routes through the same flow, and a member who has connected a
+bank once MUST NOT have to learn a second arrangement to do it again.
+
+#### Scenario: Knowing where you are
+- **WHEN** a member is on any step of connecting a bank before the hand-off
+- **THEN** they can see which step it is and how many steps there are
+
+#### Scenario: The actions are in the same place
+- **WHEN** a member moves from one step to the next
+- **THEN** the step's actions sit in the same place and take the same form, and
+  where a step has a way forward it is the most prominent control on it
+
+#### Scenario: A step whose list is the way forward
+- **WHEN** a member is on the step that lists the banks
+- **THEN** choosing a bank is what moves them on, and the step still carries its
+  way out in the place every other step puts it
+
+#### Scenario: Going back
+- **WHEN** a member goes back from a step to the one before it
+- **THEN** they return to it with the bank they had already chosen still chosen,
+  and nothing has been connected
+
+#### Scenario: The step that sends them to the bank says so
+- **WHEN** a member reaches the step that hands them to their bank
+- **THEN** the control that does it names the bank it will send them to, rather
+  than saying only that it continues
+
+#### Scenario: Restoring uses the same arrangement
+- **WHEN** a member restores a bank's access, or widens what it shares
+- **THEN** the steps carry the same arrangement of actions as connecting a bank
+  for the first time
+
+#### Scenario: Leaving the flow
+- **WHEN** a member decides not to connect a bank after all
+- **THEN** every step before the hand-off offers a way out that is clearly the
+  lesser action, and taking it leaves the household exactly as it was
 
 ### Requirement: Consenting at the bank
 **Story**: S1
@@ -100,7 +174,7 @@ at this point whose answer is not already filled in.
   start again, and no bank is connected
 
 ### Requirement: Choosing who owns each account and who sees it
-**Story**: S1
+**Story**: S2
 A member SHALL be able to choose, for each account the bank made available, who
 owns it and what each other member may see of it. This SHALL be presented as a
 choice about what the household sees and MUST NOT be presented as granting or
@@ -112,10 +186,18 @@ about who sees an account, which is a different question from whether wimm can
 read it, asked on a different day.
 
 The member who connected the bank SHALL own every account it returned when the
-choice opens, and SHALL be able to disown any of them and to add another member
-as an owner. No other member SHALL be granted any level until an owner grants it.
-Every one of these choices SHALL remain changeable afterwards by any owner of
-the account.
+choice opens. Ownership SHALL be shown as the set of members who own the
+account, and an owner SHALL be able to add any member of the household to that
+set and to remove themselves from it. Adding an owner MUST NOT remove any
+existing one. No other member SHALL be granted any level until an owner grants
+it. Every one of these choices SHALL remain changeable afterwards by any owner
+of the account.
+
+An owner SHALL NOT be able to leave an account with no owner at all. Where they
+want the account out of wimm, the choice offers leaving it out, which is
+reversible and is covered by the household's accounts. The way back into this
+choice SHALL remain available to every owner of any account at that bank, so a
+member cannot put an account beyond their own reach.
 
 #### Scenario: The connecting member owns what they connected
 - **WHEN** a member has connected a bank and opens the choice for it
@@ -134,6 +216,28 @@ the account.
   longer sees it at all, and the first member is not offered it again as
   something to grant
 
+#### Scenario: Both members own it
+- **WHEN** a member makes another member an owner of an account and stays an
+  owner themselves
+- **THEN** both are shown as owners and both see it in full
+
+#### Scenario: An account nobody owns and nobody is granted
+- **WHEN** the only owner of an account tries to remove themselves as its owner,
+  with no level granted to anybody
+- **THEN** the change is refused, because an account always belongs to somebody.
+  They are offered leaving it out of wimm instead, which stops every read of it
+  and can be undone
+
+#### Scenario: Leaving an account out from the choice
+- **WHEN** an owner leaves one of a bank's accounts out of wimm from this choice
+- **THEN** it stays theirs, no balance is read for it, nobody else sees it, and
+  it is shown to them as left out with a way to bring it back
+
+#### Scenario: The way back stays open
+- **WHEN** an owner has left every one of a bank's accounts out of wimm
+- **THEN** they can still reach this choice from the household's accounts and
+  bring any of them back
+
 #### Scenario: Giving one member the balance and another nothing
 - **WHEN** a member grants *balance* on an account to a second member and
   leaves a third member with nothing
@@ -149,11 +253,6 @@ the account.
 - **WHEN** a member finishes having granted no level to anybody
 - **THEN** they can finish, because the accounts are theirs and they can see
   them; the household simply sees nothing of this bank yet
-
-#### Scenario: An account nobody owns and nobody is granted
-- **WHEN** a member disowns an account and grants no member any level on it
-- **THEN** it appears for nobody, no balance is ever read for it, and it is not
-  counted in anyone's total
 
 #### Scenario: Changing the choice later
 - **WHEN** an owner reopens the choice for a connected bank
@@ -199,7 +298,7 @@ happened: their bank refused, or wimm could not complete its side.
   successful attempt at the same bank connects normally
 
 ### Requirement: Access that has run out
-**Story**: S4
+**Story**: S2
 A bank's grant SHALL be treated as expired both when the date it set is reached
 and when the bank rejects wimm's access before then. An expired connection SHALL
 say so where a member is looking at the balances it stopped updating, and SHALL
@@ -207,7 +306,7 @@ offer the way to restore it. wimm MUST NOT present a balance from an expired
 connection as current, and MUST NOT remove it either.
 
 #### Scenario: A connection reaches the end of its access
-- **WHEN** a member opens Overview and a connection's access has run out
+- **WHEN** a member opens Accounts and a connection's access has run out
 - **THEN** that bank's accounts say they have stopped updating, keep showing
   their last readings and the date each was taken, and offer a way to restore
   access
@@ -224,7 +323,7 @@ connection as current, and MUST NOT remove it either.
   current with nothing said
 
 ### Requirement: Restoring access to a bank
-**Story**: S4
+**Story**: S2
 A member SHALL be able to restore an expired connection by confirming again at
 the bank, without disconnecting first and without choosing the bank again.
 Every account SHALL keep the owners and the levels it had before, even though
@@ -234,7 +333,7 @@ the bank issues new identifiers each time.
 - **WHEN** a member chooses to restore an expired connection and confirms at
   their bank
 - **THEN** every account keeps the owners and the levels it had before, their
-  balances are read again, and Overview stops saying the bank has stopped
+  balances are read again, and Accounts stops saying the bank has stopped
   updating
 
 #### Scenario: The bank now offers an account it did not before
@@ -246,7 +345,7 @@ the bank issues new identifiers each time.
 #### Scenario: The bank no longer offers an account that members could see
 - **WHEN** an account members could see is not among those the bank makes
   available on restoring
-- **THEN** it stops appearing on Overview for everyone who could see it, its
+- **THEN** it stops appearing on Accounts for everyone who could see it, its
   owners and levels go with it, and the member restoring is told which account
   the bank no longer offers
 

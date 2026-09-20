@@ -190,6 +190,6 @@ of this change's canvas — so each task is the Svelte half and the story.
 - [x] 8.1 Confirm `docs/decisions/0022-an-account-always-has-an-owner.md` still
   describes what was built, and regenerate the index with `just adr-index`.
   Verify `just adr-index-check` passes.
-- [ ] 8.2 Confirm every `.pen` file is saved and committed, and that Pen.app is
+- [x] 8.2 Confirm every `.pen` file is saved and committed, and that Pen.app is
   not holding a stale copy of any of them. Verify `git status` shows no
   unexpected design changes.

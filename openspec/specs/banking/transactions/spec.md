@@ -220,12 +220,105 @@ ledger and a screen that empties every night.
 - **THEN** the history is not read again from the beginning, and the list keeps
   reaching back to the date it already reached
 
+### Requirement: Going straight to a month
+**Story**: S4
+A member SHALL be able to go straight to a month of the ledger. wimm SHALL offer
+the months that actually hold transactions that member can see, newest first,
+and MUST NOT offer a month with nothing in it — an empty month is a control that
+does nothing, and the reason the list is built from what is there rather than
+from a calendar.
+
+Choosing a month SHALL land the member on that month's newest transactions, and
+paging from there SHALL continue through the ledger normally in both directions,
+because a month is a place to start reading rather than a filter that cuts the
+list down.
+
+The months offered SHALL be the months of the transactions on screen: where a
+member is looking at one account, the months are that account's.
+
+#### Scenario: Jumping to a month
+- **WHEN** a member chooses April from the months offered
+- **THEN** they land on the newest transactions in April, and the dates on
+  screen say so
+
+#### Scenario: Paging on from a month
+- **WHEN** a member has jumped to a month and asks for older transactions
+- **THEN** the next page continues from where that page stopped, running into
+  the month before it when the month runs out, with nothing repeated and nothing
+  skipped
+
+#### Scenario: Only months that hold something
+- **WHEN** a household read nothing in March and several things in February
+- **THEN** March is not offered and February is
+
+#### Scenario: The months follow the account being looked at
+- **WHEN** a member narrows the ledger to one account
+- **THEN** the months offered are the months that account has transactions in
+
+#### Scenario: A month holding more than one page
+- **WHEN** a member jumps to a month with more transactions than fit on a page
+- **THEN** they land on that month's newest page and can page through the rest
+  of it
+
+#### Scenario: Not enough ledger to need it
+- **WHEN** every transaction a member can see falls in one month
+- **THEN** no months are offered, because there is nowhere else to go
+
+#### Scenario: A member who owns no account
+- **WHEN** a member owns no account
+- **THEN** no months are offered, as no transactions are
+
+### Requirement: An account left out stops filling the ledger
+**Story**: S3
+While an account is left out of wimm, no transaction SHALL be read for it and
+none of its transactions SHALL be listed, for any member including its owners.
+Its transactions SHALL NOT be deleted, and bringing the account back SHALL bring
+them back with it.
+
+This is deliberately unlike a bank being disconnected, where what was already
+read stays on screen. Disconnecting ends wimm's access to a bank; leaving an
+account out is a member saying that account is not in wimm, and a ledger that
+still listed it would contradict them.
+
+#### Scenario: The rows go
+- **WHEN** an owner leaves an account out
+- **THEN** its transactions stop being listed under Transactions, for them and
+  for everybody
+
+#### Scenario: Nothing new arrives
+- **WHEN** an account is left out
+- **THEN** no transaction is read for it, however often the ledger is brought up
+  to date
+
+#### Scenario: The rows come back
+- **WHEN** an owner brings a left-out account back
+- **THEN** its transactions are listed again, carrying on from where they
+  stopped rather than starting empty
+
+#### Scenario: The ledger's count and dates follow
+- **WHEN** an account is left out
+- **THEN** the number of transactions shown and the span of dates on screen
+  describe what is actually listed, without counting what is no longer there
+
+#### Scenario: Every account a member owns is left out
+- **WHEN** a member owns accounts and has left all of them out
+- **THEN** they are told the ledger is empty because their accounts are left
+  out, and how to bring one back, rather than being shown a bare empty list
+
 ### Requirement: Reading a ledger longer than one page
-**Story**: S1
+**Story**: S4
 A ledger SHALL be read a page at a time, oldest-ward and newest-ward, and the
 member SHALL always be told where in time they are rather than which page they
 are on. A page's position MUST NOT shift because transactions arrived while the
 member was reading, because the whole list moves when the newest end grows.
+
+The member SHALL also be able to go straight to the newest page and straight to
+the oldest, without walking there. Both are a seek like any other and neither
+requires wimm to know how many pages there are.
+
+wimm MUST NOT offer page numbers or a count of pages. A seek knows neither
+without a second count that would be stale before it rendered, and the span of
+dates is the thing a person scanning backwards is actually looking for.
 
 Where a day's transactions do not fit on one page, the day SHALL be named again
 at the top of the next, so a row is never shown under no date.
@@ -239,10 +332,29 @@ at the top of the next, so a row is never shown under no date.
 - **WHEN** a member who has paged backwards asks for newer transactions
 - **THEN** they return through the same transactions in the same order
 
+#### Scenario: Straight back to the newest
+- **WHEN** a member deep in the ledger asks for the newest transactions
+- **THEN** they land on the newest page in one action, and it is the same page
+  they would have reached by paging newer-ward the whole way
+
+#### Scenario: Straight to the oldest
+- **WHEN** a member asks for the oldest transactions wimm holds
+- **THEN** they land on the oldest page in one action, told there is nothing
+  older, and paging newer-ward from it works normally
+
+#### Scenario: Already at the end being jumped to
+- **WHEN** a member on the newest page asks for the newest page
+- **THEN** nothing moves and nothing is offered that would do nothing
+
 #### Scenario: Where the member is, is a date
 - **WHEN** a member is reading any page
 - **THEN** they are told the span of dates they are looking at, and are not
   asked to think in page numbers
+
+#### Scenario: The span is shown even on a single page
+- **WHEN** every transaction a member can see fits on one page
+- **THEN** they are still told the span of dates they are looking at, even
+  though no way to page is offered
 
 #### Scenario: New transactions arrive while a member is reading
 - **WHEN** transactions are read from a bank while the member is on a page
@@ -310,3 +422,59 @@ about it. The reasons differ and MUST NOT be collapsed into one empty list.
 - **WHEN** an account has been read and the bank returned no transactions
 - **THEN** the member is told the account has no transactions, and when it was
   last checked
+
+### Requirement: A transaction is named by who it was with
+**Story**: S3
+Wherever wimm lists a transaction, it SHALL name it by the merchant or person
+it was with, not by the bank's statement line. Where the bank supplies only a
+statement line, wimm SHALL remove the bank's own bookkeeping from it: the
+word for the kind of transaction at its start, reference numbers at its end,
+and any trailer about the country or the original amount. Two payments to one
+merchant that differ only in that bookkeeping SHALL carry the same name.
+
+A name MUST NOT be empty. Where removing the bookkeeping would leave nothing,
+the line SHALL be shown as the bank wrote it, and where the bank wrote
+nothing, the transaction SHALL be named for what it is.
+
+wimm MUST NOT discard what the bank wrote. On Transactions, where the name
+differs from the bank's line, the bank's line SHALL be shown with the
+transaction, because a name wimm derived has to be checkable against the
+statement it came from.
+
+#### Scenario: A card payment with a reference number
+- **WHEN** the bank's line for a payment is
+  `COMPRA WWW.AMAZON NM4HU1VZ4 230002268264350`
+- **THEN** the transaction is listed as `Amazon`
+
+#### Scenario: Two payments to one merchant
+- **WHEN** a member has paid the same merchant twice and the bank's two lines
+  differ only in their reference numbers
+- **THEN** both transactions carry the same name
+
+#### Scenario: A trailer about where and how much
+- **WHEN** the bank's line ends with the country and the original amount of a
+  payment made abroad
+- **THEN** the name stops before that trailer
+
+#### Scenario: The bank names the other party
+- **WHEN** the bank supplies the name of the person or company on the other
+  side of a transaction
+- **THEN** the transaction is named by it
+
+#### Scenario: Nothing would be left
+- **WHEN** a bank's line consists only of a transaction word and a number
+- **THEN** the transaction is listed under the line as the bank wrote it,
+  never under an empty name
+
+#### Scenario: The bank wrote nothing
+- **WHEN** a transaction arrives with no other party and no statement line
+- **THEN** it is listed as a card payment
+
+#### Scenario: Checking a name against the statement
+- **WHEN** a member looks at a transaction on Transactions whose name differs
+  from the bank's line
+- **THEN** the bank's line is shown with it, exactly as the bank wrote it
+
+#### Scenario: The same name everywhere
+- **WHEN** a member sees a transaction on Overview and then on Transactions
+- **THEN** it carries the same name in both places
