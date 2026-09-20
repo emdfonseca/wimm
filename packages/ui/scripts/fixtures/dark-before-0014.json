@@ -1,5 +1,5 @@
 {
-  "$comment": "Exported from packages/ui/design/product-ui.lib.pen via the pencil MCP. Never hand-edit; see docs/design/tokens.md. Every token carries an explicit type and unit — nothing downstream infers either.",
+  "$comment": "A token document the palette check must refuse; see scripts/test-palette.py. Every token carries an explicit type and unit — nothing downstream infers either.",
   "themes": {
     "color": [
       "light",

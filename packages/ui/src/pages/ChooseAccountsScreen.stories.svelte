@@ -44,7 +44,7 @@
 		title: 'Pages/ChooseAccountsScreen',
 		component: ChooseAccountsScreen,
 		tags: ['autodocs'],
-		parameters: { layout: 'fullscreen' },
+		parameters: { layout: 'fullscreen', shell: '/connect' },
 		args: {
 			bankName: 'Montepio',
 			accounts,
@@ -99,6 +99,13 @@
 <Story
 	name="Two members at different levels"
 	args={{ levels: { a1: { grace: 'details', alan: 'balance' } } }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const grace = canvas.getByRole('radiogroup', { name: 'What Grace sees of Conta à Ordem' });
+		const alan = canvas.getByRole('radiogroup', { name: 'What Alan sees of Conta à Ordem' });
+		await expect(within(grace).getByRole('radio', { name: 'Details' })).toBeChecked();
+		await expect(within(alan).getByRole('radio', { name: 'Balance' })).toBeChecked();
+	}}
 />
 
 <!-- Disowning an account nobody else sees says plainly that no balance will be
@@ -122,7 +129,9 @@
 		await userEvent.click(within(group).getByRole('radio', { name: 'Details' }));
 
 		await expect(args.onlevelchange).toHaveBeenCalledWith('a2', 'grace', 'details');
-		await expect(canvas.getByRole('status')).toHaveTextContent('Grace now sees details of Poupança');
+		await expect(canvas.getByRole('status')).toHaveTextContent(
+			'Grace now sees details of Poupança'
+		);
 	}}
 />
 
@@ -141,6 +150,14 @@
 <Story
 	name="Reopened with an existing choice"
 	args={{ levels: { a1: { grace: 'balance' }, a2: { alan: 'details' } } }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByRole('heading', { name: 'Who sees these accounts?' })).toBeVisible();
+		const grace = canvas.getByRole('radiogroup', { name: 'What Grace sees of Conta à Ordem' });
+		const alan = canvas.getByRole('radiogroup', { name: 'What Alan sees of Poupança' });
+		await expect(within(grace).getByRole('radio', { name: 'Balance' })).toBeChecked();
+		await expect(within(alan).getByRole('radio', { name: 'Details' })).toBeChecked();
+	}}
 />
 
 <!-- Restoring: the accounts kept what they had, and a newly offered one is
@@ -191,7 +208,19 @@
 
 <!-- A household of one: no levels to set, and the screen is still the place
      that says the accounts are theirs. -->
-<Story name="A household of one" args={{ members: [] }} />
+<Story
+	name="A household of one"
+	args={{ members: [] }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText(/These accounts are yours/)).toBeInTheDocument();
+		await expect(canvas.queryByText('Also owned by')).not.toBeInTheDocument();
+		await expect(canvas.queryByRole('radiogroup')).not.toBeInTheDocument();
+		await expect(
+			canvas.getByText(/Leaving everything as it is keeps these accounts to yourself/)
+		).toBeInTheDocument();
+	}}
+/>
 
 <!-- canvas.md: returning from the bank moves focus to the chooser's heading.
      A member arrives here by a full navigation, and without this a screen
@@ -233,12 +262,8 @@
 	args={{ refusedAccountId: 'a1' }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(
-			canvas.getByText('An account has to belong to somebody')
-		).toBeInTheDocument();
-		await expect(
-			canvas.getByText(/this would leave it with nobody/)
-		).toBeInTheDocument();
+		await expect(canvas.getByText('An account has to belong to somebody')).toBeInTheDocument();
+		await expect(canvas.getByText(/this would leave it with nobody/)).toBeInTheDocument();
 	}}
 />
 

@@ -25,15 +25,15 @@
 
 ## Design ↔ code naming
 
-Dotted pen variable → kebab-case CSS custom property. The mapping is a convention, not an automatic conversion; document units where they differ (canvas px vs rem), and not every design number is a pixel.
+A kebab-case token in `design/tokens.json` → the CSS custom property of the same name (ADR 0002). `just gen` writes the stylesheet; each token carries its own `type` and `unit`, and not every design number is a pixel.
 
 ```text
-pen.dev                    code
+design/tokens.json         code
 ------------------------------------------------
-color.bg.surface     ↔     --color-bg-surface
-color.text.primary   ↔     --color-text-primary
-layout.pageGutter    ↔     --layout-page-gutter
-radius.control       ↔     --radius-control
+color-bg-surface     ↔     --color-bg-surface
+color-text-primary   ↔     --color-text-primary
+layout-page-gutter   ↔     --layout-page-gutter
+radius-control       ↔     --radius-control
 ```
 
 Layer vocabulary stays the same across design and code:
@@ -47,7 +47,7 @@ Molecule            ↔    focused composition of controls
 Organism            ↔    reusable section / complex interaction
 Template            ↔    page-level scaffold / shell
 Page                ↔    presentational screen component + the route that wires it
-Journey             ↔    cross-view user flow and behavior
+Flow                ↔    cross-view user flow and behavior
 ```
 
 ## Components consume semantics
@@ -62,7 +62,7 @@ A component using a raw value or a primitive ramp is wrong in the other theme, a
 
 ## Responsive token values
 
-Where the design uses `Device`-aware variables (Compact / Medium / Wide), the implementation counterpart is a media or container query redefining the custom property, not a separate component:
+Where a token carries `device` axis values (compact / medium / wide / ultra), the implementation counterpart is a media or container query redefining the custom property, not a separate component:
 
 ```css
 :root { --layout-page-gutter: 16px; }                       /* Compact */
@@ -70,7 +70,7 @@ Where the design uses `Device`-aware variables (Compact / Medium / Wide), the im
 @media (min-width: 1200px) { :root { --layout-page-gutter: 32px; } }  /* Wide */
 ```
 
-The canvas cannot derive one mechanism from the other; boundaries are written down in the Project Setup Record.
+The boundaries are 768, 1200 and 1800, and no screen adds one of its own (`docs/design/project-setup-record.md`).
 
 ## Documenting them
 

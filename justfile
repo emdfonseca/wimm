@@ -40,7 +40,7 @@ adr-index-check:
 
 # What CI runs. The database is started first: store tests refuse to run
 # without one rather than skipping.
-ci: adr-index-check pen-exec-test db-up (all "check")
+ci: adr-index-check db-up (all "check")
 
 # The whole stack under process-compose: postgres, wimmd, the web app, Storybook.
 up *args:
@@ -79,34 +79,7 @@ db-psql:
 openspec *args:
     @bin/openspec {{args}}
 
-# Flush a .pen document from the running Pen.app to disk.
-pen-save file:
-    @bin/pen-save {{file}}
-
-# Bind a .pen library into a journey file. Refs then read <alias>:<nodeId>.
-pen-import journey alias library:
-    @bin/pen-import {{journey}} {{alias}} {{library}}
-
-# Run an execute snippet against a .pen file, headless. Snippet on stdin.
-pen-exec file snippet="":
-    @bin/pen-exec {{file}} {{snippet}}
-
 # Issue a locally-trusted certificate for the dev server. Enable Banking
 # requires an https redirect URI even on localhost.
 dev-cert *args:
     @bin/dev-cert {{args}}
-
-# Assert pen-exec leaves a file byte-identical when a snippet fails (ADR 0011).
-# Runs against a stub rather than the real CLI: it is the shim's own failure
-# handling under test, and a test needing the network would stop being run.
-pen-exec-test:
-    @bin/test-pen-exec
-
-# Write or verify the library manifest. `verify` fails if a node that already
-# existed was renamed, retyped, reparented or deleted.
-pen-manifest mode="verify":
-    @bin/pen-manifest {{mode}}
-
-# Assert the pen library's variables match design/tokens.json.
-pen-verify-tokens library="":
-    @bin/pen-verify-tokens {{library}}

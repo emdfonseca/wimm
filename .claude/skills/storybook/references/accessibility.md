@@ -1,6 +1,6 @@
 # Accessibility in Storybook
 
-The design library states accessibility contracts as prose. Storybook is where the automatable part becomes a check and the behavioural part becomes an assertion. Neither replaces a manual pass, and being honest about that gap is what keeps the checks worth running.
+A change's `canvas.md` states accessibility contracts as prose, under Contracts for implementation. Storybook is where the automatable part becomes a check and the behavioural part becomes an assertion. Neither replaces a manual pass, and being honest about that gap is what keeps the checks worth running.
 
 ## The a11y addon
 
@@ -23,7 +23,7 @@ Automated rules find missing names, contrast failures on rendered text, bad ARIA
 
 ## Contracts as play functions
 
-Take the contract from the design library and assert it:
+Take the contract from `canvas.md` and assert it:
 
 ```svelte
 <script module>
@@ -51,7 +51,7 @@ Take the contract from the design library and assert it:
 />
 ```
 
-Write the contract as a comment above the story, in the same words the design library uses. When the assertion fails later, the comment tells the next person whether the code or the contract is wrong.
+Write the contract as a comment above the story, in the same words `canvas.md` uses. When the assertion fails later, the comment tells the next person whether the code or the contract is wrong.
 
 ## Contracts worth asserting
 
@@ -64,7 +64,7 @@ Write the contract as a comment above the story, in the same words the design li
 | Tabs | Arrow-key movement; correct `tab`/`tabpanel` roles; activation model is deliberate |
 | Destructive confirmation | Names the affected object; destructive and cancel are distinguishable without colour |
 
-Note what is *not* here: reflow, zoom, text spacing, and target size. Those are measured on the rendered implementation, not asserted in a story — the numbers and their exceptions are in the design standard's measurable baseline.
+Note what is *not* here: reflow, zoom, text spacing, and target size. Those are measured on the rendered implementation, not asserted in a story.
 
 ## Focus indicators
 

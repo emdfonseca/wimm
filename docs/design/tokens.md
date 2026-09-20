@@ -1,52 +1,22 @@
 # Token contract
 
 ```text
-design/product-ui.lib.pen   the source of truth for values
-design/tokens.json          an export of it — the contract CI can read
-src/tokens.css              generated from tokens.json, never hand-edited
+design/tokens.json   the source of values, edited by hand
+src/tokens.css       generated from tokens.json, never hand-edited
 ```
 
-## Why there is an export in the middle
+## Changing a token
 
-CI cannot read a `.pen` file: it is encrypted and only reachable through the
-pencil MCP, which needs the desktop app running. So the library cannot be the
-thing `just check` compares against.
+Edit `design/tokens.json`, keeping each token's explicit `type` and `unit`, then
+`just gen packages/ui`, in the same commit. Bare `just gen` regenerates
+everything, including the decision index.
 
-`tokens.json` is that stand-in. Drift between **tokens.json and tokens.css** is
-mechanical and fully checked. Drift between **the library and tokens.json** is
-caught by a person re-exporting, and by nothing else. Treat re-export as part of
-any change to variables, in the same commit.
-
-## Re-exporting after changing variables
-
-In an `execute` call against the library:
-
-```js
-const g=GetVariables();
-Print("THEMES",JSON.stringify(g.themes));
-const rows=[];
-for(const [k,d] of Object.entries(g.variables)){
-  const out={n:k,t:d.type};
-  if(Array.isArray(d.value)){for(const e of d.value){
-    const key=e.theme?Object.entries(e.theme).map(([a,b])=>a+"="+b).join(","):"_";
-    out[key]=e.value}} else out._=d.value;
-  rows.push(out)}
-rows.sort((a,b)=>a.n<b.n?-1:1);
-for(const r of rows)Print(JSON.stringify(r));
-```
-
-Fold the output into `design/tokens.json` — keeping each token's explicit `type`
-and `unit` — then `just gen packages/ui`. Bare `just gen` regenerates everything,
-including the decision index.
-
-Unconditional fallback entries (`"_"`) exist so a value list always has a match
-before its conditional entries — file-level tooling takes the **last** matching
-entry, so a fallback goes first. They are dropped on export; only the axis values
-reach the JSON.
+A token with axis values carries every branch of each axis it names, and no
+default beside them.
 
 ## What `just check packages/ui` enforces
 
-**The export is a valid token document**
+**`tokens.json` is a valid token document**
 
 - Names are kebab-case; types are known; units are legal for their type and
   explicit on every token — nothing downstream infers a unit.
@@ -62,10 +32,10 @@ The easing tokens are left as they are: a curve with no time to run is harmless,
 and keeping them means a component never has to branch. Nothing is removed and no
 state becomes unreachable — a drawer still opens, it simply is open.
 
-**The stylesheet agrees with the export**
+**The stylesheet agrees with `tokens.json`**
 
 - Regenerating `tokens.css` is a no-op.
-- Every exported token appears in the stylesheet, and nothing else declares a
+- Every token appears in the stylesheet, and nothing else declares a
   custom property.
 - No raw hex anywhere in `src/` except `tokens.css`.
 
@@ -75,16 +45,14 @@ check that has never rejected anything is not evidence.
 
 ## How the axes reach the browser
 
-| Axis | On the canvas | In CSS |
-|---|---|---|
-| `color` | set per frame | `prefers-color-scheme`, overridden by `[data-theme]` in both directions |
-| `device` | set per frame, manually | **automatic** — `min-width` at 768 / 1200 / 1800, mobile-first from compact |
-| `density` | set per frame | `[data-density="compact"]` on any subtree |
+| Axis | In CSS |
+|---|---|
+| `color` | `prefers-color-scheme`, overridden by `[data-theme]` in both directions |
+| `device` | automatic: `min-width` at 768 / 1200 / 1800, mobile-first from compact |
+| `density` | `[data-density="compact"]` on any subtree |
 
-`device` is the one that behaves differently in the two places. On the canvas it
-is a label with no relationship to frame width — a 390 px frame does not become
-compact by being 390 px wide. In CSS it resolves from the viewport. That is the
-intended asymmetry: the canvas shows chosen compositions, the browser adapts.
+`device` resolves from the viewport. A story is seen at a regime by being given
+that regime's width on the design canvas, never by a label.
 
 `density = compact` reverts to comfortable under `@media (any-pointer: coarse)`,
 not below a width. Touch is an input capability: a large tablet is a wide viewport

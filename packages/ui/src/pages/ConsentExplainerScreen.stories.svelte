@@ -7,7 +7,7 @@
 		title: 'Pages/ConsentExplainerScreen',
 		component: ConsentExplainerScreen,
 		tags: ['autodocs'],
-		parameters: { layout: 'fullscreen' },
+		parameters: { layout: 'fullscreen', shell: '/connect' },
 		args: {
 			bankName: 'Monzo',
 			oncontinue: fn(),
@@ -65,5 +65,19 @@
 		await userEvent.click(within(canvasElement).getByRole('button', { name: 'Cancel' }));
 		await expect(args.oncancel).toHaveBeenCalledOnce();
 		await expect(args.oncontinue).not.toHaveBeenCalled();
+	}}
+/>
+
+<!-- Compact says the same thing in one sentence: the notice is the only part
+     of this screen whose words change with the regime. -->
+<Story
+	name="Compact"
+	globals={{ viewport: { value: 'compact' } }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Only you can see these accounts')).toBeInTheDocument();
+		await expect(
+			canvas.getByText(/Nobody else sees an account until you choose who does/)
+		).toBeInTheDocument();
 	}}
 />

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "wimm design system: the token contract generated from the pen.dev library, and the Svelte components screens instance",
+  "description": "wimm design system: the token contract in design/tokens.json, and the Svelte components screens are built from",
   "exports": {
     ".": "./src/index.ts",
     "./base.css": "./src/base.css",

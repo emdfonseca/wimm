@@ -1,7 +1,7 @@
 # Project Setup Record — wimm
 
-Project-level design decisions. Journey files carry a short summary and their own
-`00 · JOURNEY OVERVIEW`; they never duplicate this record.
+Project-level design decisions. A flow's own decisions live in its spec under
+`openspec/specs/`; they never duplicate this record.
 
 ## Product
 
@@ -11,38 +11,52 @@ stands for, set in the accent blue. The mark alone never carries it: a lone `?`
 in a rounded square is a help affordance everywhere else.
 
 **Problem / in scope / out of scope**
-Personal money management: where the money is, where it went, and whether the plan
+Household money management: where the money is, where it went, and whether the plan
 holds. In scope: accounts and balances, transactions, categorisation, budgets,
-recurring items, reporting. Out of scope until decided: multi-user households,
-investment performance, tax.
+recurring items, reporting. Out of scope until decided: investment performance, tax.
 
 **Primary actor + permission differences**
-A single person managing their own money. One role, no permission tiers.
-OPEN DECISION — shared household access.
+A household member. The operator who runs the instance registers members; nobody
+signs themselves up (ADR 0016, `openspec/specs/identity/operator-registration/spec.md`).
+An account has owners, who see it in full. Every other member sees it at a level
+set per account: hidden, balance or details (ADR 0019). Transactions are
+owner-only (ADR 0021).
 
-**Primary journey + success outcome**
-Not yet scoped. The library is being built ahead of the first journey.
-OPEN DECISION — first journey (assumption: connect/add an account, then review and
-categorise transactions).
+**Primary flow + success outcome**
+Connect a bank, choose which accounts the household sees, then read balances on
+Overview and transactions in the ledger
+(`openspec/specs/banking/bank-connections/spec.md`,
+`openspec/specs/banking/overview/spec.md`,
+`openspec/specs/banking/transactions/spec.md`).
+
+**Data source**
+Accounts, balances and transactions are read from banks through a gateway
+(ADR 0018, ADR 0021). Nothing is entered by hand or imported from a file.
+
+**Currency**
+Money is minor units plus an ISO 4217 code. Totals are per currency and mixed
+currencies are never summed (ADR 0018).
 
 **Failure / recovery paths to design**
-Per journey. Domain-wide ones known already: account sync failure and stale data,
+Per flow. Domain-wide ones known already: account sync failure and stale data,
 duplicate transaction, failed categorisation rule, budget exceeded.
 
 ## Navigation and surfaces
 
 **Entry route + navigation hierarchy**
-OPEN DECISION — the route map. Assumption: a top-level area per noun
-(`/accounts`, `/transactions`, `/budgets`, `/reports`, `/settings`), each with a
-list and a detail route.
+Four destinations, one list for every form of the navigation
+(`packages/ui/src/destinations.ts`): Overview `/`, Accounts `/accounts`,
+Transactions `/transactions`, Settings `/settings`. Connecting a bank is a flow
+under `/connect`. The navigation is a bottom bar at Compact, a rail at Medium and
+a labelled sidebar at Wide and Ultra (`openspec/specs/app/screen-layout/spec.md`).
 
 **Back / cancel / success destinations**
-Per journey.
+Per flow.
 
 **Task surfaces**
 
 ```text
-Add account            → Full page   / route-backed   (multi-step, resumable)
+Connect a bank         → Full page   / route-backed   (multi-step, resumable)
 Add transaction        → Modal       / ephemeral      (short, blocking)
 Edit transaction       → Drawer     / route-backed   (renders per regime, below)
 Recategorise           → Inline edit
@@ -66,37 +80,35 @@ the rest to here.
   **non-modal**: the ledger stays visible *and interactive* behind it, which is
   the whole reason to prefer it over a dialog. Focus moves in on open and returns
   to the row on close.
-- **Ultra** — a persistent inspector pane, with the elevation and the close
-  control removed because nothing is dismissed.
+- **Ultra** — a persistent inspector pane, with no elevation and no close
+  control because nothing is dismissed.
 
 Only the middle one has anything behind it, so only the middle one has a modality
 question to answer. A full-bleed sheet inheriting the non-modal contract would be
 the worst of both: covering the page while leaving focus free to wander behind it.
 Nothing is reachable at one width and not another.
 
-**View preferences live in the account menu.** Appearance (light / dark / system)
-and density (comfortable / compact) are set there, reached from the account
-trigger in the sidebar footer. Density is hidden under `any-pointer: coarse`
-(ADR 0004). Sidebar collapse is the exception: its control sits in the sidebar
-footer beside the account trigger, because it acts on the thing it sits in.
-Width sets the default form — rail below 1200 CSS px — and the control overrides
-it for the session.
+**View preferences live in Settings.** Appearance (light / dark / system) and
+density (comfortable / compact) are set there and nowhere else
+(`openspec/specs/app/settings/spec.md`). Every choice takes effect at once, with
+no saving step. Density is hidden under `any-pointer: coarse` (ADR 0004).
 
 ## Responsive
 
-**Regimes drawn**
+**Regimes**
 
 ```text
-Compact → 390 px representative frame   (width < 768 CSS px)
-Medium  → 1024 px representative frame  (768 ≤ width < 1200 CSS px)
-Wide    → 1440 px representative frame  (1200 ≤ width < 1800 CSS px)
-Ultra   → 1920 px representative frame  (width ≥ 1800 CSS px)
+Compact → width < 768 CSS px            (checked at 390)
+Medium  → 768 ≤ width < 1200 CSS px     (checked at 1024)
+Wide    → 1200 ≤ width < 1800 CSS px    (checked at 1440)
+Ultra   → width ≥ 1800 CSS px           (checked at 1920)
 ```
 
-Ultra is a deviation from the pen-design standard's canonical three regimes
-(§5.3.1). It earns a fourth regime because one structure genuinely changes: the
-editing drawer stops being an overlay and becomes a persistent inspector pane, so
-a transaction can be edited without losing the list.
+Ultra is a fourth regime, see ADR 0002. It earns its place because one structure
+genuinely changes: the editing drawer stops being an overlay and becomes a
+persistent inspector pane, so a transaction can be edited without losing the list.
+
+`just canvas` shows every screen and its state stories at all four regimes.
 
 **Structural change points (CSS px)**
 768 — Compact stacked layout becomes the shell with sidebar.
@@ -105,9 +117,8 @@ a transaction can be edited without losing the list.
 
 **What Ultra does not do**
 Ultra buys a second pane, not bigger controls: control heights and type sizes
-resolve identically to Wide. A surface with nothing to put in a second pane is not
-drawn at Ultra — it uses the Wide composition, and that mapping is recorded rather
-than duplicated.
+resolve identically to Wide. A surface with nothing to put in a second pane uses
+the Wide composition at Ultra.
 
 `layout-content-max` (1200) caps **text measure only** — prose, help, long-form
 settings copy. It does not cap panels, tables or chart regions, which take the
@@ -144,8 +155,8 @@ the product's own standard, not because the smaller value fails.
 
 **Device axis** — yes: `Compact`, `Medium`, `Wide`, `Ultra`. Drives page gutter,
 section gap, header height, sidebar width, inspector width, page-title and
-hero-amount size, and control height.
-It is not a breakpoint; a frame's width and its `Device` value are set independently.
+hero-amount size, and control height. Its values switch at the structural change
+points above.
 
 ## Accessibility
 
@@ -161,76 +172,39 @@ Project-specific requirements:
 - Charts state the value in text near the mark; never colour alone.
 - Account numbers are masked by default and revealed by an explicit control.
 
-**What is measured, and what is only promised.** The distinction matters more than
-the list: a measured claim is re-checked by `canvas-audit.md` on every pass, and a
-promised one is a test waiting for code that does not exist yet.
+**Skip link.** A skip link is first in the tab order of every shell and
+off-screen until focused. It exists because the Wide shell puts twelve tab stops
+between the top of the page and the first ledger row.
 
-```text
-measured   target size      292 control instances, 0 under 24 × 24, nearest two
-                            centres 37 px apart, so the spacing exception is not
-                            relied on anywhere
-measured   reflow at 320    two 320 px frames carrying the longest realistic
-                            strings, 0 nodes crossing either edge
-measured   text contrast    1985 text nodes, 30 failures, all color-text-disabled
-                            and exempt under SC 1.4.3
-derived    focus order      read out of the canvas per surface, in 50 · TEMPLATES
-                            → Focus order; stops a frame does not draw are marked
-promised   keyboard         40 · ORGANISMS → Keyboard contract: operability, focus
-                            transitions, error identification and status
-                            announcement, one row per organism, none of it
-                            measurable until there is markup
-```
-
-**Skip link.** `20 · ATOMS` → Skip link, a preset of Button, first in the tab
-order of every shell and off-screen until focused. It exists because the Wide
-shell puts twelve tab stops between the top of the page and the first ledger row.
-It is deliberately absent from the shell templates: a control that is invisible
-until focused, drawn always-visible in a composition template, teaches the
-composition wrong. Its position is recorded in the Focus order block instead.
-
-**The Compact page header is its own component.** `App header/compact` drops the
-breadcrumb and the tab counts and renders the primary action as an icon button
-with the label as its accessible name. At 320 CSS px a 141 px labelled action left
-90 px for the page title, which broke mid-word. Repeating those overrides per
-screen was the alternative, and it is the drift the one-component rule exists to
-prevent.
+**The Compact page header is its own component.** It drops the breadcrumb and the
+tab counts and renders the primary action as an icon button with the label as its
+accessible name. At 320 CSS px a 141 px labelled action left 90 px for the page
+title, which broke mid-word. Repeating those overrides per screen was the
+alternative, and it is the drift the one-component rule exists to prevent.
 
 ## System
 
-**Library path + revision** — `packages/ui/design/product-ui.lib.pen`.
+**Design of record** — code (ADR 0023). A screen's design is its presentational
+Svelte component under `packages/ui/src/pages` plus its state stories in
+Storybook. Components live in
+`packages/ui/src/{atoms,molecules,organisms,templates,pages}`.
+
+**Tokens** — `packages/ui/design/tokens.json` is the hand-edited source of token
+values. `packages/ui/src/tokens.css` is generated from it by `just gen`
+(ADR 0003).
 
 **Surfaces** — `docs/design/surfaces.md`: which navigation pattern, task surface
 and feedback surface to use for what, plus the rulings specific to money (no toast
 for a failed money operation; direction is a control, not a typed minus; the
 currency symbol is an affix, not content).
 
-**Conventions** — `docs/design/library-conventions.md`: component block structure
-(contract, variants and states together), the specimen-cell contract that makes
-alignment structural, and the required state matrices per component.
+**Token naming** — kebab-case (`color-bg-canvas`), so each name maps 1:1 to a CSS
+custom property (`--color-bg-canvas`).
 
-**Verification** — `docs/design/canvas-audit.md` holds the audit pass: overflow,
-dropped size bindings, hugging controls, nested focus-ring radius, text contrast
-against the resolved background, and text sized without `textGrowth`. Run it as its
-own `execute` call after every canvas change. Results read inside the mutating call
-are stale — bounds, `ctx.problems` and screenshots all report the pre-layout frame.
-
-**Known tool limitation** — this pen build silently drops variable references on
-`width` and `height`: the property is discarded and the frame falls back to hugging
-its content. Every size on the canvas is therefore a literal matching its token
-(`control-height-md` drawn as 40, `layout-sidebar-width` as 264). Colour, padding,
-corner radius, stroke width and type size bind normally. In code the tokens are
-authoritative; where a drawn size and its token disagree, the token wins.
-
-**Token naming** — the library uses kebab-case variable names (`color-bg-canvas`)
-rather than the dotted form in the pen-design standard's §8.2 vocabulary, so each
-name maps 1:1 to a CSS custom property (`--color-bg-canvas`). Roles and structure
-are unchanged; only the separator differs.
-
-**New shared assets / token changes expected**
-Domain tokens beyond the standard vocabulary: `color-amount-positive`,
-`color-amount-negative`, `color-amount-neutral`, and the `type-size-amount-*` scale.
-Accent tokens for the teal family: `color-accent`, `color-accent-hover`,
-`color-accent-subtle`.
+**Domain tokens beyond the standard vocabulary**
+Amounts: `color-amount-positive`, `color-amount-negative`, `color-amount-neutral`,
+and the `type-size-amount-*` scale.
+Accent: `color-accent`, `color-accent-hover`, `color-accent-subtle`.
 Layout tokens for the two-pane regime: `layout-inspector-width` (0 until Ultra) and
 `layout-drawer-width` (the overlay width at Compact through Wide).
 `layout-subnav-width` (212) is the in-page subsection list, identical at every
@@ -247,9 +221,10 @@ and hero amounts only. Hero amounts stay in IBM Plex Mono — a proportional fac
 would cost the decimal alignment that makes the ledger readable.
 
 **Palette** — Pine & Signal. Deep pine green (`#0C7A57`) is the brand and primary
-action; blue (`#1F5FF0`) is the highlight for links, selection and focus;
-neutrals are tinted green-grey. Revised in ADR 0006 — see it for the values, the
-alternatives, and the reasoning; they are not repeated here.
+action; blue (`#1F5FF0`) is the highlight for links, selection and focus; light
+neutrals are tinted green-grey and the dark ground is a cool near-black. See
+ADR 0006 for the light values and ADR 0014 for the dark ones, with the
+alternatives and the reasoning; they are not repeated here.
 
 Red is reserved for money direction and feedback, never for branding. Green
 carries both jobs and they are kept apart by role: `color-action-primary` is the
@@ -258,7 +233,7 @@ other's purpose.
 
 **The two greens are separated by hue, not by lightness.** Brand green sits at
 hue 161/159 and income green at 139/135, a gap of 22° and 24°. By lightness they
-are still close — 1.17:1 in dark — so the contextual rule stands unchanged:
+are still close — 1.17:1 in dark — so the contextual rule stands:
 
 ```text
 Brand green   fill only   — buttons, selected nav, chart series 1
@@ -267,16 +242,16 @@ Never adjacent in dark theme.
 Charts never use income green; the green slot in the chart ramp is teal.
 ```
 
-That rule is not redundant now that the hues differ. A 22° separation inside the
+That rule is not redundant given that the hues differ. A 22° separation inside the
 green band is close to invisible under deuteranopia, which is the case the rule
-was protecting in the first place — hue separation helps typical vision and does
-nothing for that one. What carries direction is the sign: every amount shows `+`
-or `−`, so no reading of the ledger depends on telling two greens apart.
+protects — hue separation helps typical vision and does nothing for that one. What
+carries direction is the sign: every amount shows `+` or `−`, so no reading of the
+ledger depends on telling two greens apart.
 
 **Text on the brand surface has its own tokens.** `color-text-on-brand` and
 `color-text-on-brand-secondary` are theme-invariant, because the brand surface is
-dark in both themes. The balance card used to hard-code these and the values
-broke the moment the gradient moved.
+dark in both themes. The balance card takes its text colours from them and never
+hard-codes its own.
 
 ## Constraints
 
@@ -284,28 +259,3 @@ broke the moment the gradient moved.
 SvelteKit with Svelte 5 (ADR 0001). Pages are presentational components taking data
 as props and emitting intent as callbacks; a thin route module supplies the data.
 Every designed state must be reachable by setting props.
-
-**pen.dev app/extension version** — `.pen` schema 2.14.
-
-## Open decisions
-
-```text
-Question:            What is the first journey to design?
-Current assumption:  Add an account, then review and categorise transactions.
-If wrong:            The component inventory ordering shifts; foundations and atoms
-                     are unaffected.
-
-Question:            Is account data manually entered, imported, or bank-synced?
-Current assumption:  Manual entry and file import first; sync later.
-If wrong:            Sync adds connection status, re-auth, and stale-data states to
-                     the shell and the account organism.
-
-Question:            Single currency or multi-currency?
-Current assumption:  Single currency per user, formatted by locale.
-If wrong:            Amount components need a currency slot and conversion
-                     disclosure; the token scale is unaffected.
-
-Question:            Shared household access?
-Current assumption:  No. One person, one dataset.
-If wrong:            Adds an actor, permission states, and an invite journey.
-```

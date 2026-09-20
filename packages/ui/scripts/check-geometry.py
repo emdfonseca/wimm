@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The measurements the canvas records, asserted against the stylesheets.
+"""The layout measurements of record, asserted against the stylesheets.
 
 These four numbers were all wrong at once and none of them looked wrong: the
 declarations said 480 and 560, and the browser laid out 546 and 688, because
@@ -25,29 +25,27 @@ def check(src: Path) -> list[str]:
     if not re.search(r"\*\s*,\s*\*::before\s*,\s*\*::after\s*\{[^}]*box-sizing:\s*border-box", text, re.S):
         problems.append(
             "base.css does not set box-sizing: border-box on every element. "
-            "The canvas measures whole frames; without this the browser adds "
+            "These widths are whole boxes; without this the browser adds "
             "padding on top of every width the design system declares."
         )
 
-    # Each is (file, selector, property, expected) straight from canvas.md.
+    # Each is (file, selector, property, expected). This list is the record.
     expected = [
         ("templates/AuthShell.svelte", ".card", "max-inline-size", "480px"),
         ("templates/AuthShell.svelte", ".panel", "flex", "0 0 560px"),
-        # `layout-sidebar-width`: 264 at Wide, 288 at Ultra (`NEIet`) — one
+        # `layout-sidebar-width`: 264 at Wide, 288 at Ultra — one
         # token rather than a literal, because the two regimes disagree on the
         # number and a literal can only ever be right for one of them.
         ("organisms/SidebarNav.svelte", ".sidebar", "inline-size", "var(--layout-sidebar-width)"),
-        # The rail (`WMlvF`): 72 at Medium, the same token.
+        # The rail: 72 at Medium, the same token.
         ("templates/SignedInLanding.svelte", ".rail", "inline-size", "var(--layout-sidebar-width)"),
-        # Slot `xNVFG`'s child is always a `Page`, which owns its own gutter —
-        # for its content, not its header. The slot itself had this same
-        # padding too, which inset the header the frames draw edge to edge.
+        # The shell slot's child is always a `Page`, which owns its own gutter —
+        # for its content, not its header. Padding on the slot as well insets
+        # a header that runs edge to edge.
         ("templates/Page.svelte", ".body", "padding", "var(--layout-page-gutter)"),
     ]
 
-    # A screen of content fills its slot and packs to the top, which is how
-    # every frame's Page is drawn: height fill_container with a trailing
-    # spacer. The slot centres on both axes, so a screen that does not fill
+    # A screen of content fills its slot and packs to the top. The slot centres on both axes, so a screen that does not fill
     # floats into the middle of the page — which is what happened to all four
     # of these at once, and what no measurement above would have caught.
     for screen in sorted((src / "pages").glob("*.svelte")):
@@ -61,12 +59,12 @@ def check(src: Path) -> list[str]:
         if "flex: 1" not in rule:
             problems.append(
                 f"pages/{screen.name}: .screen does not declare flex: 1, so the "
-                "shell's slot will centre it instead of the frame's own Page "
-                "filling and packing content to the top."
+                "shell's slot will centre it instead of the Page filling and "
+                "packing content to the top."
             )
 
     # The token itself, at the three regimes that give it a value: 72 at
-    # Medium (the rail, `WMlvF`), 264 at Wide, 288 at Ultra (`NEIet`). A screen
+    # Medium (the rail), 264 at Wide, 288 at Ultra. A screen
     # can declare `var(--layout-sidebar-width)` correctly and still be wrong if
     # the token's own per-regime value drifts — which is what the check above
     # cannot see.
@@ -82,8 +80,8 @@ def check(src: Path) -> list[str]:
             if not block or f"--layout-sidebar-width: {want_px}px" not in block.group(1):
                 problems.append(
                     f"tokens.css: --layout-sidebar-width is not {want_px}px at "
-                    f"{device} (min-width: {min_width}px), which is what the "
-                    "canvas measures there."
+                    f"{device} (min-width: {min_width}px), which is the width of "
+                    "record there."
                 )
 
     for filename, selector, prop, want in expected:
@@ -95,7 +93,7 @@ def check(src: Path) -> list[str]:
         if f"{prop}: {want}" not in body:
             problems.append(
                 f"{filename}: {selector} no longer declares {prop}: {want}, "
-                "which is what the canvas measures."
+                "which is the measurement of record."
             )
 
     return problems
@@ -105,11 +103,11 @@ def main() -> int:
     src = Path(sys.argv[1] if len(sys.argv) > 1 else "src").resolve()
     problems = check(src)
     if problems:
-        print("geometry does not match the canvas:", file=sys.stderr)
+        print("geometry does not match the measurements of record:", file=sys.stderr)
         for problem in problems:
             print(f"  {problem}", file=sys.stderr)
         return 1
-    print("geometry matches the canvas (border-box, card 480, panel 560, sidebar/rail tokenised)")
+    print("geometry matches the record (border-box, card 480, panel 560, sidebar/rail tokenised)")
     return 0
 
 

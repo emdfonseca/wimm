@@ -25,5 +25,8 @@
 		// No notice: the card is the message.
 		await expect(canvas.queryByRole('alert')).toBeNull();
 		await expect(canvas.getByText(/ask whoever set up your account/i)).toBeInTheDocument();
+		await expect(
+			canvas.getByText(/It may have expired, already been used, or been replaced by a newer one/)
+		).toBeInTheDocument();
 	}}
 />

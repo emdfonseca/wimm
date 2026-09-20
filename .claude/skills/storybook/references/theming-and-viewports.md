@@ -2,12 +2,12 @@
 
 ## Theme is a global
 
-pen `Color` axis values map to the Storybook `theme` global:
+The `color` axis in `design/tokens.json` maps to the Storybook `theme` global:
 
 ```text
-pen      Storybook global   DOM
-Light    light              [data-theme="light"]
-Dark     dark               [data-theme="dark"]
+axis     Storybook global   DOM
+light    light              [data-theme="light"]
+dark     dark               [data-theme="dark"]
 ```
 
 The decorator in `preview.ts` sets `data-theme` on the document element; the tokens stylesheet redefines the custom properties under `[data-theme="dark"]`. Components read semantic tokens and never know which theme is active.
@@ -20,15 +20,16 @@ Pin a theme on a story only when the state is genuinely theme-specific:
 
 If that is common, the component is hardcoding colours — see `references/tokens.md`.
 
-## Viewports mirror the design frames
+## Viewports are the four regimes
 
-The presets in `preview.ts` use the regime names and widths from the design standard, so a Storybook screenshot and a `.pen` frame are comparable:
+The presets are declared once, in `apps/storybook/canvas/viewports.js`. `preview.ts` and the design canvas both read them, so a story in the toolbar and the same story on the design canvas are the same width:
 
 ```text
-viewport key   width    pen frame / shell / Device value
-compact        390px    Compact
-medium         768px    Medium
-wide           1440px   Wide
+viewport key   width    regime
+compact        390px    Compact   below 768
+medium         834px    Medium    768 and above
+wide           1440px   Wide      1200 and above
+ultra          1920px   Ultra     1800 and above
 ```
 
 Pin a viewport where the component only makes sense in one regime:
@@ -41,6 +42,6 @@ Those widths are review conveniences. Real responsive verification happens just 
 
 ## The one legitimate side-by-side
 
-A component whose theming is genuinely risky — focus rings, elevation, error and disabled treatments, data graphics — may carry a single `ThemeQA` story rendering the same component twice with both themes forced. It mirrors the design's QA zones: library zone 90 for library components, journey zone 40 for Pages. Label it as a test fixture in its docs description and tag it out of the default view.
+A component whose theming is genuinely risky — focus rings, elevation, error and disabled treatments, data graphics — may carry a single `ThemeQA` story rendering the same component twice with both themes forced. Label it as a test fixture in its docs description and tag it out of the default view.
 
 One per component, at most.

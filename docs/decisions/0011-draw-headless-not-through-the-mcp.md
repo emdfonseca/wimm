@@ -2,7 +2,9 @@
 
 ## Status
 
-Accepted
+Accepted; superseded by 0023
+
+Nothing is drawn, headless or otherwise.
 
 ## Context
 

@@ -19,4 +19,4 @@ Recipes live in the package justfile (`monorepo`): `just dev packages/ui` starts
 
 ## What Storybook does not test
 
-Routing, data loading, authentication, and anything spanning more than one screen. Those are journeys, they live in the `.pen` files, and they need e2e tests against the running app.
+Routing, data loading, authentication, and anything spanning more than one screen. Those are flows across wired screens, and they need e2e tests against the running app.

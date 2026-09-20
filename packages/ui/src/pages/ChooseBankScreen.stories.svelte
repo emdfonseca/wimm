@@ -14,8 +14,10 @@
 		title: 'Pages/ChooseBankScreen',
 		component: ChooseBankScreen,
 		tags: ['autodocs'],
-		parameters: { layout: 'fullscreen' },
-		argTypes: { state: { control: 'inline-radio', options: ['default', 'loading', 'unavailable'] } },
+		parameters: { layout: 'fullscreen', shell: '/connect' },
+		argTypes: {
+			state: { control: 'inline-radio', options: ['default', 'loading', 'unavailable'] }
+		},
 		args: { banks, state: 'default', onselect: fn(), onretry: fn() }
 	});
 </script>
@@ -25,6 +27,9 @@
 	play={async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getAllByRole('button')).toHaveLength(5);
+		await expect(
+			canvas.getByRole('heading', { name: 'Connect a bank', level: 1 })
+		).toBeInTheDocument();
 		await userEvent.click(canvas.getByRole('button', { name: 'Revolut' }));
 		await expect(args.onselect).toHaveBeenCalledWith('PT:Revolut');
 	}}
@@ -63,7 +68,13 @@
 	}}
 />
 
-<Story name="Loading" args={{ state: 'loading', banks: [] }} />
+<Story
+	name="Loading"
+	args={{ state: 'loading', banks: [] }}
+	play={async ({ canvasElement }) => {
+		await expect(within(canvasElement).getByText('Loading banks…')).toBeInTheDocument();
+	}}
+/>
 
 <Story
 	name="List unavailable"

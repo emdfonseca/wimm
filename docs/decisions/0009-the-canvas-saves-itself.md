@@ -2,7 +2,9 @@
 
 ## Status
 
-Accepted
+Accepted; superseded by 0023
+
+There is no `.pen` document to save.
 
 ## Context
 

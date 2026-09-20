@@ -1,8 +1,8 @@
 # Surface and navigation decisions
 
 Which component to reach for, and what each one must never be used for. The
-components live in `40 · ORGANISMS`; this is the rule that picks between them.
-Mirrored as a canvas section in `00 · README`.
+components live in `packages/ui/src/organisms`; this is the rule that picks
+between them.
 
 ## Navigation
 

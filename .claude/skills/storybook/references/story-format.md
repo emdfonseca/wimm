@@ -25,7 +25,7 @@ The older `<Template>` component is deprecated in the Svelte 5 addon; snippets r
 
 ## Titles
 
-`title` mirrors the design library's layers: `Atoms/…`, `Molecules/…`, `Organisms/…`, `Templates/…`, `Pages/…`, plus `Foundations/…` for docs pages. Set it explicitly rather than relying on path-derived titles — the file path follows code organization, the sidebar follows design taxonomy (table in `SKILL.md`).
+`title` mirrors the design system's layers: `Atoms/…`, `Molecules/…`, `Organisms/…`, `Templates/…`, `Pages/…`, plus `Foundations/…` for docs pages. Set it explicitly rather than relying on path-derived titles — the file path follows code organization, the sidebar follows design taxonomy (table in `SKILL.md`).
 
 ## Tags
 
@@ -40,4 +40,4 @@ Every knob a consumer can turn is an arg with an `argTypes` control, so the docs
 
 ## What does not belong in a story file
 
-Data fetching, router setup, and multi-organism flows. If a story needs those, it is a connected route or a journey (`SKILL.md` table); the e2e test covers it.
+Data fetching, router setup, and multi-organism flows. If a story needs those, it is a connected route or a flow (`SKILL.md` table); the e2e test covers it.

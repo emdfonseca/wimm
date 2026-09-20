@@ -48,6 +48,19 @@ def a_component_outside_every_layer(src: Path) -> None:
     (src / "Loose.svelte").write_text(COMPONENT)
 
 
+PAGE_META = "<script module>defineMeta({ title: 'Pages/Ledger' });</script>\n"
+
+
+def a_page_story_with_no_play_function(src: Path) -> None:
+    (src / "pages").mkdir()
+    (src / "pages" / "Ledger.svelte").write_text(COMPONENT)
+    (src / "pages" / "Ledger.stories.svelte").write_text(
+        PAGE_META
+        + '<Story name="Default" play={async () => {}} />\n'
+        + '<Story name="Loading" args={{ state: \'loading\' }} />\n'
+    )
+
+
 def a_valid_tree(src: Path) -> None:
     (src / "atoms" / "Widget.svelte").write_text(COMPONENT)
     (src / "atoms" / "Widget.stories.svelte").write_text(
@@ -60,7 +73,17 @@ def main() -> int:
         ("a component with no story", a_component_with_no_story),
         ("a story with the wrong title", a_story_with_the_wrong_title),
         ("a component outside every layer", a_component_outside_every_layer),
+        ("a page story with no play function", a_page_story_with_no_play_function),
     ]
+
+    # The refusal has to say which story, or the repair is a search.
+    reasons = {
+        "a page story with no play function": (
+            "pages/Ledger.stories.svelte",
+            "'Loading'",
+            "no play function",
+        ),
+    }
 
     failures: list[str] = []
 
@@ -68,6 +91,10 @@ def main() -> int:
         _, problems = case(name, build)
         if not problems:
             failures.append(f"accepted {name}")
+        elif missing := [w for w in reasons.get(name, ()) if w not in problems[0]]:
+            failures.append(f"refused {name} without saying {missing}: {problems[0]}")
+        elif len(problems) > 1:
+            failures.append(f"refused more than {name}: {problems}")
         else:
             print(f"refused {name}: {problems[0]}")
 

@@ -71,7 +71,7 @@ amount's colour means exactly one thing.
   1440 × 900, roughly 684 px of table area shows 12 comfortable rows or 17
   compact ones.
 
-## 0003 · Token pipeline provenance — Accepted
+## 0003 · Token pipeline provenance — Accepted; library agreement superseded by 0023
 
 `design/tokens.json` is the contract CI owns. It carries, for every token, an
 explicit `type` and `unit`; nothing downstream infers either.
@@ -192,7 +192,7 @@ dependencies.
 
 Claude Code is the only configured tool integration.
 
-## 0008 · The canvas is a proposal artifact — Accepted
+## 0008 · The canvas is a proposal artifact — Accepted; drawing superseded by 0023
 
 A project schema, `openspec/schemas/wimm/`, adds a fifth artifact between design
 and tasks. `openspec/config.yaml` sets `schema: wimm`, so every new change is
@@ -222,7 +222,7 @@ missing becomes one task covering both the origin in `product-ui.lib.pen` and th
 Svelte component in `packages/ui/src`. The screen composes instances and cannot
 share a task with the components it instances.
 
-## 0009 · The canvas saves without a person — Accepted
+## 0009 · The canvas saves without a person — Accepted; superseded by 0023
 
 `bin/pen-save <file.pen>` pipes `save()` into the pinned CLI attached to the
 running app, and `just pen-save <file.pen>` is the shape everything uses.
@@ -250,7 +250,7 @@ reason is a defect in the package rather than a preference.
 This supersedes the save consequence in ADR 0008. The canvas artifact itself is
 unchanged.
 
-## 0010 · Journeys import the library — Accepted
+## 0010 · Journeys import the library — Accepted; superseded by 0023
 
 A journey file imports the library. `just pen-import <journey.pen> <alias>
 <library.pen>` writes the `imports` key and creates the journey file if it does
@@ -274,7 +274,7 @@ repository, and a non-kebab alias. The library does not sit beside the journey:
 journeys live under `apps/web/design/` and the library under
 `packages/ui/design/`, so the written path traverses upward, which pen resolves.
 
-## 0011 · Draw headless, not through the MCP — Accepted
+## 0011 · Draw headless, not through the MCP — Accepted; superseded by 0023
 
 Journeys are drawn headless. `just pen-exec <file.pen>` pipes an execute snippet
 into `pen interactive --in X --out X`, which opens X, resolves its imports, saves,
@@ -804,7 +804,7 @@ cross-session hash. An account newly offered belongs to the member who restored
 it with nobody granted; one the bank no longer offers goes with its owners and
 grants.
 
-## 0020 · A screen is finished when it matches its frame — Accepted
+## 0020 · A screen is finished when it matches its frame — Accepted; superseded by 0023
 
 **A UI implementation is not finished until it matches its pen frame.** Not
 "captures the intent", not "close enough" — matches. The frame is the design of
@@ -999,3 +999,32 @@ not dead code; it is authority waiting for the invariant to break.
 the member who connected its bank, and left out. The migration asserts no
 ownerless account remains and fails if one does, because a backfill that half
 worked is worse than one that did not run.
+
+## 0023 · Code is the design of record — Accepted
+
+**A page's presentational Svelte component and its state stories are the design
+of record.** A design is a screen rendered from fixtures in Storybook and looked
+at on the design canvas at compact, medium, wide and ultra, before any wiring
+exists. There is no drawing of a screen.
+
+`canvas.md` keeps its place between design and tasks and becomes a state plan:
+the state stories a change will write, the words each shows, the flow they join,
+and what was seen. Planning writes no code, so apply runs in a fixed order:
+components, the presentational screen with its state stories, a look at all four
+regimes that writes Seen into `canvas.md`, then wiring.
+
+**The words of a state are held by its story's play function.**
+`check-stories.py` refuses a page story that has none, and
+`test-stories.py` asserts that refusal.
+
+**`design/tokens.json` is the source of token values.** Nothing exports it. The
+validation in ADR 0003 is unchanged.
+
+The journey files, the pen library and its manifest, the `bin/pen-*` tooling,
+the `pen-design` skill, the pencil MCP entry and the four frame-check scripts
+are deleted. Commit `38355d1` is the last that holds the `.pen` files;
+`git show 38355d1:<path>` restores one.
+
+This supersedes ADRs 0020, 0009, 0010 and 0011 whole, the drawing in 0008, and
+the library clause of 0003. 0008's artifact, its conditional skip and its
+components-before-screens rule stand.

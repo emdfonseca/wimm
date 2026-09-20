@@ -19,6 +19,7 @@
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Signed in as Ana Reis')).toBeInTheDocument();
+		await expect(canvas.getByText('There is nothing here yet.')).toBeInTheDocument();
 		await expect(canvas.getByRole('link', { name: 'Overview' })).toHaveAttribute(
 			'aria-current',
 			'page'

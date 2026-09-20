@@ -32,11 +32,13 @@ context: |
   Repo standards are Claude skills in .claude/skills/; language conventions are
   in .claude/rules/. Both are binding on generated work.
 
-  .pen files are pretty-printed JSON, not encrypted: read them with jq or Python
-  when you need their shape, and write them through `just pen-exec`. The design
-  library is additive - never rename, retype, reparent or delete a node that
-  already exists as a side effect of adding one. `just pen-manifest verify`
-  enforces that.
+  Code is the design of record (ADR 0023). A screen's design is its
+  presentational Svelte component under packages/ui/src/pages and that
+  component's state stories, seen on the design canvas with `just canvas`.
+  There is no drawing of a screen and nothing to keep in step with one.
+  canvas.md is a state plan: the state stories a change will write, the words
+  each shows, and what was seen when they were looked at. design/tokens.json is
+  the source of token values.
 
 # Project context (optional)
 # This is shown to AI when creating artifacts.
@@ -72,9 +74,10 @@ context: |
 operations:
   apply:
     guidance:
-      - Build library components before the screen that instances them.
+      - Build components before the screen that uses them, the presentational screen and its state stories before the look task, and the look task before any wiring.
       - tokens.css is generated. Change design/tokens.json and run `just gen`; never edit the output.
-      - A canvas frame is intent, not behaviour. Focus order, announcements and routing are written in code and verified there.
+      - A state story shows a state on fixtures; it does not prove behaviour by being looked at. Focus order, announcements and routing are asserted in play functions.
+      - The look task writes what was seen at compact, medium, wide and ultra into canvas.md under Seen. Never fill Seen in from memory.
   archive:
     guidance:
-      - Confirm the journey .pen is saved and committed before archiving a change whose canvas.md names frames.
+      - Confirm canvas.md's Seen section names every state story at every regime before archiving a change that has a state plan.

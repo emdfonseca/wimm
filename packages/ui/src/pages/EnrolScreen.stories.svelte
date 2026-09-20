@@ -58,6 +58,10 @@
 		const alert = canvas.getByRole('alert');
 		await expect(alert).toHaveAttribute('aria-live', 'assertive');
 		await expect(alert).not.toHaveFocus();
+		await expect(alert).toHaveTextContent('Your device did not save the passkey');
+		await expect(alert).toHaveTextContent(
+			/wimm needs a passkey your device can offer you next time/
+		);
 		// A refusal changes the action's own sentence, and the page says the link
 		// still works.
 		await expect(canvas.getByRole('button', { name: 'Try again' })).toBeEnabled();

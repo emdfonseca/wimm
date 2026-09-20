@@ -14,7 +14,7 @@ description: "Storybook for the SvelteKit design system: which layers get storie
 
 # Storybook for the Svelte design system
 
-Storybook mirrors the `.lib.pen` design library: a story is a *state*; theme and viewport are globals selected at view time. Never multiply stories by theme × viewport × state.
+A page's stories are its design of record (ADR 0023): a story is a *state*; theme and viewport are globals selected at view time. Never multiply stories by theme × viewport × state.
 
 ## What gets a story
 
@@ -27,14 +27,14 @@ Storybook mirrors the `.lib.pen` design library: a story is a *state*; theme and
 | Template | `Templates/<Name>` | Placeholder regions, not real pages; one story per structurally distinct shell, fluid adaptation is the viewport global |
 | Page | `Pages/<Name>` | The **pure** screen component in `src/lib/screens/<Name>/`: data as props, actions as callbacks |
 | (route module) | — | `+page.svelte` / `+page.server.ts` wire data and navigation. Not a story. |
-| Journey | — | Lives in the `.pen` file; verified by e2e tests |
+| Flow | — | An ordered walk through state stories, declared in `apps/storybook/canvas/flows.js`; behaviour across screens is verified by e2e tests |
 
 If a Page story needs `$app/state`, a load function, or `fetch` mocked to render, the screen is still connected: split the pure screen out of the route instead of mocking.
 
 ## Start here, every time
 
 1. **Which layer is this?** That decides the title.
-2. **What are its states?** The local states beside the journey step plus the stress fixtures — not one story per visual variant.
+2. **What are its states?** The states the change's `canvas.md` state plan names plus the stress fixtures — not one story per visual variant.
 3. **New story, or an arg / global / play step?** Add a story only for a genuinely distinct state.
 
 ## Where to read next
@@ -63,7 +63,7 @@ Theme and viewport are **globals**, switchable from the toolbar and pinnable per
 
 ### Story names come from the design
 
-Story name = pen state name with spaces stripped, PascalCase: `Validation error` → `ValidationError`. A state in the design with no story is the gap to flag.
+Story name = the state's name in the state plan with spaces stripped, PascalCase: `Validation error` → `ValidationError`. A state in the state plan with no story is the gap to flag.
 
 ### Stories live beside the component
 

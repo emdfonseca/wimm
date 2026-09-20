@@ -7,7 +7,7 @@
 		title: 'Pages/SettingsScreen',
 		component: SettingsScreen,
 		tags: ['autodocs'],
-		parameters: { layout: 'fullscreen' },
+		parameters: { layout: 'fullscreen', shell: '/settings' },
 		args: { ontheme: fn(), ondensity: fn() }
 	});
 </script>
@@ -44,5 +44,16 @@
 <!-- ADR 0004: on a touch screen the row-height control is hidden entirely,
      never disabled, and the helper says why rather than leaving a gap.
      `(any-pointer: coarse)` cannot be forced from Storybook's own controls, so
-     this documents the state rather than asserting it with a play function. -->
-<Story name="On a touch screen (see the rule in SettingsScreen.svelte)" tags={['!test']} />
+     which helper is showing cannot be asserted here. What can be held is that
+     the words a touch screen shows are in the page for the media query to
+     reveal. -->
+<Story
+	name="On a touch screen (see the rule in SettingsScreen.svelte)"
+	play={async ({ canvasElement }) => {
+		await expect(
+			within(canvasElement).getByText(
+				/Row height is not offered here\..*on a\s+touch screen wimm stays comfortable/
+			)
+		).toBeInTheDocument();
+	}}
+/>

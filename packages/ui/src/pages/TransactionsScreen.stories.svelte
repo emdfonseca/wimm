@@ -22,7 +22,7 @@
 				{
 					id: '1',
 					description: 'Pingo Doce',
-					account: 'Current account · Monzo',
+					account: 'Current account',
 					amount: '−€42.18',
 					date: '17 Sep',
 					negative: true,
@@ -31,7 +31,7 @@
 				{
 					id: '2',
 					description: 'Transfer to Ana Reis',
-					account: 'Joint savings · Montepio',
+					account: 'Joint savings',
 					amount: '−€60.00',
 					date: '17 Sep',
 					negative: true,
@@ -46,7 +46,7 @@
 				{
 					id: '3',
 					description: 'Galp',
-					account: 'Current account · Monzo',
+					account: 'Current account',
 					amount: '−€71.40',
 					date: '16 Sep',
 					negative: true,
@@ -55,7 +55,7 @@
 				{
 					id: '4',
 					description: 'Salary',
-					account: 'Current account · Monzo',
+					account: 'Current account',
 					amount: '+€2,180.00',
 					date: '16 Sep',
 					initials: 'SA'
@@ -63,7 +63,7 @@
 				{
 					id: '5',
 					description: 'NOS',
-					account: 'Joint savings · Montepio',
+					account: 'Joint savings',
 					amount: '−€39.99',
 					date: '15 Sep',
 					negative: true,
@@ -80,7 +80,7 @@
 				{
 					id: '6',
 					description: 'Continente',
-					account: 'Current account · Monzo',
+					account: 'Current account',
 					amount: '−€118.72',
 					date: '4 Aug',
 					negative: true,
@@ -89,7 +89,7 @@
 				{
 					id: '7',
 					description: 'Águas de Lisboa',
-					account: 'Joint savings · Montepio',
+					account: 'Joint savings',
 					amount: '−€28.40',
 					date: '4 Aug',
 					negative: true,
@@ -103,7 +103,7 @@
 				{
 					id: '8',
 					description: 'Salary',
-					account: 'Current account · Monzo',
+					account: 'Current account',
 					amount: '+€2,180.00',
 					date: '31 Jul',
 					initials: 'SA'
@@ -118,6 +118,7 @@
 		title: 'Pages/TransactionsScreen',
 		component: TransactionsScreen,
 		tags: ['autodocs'],
+		parameters: { layout: 'fullscreen', shell: '/transactions' },
 		args: {
 			days,
 			count: 382,
@@ -132,7 +133,9 @@
 	name="AsItOpens"
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getByRole('heading', { name: 'Transactions', level: 1 })).toBeInTheDocument();
+		await expect(
+			canvas.getByRole('heading', { name: 'Transactions', level: 1 })
+		).toBeInTheDocument();
 		await expect(canvas.getByText('382 transactions')).toBeInTheDocument();
 		await expect(canvas.getByText('Today')).toBeInTheDocument();
 		await expect(canvas.getByText('Yesterday')).toBeInTheDocument();
@@ -204,6 +207,7 @@
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Monzo is not sending transactions yet')).toBeInTheDocument();
+		await expect(canvas.getByText('Nothing read from Monzo')).toBeInTheDocument();
 		await expect(canvas.getByRole('link', { name: 'Widen at Monzo' })).toBeInTheDocument();
 		await expect(canvas.queryByText(/broken|expired|failing/i)).not.toBeInTheDocument();
 	}}
@@ -245,9 +249,7 @@
 		await expect(canvas.getByText('The list fills as the bank answers.')).toBeInTheDocument();
 		// Announced, because a member not looking at the toolbar has no other
 		// way to know a request is in flight.
-		await expect(canvas.getByRole('status')).toHaveTextContent(
-			'Bringing transactions up to date'
-		);
+		await expect(canvas.getByRole('status')).toHaveTextContent('Bringing transactions up to date');
 	}}
 />
 
@@ -277,6 +279,9 @@
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Reading your transactions')).toBeInTheDocument();
+		await expect(
+			canvas.getByText(/is sending them now\. This is the first time/)
+		).toBeInTheDocument();
 		await expect(canvas.queryByText(/Reaching back to/)).not.toBeInTheDocument();
 	}}
 />
@@ -294,6 +299,9 @@
 		await expect(canvas.getByText('Monzo has been asked too often')).toBeInTheDocument();
 		// The notice says it and the live region announces it, in the same words.
 		await expect(canvas.getAllByText(/after 11:20/).length).toBeGreaterThan(1);
+		await expect(
+			canvas.getAllByText(/What is below was\s+already read, and it has not changed/).length
+		).toBeGreaterThan(0);
 		await expect(canvas.getByText('382 transactions')).toBeInTheDocument();
 		await expect(canvas.getByText(freshness)).toBeInTheDocument();
 	}}
@@ -316,6 +324,7 @@
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Montepio did not answer')).toBeInTheDocument();
 		await expect(canvas.getByText(/last read at 08:02/)).toBeInTheDocument();
+		await expect(canvas.getAllByText(/Everything else is up to date/).length).toBeGreaterThan(0);
 	}}
 />
 
@@ -335,6 +344,7 @@
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Monzo has stopped sending transactions')).toBeInTheDocument();
+		await expect(canvas.getByText(/The access you gave Monzo has run out/)).toBeInTheDocument();
 		await expect(canvas.getByText('382 transactions')).toBeInTheDocument();
 	}}
 />
@@ -348,6 +358,9 @@
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Monzo is no longer connected')).toBeInTheDocument();
+		await expect(
+			canvas.getByText(/Its accounts have left Overview and its balances are gone/)
+		).toBeInTheDocument();
 		await expect(canvas.getByText(/still here/)).toBeInTheDocument();
 		await expect(canvas.getByText('382 transactions')).toBeInTheDocument();
 	}}
@@ -382,6 +395,14 @@
 	name="CompactOneAccount"
 	args={{ compact: true, count: 204, filterAccount: 'Current account · Monzo' }}
 	globals={{ viewport: { value: 'compact' } }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Newest first.')).toBeInTheDocument();
+		await expect(canvas.getByText('Showing one account')).toBeInTheDocument();
+		await expect(canvas.getByText('Current account · Monzo')).toBeInTheDocument();
+		await expect(canvas.getByRole('link', { name: 'Show all accounts' })).toBeInTheDocument();
+		await expect(canvas.getByText(freshness)).toBeInTheDocument();
+	}}
 />
 
 <!-- J08.A / 02 — the bank was widened and is sending now. -->
@@ -394,5 +415,8 @@
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Monzo is sending transactions now')).toBeInTheDocument();
 		await expect(canvas.getByText(/who owns these accounts has changed/)).toBeInTheDocument();
+		await expect(
+			canvas.getByText(/This is the first read, so it goes back as far as/)
+		).toBeInTheDocument();
 	}}
 />

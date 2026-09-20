@@ -2,7 +2,11 @@
 
 ## Status
 
-Accepted
+Accepted; drawing superseded by 0023
+
+`canvas.md` is a state plan and nothing is drawn. The artifact's place in the
+graph, its conditional skip and the components-before-screens rule are
+unchanged.
 
 ## Context
 

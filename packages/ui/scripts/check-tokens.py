@@ -11,9 +11,8 @@ Checking only (2) means a token typed "banana", a colour of #GGGGGG, or an axis
 nobody defined all pass, because the generator faithfully renders nonsense and
 the comparison then agrees with itself.
 
-What this still cannot check: whether tokens.json matches the pen.dev library.
-CI cannot read a .pen file. That link is re-export plus review — see
-docs/design/tokens.md.
+tokens.json is the source of values, so there is nothing upstream for it to
+agree with — see docs/design/tokens.md.
 """
 import json, pathlib, re, subprocess, sys
 

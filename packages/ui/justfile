@@ -1,5 +1,5 @@
 # packages/ui — the design system token contract.
-# tokens.json is exported from the pen.dev library by hand; tokens.css is generated.
+# tokens.json is the source of token values; tokens.css is generated.
 set shell := ["bash", "-uc"]
 
 default:
@@ -8,7 +8,6 @@ default:
 # Regenerate tokens.css from tokens.json. Refuses to write an invalid document.
 gen:
     @python3 scripts/gen-tokens.py
-    @python3 scripts/gen-canvas-contract.py
 
 build: gen
 
@@ -47,9 +46,6 @@ test:
     @python3 scripts/check-geometry.py src
     @python3 scripts/check-breakpoints.py src
     @python3 scripts/test-breakpoints.py
-    @python3 scripts/check-canvas.py
-    @python3 scripts/test-contract.py
-    @python3 scripts/test-canvas.py
     @python3 scripts/check-stories.py src
     @python3 scripts/test-stories.py
     @echo "component behaviour runs as stories: just test apps/storybook"

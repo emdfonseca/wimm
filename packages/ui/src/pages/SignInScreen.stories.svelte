@@ -26,6 +26,9 @@
 		const canvas = within(canvasElement);
 		await expect(canvas.getByRole('heading', { level: 1 })).toHaveFocus();
 		await expect(canvas.queryByRole('textbox')).toBeNull();
+		await expect(
+			canvas.getByText(/Sign in with the passkey you saved\. Your browser will offer it/)
+		).toBeInTheDocument();
 		await userEvent.click(canvas.getByRole('button', { name: 'Sign in with a passkey' }));
 		await expect(args.onsignin).toHaveBeenCalledOnce();
 	}}
@@ -47,6 +50,7 @@
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Nothing happened')).toBeInTheDocument();
+		await expect(canvas.getByText(/You closed the passkey prompt\. Try again/)).toBeInTheDocument();
 		await expect(canvas.getByRole('button', { name: 'Sign in with a passkey' })).toBeEnabled();
 	}}
 />
@@ -73,6 +77,9 @@
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByRole('alert')).toHaveTextContent('That passkey is not recognised');
+		await expect(canvas.getByRole('alert')).toHaveTextContent(
+			/wimm has no record of it\. Ask whoever/
+		);
 		await expect(canvas.getByRole('button', { name: 'Try another passkey' })).toBeEnabled();
 	}}
 />

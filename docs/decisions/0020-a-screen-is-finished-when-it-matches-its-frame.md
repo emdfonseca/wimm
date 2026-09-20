@@ -2,7 +2,10 @@
 
 ## Status
 
-Accepted
+Accepted; superseded by 0023
+
+A screen and its state stories are the design, so there is no frame to match.
+The reasoning against image comparison stands.
 
 ## Context
 

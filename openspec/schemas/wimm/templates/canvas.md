@@ -1,22 +1,22 @@
-## Journey
+## Screens
 
-<!-- Journey ID and name, e.g. J03 · Categorise a transaction. IDs are stable and never reused -->
+<!-- Each screen this change adds or alters: its presentational component under packages/ui/src/pages/ and its stories file. Say which exist and which are new -->
 
-## File
+## State stories
 
-<!-- Path to the journey .pen, e.g. apps/web/design/categorise.pen. Never packages/ui/design/product-ui.lib.pen: that file holds reusable mechanics only -->
+<!-- One row per state story to write or change. The fixture is what puts the screen in that state. Every state the specs' scenarios name gets a row, the unhappy ones included -->
 
-## Saved to disk
+| Story | File | Fixture | Scenario |
+| --- | --- | --- | --- |
+|  |  |  |  |
 
-<!-- `just pen-exec` saves on a clean run; `just pen-save` is only for MCP edits to the document a person has open. Confirm git sees the file, then state the mtime or say NOT SAVED -->
+## Words
 
-## Frames
+<!-- For each state story above: the heading, labels, help text and messages that state shows, written out in full. This is what a reviewer reads the play function against. No em or en dash, no marketing voice -->
 
-<!-- One row per frame drawn or changed. Fully qualified name, node ID, zone -->
+## Flow
 
-| Frame | ID | Zone |
-| --- | --- | --- |
-|  |  |  |
+<!-- The flow in apps/storybook/canvas/flows.js these states join and where in its order, or the new flow and its steps, or "stands alone" -->
 
 ## Surfaces
 
@@ -24,16 +24,22 @@
 
 ## Components used
 
-<!-- Library components instanced, by name and origin ID in product-ui.lib.pen -->
+<!-- Components composed, by path under packages/ui/src -->
 
 ## Components missing
 
-<!-- Anything the journey needs that the library does not have. Each becomes a task. Name what it is a configuration of, if it is one. Each entry MUST name the existing components you opened and read, and why each cannot carry this - searching by the data it holds, not by the shape you had in mind. Without that line it is a guess, and the usual result is two components owning one job. -->
+<!-- Anything the screen needs that packages/ui/src does not have. Each becomes one task with two deliverables: the Svelte component and its story. Name what it is a configuration of, if it is one. Each entry MUST name the existing components you read, and why each cannot carry this - searching by the data it holds, not by the shape you had in mind. Without that line it is a guess, and the usual result is two components owning one job. -->
 
-## States drawn
+## States left out
 
-<!-- Local states beside their step: empty, loading, validation error, failure. Say which were deliberately not drawn and why -->
+<!-- States deliberately given no story, and why -->
 
 ## Contracts for implementation
 
-<!-- Behaviour the canvas cannot execute: focus management, announcements, routing, keyboard completion. Every number here must have been measured -->
+<!-- Behaviour a story on fixtures cannot show by being looked at: focus management, announcements, routing, keyboard completion. Write each so a play function can assert it. Every number here comes from design/tokens.json or a measurement -->
+
+## Seen
+
+<!-- Written by the look task during apply, not while planning. Until then: "Not looked at yet." Afterwards: the state stories opened on the design canvas (`just canvas`) at compact, medium, wide and ultra, what was seen at each, and what changed because of it -->
+
+Not looked at yet.

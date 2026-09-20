@@ -2,7 +2,9 @@
 
 ## Status
 
-Accepted
+Accepted; superseded by 0023
+
+There are no journey files and no library to import.
 
 ## Context
 

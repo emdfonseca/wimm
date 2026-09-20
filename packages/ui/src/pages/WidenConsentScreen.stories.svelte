@@ -7,6 +7,7 @@
 		title: 'Pages/WidenConsentScreen',
 		component: WidenConsentScreen,
 		tags: ['autodocs'],
+		parameters: { layout: 'fullscreen', shell: '/connect' },
 		args: { bankName: 'Monzo', accessEndsOn: '17 December 2026' }
 	});
 </script>
@@ -19,9 +20,7 @@
 			canvas.getByRole('heading', { name: "Include Monzo's transactions", level: 1 })
 		).toBeInTheDocument();
 		await expect(canvas.getByText('Transactions on the accounts you own')).toBeInTheDocument();
-		await expect(
-			canvas.getByRole('button', { name: 'Continue to Monzo' })
-		).toBeInTheDocument();
+		await expect(canvas.getByRole('button', { name: 'Continue to Monzo' })).toBeInTheDocument();
 	}}
 />
 
@@ -41,9 +40,10 @@
 <Story
 	name="DecliningIsALinkBack"
 	play={async ({ canvasElement }) => {
-		await expect(
-			within(canvasElement).getByRole('link', { name: 'Not now' })
-		).toHaveAttribute('href', '/transactions');
+		await expect(within(canvasElement).getByRole('link', { name: 'Not now' })).toHaveAttribute(
+			'href',
+			'/transactions'
+		);
 	}}
 />
 
@@ -59,4 +59,16 @@
 	}}
 />
 
-<Story name="Compact" globals={{ viewport: { value: 'compact' } }} />
+<Story
+	name="Compact"
+	globals={{ viewport: { value: 'compact' } }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(
+			canvas.getByRole('heading', { name: "Include Monzo's transactions" })
+		).toBeInTheDocument();
+		await expect(canvas.getByText('Transactions on the accounts you own')).toBeInTheDocument();
+		await expect(canvas.getByRole('button', { name: 'Continue to Monzo' })).toBeVisible();
+		await expect(canvas.getByRole('link', { name: 'Not now' })).toBeVisible();
+	}}
+/>

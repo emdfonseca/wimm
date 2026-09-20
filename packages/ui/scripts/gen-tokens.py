@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Generate src/tokens.css from design/tokens.json.
 
-tokens.json is exported from the pen.dev library by hand (docs/design/tokens.md);
+tokens.json is the source of token values, edited by hand (docs/design/tokens.md);
 this script is the only thing that writes tokens.css. Run `just gen packages/ui`.
 `just check` regenerates into memory and fails if the committed CSS differs.
 
-Nothing here infers a unit or a type: both are explicit per token in the export,
+Nothing here infers a unit or a type: both are explicit per token in tokens.json,
 because inference is how an opacity token ends up emitted as `0.5px`.
 """
 import json, pathlib, sys
@@ -86,7 +86,7 @@ def build(doc):
     add("  color-scheme: light;")
     add("}")
     add("")
-    add("/* device axis. Unlike the canvas, this resolves from the viewport. */")
+    add("/* device axis. Resolves from the viewport. */")
     for value, minw in DEVICE_MIN.items():
         rows = decls(t, lambda n, s, v=value: s.get("device", {}).get(v), "    ")
         if not rows:

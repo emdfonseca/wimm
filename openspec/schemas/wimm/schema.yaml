@@ -1,6 +1,6 @@
 name: wimm
 version: 1
-description: wimm workflow - proposal → stories → specs → design → canvas → tasks. Stories carry the user and the value; specs carry the contract; the canvas is drawn before any task is written.
+description: wimm workflow - proposal → stories → specs → design → canvas → tasks. Stories carry the user and the value; specs carry the contract; the states of a screen are planned before any task is written.
 artifacts:
   - id: proposal
     generates: proposal.md
@@ -95,7 +95,7 @@ artifacts:
       pointing back here; if one does not, either the story is missing or the
       requirement is.
 
-      Number stories S1, S2, ... The canvas and tasks refer to them by number.
+      Number stories S1, S2, ... The state plan and tasks refer to them by number.
     requires:
       - proposal
 
@@ -266,12 +266,14 @@ artifacts:
 
   - id: canvas
     generates: canvas.md
-    description: The journey drawn on the pen.dev canvas, and the record of what was drawn
+    description: The state plan - the state stories a change will write, the words each shows, and what was seen on the design canvas
     template: canvas.md
     instruction: |
-      Draw or update the change on the pen.dev canvas, then record what was
-      drawn. The canvas is where this project decides what a screen is; the
-      proposal is not finished until the design exists.
+      Plan the states of the change, and record what was seen when they were
+      looked at. A page's presentational Svelte component and its stories are
+      the design of record: there is no drawing of a screen, only the screen
+      on example data. This artifact says which state stories the change will
+      write and the words each one shows, before any task exists.
 
       Create this artifact only if the change alters something a person sees or
       operates: a screen, a flow, a task surface, a state, or a component's
@@ -279,119 +281,100 @@ artifacts:
       a migration, a build script, a dependency bump - records a deliberate skip
       instead. Say so in one line rather than creating an empty canvas.md.
 
-      Read `.claude/skills/pen-design/SKILL.md` before the first pencil call,
-      and `references/tooling-traps.md` before the first `execute`. They are
-      binding, not background.
+      **Planning writes no code.** A story is code, so this artifact names the
+      state stories and does not write them. The screen and its stories are
+      the first tasks of apply, a look at them on the design canvas follows,
+      and the Seen section below is filled in by that look task, not now.
+      Leave it saying so.
 
-      Two files, two owners. Journey flow - routes, content, decisions, states -
-      goes in a journey `.pen` under `apps/web/design/`, one file per journey
-      family or product area - a journey is the app's flow and the app owns it.
-      Reusable mechanics go in `packages/ui/design/product-ui.lib.pen`. Never add
-      journey frames to the library. If the journey file does not exist yet, create it with the zoning
-      the skill sets out (00 overview, 10 primary success, 20 alternative paths,
-      30 state index, 40 theme and accessibility QA, 90 notes).
+      Read `.claude/skills/storybook/SKILL.md` first. It gives the layer, the
+      story title and what a play function asserts, and it is binding.
 
-      Draw with `just pen-exec <journey.pen>`, which pipes the snippet into a
-      headless `pen interactive` that really opens the file. The pencil MCP
-      ignores its filePath and edits whatever Pen.app has open, so an MCP call
-      aimed at a journey silently edits the library instead.
+      **One state story per state, on a fixture.** For every state the specs'
+      scenarios name, including the unhappy ones - empty, loading, refused,
+      failed, stale - name the story, the file it goes in under
+      `packages/ui/src/pages/`, the fixture that puts the screen in that
+      state, and the words that state shows: its heading, labels, help text
+      and messages, written out in full. A scenario with no state story is a
+      screen that will not exist. Say which states were deliberately left out
+      and why.
 
-      Bind the library before drawing: `just pen-import apps/web/design/<journey>.pen
-      ui packages/ui/design/product-ui.lib.pen`. It creates the journey file if it
-      does not exist and writes the `imports` key, which no MCP or CLI call can
-      write. Everything in the library is then addressed through the alias -
-      `ref: "ui:W2gOKx"` for a component, `"$ui:color-bg-canvas"` for a token.
-      The colon is load-bearing: a bare id does not resolve and a slash is
-      rejected. A node you draw yourself must alias-qualify every token or it
-      falls back to black without complaining.
+      **The words are decided here and held by play functions.** Each state
+      story's play function asserts the words of its state with `getByText`
+      or a role query. `just check packages/ui` refuses a page story with no
+      play function. It cannot see what the play function asserts, so the
+      words written in this artifact are what a reviewer reads the play
+      function against.
 
       **Interface copy carries no em dashes and no marketing voice.** No em or en
       dash anywhere a person reads in the product; use a full stop or a comma and
       write the shorter sentence. No "seamless", "effortless", "elevate", "unlock
       the power", "dive in", "robust". A screen reads like a person wrote it for
-      one other person, or it reads like filler. This applies to the drawn copy
-      too: a canvas is where the words are decided, and copy nobody edited on the
-      canvas is copy nobody edits later.
+      one other person, or it reads like filler. The state plan is where the
+      words are decided, and copy nobody edited here is copy nobody edits
+      later.
 
-      **Draw what exists now, never what is planned.** The canvas describes the
-      product as it will be after this change ships and nothing further. A shell
-      carrying navigation to screens that do not exist, an empty state promising a
-      feature, a tab strip for one tab - each draws a product nobody agreed to
-      build, and someone has to unbuild it later having assumed the drawing was a
-      decision. The pull is strongest where the library already has a richer
-      component, because instancing the full app shell is less work than drawing
-      the one header that exists today. Take the extra work: if the journey needs
-      less than the library offers, it needs a smaller component, and that is a
-      finding worth recording under Components missing.
+      **Plan what exists now, never what is planned.** The state plan describes
+      the product as it will be after this change ships and nothing further. A
+      shell carrying navigation to screens that do not exist, an empty state
+      promising a feature, a tab strip for one tab - each shows a product
+      nobody agreed to build, and someone has to unbuild it later having
+      assumed the story was a decision. The pull is strongest where the design
+      system already has a richer component, because using the full app shell
+      is less work than writing the one header that exists today. Take the
+      extra work: if the screen needs less than the design system offers, it
+      needs a smaller component, and that is a finding worth recording under
+      Components missing.
 
-      **The library is additive.** Never rename, retype, reparent or delete a
-      node that already exists as a side effect of adding one - not to make a
-      name read better beside your addition, not to make siblings symmetrical.
-      A `.pen` is pretty-printed JSON, so read it with `jq` when you want its
-      shape, and it does diff - but a three-thousand-node diff buries a one-line
-      rename. `just pen-manifest verify` fails on any such change; `just pen-manifest write`
-      is for when changing an existing node is the thing you set out to do.
-      Read the component you are extending and copy its own pattern rather than
-      one inferred from another zone.
+      **Say which flow the states join.** A flow on the design canvas is an
+      ordered walk through state stories, declared in
+      `apps/storybook/canvas/flows.js`. Name the flow the new states join and
+      where in its order, or the new flow and its steps, or say that the
+      states stand alone.
 
-      Compose from library components. Instance what exists; do not redraw a
-      control's chrome. Anything the journey needs that the library lacks goes
-      under Components missing and becomes a task - build it in the library
+      Compose from the components in `packages/ui/src`. Use what exists; do not
+      rebuild a control's chrome. Anything the screen needs that the design
+      system lacks goes under Components missing and becomes a task - build it
       during apply, not here.
 
-      **Every entry under Components missing is three deliverables, not two:**
-      the origin in `product-ui.lib.pen`, the Svelte component in
-      `packages/ui/src/<layer>/`, and its `.stories.svelte` beside it. A
-      component with no story is a component nobody can see in isolation, in
-      either theme, at any viewport, and its behavioural contract - focus, live
-      regions, disabled states - is asserted nowhere. Name all three in the
-      task, so none of them is remembered rather than planned. `.claude/skills/
-      storybook/SKILL.md` gives the layer, the title and the play functions;
+      **Every entry under Components missing is two deliverables:** the Svelte
+      component in `packages/ui/src/<layer>/` and its `.stories.svelte` beside
+      it. A component with no story is a component nobody can see in
+      isolation, in either theme, at any viewport, and its behavioural
+      contract - focus, live regions, disabled states - is asserted nowhere.
+      Name both in the task, so neither is remembered rather than planned.
       `just check packages/ui` refuses a component that has no story.
 
       **Layers are atomic design and the story title mirrors them.**
-      `atoms/ molecules/ organisms/ templates/ pages/` under `packages/ui/src/`,
-      matching the library's own zoning. A template and a page are components:
-      they get stories like anything else.
+      `atoms/ molecules/ organisms/ templates/ pages/` under `packages/ui/src/`.
+      A template and a page are components: they get stories like anything
+      else.
 
-      **Before declaring anything missing, find where the library already puts
-      that content.** Search by the data, not by the shape you have in mind: ask
-      "where does this design system show a signed-in person?", not "is there a
-      top bar?". A component list gives names and ids and tells you nothing about
-      what a component contains, so open the two or three that could plausibly own
-      it and read their children. This is how a duplicate gets built: you picture
-      a shape, fail to find that shape, and add it - while the system was holding
+      **Before declaring anything missing, find where the design system already
+      puts that content.** Search `packages/ui/src` by the data, not by the
+      shape you have in mind: ask "where does this design system show a
+      signed-in person?", not "is there a top bar?". A file name tells you
+      nothing about what a component contains, so read the two or three that
+      could plausibly own it. This is how a duplicate gets built: you picture a
+      shape, fail to find that shape, and add it - while the system was holding
       the same content somewhere else, and now two components own one job.
 
       Every entry under Components missing names the existing components that were
-      opened and read, and why each cannot carry it. An entry without that line is
-      not a finding, it is a guess.
+      read, and why each cannot carry it. An entry without that line is not a
+      finding, it is a guess.
 
-      Draw every state the stories' acceptance criteria name, including the
-      unhappy ones. A criterion nobody can see on the canvas is a screen that
-      does not exist yet.
+      **Contracts are what a story on fixtures cannot show by being looked
+      at**: where focus lands, what is announced, what a route does, how the
+      keyboard completes a task. Write each so a play function can assert it.
+      Every number written there must come from `design/tokens.json` or a
+      measurement, not from memory.
 
-      Assign the journey ID before drawing. IDs are stable and never reused:
-      check the existing journey files and every archived canvas.md before
-      taking one.
-
-      Mutate in one `pen-exec` call and verify in a separate one - bounds,
-      `ctx.problems` and screenshots all return the pre-layout frame inside the
-      call that changed it. To look at what you drew, `Export` the frame to PNG
-      and read the file. Every number written into Contracts for implementation
-      must have been measured, not recalled.
-
-      `pen-exec` saves, and refuses to write anything if the snippet errored, so
-      a clean run is on disk. Confirm `git status` shows the file before filling
-      in Saved to disk - a canvas.md claiming frames nobody can see is worse than
-      no canvas.md. Only library work done through the MCP, on the document a
-      person has open, needs `just pen-save`.
-
-      The `.pen` is 1.5 MB of pretty-printed JSON. It is not encrypted - the
-      pencil MCP's own blurb says otherwise and is wrong, and `bin/pen-import`
-      has always relied on it being JSON. It diffs, but a three-thousand-node
-      diff buries a one-line change, so this document is the review artifact for
-      intent and `library-manifest.tsv` is the one for damage. Frame IDs, surface decisions and contracts belong here in full.
+      **Seen is written by the look task.** During apply, the state stories
+      are opened on the design canvas (`just canvas`) at all four regimes -
+      compact, medium, wide and ultra - and what was seen, and what changed
+      because of it, is written under Seen. A state or a regime nobody looked
+      at is not one the change supports. A canvas.md whose Seen section
+      claims a look nobody took is worse than no canvas.md.
     requires:
       - specs
 
@@ -434,20 +417,32 @@ artifacts:
       ```
 
       Reference specs for what needs to be built, design for how to build it,
-      and canvas.md for what it looks like.
+      and canvas.md for the states and the words each one shows.
 
-      UI work splits in a fixed order, and the order is the dependency:
+      UI work splits in a fixed order, and the order is the dependency. None
+      of the four shares a task with another:
 
       1. Every entry under canvas.md's Components missing becomes a component
-         task in `packages/ui` - the origin in `product-ui.lib.pen` and the
-         Svelte component in `packages/ui/src` are one task, not two. A control
-         that reproduces another's chrome is a preset wrapping an instance, not
-         a new component.
-      2. The screen composes instances of those components. It cannot be built
-         before they exist, so it never shares a task with them.
-      3. Nothing hand-edits `packages/ui/src/tokens.css` - it is generated from
-         `design/tokens.json` by `just gen`. A new token means exporting the
-         library again, in the same commit.
+         task in `packages/ui` - the Svelte component in `packages/ui/src` and
+         its story are one task, not two. A control that reproduces another's
+         chrome is a preset wrapping an instance, not a new component.
+      2. The presentational screen with its state stories, on fixtures, one
+         story per row of canvas.md's State stories. Each play function
+         asserts the words canvas.md gives that state. The screen composes
+         the components from step 1, so it cannot be built before they exist.
+      3. A look task. Open the state stories on the design canvas
+         (`just canvas`) at all four regimes - compact, medium, wide and
+         ultra - change what is wrong, and write what was seen and what
+         changed into canvas.md under Seen. Its verification is that Seen
+         names every state story at every regime.
+      4. Wiring: routes, load functions, form actions and anything that
+         reaches a service. It comes after the look task, because wiring a
+         screen nobody has looked at makes every later change to it cost
+         twice.
+
+      Nothing hand-edits `packages/ui/src/tokens.css` - it is generated from
+      `design/tokens.json` by `just gen`. A new token is an edit to
+      `design/tokens.json` and a `just gen`, in the same commit.
 
       Verification is `just check <dir>` for the package the task touched.
       `just check packages/ui` covers the token contract and refuses a raw hex

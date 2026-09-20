@@ -2,7 +2,11 @@
 
 ## Status
 
-Accepted
+Accepted; library agreement superseded by 0023
+
+`design/tokens.json` is the source of token values and nothing exports it, so
+there is no library for it to agree with. The validation of the token document
+and of the stylesheet is unchanged.
 
 ## Context
 

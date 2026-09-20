@@ -4,7 +4,7 @@
 
 A component's stories come from two places in the design:
 
-1. **Local states beside the journey step** — Default, Loading/Submitting, Validation error, Server error, Empty, Permission denied, and whatever else the design actually shows.
+1. **The states the state plan names** — Default, Loading/Submitting, Validation error, Server error, Empty, Permission denied, and whatever else the change's `canvas.md` names.
 2. **Library stress fixtures (library zone 90)** — long labels, maximum content, empty content, focus, disabled, nested components, localization stress, text growth.
 
 Naming rule: `SKILL.md` ("Story names come from the design").
@@ -19,7 +19,7 @@ Naming rule: `SKILL.md` ("Story names come from the design").
 
 **Template** — one story per genuinely distinct shell composition, with placeholder regions. Fluid adaptation is a viewport global, not extra stories.
 
-**Page (pure screen)** — the journey step's local states:
+**Page (pure screen)** — the states of that step of the flow:
 
 ```text
 Pages/SignIn      Default · InvalidCredentials · Submitting · AccountLocked · ServiceUnavailable
