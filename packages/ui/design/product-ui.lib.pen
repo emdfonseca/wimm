@@ -33437,6 +33437,57 @@
                         },
                         {
                           "type": "frame",
+                          "id": "t5LuE",
+                          "name": "Tab",
+                          "width": "fill_container",
+                          "height": 60,
+                          "layout": "vertical",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "id": "GhkIG",
+                              "type": "ref",
+                              "ref": "rEOk1",
+                              "name": "Accounts",
+                              "layout": "vertical",
+                              "gap": 3,
+                              "padding": [
+                                0,
+                                4
+                              ],
+                              "width": "fill_container",
+                              "height": 52,
+                              "fill": "#FFFFFF00",
+                              "alignItems": "center",
+                              "justifyContent": "center",
+                              "descendants": {
+                                "TVqlB": {
+                                  "icon": "wallet",
+                                  "width": 20,
+                                  "height": 20,
+                                  "fill": "$color-text-secondary"
+                                },
+                                "KfRDI": {
+                                  "content": "Accounts",
+                                  "textGrowth": "auto",
+                                  "textAlign": "center",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal",
+                                  "fill": "$color-text-secondary"
+                                },
+                                "dcsRs": {
+                                  "enabled": false
+                                },
+                                "SZZfP": {
+                                  "enabled": false
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
                           "id": "cfkK0",
                           "name": "Tab",
                           "width": "fill_container",
@@ -41684,7 +41735,7 @@
                   "enabled": false
                 },
                 "W4cIE8/u5RU0": {
-                  "enabled": false
+                  "enabled": true
                 },
                 "W4cIE8/l4tOM": {
                   "enabled": true
@@ -42329,7 +42380,7 @@
                   "enabled": false
                 },
                 "gbMe3": {
-                  "enabled": false
+                  "enabled": true
                 },
                 "K82JD": {
                   "fill": "$color-accent-subtle"
@@ -42453,7 +42504,7 @@
                   "enabled": false
                 },
                 "W4cIE8/u5RU0": {
-                  "enabled": false
+                  "enabled": true
                 },
                 "W4cIE8/l4tOM": {
                   "enabled": true,
@@ -42550,6 +42601,162 @@
               ]
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "K3w7Lx",
+      "x": 0,
+      "y": -219.5,
+      "name": "Trend sparkline",
+      "reusable": true,
+      "width": "fill_container(0)",
+      "layout": "vertical",
+      "gap": 8,
+      "children": [
+        {
+          "type": "text",
+          "id": "MWZgn",
+          "name": "Label",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Trend",
+          "fontFamily": "$type-family-body",
+          "fontSize": 12,
+          "fontWeight": "500"
+        },
+        {
+          "type": "frame",
+          "id": "si3mi",
+          "name": "Bars",
+          "width": "fill_container",
+          "height": 48,
+          "gap": 3,
+          "alignItems": "end",
+          "children": [
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "vrBNB",
+              "name": "Bar",
+              "fill": "$color-chart-1",
+              "width": "fill_container",
+              "height": 18
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "DdSF0",
+              "name": "Bar",
+              "fill": "$color-chart-1",
+              "width": "fill_container",
+              "height": 22
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "r1vma",
+              "name": "Bar",
+              "fill": "$color-chart-1",
+              "width": "fill_container",
+              "height": 20
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "StOdf",
+              "name": "Bar",
+              "fill": "$color-chart-1",
+              "width": "fill_container",
+              "height": 26
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "dzWhQ",
+              "name": "Bar",
+              "fill": "$color-chart-1",
+              "width": "fill_container",
+              "height": 24
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "iWXry",
+              "name": "Bar",
+              "fill": "$color-chart-1",
+              "width": "fill_container",
+              "height": 30
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "h5jlt",
+              "name": "Bar",
+              "fill": "$color-chart-1",
+              "width": "fill_container",
+              "height": 28
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "YG3HB",
+              "name": "Bar",
+              "fill": "$color-chart-1",
+              "width": "fill_container",
+              "height": 34
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "G0veZ",
+              "name": "Bar",
+              "fill": "$color-chart-1",
+              "width": "fill_container",
+              "height": 32
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "hdKvf",
+              "name": "Bar",
+              "fill": "$color-chart-1",
+              "width": "fill_container",
+              "height": 40
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "S4tsXY",
+              "name": "Bar",
+              "fill": "$color-chart-1",
+              "width": "fill_container",
+              "height": 36
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "T3uqW",
+              "name": "Bar",
+              "fill": "$color-chart-1",
+              "width": "fill_container",
+              "height": 48
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "j5IZ9Y",
+          "name": "Caption",
+          "fill": "$color-text-secondary",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "90 days to 19 Sep",
+          "fontFamily": "$type-family-body",
+          "fontSize": 11,
+          "fontWeight": "normal"
         }
       ]
     }
