@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>wimm design canvas</title>
+		<link rel="stylesheet" href="/canvas-ui/base.css" />
+		<link rel="stylesheet" href="./canvas.css" />
+	</head>
+	<body>
+		<header id="bar">
+			<span id="status" role="status"></span>
+			<span id="hint"
+				>Wheel pans · Ctrl-wheel zooms · 0 fits · 1 is 100% · Alt-click points · M toggles the
+				sitemap</span
+			>
+		</header>
+		<nav id="sitemap" aria-label="Sitemap">
+			<input
+				id="find"
+				type="search"
+				placeholder="Find a screen  ( / )"
+				aria-label="Find a screen"
+			/>
+			<div id="tree"></div>
+		</nav>
+		<main id="stage">
+			<div id="world"></div>
+		</main>
+		<script type="module" src="./canvas.js"></script>
+	</body>
+</html>

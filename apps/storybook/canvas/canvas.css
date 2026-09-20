@@ -1,0 +1,328 @@
+/* The design canvas is a developer's page, styled from the same tokens as the
+ * product so it never becomes a second look to keep in step. */
+
+html,
+body {
+	height: 100%;
+	margin: 0;
+	overflow: hidden;
+}
+
+html {
+	--sitemap-width: 280px;
+}
+
+#bar {
+	position: fixed;
+	inset: 0 0 auto 0;
+	z-index: 10;
+	display: flex;
+	gap: var(--space-4);
+	align-items: center;
+	padding: var(--space-2) var(--space-4);
+	background: var(--color-bg-surface);
+	border-bottom: 1px solid var(--color-border-default);
+	color: var(--color-text-secondary);
+	font-size: var(--type-size-body-sm);
+}
+
+#status {
+	color: var(--color-text-primary);
+	font-family: var(--type-family-mono);
+}
+
+#hint {
+	margin-left: auto;
+}
+
+#stage {
+	position: fixed;
+	inset: 0;
+	overflow: hidden;
+	cursor: grab;
+	touch-action: none;
+	background: var(--color-bg-subtle);
+}
+
+#world.moving {
+	will-change: transform;
+}
+
+#world {
+	position: absolute;
+	top: 0;
+	left: 0;
+	transform-origin: 0 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-16);
+	padding: var(--space-16);
+	width: max-content;
+}
+
+.row {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+}
+
+#world > .screen {
+	margin: 0;
+	color: var(--color-text-primary);
+	font-family: var(--type-family-display);
+	font-size: var(--type-size-heading-lg);
+}
+
+.row > h2 {
+	margin: 0;
+	color: var(--color-text-primary);
+	font-family: var(--type-family-display);
+	font-size: var(--type-size-heading-md);
+}
+
+.boards {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--space-8);
+}
+
+.board {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2);
+}
+
+.board > .label {
+	color: var(--color-text-secondary);
+	font-size: var(--type-size-body-sm);
+	white-space: nowrap;
+}
+
+.board > .label b {
+	color: var(--color-text-primary);
+	font-weight: 600;
+}
+
+.frame {
+	/* As wide as its artboard, never as wide as a label longer than it. */
+	align-self: flex-start;
+	position: relative;
+	background: var(--color-bg-canvas);
+	border: 1px solid var(--color-border-strong);
+	border-radius: var(--radius-sm);
+	overflow: hidden;
+}
+
+.frame iframe {
+	display: block;
+	border: 0;
+	background: var(--color-bg-canvas);
+}
+
+/* Iframes swallow wheel and drag, so a cover sits over each artboard and the
+ * design canvas gets them. Holding Alt lifts the covers: the story is then
+ * live, and a click on it points rather than acts. */
+.cover {
+	position: absolute;
+	inset: 0;
+}
+
+.alt .cover {
+	display: none;
+}
+
+.alt #stage {
+	cursor: crosshair;
+}
+
+.pointer {
+	position: absolute;
+	display: none;
+	pointer-events: none;
+	outline: 2px solid var(--color-action-primary);
+	outline-offset: -1px;
+	background: color-mix(in srgb, var(--color-action-primary) 12%, transparent);
+}
+
+/* An artboard that has not rendered says so instead of sitting blank. */
+.frame:not(.loaded)::after {
+	content: 'Waiting to render';
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	pointer-events: none;
+	color: var(--color-text-secondary);
+	font-size: var(--type-size-body-sm);
+}
+
+/* The sitemap: every screen on the canvas, one click from centred. */
+#sitemap {
+	position: fixed;
+	inset: var(--bar-height, 40px) auto 0 0;
+	z-index: 9;
+	inline-size: var(--sitemap-width);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2);
+	padding: var(--space-3);
+	background: var(--color-bg-surface);
+	border-inline-end: 1px solid var(--color-border-default);
+	font-size: var(--type-size-body-sm);
+	overflow: hidden;
+}
+
+.no-map #sitemap {
+	display: none;
+}
+
+#find {
+	inline-size: 100%;
+	padding: var(--space-2) var(--space-3);
+	border: 1px solid var(--color-border-default);
+	border-radius: var(--radius-control);
+	background: var(--color-bg-canvas);
+	color: var(--color-text-primary);
+	font: inherit;
+}
+
+#tree {
+	overflow-y: auto;
+	min-block-size: 0;
+}
+
+#tree summary {
+	cursor: pointer;
+	padding: var(--space-1) 0;
+	color: var(--color-text-secondary);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+#tree .title {
+	margin: var(--space-2) 0 var(--space-1);
+	color: var(--color-text-primary);
+	font-weight: 600;
+}
+
+#tree button {
+	display: block;
+	inline-size: 100%;
+	padding: var(--space-1) var(--space-2);
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: transparent;
+	color: var(--color-text-secondary);
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+
+#tree button:hover {
+	background: var(--color-bg-hover);
+	color: var(--color-text-primary);
+}
+
+#tree button[aria-current='true'] {
+	background: var(--color-bg-active);
+	color: var(--color-text-primary);
+}
+
+#tree [hidden] {
+	display: none;
+}
+
+/* Flow view: a connector between neighbouring steps, named for what moves the
+ * member on. */
+.connector {
+	/* Level with the happy path, however far a step's branches hang below it. */
+	align-self: flex-start;
+	margin-block-start: 240px;
+	display: grid;
+	place-items: center;
+	min-inline-size: 96px;
+	padding: 0 var(--space-2);
+	color: var(--color-text-secondary);
+	font-family: var(--type-family-mono);
+	font-size: var(--type-size-body-sm);
+}
+
+.connector::after {
+	content: '';
+	display: block;
+	inline-size: 100%;
+	block-size: 2px;
+	margin-block-start: var(--space-1);
+	background: var(--color-border-strong);
+}
+
+/* A step, and under it the ways off the happy path from there. */
+.step {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-8);
+}
+
+.branch {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+	padding-inline-start: var(--space-4);
+	border-inline-start: 2px solid var(--color-border-strong);
+}
+
+.outcome {
+	color: var(--color-text-primary);
+	font-family: var(--type-family-mono);
+	font-size: var(--type-size-body-sm);
+}
+
+/* Play mode: one artboard, used like a page. */
+.play #world {
+	display: none;
+}
+
+.play #stage {
+	cursor: default;
+	touch-action: auto;
+}
+
+#player {
+	position: absolute;
+	inset: var(--bar-height, 40px) 0 0 0;
+	overflow: auto;
+	display: grid;
+	justify-content: center;
+	align-content: start;
+	padding: var(--space-4);
+}
+
+#tree a {
+	display: inline-block;
+	padding: var(--space-1) var(--space-2);
+	margin-inline-end: var(--space-1);
+	border-radius: var(--radius-sm);
+	color: var(--color-accent);
+	text-decoration: none;
+}
+
+#tree a:hover {
+	background: var(--color-bg-hover);
+}
+
+/* A screen's name opens that screen. */
+#tree a.title {
+	display: block;
+	padding: var(--space-1) 0;
+	margin-inline-end: 0;
+}
+
+#tree a.title[aria-current='page'] {
+	color: var(--color-accent);
+}
+
+#tree .problem {
+	margin: 0;
+	color: var(--color-text-primary);
+}
