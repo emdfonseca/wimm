@@ -3,6 +3,7 @@ import type { Preview } from '@storybook/sveltekit';
 // The real token stylesheet, generated from design/tokens.json. Storybook must
 // render against the contract, not a copy of it.
 import '@wimm/ui/base.css';
+import { DENSITY_KEY, THEME_KEY } from '@wimm/ui';
 
 /**
  * Theme, device and density are globals, not stories. A frame resolves one
@@ -57,6 +58,16 @@ const preview: Preview = {
 				dynamicTitle: true
 			}
 		}
+	},
+
+	// Every story file shares one origin, so a choice one story stores is still
+	// there when the next mounts. The theme and density controls read what is
+	// stored on mount: with "compact" left behind, clicking Compact changes
+	// nothing and the story asserting its onchange fails, in whichever run
+	// happens to order the files that way.
+	beforeEach() {
+		localStorage.removeItem(THEME_KEY);
+		localStorage.removeItem(DENSITY_KEY);
 	},
 
 	decorators: [
