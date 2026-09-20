@@ -24,3 +24,11 @@ __pycache__/
 
 .svelte-kit/
 build/
+
+# macOS folder metadata.
+.DS_Store
+
+# What Vitest's browser mode leaves behind when a test fails: a screenshot of
+# the page and the run's attachments. Evidence for one run, never an input.
+__screenshots__/
+.vitest-attachments/
