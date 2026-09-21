@@ -44,7 +44,7 @@ func TestTrendWalksBackOnlyAsFarAsItsOldestTransaction(t *testing.T) {
 	seedTransaction(st, "t0", accountID, -1, "EUR", bound)
 	seedTransaction(st, "t1", accountID, -20_000, "EUR", st.now.AddDate(0, 0, -10))
 
-	trend, err := svc.BalanceTrend(context.Background(), ada)
+	trend, err := svc.BalanceTrend(context.Background(), ada, banking.ScopeAll)
 	if err != nil {
 		t.Fatalf("BalanceTrend: %v", err)
 	}
@@ -121,7 +121,7 @@ func TestAnAccountWithBalancesOnlyContributesToTotalNotTrend(t *testing.T) {
 		t.Fatalf("total = %+v, want both accounts summed to 400000", view.OwnTotals)
 	}
 
-	trend, err := svc.BalanceTrend(context.Background(), ada)
+	trend, err := svc.BalanceTrend(context.Background(), ada, banking.ScopeAll)
 	if err != nil {
 		t.Fatalf("BalanceTrend: %v", err)
 	}
@@ -156,7 +156,7 @@ func TestTwoCurrenciesAreNeverCombinedInTheTrend(t *testing.T) {
 		seedTransaction(st, "seed-"+a.ID, a.ID, -1, a.Currency, bound)
 	}
 
-	trend, err := svc.BalanceTrend(context.Background(), ada)
+	trend, err := svc.BalanceTrend(context.Background(), ada, banking.ScopeAll)
 	if err != nil {
 		t.Fatalf("BalanceTrend: %v", err)
 	}
@@ -180,7 +180,7 @@ func TestNoTrendWhenAnAccountHasNeverSyncedAnyTransaction(t *testing.T) {
 	trendAccount(t, svc, gw, st, "EUR", 200_000)
 	// No transactions seeded: Oldest stays nil for this account.
 
-	trend, err := svc.BalanceTrend(context.Background(), ada)
+	trend, err := svc.BalanceTrend(context.Background(), ada, banking.ScopeAll)
 	if err != nil {
 		t.Fatalf("BalanceTrend: %v", err)
 	}
@@ -198,7 +198,7 @@ func TestNoTrendForAMemberWhoOwnsNothing(t *testing.T) {
 	svc, gw, st := newService(t)
 	trendAccount(t, svc, gw, st, "EUR", 200_000)
 
-	trend, err := svc.BalanceTrend(context.Background(), grace)
+	trend, err := svc.BalanceTrend(context.Background(), grace, banking.ScopeAll)
 	if err != nil {
 		t.Fatalf("BalanceTrend: %v", err)
 	}
@@ -238,7 +238,7 @@ func TestTheChartCoversAtMostNinetyDays(t *testing.T) {
 	seedTransaction(st, "t0", id, -100, "EUR", day(st.now, 200))
 	seedTransaction(st, "t1", id, -100, "EUR", day(st.now, 3))
 
-	trend, err := svc.BalanceTrend(context.Background(), ada)
+	trend, err := svc.BalanceTrend(context.Background(), ada, banking.ScopeAll)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -257,7 +257,7 @@ func TestAnAccountConnectedYesterdayDoesNotShortenTheChart(t *testing.T) {
 	seedTransaction(st, "l1", longID, -5_000, "EUR", day(st.now, 40))
 	seedTransaction(st, "s0", shortID, -100, "EUR", day(st.now, 1))
 
-	trend, err := svc.BalanceTrend(context.Background(), ada)
+	trend, err := svc.BalanceTrend(context.Background(), ada, banking.ScopeAll)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -281,7 +281,7 @@ func TestWhenNoAccountReachesThirtyDaysTheLongestAloneContributes(t *testing.T) 
 	seedTransaction(st, "a0", a, -100, "EUR", day(st.now, 20))
 	seedTransaction(st, "b0", b, -100, "EUR", day(st.now, 10))
 
-	trend, err := svc.BalanceTrend(context.Background(), ada)
+	trend, err := svc.BalanceTrend(context.Background(), ada, banking.ScopeAll)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -302,7 +302,7 @@ func TestLessThanAWeekOfHistoryDrawsNoChartAndSaysWhy(t *testing.T) {
 	id, _ := trendAccount(t, svc, gw, st, "EUR", 500_000)
 	seedTransaction(st, "t0", id, -100, "EUR", day(st.now, 6))
 
-	trend, err := svc.BalanceTrend(context.Background(), ada)
+	trend, err := svc.BalanceTrend(context.Background(), ada, banking.ScopeAll)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -319,7 +319,7 @@ func TestAWeekOfHistoryIsEnough(t *testing.T) {
 	id, _ := trendAccount(t, svc, gw, st, "EUR", 500_000)
 	seedTransaction(st, "t0", id, -100, "EUR", day(st.now, 7))
 
-	trend, err := svc.BalanceTrend(context.Background(), ada)
+	trend, err := svc.BalanceTrend(context.Background(), ada, banking.ScopeAll)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -333,7 +333,7 @@ func TestAQuietCurrencyGetsNoTrend(t *testing.T) {
 	id, _ := trendAccount(t, svc, gw, st, "USD", 0)
 	seedTransaction(st, "old", id, 0, "USD", day(st.now, 200))
 
-	trend, err := svc.BalanceTrend(context.Background(), ada)
+	trend, err := svc.BalanceTrend(context.Background(), ada, banking.ScopeAll)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -351,11 +351,93 @@ func TestAZeroCurrencyThatMovedRecentlyIsShown(t *testing.T) {
 	seedTransaction(st, "in", id, 5_000, "USD", day(st.now, 30))
 	seedTransaction(st, "out", id, -5_000, "USD", day(st.now, 2))
 
-	trend, err := svc.BalanceTrend(context.Background(), ada)
+	trend, err := svc.BalanceTrend(context.Background(), ada, banking.ScopeAll)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if len(trend.Currencies) != 1 || len(trend.Currencies[0].Points) == 0 {
 		t.Fatalf("got %+v, want a chart for a balance that reached zero", trend.Currencies)
 	}
+}
+
+func pointOn(t *testing.T, trend banking.Trend, date time.Time) banking.TrendPoint {
+	t.Helper()
+	if len(trend.Currencies) != 1 {
+		t.Fatalf("got %d currencies, want 1", len(trend.Currencies))
+	}
+	for _, p := range trend.Currencies[0].Points {
+		if p.Date.Year() == date.Year() && p.Date.YearDay() == date.YearDay() {
+			return p
+		}
+	}
+	t.Fatalf("no point on %s", date.Format("2 Jan"))
+	return banking.TrendPoint{}
+}
+
+func TestADayNamesTheRowsThatMovedItAndCountsTheSmallerOnes(t *testing.T) {
+	svc, gw, st := newService(t)
+	accountID, _ := trendAccount(t, svc, gw, st, "EUR", 500_000)
+	seedTransaction(st, "anchor", accountID, -1, "EUR", st.now.AddDate(0, 0, -40))
+	day := on(2026, time.September, 5)
+	for id, minor := range map[string]int64{"big": -60_000, "mid": -30_000, "s1": -1_000, "s2": -900, "s3": -800} {
+		seedTransaction(st, id, accountID, minor, "EUR", day)
+	}
+
+	p := pointOn(t, mustTrend(t, svc, ada), day)
+	if len(p.Movers) != 2 || p.Movers[0].Amount != -60_000 || p.Movers[1].Amount != -30_000 || p.Smaller != 3 {
+		t.Errorf("got %+v and %d smaller, want the two large ones and 3 smaller", p.Movers, p.Smaller)
+	}
+}
+
+func TestADayWithNothingOnItHasNoMovers(t *testing.T) {
+	svc, gw, st := newService(t)
+	accountID, _ := trendAccount(t, svc, gw, st, "EUR", 500_000)
+	seedTransaction(st, "anchor", accountID, -1, "EUR", st.now.AddDate(0, 0, -40))
+
+	p := pointOn(t, mustTrend(t, svc, ada), on(2026, time.September, 9))
+	if len(p.Movers) != 0 || p.Smaller != 0 {
+		t.Errorf("got %+v and %d smaller, want an empty day", p.Movers, p.Smaller)
+	}
+}
+
+func TestADayHoldingMoneyInNamesItWithAPlus(t *testing.T) {
+	svc, gw, st := newService(t)
+	accountID, _ := trendAccount(t, svc, gw, st, "EUR", 500_000)
+	seedTransaction(st, "anchor", accountID, -1, "EUR", st.now.AddDate(0, 0, -40))
+	seedTransaction(st, "salary", accountID, 245_000, "EUR", on(2026, time.September, 15))
+	seedTransaction(st, "tip", accountID, -500, "EUR", on(2026, time.September, 15))
+
+	p := pointOn(t, mustTrend(t, svc, ada), on(2026, time.September, 15))
+	if len(p.Movers) != 1 || p.Movers[0].Amount != 245_000 || p.Smaller != 1 {
+		t.Errorf("got %+v and %d smaller, want the salary and 1 smaller", p.Movers, p.Smaller)
+	}
+}
+
+func TestAnAccountTheChartDropsAppearsOnNoDay(t *testing.T) {
+	svc, st, done := twoAccounts(t)
+	long, short := done.Accounts[0], done.Accounts[1]
+	seedTransaction(st, "anchor", long.ID, -1, "EUR", st.now.AddDate(0, 0, -40))
+	seedTransaction(st, "short-start", short.ID, -1, "EUR", st.now.AddDate(0, 0, -10))
+	seedTransaction(st, "short-big", short.ID, -70_000, "EUR", on(2026, time.September, 10))
+	if _, err := svc.Accounts(context.Background(), ada, false); err != nil {
+		t.Fatal(err)
+	}
+
+	trend := mustTrend(t, svc, ada)
+	for _, p := range trend.Currencies[0].Points {
+		for _, m := range p.Movers {
+			if m.Amount == -70_000 {
+				t.Errorf("a dropped account's payment moved %s", p.Date.Format("2 Jan"))
+			}
+		}
+	}
+}
+
+func mustTrend(t *testing.T, svc *banking.Service, member string) banking.Trend {
+	t.Helper()
+	trend, err := svc.BalanceTrend(context.Background(), member, banking.ScopeAll)
+	if err != nil {
+		t.Fatalf("BalanceTrend: %v", err)
+	}
+	return trend
 }

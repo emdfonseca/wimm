@@ -141,6 +141,112 @@
 	}}
 />
 
+<!-- The label is text in the status slot and the row keeps its height. -->
+<Story
+	name="Unusual"
+	args={{ description: 'Galp', account: 'Current account', amount: '−€210.00', unusual: true }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Galp')).toBeInTheDocument();
+		await expect(canvas.getByText('−€210.00')).toBeInTheDocument();
+		await expect(canvas.getByText('Unusual')).toBeInTheDocument();
+		await expect(canvas.queryByText('Unusual income')).not.toBeInTheDocument();
+		await expect(canvasElement.querySelector('.ledger-row')!.getBoundingClientRect().height).toBe(
+			56
+		);
+	}}
+/>
+
+<Story
+	name="CompactUnusual"
+	args={{
+		compact: true,
+		description: 'Galp',
+		account: 'Current account',
+		amount: '−€210.00',
+		unusual: true
+	}}
+	globals={{ viewport: { value: 'compact' } }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Galp')).toBeInTheDocument();
+		await expect(canvas.getByText('−€210.00')).toBeInTheDocument();
+		await expect(canvas.getByText('Unusual')).toBeInTheDocument();
+	}}
+/>
+
+<!-- The sign says which way it went and so does the label. -->
+<Story
+	name="UnusualIncome"
+	args={{
+		description: 'Employer Lda',
+		account: 'Current account',
+		amount: '+€9,804.00',
+		negative: false,
+		unusual: true
+	}}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Employer Lda')).toBeInTheDocument();
+		await expect(canvas.getByText('+€9,804.00')).toBeInTheDocument();
+		await expect(canvas.getByText('Unusual income')).toBeInTheDocument();
+		await expect(canvas.queryByText('Unusual')).not.toBeInTheDocument();
+	}}
+/>
+
+<!-- A recurring payment: the cadence and account in the account's place, the
+     expected date in the date's, no settled marker. -->
+<Story
+	name="ExpectedDate"
+	args={{
+		description: 'Spotify',
+		account: 'Monthly · Current account · Monzo',
+		amount: '−€9.99',
+		date: 'Was expected 18 Sep',
+		hideStatus: true
+	}}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Spotify')).toBeInTheDocument();
+		await expect(canvas.getByText('Monthly · Current account · Monzo')).toBeInTheDocument();
+		const date = canvas.getByText('Was expected 18 Sep');
+		await expect(date).toBeInTheDocument();
+		await expect(date.scrollWidth).toBeLessThanOrEqual(date.clientWidth);
+		await expect(canvas.getByText('−€9.99')).toBeInTheDocument();
+		await expect(canvasElement.querySelector('.ledger-row')!.getBoundingClientRect().height).toBe(
+			56
+		);
+	}}
+/>
+
+<!-- One link holds everything the row says, so a screen reader reads a single
+     destination rather than four stops. -->
+<Story
+	name="WithANoteAndALink"
+	args={{
+		description: 'Galp',
+		account: 'Current account',
+		amount: '−€210.00',
+		date: '27 Mar',
+		unusual: true,
+		note: 'usually about €60',
+		href: '/transactions?page=2026-03-27.abc'
+	}}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const links = canvas.getAllByRole('link');
+		await expect(links).toHaveLength(1);
+		const link = links[0]!;
+		for (const words of ['Galp', '27 Mar', '−€210.00', 'usually about €60']) {
+			await expect(link).toHaveTextContent(words);
+		}
+		await expect(link).toHaveAttribute('href', '/transactions?page=2026-03-27.abc');
+		await expect(canvasElement.querySelector('.ledger-row')!.getBoundingClientRect().height).toBe(
+			56
+		);
+	}}
+/>
+
 <Story name="AList" tags={['!test']}>
 	{#snippet template(args)}
 		<div style="display: flex; flex-direction: column; inline-size: 880px;">

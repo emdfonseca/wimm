@@ -23,6 +23,9 @@
 		/** The statement text as the bank wrote it. Shown under `description`
 		 *  only where it differs from it. */
 		banksLine?: string;
+		/** The one payment rule marked it. Labelled `Unusual`, or `Unusual
+		 *  income` where it came in. */
+		unusual?: boolean;
 	}
 
 	/** One day's transactions under the heading that names it. */
@@ -390,6 +393,7 @@
 								unsettled={entry.unsettled}
 								initials={entry.initials}
 								banksLine={entry.banksLine}
+								unusual={entry.unusual}
 								hideDate={!compact}
 								{compact}
 							/>

@@ -6,6 +6,24 @@
 		value: number;
 		/** Already formatted, carrying its currency. */
 		amount: string;
+		/** Against the day before: `€805.79 less than 2 Aug`, `No change from
+		 *  8 Aug`. Absent on the first day, which has no day before. */
+		change?: string;
+		/** What moved the day, largest first. */
+		movers?: BalanceMover[];
+		/** `and 3 smaller`, when rows were left out of `movers`. */
+		smaller?: string;
+		/** Nothing happened this day. */
+		empty?: boolean;
+	}
+
+	export interface BalanceMover {
+		name: string;
+		/** Already formatted, carrying its sign. */
+		amount: string;
+		negative?: boolean;
+		/** The one payment rule marked it. */
+		unusual?: boolean;
 	}
 </script>
 
@@ -72,8 +90,35 @@
 		return { line, area: `${line} L${WIDTH} ${HEIGHT} L0 ${HEIGHT} Z` };
 	});
 
-	const readout = $derived(
-		marked === null ? '' : `${points[marked]?.date} · ${points[marked]?.amount}`
+	const point = $derived(marked === null ? undefined : points[marked]);
+
+	function unusualLabel(mover: BalanceMover): string {
+		return mover.negative === false ? 'Unusual income' : 'Unusual';
+	}
+
+	// The popover is aria-hidden; this is the same words as one string, in the
+	// order date, balance, change, movers, smaller.
+	const readout = $derived.by(() => {
+		if (!point) return '';
+		const parts = [`${point.date}.`, `${point.amount}.`];
+		if (point.change) parts.push(`${point.change}.`);
+		for (const mover of point.movers ?? []) {
+			parts.push(
+				`${mover.name} ${mover.amount}${mover.unusual ? `, ${unusualLabel(mover)}` : ''}.`
+			);
+		}
+		if (point.smaller)
+			parts.push(`${point.smaller.charAt(0).toUpperCase()}${point.smaller.slice(1)}.`);
+		if (point.empty) parts.push('No transactions this day.');
+		return parts.join(' ');
+	});
+
+	let plot: HTMLElement | undefined = $state();
+	const flip = $derived(marked !== null && last > 0 && marked / last > 0.5);
+	// The popover takes the room on its side of the marker and no more, so on a
+	// phone it is narrowed rather than run off the plot.
+	const room = $derived(
+		marked === null || last === 0 ? 100 : (flip ? marked / last : 1 - marked / last) * 100
 	);
 
 	function clamp(index: number): number {
@@ -86,16 +131,28 @@
 		else if (event.key === 'ArrowRight') marked = clamp(from + 1);
 		else if (event.key === 'Home') marked = 0;
 		else if (event.key === 'End') marked = last;
+		else if (event.key === 'Escape') marked = null;
 		else return;
 		event.preventDefault();
 	}
 
-	function onpointermove(event: PointerEvent) {
+	function mark(event: PointerEvent) {
 		const box = (event.currentTarget as HTMLElement).getBoundingClientRect();
 		if (box.width === 0) return;
 		marked = clamp(Math.round(((event.clientX - box.left) / box.width) * last));
 	}
+
+	// A mouse leaving clears the day; a tap keeps it until the next tap.
+	function onpointerleave(event: PointerEvent) {
+		if (event.pointerType === 'mouse') marked = null;
+	}
+
+	function outside(event: PointerEvent) {
+		if (marked !== null && plot && !plot.contains(event.target as Node)) marked = null;
+	}
 </script>
+
+<svelte:window onpointerdown={outside} />
 
 <section class="chart" aria-label={title}>
 	<header class="header">
@@ -117,12 +174,14 @@
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<div
 				class="plot"
+				bind:this={plot}
 				role="img"
 				aria-label={summary}
 				tabindex="0"
 				{onkeydown}
-				{onpointermove}
-				onpointerleave={() => (marked = null)}
+				onpointermove={mark}
+				onpointerdown={mark}
+				{onpointerleave}
 			>
 				<svg viewBox="0 0 {WIDTH} {HEIGHT}" preserveAspectRatio="none" aria-hidden="true">
 					<path class="area" d={geometry.area} />
@@ -130,6 +189,36 @@
 				</svg>
 				{#if marked !== null}
 					<span class="marker" style:left="{(marked / last) * 100}%" aria-hidden="true"></span>
+				{/if}
+				{#if point && marked !== null}
+					<div
+						class="popover"
+						class:flip
+						style:left="{(marked / last) * 100}%"
+						style:max-inline-size="min(260px, calc({room}% - 14px))"
+						aria-hidden="true"
+					>
+						<span class="pop-date">{point.date}</span>
+						<span class="pop-balance">{point.amount}</span>
+						{#if point.change}
+							<span class="pop-change">{point.change}</span>
+						{/if}
+						{#each point.movers ?? [] as mover (mover.name + mover.amount)}
+							<span class="mover">
+								<span class="mover-name">{mover.name}</span>
+								<span class="mover-amount">{mover.amount}</span>
+								{#if mover.unusual}
+									<span class="mover-tag">{unusualLabel(mover)}</span>
+								{/if}
+							</span>
+						{/each}
+						{#if point.smaller}
+							<span class="pop-change">{point.smaller}</span>
+						{/if}
+						{#if point.empty}
+							<span class="pop-change">No transactions this day.</span>
+						{/if}
+					</div>
 				{/if}
 			</div>
 		</div>
@@ -149,6 +238,7 @@
 
 <style>
 	.chart {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
@@ -257,16 +347,82 @@
 		line-height: 14px;
 	}
 
+	/* The announcement. The popover shows the same words; this carries them
+	   to a screen reader and takes no room. */
 	.readout {
-		margin: 0;
-		color: var(--color-text-primary);
-		font-family: var(--type-family-mono);
-		font-size: 12px;
+		position: absolute;
+		inline-size: 1px;
+		block-size: 1px;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
 	}
 
-	/* Stays in the tree so a change is announced, and gives back the gap it
-	   would otherwise add while nothing is pointed at. */
-	.readout:empty {
-		margin-block-start: -12px;
+	.popover {
+		position: absolute;
+		inset-block-start: 8px;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		inline-size: max-content;
+		min-inline-size: 120px;
+		max-inline-size: 260px;
+		margin-inline-start: 10px;
+		padding: 8px 10px;
+		background: var(--color-bg-elevated);
+		border: 1px solid var(--color-border-strong);
+		border-radius: var(--radius-md);
+		color: var(--color-text-primary);
+		font-family: var(--type-family-body);
+		font-size: 12px;
+		pointer-events: none;
+	}
+
+	.popover.flip {
+		transform: translateX(calc(-100% - 20px));
+	}
+
+	.pop-date {
+		color: var(--color-text-secondary);
+		font-family: var(--type-family-mono);
+		font-size: 11px;
+	}
+
+	.pop-balance {
+		font-family: var(--type-family-mono);
+		font-size: 13px;
+		font-weight: 600;
+	}
+
+	.pop-change {
+		color: var(--color-text-secondary);
+		font-size: 11px;
+	}
+
+	.mover {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		column-gap: 8px;
+	}
+
+	.mover-name {
+		flex: 1 1 5rem;
+		min-inline-size: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.mover-amount {
+		flex: none;
+		font-family: var(--type-family-mono);
+	}
+
+	.mover-tag {
+		flex: none;
+		color: var(--color-text-secondary);
+		font-size: 11px;
 	}
 </style>

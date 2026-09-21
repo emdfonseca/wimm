@@ -44,6 +44,7 @@
 					amount: '−€71.40',
 					date: '16 Sep',
 					negative: true,
+					unusual: true,
 					initials: 'GA'
 				},
 				{
@@ -178,6 +179,16 @@
 		await expect(canvas.getByText('+€2,180.00')).toBeInTheDocument();
 
 		await expect(canvas.getAllByText(span)).toHaveLength(1);
+
+		// Marked on the Galp row, once on the page, and never on a transfer that
+		// has not settled.
+		await expect(canvas.getAllByText('Unusual')).toHaveLength(1);
+		await expect(
+			(canvas.getByText('Galp').closest('.ledger-row') as HTMLElement).textContent
+		).toContain('Unusual');
+		const transfer = canvas.getByText('Transfer to Ana Reis').closest('.ledger-row') as HTMLElement;
+		await expect(transfer).toHaveTextContent('Not settled');
+		await expect(transfer).not.toHaveTextContent('Unusual');
 	}}
 />
 

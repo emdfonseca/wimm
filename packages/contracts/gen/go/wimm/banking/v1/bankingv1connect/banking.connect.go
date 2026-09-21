@@ -81,6 +81,9 @@ const (
 	// BankingServiceGetMonthSummaryProcedure is the fully-qualified name of the BankingService's
 	// GetMonthSummary RPC.
 	BankingServiceGetMonthSummaryProcedure = "/wimm.banking.v1.BankingService/GetMonthSummary"
+	// BankingServiceGetMonthHistoryProcedure is the fully-qualified name of the BankingService's
+	// GetMonthHistory RPC.
+	BankingServiceGetMonthHistoryProcedure = "/wimm.banking.v1.BankingService/GetMonthHistory"
 )
 
 // BankingServiceClient is a client for the wimm.banking.v1.BankingService service.
@@ -128,6 +131,11 @@ type BankingServiceClient interface {
 	// of last month, with where the most money went. Drawn from their owned
 	// accounts' booked transactions. Reads no bank. Deadline: 10s.
 	GetMonthSummary(context.Context, *connect.Request[v1.GetMonthSummaryRequest]) (*connect.Response[v1.GetMonthSummaryResponse], error)
+	// The calling member's months, one per calendar month for up to a year, with
+	// the merchants behind each rise, the unusual payments in each, and the
+	// payments that recur. Drawn from their owned accounts' booked transactions
+	// within the scope asked for. Reads no bank. Deadline: 10s.
+	GetMonthHistory(context.Context, *connect.Request[v1.GetMonthHistoryRequest]) (*connect.Response[v1.GetMonthHistoryResponse], error)
 }
 
 // NewBankingServiceClient constructs a client for the wimm.banking.v1.BankingService service. By
@@ -237,6 +245,12 @@ func NewBankingServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(bankingServiceMethods.ByName("GetMonthSummary")),
 			connect.WithClientOptions(opts...),
 		),
+		getMonthHistory: connect.NewClient[v1.GetMonthHistoryRequest, v1.GetMonthHistoryResponse](
+			httpClient,
+			baseURL+BankingServiceGetMonthHistoryProcedure,
+			connect.WithSchema(bankingServiceMethods.ByName("GetMonthHistory")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -258,6 +272,7 @@ type bankingServiceClient struct {
 	refreshTransactions    *connect.Client[v1.RefreshTransactionsRequest, v1.RefreshTransactionsResponse]
 	getBalanceTrend        *connect.Client[v1.GetBalanceTrendRequest, v1.GetBalanceTrendResponse]
 	getMonthSummary        *connect.Client[v1.GetMonthSummaryRequest, v1.GetMonthSummaryResponse]
+	getMonthHistory        *connect.Client[v1.GetMonthHistoryRequest, v1.GetMonthHistoryResponse]
 }
 
 // ListBanks calls wimm.banking.v1.BankingService.ListBanks.
@@ -340,6 +355,11 @@ func (c *bankingServiceClient) GetMonthSummary(ctx context.Context, req *connect
 	return c.getMonthSummary.CallUnary(ctx, req)
 }
 
+// GetMonthHistory calls wimm.banking.v1.BankingService.GetMonthHistory.
+func (c *bankingServiceClient) GetMonthHistory(ctx context.Context, req *connect.Request[v1.GetMonthHistoryRequest]) (*connect.Response[v1.GetMonthHistoryResponse], error) {
+	return c.getMonthHistory.CallUnary(ctx, req)
+}
+
 // BankingServiceHandler is an implementation of the wimm.banking.v1.BankingService service.
 type BankingServiceHandler interface {
 	// Banks connectable in a country, each carrying how long its consent lasts.
@@ -385,6 +405,11 @@ type BankingServiceHandler interface {
 	// of last month, with where the most money went. Drawn from their owned
 	// accounts' booked transactions. Reads no bank. Deadline: 10s.
 	GetMonthSummary(context.Context, *connect.Request[v1.GetMonthSummaryRequest]) (*connect.Response[v1.GetMonthSummaryResponse], error)
+	// The calling member's months, one per calendar month for up to a year, with
+	// the merchants behind each rise, the unusual payments in each, and the
+	// payments that recur. Drawn from their owned accounts' booked transactions
+	// within the scope asked for. Reads no bank. Deadline: 10s.
+	GetMonthHistory(context.Context, *connect.Request[v1.GetMonthHistoryRequest]) (*connect.Response[v1.GetMonthHistoryResponse], error)
 }
 
 // NewBankingServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -490,6 +515,12 @@ func NewBankingServiceHandler(svc BankingServiceHandler, opts ...connect.Handler
 		connect.WithSchema(bankingServiceMethods.ByName("GetMonthSummary")),
 		connect.WithHandlerOptions(opts...),
 	)
+	bankingServiceGetMonthHistoryHandler := connect.NewUnaryHandler(
+		BankingServiceGetMonthHistoryProcedure,
+		svc.GetMonthHistory,
+		connect.WithSchema(bankingServiceMethods.ByName("GetMonthHistory")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/wimm.banking.v1.BankingService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case BankingServiceListBanksProcedure:
@@ -524,6 +555,8 @@ func NewBankingServiceHandler(svc BankingServiceHandler, opts ...connect.Handler
 			bankingServiceGetBalanceTrendHandler.ServeHTTP(w, r)
 		case BankingServiceGetMonthSummaryProcedure:
 			bankingServiceGetMonthSummaryHandler.ServeHTTP(w, r)
+		case BankingServiceGetMonthHistoryProcedure:
+			bankingServiceGetMonthHistoryHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -595,4 +628,8 @@ func (UnimplementedBankingServiceHandler) GetBalanceTrend(context.Context, *conn
 
 func (UnimplementedBankingServiceHandler) GetMonthSummary(context.Context, *connect.Request[v1.GetMonthSummaryRequest]) (*connect.Response[v1.GetMonthSummaryResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("wimm.banking.v1.BankingService.GetMonthSummary is not implemented"))
+}
+
+func (UnimplementedBankingServiceHandler) GetMonthHistory(context.Context, *connect.Request[v1.GetMonthHistoryRequest]) (*connect.Response[v1.GetMonthHistoryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("wimm.banking.v1.BankingService.GetMonthHistory is not implemented"))
 }

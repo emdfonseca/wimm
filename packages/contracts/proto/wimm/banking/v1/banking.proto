@@ -70,6 +70,32 @@ service BankingService {
   // of last month, with where the most money went. Drawn from their owned
   // accounts' booked transactions. Reads no bank. Deadline: 10s.
   rpc GetMonthSummary(GetMonthSummaryRequest) returns (GetMonthSummaryResponse);
+
+  // The calling member's months, one per calendar month for up to a year, with
+  // the merchants behind each rise, the unusual payments in each, and the
+  // payments that recur. Drawn from their owned accounts' booked transactions
+  // within the scope asked for. Reads no bank. Deadline: 10s.
+  rpc GetMonthHistory(GetMonthHistoryRequest) returns (GetMonthHistoryResponse);
+}
+
+// Which of the calling member's owned accounts the insights count. Never
+// widens to an account the member holds only a grant on (ADR 0021).
+enum InsightScope {
+  // Read as ALL.
+  INSIGHT_SCOPE_UNSPECIFIED = 0;
+  // Owned accounts in the household group (ADR 0024).
+  INSIGHT_SCOPE_HOUSEHOLD = 1;
+  // Owned accounts in the member's own group.
+  INSIGHT_SCOPE_OWN = 2;
+  // Every owned account.
+  INSIGHT_SCOPE_ALL = 3;
+}
+
+enum Cadence {
+  CADENCE_UNSPECIFIED = 0;
+  CADENCE_WEEKLY = 1;
+  CADENCE_MONTHLY = 2;
+  CADENCE_YEARLY = 3;
 }
 
 // What one member may see of one account they do not own.
@@ -449,6 +475,9 @@ message Transaction {
   // The name wimm shows: the merchant or person it was with, with the bank's
   // own bookkeeping removed. Never empty. Derived on read, never stored.
   string display_name = 10;
+  // True when the one unusual-payment rule marks this booked row, judged under
+  // the All scope. Derived on read, never stored.
+  bool unusual = 11;
 }
 
 // Where a page starts. It is the sort key itself rather than an offset, because
@@ -556,7 +585,9 @@ message PageMarker {
   google.protobuf.Timestamp oldest = 3;
 }
 
-message GetBalanceTrendRequest {}
+message GetBalanceTrendRequest {
+  InsightScope scope = 1;
+}
 
 message GetBalanceTrendResponse {
   // One entry per currency the calling member's owned accounts hold, oldest
@@ -588,9 +619,23 @@ message CurrencyTrend {
 message TrendPoint {
   google.protobuf.Timestamp date = 1;
   Money balance = 2;
+  // The rows that moved this day, largest first: enough to reach 80% of the
+  // day's gross movement, at most five.
+  repeated DayMover movers = 3;
+  // How many booked rows that day are not in movers.
+  int32 smaller = 4;
 }
 
-message GetMonthSummaryRequest {}
+// One booked row that moved a day. Signed: money in is positive.
+message DayMover {
+  string display_name = 1;
+  Money amount = 2;
+  bool unusual = 3;
+}
+
+message GetMonthSummaryRequest {
+  InsightScope scope = 1;
+}
 
 message GetMonthSummaryResponse {
   // One per currency in which the calling member has a booked transaction this
@@ -621,6 +666,98 @@ message CurrencyMonth {
   repeated MerchantTotal top_merchants = 10;
   // The five largest single payments, largest first.
   repeated Transaction largest_payments = 11;
+}
+
+message GetMonthHistoryRequest {
+  InsightScope scope = 1;
+}
+
+message GetMonthHistoryResponse {
+  // The scope actually answered.
+  InsightScope scope = 1;
+  // Empty when no scope control is to be shown.
+  repeated InsightScope available = 2;
+  // Account names, set only when Household is narrower than household money:
+  // household accounts the member owns, and household accounts they see but do
+  // not own.
+  repeated string household_counted = 3;
+  repeated string household_not_counted = 4;
+  // One per currency with a full month or a recurring payment, or every currency
+  // held when a scope control is on offer, the currency
+  // with the most money out first.
+  repeated CurrencyHistory histories = 5;
+}
+
+message CurrencyHistory {
+  string currency = 1;
+  // Newest first, at most 13.
+  repeated HistoryMonth months = 2;
+  int32 full_months = 3;
+  // Unset under three full months.
+  Money typical_net = 4;
+  Money average_net = 5;
+  // The same, with every unusual payment set aside.
+  Money typical_net_usual = 6;
+  Money average_net_usual = 7;
+  // Across the months shown.
+  int32 unusual_count = 8;
+  // Soonest expected first.
+  repeated RecurringPayment recurring = 9;
+  // Accounts missing from at least one full month shown, oldest beginning
+  // first: the months before `from` do not include them.
+  repeated LateLedger late_ledgers = 10;
+}
+
+message LateLedger {
+  string account_name = 1;
+  google.protobuf.Timestamp from = 2;
+}
+
+message HistoryMonth {
+  google.protobuf.Timestamp month_start = 1;
+  // in and out are positive; net is in minus out.
+  Money in = 2;
+  Money out = 3;
+  Money net = 4;
+  // Set only when the month held an unusual payment.
+  Money net_usual = 5;
+  // The current month.
+  bool so_far = 6;
+  // Set when a contributing ledger begins inside this month.
+  google.protobuf.Timestamp held_from = 7;
+  // At most five, largest rise first. Empty for a partial month.
+  repeated MerchantRise risers = 8;
+  // Newest first.
+  repeated UnusualPayment unusual = 9;
+}
+
+message MerchantRise {
+  string name = 1;
+  Money total = 2;
+  // The merchant's own median month over the full months, zeros included.
+  Money usual = 3;
+  int32 payments = 4;
+}
+
+message UnusualPayment {
+  Transaction transaction = 1;
+  // What is typical for its baseline. Unset when first_payment is set.
+  Money typical = 2;
+  // A first payment to a merchant never paid before.
+  bool first_payment = 3;
+}
+
+message RecurringPayment {
+  string name = 1;
+  // The newest payment's amount, signed as the row is.
+  Money amount = 2;
+  Cadence cadence = 3;
+  // A yearly payment seen only twice.
+  bool likely = 4;
+  google.protobuf.Timestamp expected = 5;
+  // Expected date passed and still inside the cadence's slack.
+  bool late = 6;
+  string account_id = 7;
 }
 
 // Money out to one merchant this month.

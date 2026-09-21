@@ -53,7 +53,11 @@ type MerchantTotal struct {
 // Windows come from database time. The prior window is the same day numbers of
 // last month, capped at that month's length, so the 31st is set against the
 // whole of a 30-day month.
-func (s *Service) MonthSummary(ctx context.Context, memberID string) (MonthSummary, error) {
+func (s *Service) MonthSummary(ctx context.Context, memberID string, asked Scope) (MonthSummary, error) {
+	scope, err := s.scopedAccounts(ctx, memberID, asked)
+	if err != nil {
+		return MonthSummary{}, err
+	}
 	now, err := s.store.Now(ctx)
 	if err != nil {
 		return MonthSummary{}, err
@@ -66,22 +70,22 @@ func (s *Service) MonthSummary(ctx context.Context, memberID string) (MonthSumma
 	priorDays := min(today.Day(), daysIn(priorStart))
 	priorEnd := priorStart.AddDate(0, 0, priorDays)
 
-	current, err := s.store.OwnedWindowSums(ctx, memberID, monthStart, windowEnd)
+	current, err := s.store.OwnedWindowSums(ctx, memberID, scope.AccountIDs, monthStart, windowEnd)
 	if err != nil {
 		return MonthSummary{}, err
 	}
 	if len(current) == 0 {
 		return MonthSummary{}, nil
 	}
-	prior, err := s.store.OwnedWindowSums(ctx, memberID, priorStart, priorEnd)
+	prior, err := s.store.OwnedWindowSums(ctx, memberID, scope.AccountIDs, priorStart, priorEnd)
 	if err != nil {
 		return MonthSummary{}, err
 	}
-	outgoing, err := s.store.OwnedOutgoing(ctx, memberID, monthStart, windowEnd)
+	outgoing, err := s.store.OwnedOutgoing(ctx, memberID, scope.AccountIDs, monthStart, windowEnd)
 	if err != nil {
 		return MonthSummary{}, err
 	}
-	accounts, err := s.store.OwnedAccountsForTrend(ctx, memberID)
+	accounts, err := s.store.OwnedAccountsForTrend(ctx, memberID, scope.AccountIDs)
 	if err != nil {
 		return MonthSummary{}, err
 	}

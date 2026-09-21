@@ -25,7 +25,7 @@ export { default as DisconnectBankDialog } from './molecules/DisconnectBankDialo
 export { default as LeftOutDialog, type Grantee } from './molecules/LeftOutDialog.svelte';
 export { default as LedgerRow } from './molecules/LedgerRow.svelte';
 export { default as MetricTile, type Delta } from './molecules/MetricTile.svelte';
-export { default as BalanceChart, type BalancePoint } from './molecules/BalanceChart.svelte';
+export { default as BalanceChart, type BalancePoint, type BalanceMover } from './molecules/BalanceChart.svelte';
 export { default as BudgetMeter } from './molecules/BudgetMeter.svelte';
 export { default as TrendSparkline } from './molecules/TrendSparkline.svelte';
 export { default as SeekPager } from './molecules/SeekPager.svelte';
@@ -86,7 +86,13 @@ export type {
 	ChartData,
 	CurrencySection,
 	Merchant,
+	HistoryMonth,
+	HistorySection,
+	HistoryView,
 	MonthFigure,
 	MonthSummary,
-	RecentTransaction
+	RecentTransaction,
+	RecurringEntry,
+	ScopeState,
+	ScopeValue
 } from './pages/Overview.svelte';

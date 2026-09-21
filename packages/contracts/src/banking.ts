@@ -8,6 +8,8 @@ export {
 	RestoreReason,
 	TransactionStatus,
 	AccountGroup,
+	InsightScope,
+	Cadence,
 	type Bank,
 	type Member,
 	type Money,
@@ -57,5 +59,14 @@ export {
 	type GetMonthSummaryRequest,
 	type GetMonthSummaryResponse,
 	type CurrencyMonth,
-	type MerchantTotal
+	type MerchantTotal,
+	type DayMover,
+	type GetMonthHistoryRequest,
+	type GetMonthHistoryResponse,
+	type CurrencyHistory,
+	type HistoryMonth,
+	type MerchantRise,
+	type UnusualPayment,
+	type RecurringPayment,
+	type LateLedger
 } from '../gen/ts/wimm/banking/v1/banking_pb.js';

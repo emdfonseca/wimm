@@ -33,6 +33,10 @@ type CurrencyTrend struct {
 type TrendPoint struct {
 	Date  time.Time
 	Money Money
+	// Movers are the rows that moved the day, largest first, and Smaller counts
+	// the rest. Only rows of the accounts the chart is drawn from.
+	Movers  []DayMover
+	Smaller int
 }
 
 // Trend is what Overview's balance chart needs.
@@ -61,8 +65,12 @@ func daysBetween(from, to time.Time) int {
 // a chart never draws a line across a gap it has no transactions for, and one
 // account with a short history never shortens it for the rest
 // (`banking/overview`).
-func (s *Service) BalanceTrend(ctx context.Context, memberID string) (Trend, error) {
-	accounts, err := s.store.OwnedAccountsForTrend(ctx, memberID)
+func (s *Service) BalanceTrend(ctx context.Context, memberID string, asked Scope) (Trend, error) {
+	scope, err := s.scopedAccounts(ctx, memberID, asked)
+	if err != nil {
+		return Trend{}, err
+	}
+	accounts, err := s.store.OwnedAccountsForTrend(ctx, memberID, scope.AccountIDs)
 	if err != nil {
 		return Trend{}, err
 	}
@@ -73,6 +81,10 @@ func (s *Service) BalanceTrend(ctx context.Context, memberID string) (Trend, err
 	}
 
 	figured, err := s.currenciesWithFigures(ctx, memberID)
+	if err != nil {
+		return Trend{}, err
+	}
+	marks, err := s.unusualMarks(ctx, memberID, scope.AccountIDs, accounts, now.T)
 	if err != nil {
 		return Trend{}, err
 	}
@@ -103,7 +115,7 @@ func (s *Service) BalanceTrend(ctx context.Context, memberID string) (Trend, err
 			continue
 		}
 
-		trend, partial, err := s.currencyTrend(ctx, currency, group, now.T, windowStart)
+		trend, partial, err := s.currencyTrend(ctx, currency, group, now.T, windowStart, marks)
 		if err != nil {
 			return Trend{}, err
 		}
@@ -172,6 +184,7 @@ func (s *Service) quietCurrency(
 // begins, which reads as money arriving.
 func (s *Service) currencyTrend(
 	ctx context.Context, currency string, accounts []store.TrendAccount, now, windowStart time.Time,
+	marks map[string]UnusualMark,
 ) (CurrencyTrend, bool, error) {
 	partial := false
 	var candidates []store.TrendAccount
@@ -223,10 +236,16 @@ func (s *Service) currencyTrend(
 
 	dates := dailyDates(bound, now)
 	sums := make([]int64, len(dates))
+	byDay := make([][]store.Transaction, len(dates))
 	for _, a := range contribute {
 		txs, err := s.store.TransactionsSince(ctx, a.ID, bound)
 		if err != nil {
 			return CurrencyTrend{}, false, err
+		}
+		for _, t := range txs {
+			if i := daysBetween(bound, t.BookingDate); i >= 0 && i < len(byDay) {
+				byDay[i] = append(byDay[i], t)
+			}
 		}
 		for i, balance := range walkBack(*a.BalanceMinor, txs, dates) {
 			sums[i] += balance
@@ -236,6 +255,10 @@ func (s *Service) currencyTrend(
 	points := make([]TrendPoint, len(dates))
 	for i, d := range dates {
 		points[i] = TrendPoint{Date: d, Money: Money{Minor: sums[i], Currency: currency}}
+		points[i].Movers, points[i].Smaller = DayMovers(byDay[i])
+		for j := range points[i].Movers {
+			_, points[i].Movers[j].Unusual = marks[points[i].Movers[j].TransactionID]
+		}
 	}
 	return CurrencyTrend{Currency: currency, Points: points}, partial, nil
 }

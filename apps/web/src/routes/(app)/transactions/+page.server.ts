@@ -221,7 +221,8 @@ function group(transactions: Transaction[]): LedgerDay[] {
 			amount: formatMoney(transaction.amount, { signed: true }) ?? '',
 			date: shortDate(seconds),
 			negative: isNegative(transaction.amount),
-			unsettled: transaction.status === TransactionStatus.PENDING
+			unsettled: transaction.status === TransactionStatus.PENDING,
+			unusual: transaction.unusual
 		};
 
 		if (last && last.date === date) last.entries.push(entry);

@@ -2,6 +2,7 @@
 	import { Overview } from '@wimm/ui';
 	import { afterNavigate, goto, invalidate } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { scopeQuery } from '$lib/insights';
 
 	let { data } = $props();
 
@@ -42,6 +43,12 @@
 <Overview
 	hasAccounts={data.hasAccounts}
 	ownsNothing={data.ownsNothing}
+	scope={data.scope}
+	onscope={(value) => {
+		// resolve() takes a route, not a query string.
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
+		void goto(`${resolve('/(app)')}${scopeQuery(value)}`);
+	}}
 	currencies={data.currencies}
 	accounts={data.accounts}
 	recentTransactions={data.recentTransactions}

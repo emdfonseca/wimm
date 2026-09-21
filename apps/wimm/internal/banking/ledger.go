@@ -34,6 +34,9 @@ type Ledger struct {
 	// whose accounts are simply empty. The reasons differ and must not be
 	// collapsed into one empty list.
 	OwnsNothing bool
+	// Unusual is the marks on this page's rows by transaction id, judged
+	// under the All scope.
+	Unusual map[string]UnusualMark
 	// Accounts names every account this member owns, so a row can say which
 	// one it came from without a second call per row.
 	Accounts map[string]store.AccountLabel
@@ -115,8 +118,17 @@ func (s *Service) Transactions(ctx context.Context, req LedgerRequest) (Ledger, 
 		return Ledger{}, err
 	}
 
+	var marks map[string]UnusualMark
+	if n := len(page.Transactions); n > 0 {
+		marks, err = s.marksUnderAll(ctx, req.MemberID, page.Newest)
+		if err != nil {
+			return Ledger{}, err
+		}
+	}
+
 	return Ledger{
 		Accounts: labels,
+		Unusual:  marks,
 		Pages:    pages,
 		Page:     page, Count: count, Narrow: narrow, Failures: failures,
 		SyncedAt:    state.SyncedAt,

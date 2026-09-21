@@ -1,4 +1,4 @@
-import type { Cookies, ServerLoad } from '@sveltejs/kit';
+import { redirect, type Cookies, type ServerLoad } from '@sveltejs/kit';
 import { banking } from '$lib/server/banking';
 import { call } from '$lib/server/call';
 import { formatMoney, isNegative } from '$lib/money';
@@ -12,7 +12,19 @@ import {
 	shortDay
 } from '$lib/overview';
 import {
+	chartPoints,
+	HISTORY_EMPTY,
+	RECURRING_EMPTY,
+	historySection,
+	recurringEntries,
+	scopeNeedsRedirect,
+	scopeFromAddress,
+	scopeState
+} from '$lib/insights';
+import {
 	AccountGroup,
+	type GetMonthHistoryResponse,
+	type InsightScope,
 	type Account,
 	type CurrencyMonth,
 	type CurrencyTrend,
@@ -36,12 +48,16 @@ import type {
  * the member's own transactions (`banking/overview`). Account management
  * lives on Accounts; this load carries none of its outcome/handoff wiring.
  */
-export const load: ServerLoad = async ({ cookies, depends }) => {
+export const load: ServerLoad = async ({ cookies, depends, url }) => {
 	// Named so the page can re-read this data alone once the arrival's balance
 	// read lands, without re-running the layout's session check.
 	depends('wimm:accounts');
 
-	return await overview(cookies);
+	const view = await overview(cookies, scopeFromAddress(url));
+	// The address and the control must agree: an unknown or unavailable scope
+	// was answered as All, so the address goes back to the bare one.
+	if (view.answered !== undefined && scopeNeedsRedirect(url, view.answered)) redirect(303, '/');
+	return view;
 };
 
 /**
@@ -52,9 +68,9 @@ export const load: ServerLoad = async ({ cookies, depends }) => {
  * the page reads behind that arrival (`+page.svelte`'s own `read-balances`
  * call).
  */
-async function overview(cookies: Cookies) {
+async function overview(cookies: Cookies, scope: InsightScope) {
 	try {
-		const [accountsView, transactionsView, trendView, monthView] = await Promise.all([
+		const [accountsView, transactionsView, trendView, monthView, historyView] = await Promise.all([
 			call(cookies, (options) => banking.listAccounts({ skipRead: true }, options)),
 			// Stored rows only: a sync is Transactions' own concern, bound to its
 			// own interval, and Overview's slice does not drive it.
@@ -63,8 +79,9 @@ async function overview(cookies: Cookies) {
 			),
 			// Reads no bank; computed in wimmd from the same stored ledger
 			// (design.md: "the trend is computed in wimmd").
-			call(cookies, (options) => banking.getBalanceTrend({}, options)),
-			call(cookies, (options) => banking.getMonthSummary({}, options))
+			call(cookies, (options) => banking.getBalanceTrend({ scope }, options)),
+			call(cookies, (options) => banking.getMonthSummary({ scope }, options)),
+			call(cookies, (options) => banking.getMonthHistory({ scope }, options))
 		]);
 
 		const ledger = transactionsView.ledger;
@@ -76,12 +93,14 @@ async function overview(cookies: Cookies) {
 		const transactions = ledger?.transactions ?? [];
 
 		return {
+			answered: historyView.scope,
+			scope: scopeState(historyView),
 			// Before any bank is connected, or a member who may see no account:
 			// both are an empty accounts list, and both get Overview's own
 			// explanation rather than a total of zero.
 			hasAccounts: accountsView.accounts.length > 0,
 			ownsNothing,
-			currencies: currenciesFrom(accountsView, trendView, monthView),
+			currencies: currenciesFrom(accountsView, trendView, monthView, historyView),
 			accounts: groupAccounts(accountsView.accounts),
 			recentTransactions:
 				!ownsNothing && transactions.length > 0
@@ -91,7 +110,15 @@ async function overview(cookies: Cookies) {
 	} catch {
 		// No gateway, or the service behind it is down. Either way the member
 		// sees Overview's own empty explanation rather than a failure.
-		return { hasAccounts: false, ownsNothing: false, currencies: [], accounts: {}, recentTransactions: [] };
+		return {
+			answered: undefined,
+			scope: undefined,
+			hasAccounts: false,
+			ownsNothing: false,
+			currencies: [],
+			accounts: {},
+			recentTransactions: []
+		};
 	}
 }
 
@@ -101,15 +128,18 @@ async function overview(cookies: Cookies) {
 function currenciesFrom(
 	accountsView: ListAccountsResponse,
 	trendView: GetBalanceTrendResponse,
-	monthView: GetMonthSummaryResponse
+	monthView: GetMonthSummaryResponse,
+	historyView: GetMonthHistoryResponse
 ): CurrencySection[] {
 	const household = new Map(accountsView.householdTotals.map((t) => [t.total?.currency ?? '', t]));
 	const own = new Map(accountsView.ownTotals.map((t) => [t.total?.currency ?? '', t]));
 	const trends = new Map(trendView.trends.map((t) => [t.currency, t]));
 	const months = new Map(monthView.months.map((m) => [m.currency, m]));
+	const offered = historyView.available.length > 0;
+	const histories = new Map(historyView.histories.map((h) => [h.currency, h]));
 	const today = new Date();
 
-	const codes = new Set([...household.keys(), ...own.keys(), ...trends.keys(), ...months.keys()]);
+	const codes = new Set([...household.keys(), ...own.keys(), ...trends.keys(), ...months.keys(), ...histories.keys()]);
 	const sections: { section: CurrencySection; weight: number }[] = [];
 
 	for (const currency of codes) {
@@ -118,7 +148,13 @@ function currenciesFrom(
 		const o = own.get(currency)?.total;
 		const trend = trends.get(currency);
 		const month = months.get(currency);
+		const history = histories.get(currency);
 		if (isQuiet([h, o], Boolean(trend), Boolean(month))) continue;
+
+		const historyShown = history ? historySection(history, today) : undefined;
+		const recurringShown = history
+			? recurringEntries(history.recurring, accountsView.accounts, today)
+			: undefined;
 
 		sections.push({
 			weight: Math.abs(Number(h?.minor ?? 0n)) + Math.abs(Number(o?.minor ?? 0n)),
@@ -134,7 +170,11 @@ function currenciesFrom(
 						? dayRange(new Date(Number(month.countedFrom.seconds) * 1000), today)
 						: dayRange(new Date(Number(month.monthStart?.seconds ?? 0n) * 1000), today)
 					: undefined,
-				largestPayments: month?.largestPayments.map((transaction) => entryOf(transaction, true))
+				largestPayments: month?.largestPayments.map((transaction) => entryOf(transaction, true)),
+				history: historyShown,
+				historyEmpty: offered && !historyShown ? HISTORY_EMPTY : undefined,
+				recurring: recurringShown,
+				recurringEmpty: offered && !recurringShown ? RECURRING_EMPTY : undefined
 			}
 		});
 	}
@@ -145,11 +185,7 @@ function currenciesFrom(
 function chartOf(trend: CurrencyTrend, partialCoverage: boolean): ChartData {
 	if (trend.shortHistory || trend.points.length === 0) return { shortHistory: true };
 
-	const points = trend.points.map((point) => ({
-		date: shortDay(point.date?.seconds ?? 0n),
-		value: Number(point.balance?.minor ?? 0n),
-		amount: formatMoney(point.balance) ?? ''
-	}));
+	const points = chartPoints(trend);
 	const values = points.map((p) => p.value);
 	const at = (value: number) => trend.points.find((p) => Number(p.balance?.minor ?? 0n) === value)?.balance;
 

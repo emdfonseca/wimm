@@ -391,7 +391,7 @@ func (s *BankingServer) GetBalanceTrend(
 		return nil, toConnectError(err)
 	}
 
-	trend, err := s.banking.BalanceTrend(ctx, m.ID)
+	trend, err := s.banking.BalanceTrend(ctx, m.ID, fromProtoScope(req.Msg.GetScope()))
 	if err != nil {
 		return nil, toConnectError(err)
 	}
@@ -411,11 +411,135 @@ func (s *BankingServer) GetMonthSummary(
 		return nil, toConnectError(err)
 	}
 
-	summary, err := s.banking.MonthSummary(ctx, m.ID)
+	summary, err := s.banking.MonthSummary(ctx, m.ID, fromProtoScope(req.Msg.GetScope()))
 	if err != nil {
 		return nil, toConnectError(err)
 	}
 	return connect.NewResponse(toProtoMonthSummary(summary)), nil
+}
+
+// GetMonthHistory returns the calling member's months, recurring payments and
+// unusual payments within a scope. Reads no bank.
+func (s *BankingServer) GetMonthHistory(
+	ctx context.Context, req *connect.Request[bankingv1.GetMonthHistoryRequest],
+) (*connect.Response[bankingv1.GetMonthHistoryResponse], error) {
+	m, err := s.member(ctx, req.Header())
+	if err != nil {
+		return nil, toConnectError(err)
+	}
+
+	history, err := s.banking.MonthHistory(ctx, m.ID, fromProtoScope(req.Msg.GetScope()))
+	if err != nil {
+		return nil, toConnectError(err)
+	}
+	return connect.NewResponse(toProtoHistory(history)), nil
+}
+
+func toProtoHistory(h banking.History) *bankingv1.GetMonthHistoryResponse {
+	out := &bankingv1.GetMonthHistoryResponse{
+		Scope:               toProtoScope(h.Scope),
+		HouseholdCounted:    h.Counted,
+		HouseholdNotCounted: h.NotCounted,
+	}
+	for _, s := range h.Available {
+		out.Available = append(out.Available, toProtoScope(s))
+	}
+	for _, c := range h.Currencies {
+		// With a scope control on offer a scope's sections stay in place, and say
+		// why they are empty, rather than vanishing.
+		if len(h.Available) == 0 && c.FullMonths == 0 && len(c.Recurring) == 0 {
+			continue
+		}
+		out.Histories = append(out.Histories, toProtoCurrencyHistory(c, h.Labels))
+	}
+	return out
+}
+
+func toProtoCurrencyHistory(c banking.CurrencyHistory, labels map[string]store.AccountLabel) *bankingv1.CurrencyHistory {
+	out := &bankingv1.CurrencyHistory{
+		Currency:        c.Currency,
+		FullMonths:      int32(c.FullMonths),
+		TypicalNet:      toProtoMoneyPtr(c.TypicalNet),
+		AverageNet:      toProtoMoneyPtr(c.AverageNet),
+		TypicalNetUsual: toProtoMoneyPtr(c.TypicalNetUsual),
+		AverageNetUsual: toProtoMoneyPtr(c.AverageNetUsual),
+		UnusualCount:    int32(c.UnusualCount),
+	}
+	for _, m := range c.Months {
+		month := &bankingv1.HistoryMonth{
+			MonthStart: timestamppb.New(m.Start),
+			In:         toProtoMoney(m.In),
+			Out:        toProtoMoney(m.Out),
+			Net:        toProtoMoney(m.Net),
+			NetUsual:   toProtoMoneyPtr(m.NetUsual),
+			SoFar:      m.SoFar,
+		}
+		if m.HeldFrom != nil {
+			month.HeldFrom = timestamppb.New(*m.HeldFrom)
+		}
+		for _, r := range m.Risers {
+			month.Risers = append(month.Risers, &bankingv1.MerchantRise{
+				Name: r.Name, Total: toProtoMoney(r.Total), Usual: toProtoMoney(r.Usual), Payments: int32(r.Payments),
+			})
+		}
+		for _, u := range m.Unusual {
+			row := toProtoTransaction(u.Transaction, labels[u.Transaction.AccountID])
+			row.Unusual = true
+			month.Unusual = append(month.Unusual, &bankingv1.UnusualPayment{
+				Transaction: row, Typical: toProtoMoneyPtr(u.Typical), FirstPayment: u.FirstPayment,
+			})
+		}
+		out.Months = append(out.Months, month)
+	}
+	for _, l := range c.LateLedgers {
+		out.LateLedgers = append(out.LateLedgers, &bankingv1.LateLedger{
+			AccountName: l.AccountName, From: timestamppb.New(l.From),
+		})
+	}
+	for _, r := range c.Recurring {
+		out.Recurring = append(out.Recurring, &bankingv1.RecurringPayment{
+			Name:      r.Name,
+			Amount:    &bankingv1.Money{Minor: r.Amount, Currency: r.Currency},
+			Cadence:   toProtoCadence(r.Cadence),
+			Likely:    r.Likely,
+			Expected:  timestamppb.New(r.Expected),
+			Late:      r.Late,
+			AccountId: r.AccountID,
+		})
+	}
+	return out
+}
+
+func toProtoCadence(c banking.Cadence) bankingv1.Cadence {
+	switch c {
+	case banking.CadenceWeekly:
+		return bankingv1.Cadence_CADENCE_WEEKLY
+	case banking.CadenceMonthly:
+		return bankingv1.Cadence_CADENCE_MONTHLY
+	case banking.CadenceYearly:
+		return bankingv1.Cadence_CADENCE_YEARLY
+	}
+	return bankingv1.Cadence_CADENCE_UNSPECIFIED
+}
+
+func fromProtoScope(s bankingv1.InsightScope) banking.Scope {
+	switch s {
+	case bankingv1.InsightScope_INSIGHT_SCOPE_HOUSEHOLD:
+		return banking.ScopeHousehold
+	case bankingv1.InsightScope_INSIGHT_SCOPE_OWN:
+		return banking.ScopeOwn
+	}
+	return banking.ScopeAll
+}
+
+func toProtoScope(s banking.Scope) bankingv1.InsightScope {
+	switch s {
+	case banking.ScopeHousehold:
+		return bankingv1.InsightScope_INSIGHT_SCOPE_HOUSEHOLD
+	case banking.ScopeOwn:
+		return bankingv1.InsightScope_INSIGHT_SCOPE_OWN
+	}
+	return bankingv1.InsightScope_INSIGHT_SCOPE_ALL
 }
 
 func toProtoMoney(m banking.Money) *bankingv1.Money {
@@ -509,7 +633,9 @@ func toProtoLedger(l banking.Ledger) *bankingv1.Ledger {
 	}
 
 	for _, t := range l.Page.Transactions {
-		out.Transactions = append(out.Transactions, toProtoTransaction(t, l.Accounts[t.AccountID]))
+		row := toProtoTransaction(t, l.Accounts[t.AccountID])
+		_, row.Unusual = l.Unusual[t.ID]
+		out.Transactions = append(out.Transactions, row)
 	}
 
 	// A span with no transactions in it is no span. Left absent rather than
@@ -682,10 +808,19 @@ func toProtoTrends(trends []banking.CurrencyTrend) []*bankingv1.CurrencyTrend {
 	for _, t := range trends {
 		points := make([]*bankingv1.TrendPoint, 0, len(t.Points))
 		for _, p := range t.Points {
-			points = append(points, &bankingv1.TrendPoint{
+			point := &bankingv1.TrendPoint{
 				Date:    timestamppb.New(p.Date),
 				Balance: &bankingv1.Money{Minor: p.Money.Minor, Currency: p.Money.Currency},
-			})
+				Smaller: int32(p.Smaller),
+			}
+			for _, m := range p.Movers {
+				point.Movers = append(point.Movers, &bankingv1.DayMover{
+					DisplayName: m.Name,
+					Amount:      &bankingv1.Money{Minor: m.Amount, Currency: p.Money.Currency},
+					Unusual:     m.Unusual,
+				})
+			}
+			points = append(points, point)
 		}
 		out = append(out, &bankingv1.CurrencyTrend{Currency: t.Currency, Points: points, ShortHistory: t.ShortHistory})
 	}

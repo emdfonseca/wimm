@@ -73,13 +73,18 @@ type Store interface {
 	// The trend. OwnedAccountsForTrend is scoped to ownership, never level:
 	// a trend is drawn from the same accounts that feed the total, not from
 	// everything a member may merely see.
-	OwnedAccountsForTrend(ctx context.Context, memberID string) ([]store.TrendAccount, error)
+	OwnedAccountsForTrend(ctx context.Context, memberID string, accountIDs []string) ([]store.TrendAccount, error)
 	TransactionsSince(ctx context.Context, accountID string, since time.Time) ([]store.Transaction, error)
 
 	// The month. Both windows are the caller's arguments and never a clock of
 	// the store's own.
-	OwnedWindowSums(ctx context.Context, memberID string, from, to time.Time) ([]store.WindowSum, error)
-	OwnedOutgoing(ctx context.Context, memberID string, from, to time.Time) ([]store.Transaction, error)
+	//
+	// Every owned query takes the account ids a scope resolved to, applied in
+	// SQL beside ownership: an id the member does not own matches nothing.
+	OwnedWindowSums(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.WindowSum, error)
+	OwnedOutgoing(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.Transaction, error)
+	OwnedMonthlySums(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.MonthSum, error)
+	OwnedBooked(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.Transaction, error)
 }
 
 // LedgerOptions bounds the ledger. Every one of them is configuration with a

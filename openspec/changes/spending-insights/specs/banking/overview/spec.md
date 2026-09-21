@@ -9,12 +9,14 @@ force. Currencies MUST NOT be combined or converted. The months SHALL be
 readable as a trend at a glance and as figures, and the direction of a month's
 net SHALL be carried by its sign or by words, never by colour alone.
 
-A month SHALL be called full only when it has ended and every contributing
-account's ledger reaches back to its first day. The month so far, and a month
-a ledger begins inside, SHALL be shown as what they are, the first as so far
-and the second with the date it is held from, because a part-month read as a
-whole one always looks like a good month. A month before every ledger begins
-SHALL not be shown at all. The section SHALL say that money moved between the
+A month SHALL be called full only when it has ended and the oldest contributing
+ledger reaches back to its first day. A younger account beside it SHALL NOT
+hold the months back: it simply adds nothing before its own ledger begins, and
+Overview SHALL say which accounts the earlier months do not include and from
+when. The month so far, and the month the oldest ledger begins inside, SHALL be
+shown as what they are, the first as so far and the second with the date it is
+held from, because a part-month read as a whole one always looks like a good
+month. A month before every ledger begins SHALL not be shown at all. The section SHALL say that money moved between the
 member's own accounts is counted, as the month summary does.
 
 A member who owns no account, or whose ledger holds no full month, SHALL see no
@@ -42,9 +44,10 @@ month-by-month section, rather than one bar standing alone.
   figures
 
 #### Scenario: A second bank connected last month
-- **WHEN** a member connects a bank whose ledger begins in August
-- **THEN** the months before August are shown as partly held, because they do
-  not include that bank
+- **WHEN** a member connects a bank whose ledger begins on 19 September, beside
+  an account whose ledger reaches back to March
+- **THEN** the months since April stay full, and Overview says the months
+  before 19 September do not include that bank
 
 #### Scenario: No full month yet
 - **WHEN** a member's only ledger begins this month
@@ -177,7 +180,7 @@ offer to cancel, pause or change anything: wimm reads banks and instructs none.
 - **WHEN** a member has recurring payments in two currencies
 - **THEN** each is listed in its own currency, and no figure adds them up
 
-### Requirement: A month says how many unusual payments it held, and opens to list them
+### Requirement: A month says how many unusual payments it held, and lists them when selected
 **Story**: S4
 Each month shown SHALL say how many unusual payments it held, as
 `banking/payment-patterns` defines them, and SHALL give its net both as it was
@@ -185,7 +188,7 @@ and without them. A month that held none SHALL say nothing about unusual
 payments, rather than report a count of zero.
 
 The count and the net without them SHALL cover unusual payments in both
-directions. Opening a month SHALL list them, money going out and money coming
+directions. Selecting a month SHALL list them, money going out and money coming
 in together, told apart by the sign on the amount and by the label unusual
 income on one coming in. Each SHALL show its date, its name, its signed amount
 and what is typical for the baseline it was measured against, or that it is a
@@ -199,8 +202,8 @@ it from any other list on Overview.
   unusual, and ended at −€1,480.30
 - **THEN** March reads 2 unusual, −€1,480.30, and +€379.70 without them
 
-#### Scenario: Opening that month
-- **WHEN** the member opens March
+#### Scenario: Selecting that month
+- **WHEN** the member selects March
 - **THEN** they see both payments, each with its date, its name and its amount,
   the fuel bill with "usually about €60" and the garage bill as a first payment
   to that garage
@@ -209,7 +212,7 @@ it from any other list on Overview.
 - **WHEN** May held a €9,804.00 bonus that is unusual income and ended at
   +€10,029.00
 - **THEN** May reads 1 unusual, +€10,029.00, and +€225.00 without it, and
-  opening it lists the bonus with a plus sign and the label Unusual income
+  selecting it lists the bonus with a plus sign and the label Unusual income
 
 #### Scenario: Going to the payment
 - **WHEN** the member chooses one of those payments
@@ -249,7 +252,7 @@ Where no month shown held an unusual payment, the view SHALL not be offered.
 - **THEN** that month's net and the average month are read without the bonus
 
 #### Scenario: The payments are still there
-- **WHEN** the view without unusual payments is on and the member opens March
+- **WHEN** the view without unusual payments is on and the member selects March
 - **THEN** March still lists its unusual payments
 
 #### Scenario: Coming back
@@ -301,6 +304,23 @@ say why. The choice SHALL survive a reload and be shareable as an address.
   on and does not own, and they choose Household
 - **THEN** Overview says Household counts the joint account, and that the
   savings account is household money whose transactions are its owners' to see
+
+#### Scenario: A scope with no full month
+- **WHEN** the scope control is on offer and a member chooses a scope whose
+  accounts hold no full calendar month
+- **THEN** Month by month is still shown, saying no full month is held for
+  these accounts yet, and no typical or average month
+
+#### Scenario: A scope with no recurring payment
+- **WHEN** the scope control is on offer and a member chooses a scope whose
+  accounts hold no recurring payment
+- **THEN** Recurring payments is still shown, saying there are none in these
+  accounts
+
+#### Scenario: A scope with nothing to set aside
+- **WHEN** a member chooses a scope holding a full month and no unusual payment
+- **THEN** the view control is still shown, and says there are no unusual
+  payments to set aside
 
 #### Scenario: A household of one
 - **WHEN** the member is the only member of their household

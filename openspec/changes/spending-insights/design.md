@@ -198,17 +198,22 @@ month 12 before the current one and `to` is tomorrow, both from
 with transaction scope:
 
 ```text
-begins      = the latest of ledgers            (every ledger is held from here)
-month shown   when its last day >= the earliest of ledgers
+begins      = the earliest of ledgers          (the oldest ledger is held from here)
+month shown   when its last day >= begins
 full          when it has ended and its first day >= begins
 held_from     = begins, when begins falls inside the month
+late ledger   an account whose ledger begins after `begins` and after the start
+              of the oldest full month: named, with its date, in `late_ledgers`
 so_far        the current month
 section       absent when full_months == 0
 typical, average   over full months only, unset when full_months < 3
 ```
 
-This is the month summary's rule for `prior_*`, extended: strict, so a bank
-connected last month makes earlier months partly held. *Alternative:* the
+This differs from the month summary's `prior_*` rule, which stays strict. Here a
+young ledger does not veto months the household plainly holds: it contributes
+nothing before it began and is named as missing. *Alternative:* the latest
+begin, so one account with two days of history leaves a household with no full
+month at all, which is what the first version did. Rejected. *Alternative:* the
 chart's contributor rule, dropping short ledgers from the whole history.
 Rejected: September's bar would then disagree with the month summary above it,
 which counts every account.
@@ -342,11 +347,13 @@ behaviour for any `before`/`after` cursor.
 above it or below it, with a dashed rule at the typical month; so-far and
 held-from bars are drawn at reduced opacity. It follows `BalanceChart`'s
 contract: one tab stop, arrows, Home, End, a marker, a live readout, an
-accessible name that is a sentence. Below it, one disclosure row per month
-carries the net, the unusual count and the net without them, and opens to the
-month's figures, its risers and its unusual payments. Pointing at a bar opens
-that month's row: one selection, two views of it. The last full month is open
-as the screen loads. *Alternative:* the list alone, with an inline bar per row.
+accessible name that is a sentence. Below it, an always-visible table of
+months, one button row per month, carries money in, money out, the net and the
+unusual count with the net without them, and one detail panel shows the
+selected month's figures, its risers and its unusual payments. Choosing a row
+or moving the chart's marker selects that month: one selection, three views of
+it, and no row opens or closes. The last full month is selected as the screen
+loads. *Alternative:* the list alone, with an inline bar per row.
 Rejected: a trend across thirteen rows is read by scrolling, and the typical
 month has nowhere to be drawn.
 
@@ -379,10 +386,10 @@ none: it applies ADR 0021 and ADR 0024 and decides nothing new.
   recurring. It is one constant.
 - [Two unrelated payments to one merchant a year apart read as likely yearly]
   → They must also be within 10% of each other, and the words say likely.
-- [Connecting a second bank turns earlier months into partly held ones and can
-  drop the typical month for up to three months] → The bars stay, the sentence
-  says why, and it returns on its own. It is the month summary's existing
-  behaviour.
+- [A younger account makes earlier months understate money in and out, and a
+  bank that returned little history can look as if it was inactive] → Overview
+  names each such account and the date before which it is missing, in the
+  section itself.
 - [An Overview load reads 25 months of booked rows twice] → A store test
   seeds 50,000 rows and asserts a budget, as the page index's does. One
   combined read is the fallback.
@@ -395,8 +402,8 @@ none: it applies ADR 0021 and ADR 0024 and decides nothing new.
 - [Household scope is narrower than household money for a member who holds
   details on an account they do not own] → Named on screen, account by
   account.
-- [Thirteen disclosure rows are long at Compact] → Closed rows are one line;
-  the look decides whether Compact shows six and a way to the rest.
+- [Thirteen rows are long at Compact] → Rows are two short lines and the
+  detail panel stacks below the table; the look decides the rest.
 
 ## Open Questions
 

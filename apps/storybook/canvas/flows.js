@@ -513,4 +513,20 @@ export const flows = {
  * and shows nothing a state does not.
  * @type {string[]}
  */
-export const unplaced = [];
+export const unplaced = [
+	'pages-overview--a-month-with-unusual-payments-opened',
+	'pages-overview--a-month-with-unusual-income-opened',
+	'pages-overview--a-likely-yearly-payment',
+	'pages-overview--a-month-with-none-opened',
+	'pages-overview--the-month-so-far-opened',
+	'pages-overview--without-unusual-payments',
+	'pages-overview--more-goes-out-than-comes-in',
+	'pages-overview--two-full-months',
+	'pages-overview--a-young-account-beside-older-ones',
+	'pages-overview--ledger-begins-part-way-through',
+	'pages-overview--household-scope',
+	'pages-overview--household-scope-with-no-history',
+	'pages-overview--household-scope-with-nothing-to-set-aside',
+	'pages-overview--household-scope-is-narrower',
+	'pages-overview--yours-scope'
+];

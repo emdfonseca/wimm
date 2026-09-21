@@ -76,7 +76,7 @@ async function open(search = '') {
 		depends: () => {},
 		url: new URL(`http://localhost/transactions${search}`)
 	} as never)) as {
-		days: { date: string; entries: { id: string }[] }[];
+		days: { date: string; entries: { id: string; unusual?: boolean }[] }[];
 		count: number;
 		accountId?: string;
 		freshness?: string;
@@ -351,5 +351,27 @@ describe('a gateway wimm has not been given', () => {
 
 		expect(data.days).toEqual([]);
 		expect(data.count).toBe(0);
+	});
+});
+
+describe('arriving from an unusual payment on Overview', () => {
+	it('asks for the page that starts at that payment and passes its mark on', async () => {
+		listTransactions.mockResolvedValue(
+			ledger({
+				transactions: [
+					transaction({ id: 'garage', bookingDate: at('2026-03-12T00:00:00Z'), unusual: true }),
+					transaction({ id: 'coffee', bookingDate: at('2026-03-12T00:00:00Z'), unusual: false })
+				]
+			})
+		);
+
+		const data = await open('?page=2026-03-12.garage');
+
+		const [request] = listTransactions.mock.calls[0]!;
+		expect(request.pageStart.transactionId).toBe('garage');
+		expect(data.days[0]?.entries.map((e) => [e.id, e.unusual])).toEqual([
+			['garage', true],
+			['coffee', false]
+		]);
 	});
 });

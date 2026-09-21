@@ -39,7 +39,7 @@ func monthLedger(t *testing.T) (*banking.Service, *memStore, string) {
 
 func monthOf(t *testing.T, svc *banking.Service, member string) banking.MonthSummary {
 	t.Helper()
-	m, err := svc.MonthSummary(context.Background(), member)
+	m, err := svc.MonthSummary(context.Background(), member, banking.ScopeAll)
 	if err != nil {
 		t.Fatalf("MonthSummary: %v", err)
 	}

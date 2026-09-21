@@ -25,18 +25,21 @@ Today in every fixture is 20 September 2026.
 | --- | --- | --- | --- |
 | `Populated` (changed) | Overview | As it stands, plus: scope control on All; thirteen months, September 2025 to September 2026 so far, twelve full, March holding two unusual payments and December one; typical and average month; August open with three merchants that rose; six recurring payments, one late. | A year of months; A month that ended below zero; Living within what comes in; The two figures disagree; The month so far is a bad one; Fuel cost more in August; A merchant they do not usually pay; Several payments to one merchant; What is due and when; One is late; A month with a repair in it; A month with none; Still in the other lists; As it opens; Pending payments are not counted. `banking/payment-patterns`: every scenario that ends in a payment being listed or not, as fixture rows. |
 | `ADayPointedAt` (changed) | Overview | `Populated`, with the chart's marker on 3 Aug: two movers, one unusual, three smaller. | What happened on the day it dropped; One of them is unusual |
-| `AMonthWithUnusualPaymentsOpened` | Overview | `Populated`, with March 2026 open. | Opening that month; Going to the payment; Reading one month |
-| `AMonthWithUnusualIncomeOpened` | Overview | `Populated`, with May 2026 holding a €9,804.00 bonus and open. | A month with a bonus in it; Setting a bonus aside. `banking/payment-patterns`: A bonus |
+| `AMonthWithUnusualPaymentsOpened` | Overview | `Populated`, with March 2026 selected. | Opening that month; Going to the payment; Reading one month |
+| `AMonthWithUnusualIncomeOpened` | Overview | `Populated`, with May 2026 holding a €9,804.00 bonus and selected. | A month with a bonus in it; Setting a bonus aside. `banking/payment-patterns`: A bonus |
 | `ALikelyYearlyPayment` | Overview | `Populated`, with `Fidelidade` paid twice, a year apart. | A yearly payment seen twice. `banking/payment-patterns`: An insurance premium paid twice |
-| `AMonthWithNoneOpened` | Overview | `Populated`, with June 2026 open: no unusual payments and nothing that rose. | A month with none; Nothing rose |
-| `TheMonthSoFarOpened` | Overview | `Populated`, with September 2026 open. | Reading the month so far |
+| `AMonthWithNoneOpened` | Overview | `Populated`, with June 2026 selected: no unusual payments and nothing that rose. | A month with none; Nothing rose |
+| `TheMonthSoFarOpened` | Overview | `Populated`, with September 2026 selected. | Reading the month so far |
 | `WithoutUnusualPayments` | Overview | `Populated`, with the view switched. | Setting the repair aside; The payments are still there |
 | `MoreGoesOutThanComesIn` | Overview | `Populated`, with a typical month of −€212.40 and an average of −€260.15. | More goes out than comes in |
 | `TwoFullMonths` | Overview | `Populated`, with a ledger from 1 July: July and August full, September so far, no typical or average, no risers, nothing unusual, nothing recurring. | Two full months held; Nothing to set aside; Nothing recurs |
+| `AYoungAccountBesideOlderOnes` | Overview | `Populated`, with an account whose ledger begins 19 September beside older ones. | A second bank connected last month |
 | `LedgerBeginsPartWayThrough` | Overview | `Populated`, with a ledger from 12 April: April held from 12 April, four full months. | A shorter ledger; A second bank connected last month |
 | `HouseholdScope` | Overview | `Populated` under Household: every section counts Joint account only; three recurring payments. | Are we overspending; The figures do not move; Under another scope |
 | `HouseholdScopeIsNarrower` | Overview | `HouseholdScope`, plus `Joint savings` in the Household group, not owned. | Household money they do not own |
 | `YoursScope` | Overview | `Populated` under Yours: the two own accounts only. | Am I overspending |
+| `HouseholdScopeWithNoHistory` | Overview | `HouseholdScope`, whose accounts hold no full month, no recurring payment and no unusual payment. | A scope with no full month; A scope with no recurring payment; A scope with nothing to set aside |
+| `HouseholdScopeWithNothingToSetAside` | Overview | `HouseholdScope`, with a typical month and no unusual payment. | A scope with nothing to set aside |
 | `LedgerStartsThisMonth` (changed) | Overview | As it stands. Asserts the absences below. | No full month yet; `banking/payment-patterns`: Too little history |
 | `NoTransactionHistory`, `OwnsNoAccount` (changed) | Overview | As they stand. Assert the absences below. | A member who owns nothing (both requirements) |
 | `HouseholdOfOne` (changed) | Overview | As it stands, with the new sections. Asserts no scope control. | A household of one; Nothing of their own |
@@ -50,7 +53,8 @@ Today in every fixture is 20 September 2026.
 | `OpensFromTheKeyboard` | BalanceChart | `AsItOpens`; the play function focuses and presses the keys. | By keyboard |
 | `OpensFromATap` | BalanceChart | `AsItOpens`; the play function taps the plot, then outside it. | By touch |
 | `AsItOpens`, `AMonthPointedAt`, `AMonthBelowZero`, `PartlyHeldMonths`, `NoTypicalMonthYet` | MonthlyNetChart | Thirteen months; the marker on March; two full months. | A year of months; Reading one month; A month that ended below zero; A shorter ledger; Two full months held |
-| `Closed`, `ClosedWithUnusual`, `Open`, `OpenWithUnusual`, `OpenWithUnusualIncome`, `SoFar`, `HeldFrom` | MonthRow | One month each. | A month with a repair in it; A month with none; Opening that month; A month with a bonus in it |
+| `Row`, `RowWithUnusual`, `Selected`, `SoFar`, `HeldFrom`, `Choosing` | MonthTable | Thirteen rows, or one, as named. | A month with a repair in it; A month with none; Selecting that month |
+| `Detail`, `DetailWithUnusual`, `DetailWithUnusualIncome`, `DetailSoFar` | MonthDetail | One month each. | Selecting that month; A month with a bonus in it |
 | `Unusual`, `CompactUnusual`, `UnusualIncome`, `ExpectedDate`, `WithANoteAndALink` | LedgerRow | One row each. | `banking/transactions`: Finding the repair in the ledger; A bonus in the ledger. `banking/overview`: What is due and when; Opening that month |
 | `AsItOpens` (changed) | Transactions | As it stands, with `Galp` marked Unusual. | `banking/transactions`: Finding the repair in the ledger; A payment not yet settled |
 
@@ -85,7 +89,7 @@ play function asserts the sentence they sit in. No state shows the words
   `1 unusual · −€160.00 without it`; `November 2025`, `−€95.20`;
   `October 2025`, `+€180.10`; `September 2025`, `+€212.40`. One unusual payment
   reads `1 unusual` and `without it`, never `1 unusuals` or `without them`.
-- August is open: `Money in` `€2,450.00`, `Money out` `€2,144.60`, `Net`
+- August is selected: `Money in` `€2,450.00`, `Money out` `€2,144.60`, `Net`
   `+€305.40`; heading `More than usual`; `Galp` with
   `€246.80 · €82.40 more than usual`; `Amazon` with
   `€188.20 · €64.10 more than usual`; `Zara` with
@@ -124,7 +128,7 @@ rows or `No transactions this day.`
 
 **`ABusyDay`.** Five rows, then `and 7 smaller`.
 
-**`AMonthWithUnusualPaymentsOpened`.** `Populated`'s words with March open
+**`AMonthWithUnusualPaymentsOpened`.** `Populated`'s words with March selected
 instead of August: `Money in` `€2,450.00`, `Money out` `€3,930.30`, `Net`
 `−€1,480.30`, `Without unusual payments` `+€379.70`; heading `More than
 usual`: `Auto Reparadora` with `€1,650.00 · not usually paid`, `Galp` with
@@ -135,7 +139,7 @@ is a link. `usually about` never appears beside a first payment.
 
 **`AMonthWithUnusualIncomeOpened`.** `Populated`'s words, except: `Average
 month` over `+€779.20`, `Typical month` still over `+€189.40`; the row
-`May 2026`, `+€10,029.00`, `1 unusual · +€225.00 without it`; and May open:
+`May 2026`, `+€10,029.00`, `1 unusual · +€225.00 without it`; and May selected:
 `Money in` `€12,254.00`, `Money out` `€2,225.00`, `Net` `+€10,029.00`,
 `Without unusual payments` `+€225.00`; heading `Unusual payments`: `22 May`,
 `Employer Lda`, `+€9,804.00`, `Unusual income`, `usually about €2,450`. The
@@ -146,12 +150,12 @@ view control is present, and with it switched the average month reads
 payment reading `Fidelidade`, `Likely yearly · Joint account · Monzo`,
 `Expected 3 Mar 2027`, `−€386.00`. Absent: `Yearly ·` on that row.
 
-**`AMonthWithNoneOpened`.** June open: `Money in` `€2,450.00`, `Money out`
+**`AMonthWithNoneOpened`.** June selected: `Money in` `€2,450.00`, `Money out`
 `€2,299.80`, `Net` `+€150.20`; `Nothing took more than usual this month.`
 Absent inside the row: `Unusual payments`, `unusual`, `Without unusual
 payments`.
 
-**`TheMonthSoFarOpened`.** September open: `1 to 20 Sep`, `Money in`
+**`TheMonthSoFarOpened`.** September selected: `1 to 20 Sep`, `Money in`
 `€2,450.00`, `Money out` `€1,812.64`, `Net` `+€637.36`, and `A month under way
 is not set against whole months.` Absent: `More than usual`.
 
@@ -172,12 +176,23 @@ three month rows, and `A typical month and an average month appear once three
 full months are held.` Absent: `Typical month`, `Average month`, `Payments
 counted`, `More than usual`, `Recurring payments`.
 
+**`AYoungAccountBesideOlderOnes`.** `Populated`'s words, and under the tiles
+`Months before 19 Sep do not include CLASSIC CEMG.` Absent: `No full month is
+held`.
+
 **`LedgerBeginsPartWayThrough`.** Span `April 2026 to September 2026`; the row
 `April 2026`, `Held from 12 Apr`; `From 4 full months.`
 
 **`HouseholdScope`.** `Household` chosen. `Recurring payments` holds
 `Limpeza Casa`, `Rent` and `Fidelidade` only. `Household money` and
 `Your money` read as in `Populated`. No sentence under the control.
+
+**`HouseholdScopeWithNoHistory`.** `Household` chosen. `Month by month` with
+`No full month is held for these accounts yet.` Absent: `Typical month`,
+`Average month`. `Recurring payments` with `No recurring payments in these
+accounts.` `Payments counted` absent, because no typical month is stated. In a scope
+holding a typical month and no unusual payment, `Payments counted` is present and
+`No unusual payments to set aside.` shows under it.
 
 **`HouseholdScopeIsNarrower`.** `HouseholdScope`'s words, and under the
 control: `Household counts Joint account. Joint savings is household money too,
@@ -201,11 +216,14 @@ both with `GBP`. One scope control, above the first currency.
 `NoTypicalMonthYet`: the accessible name ends at the lowest month and names no
 typical month.
 
-**MonthRow.** `OpenWithUnusualIncome`: the May panel above. `Closed`: `August 2026`, `+€305.40`. `ClosedWithUnusual`:
+**MonthTable.** `Row`: `August 2026`, `+€305.40`. `RowWithUnusual`:
 `March 2026`, `−€1,480.30`, `2 unusual · +€379.70 without them`. `SoFar`:
 `September 2026`, `So far`, `+€637.36`. `HeldFrom`: `April 2026`,
-`Held from 12 Apr`, `+€41.10`. `Open` and `OpenWithUnusual`: the August and
-March panels above.
+`Held from 12 Apr`, `+€41.10`. `Selected`: one row has `aria-pressed` true.
+`Choosing`: Enter and Space on a row select it and clear the previous one.
+**MonthDetail.** `Detail` and `DetailWithUnusual`: the August and March panels
+above. `DetailWithUnusualIncome`: the May panel. `DetailSoFar`: the September
+panel.
 
 **LedgerRow.** `Unusual` and `CompactUnusual`: `Galp`, `−€210.00`, `Unusual`.
 `UnusualIncome`: `Employer Lda`, `+€9,804.00`, `Unusual income`.
@@ -231,8 +249,9 @@ Every state here stands alone. `connect-a-bank` still opens on
   `/` is All, `/?scope=household` and `/?scope=yours` are the others.
 - Without unusual payments is inline and ephemeral: component state, gone on
   reload.
-- A month row is an inline disclosure, non-modal, ephemeral. One is open at a
-  time, and pointing at a bar opens its row.
+- A month is selected in a table beside or above one detail panel: inline,
+  non-modal, ephemeral. One is selected at a time, and pointing at a bar
+  selects its row.
 - The chart's popover is inline, non-modal and ephemeral. It is not a dialog:
   focus stays on the chart and nothing inside it is operable.
 - An unusual payment in a month leaves the page for
@@ -279,15 +298,15 @@ upward only, at a fixed 48 px, with no labels, no negative values and nothing
 to point at. `molecules/BudgetMeter.svelte` is one horizontal proportion with
 no sign. Nothing draws a signed series.
 
-**Month row** (molecule). `packages/ui/src/molecules/MonthRow.svelte` and
-`MonthRow.stories.svelte`. A button row with `aria-expanded` holding the
-month's name, a state word (`So far`, `Held from 12 Apr`), its net and its
-unusual line, and a panel it controls. Read before deciding:
-`molecules/LedgerRow.svelte` is one transaction, not operable, with no panel.
-`molecules/AccountRow.svelte` is a link that leaves the page.
-`molecules/MetricTile.svelte` holds one figure and may be a link. No component
-under `packages/ui/src` uses `aria-expanded` or `<details>`; the two dialogs
-are modal and are the wrong weight for reading a month.
+**Month table** (molecule). `packages/ui/src/molecules/MonthTable.svelte` and
+`MonthTable.stories.svelte`. A list of button rows with `aria-pressed`, each
+holding the month's name, a state word (`So far`, `Held from 12 Apr`), money
+in, money out, its net and its unusual line. **Month detail** (molecule).
+`molecules/MonthDetail.svelte` and its stories: the selected month's figures,
+risers and unusual payments. Read before deciding: `molecules/LedgerRow.svelte`
+is one transaction, not operable. `molecules/AccountRow.svelte` is a link that
+leaves the page. `molecules/MetricTile.svelte` holds one figure and may be a
+link. Nothing selects one of several rows and shows it elsewhere.
 
 ## States left out
 
@@ -341,10 +360,11 @@ are modal and are the wrong weight for reading a month.
   sentence under Words, passed in already written.
 - Direction is never colour alone: a bar is above or below the zero rule, and
   every net carries `+` or `−`.
-- Month row: 56 high closed, Compact 64. It is a `button` with `aria-expanded`
-  and `aria-controls`. Enter and Space toggle it. Opening one closes the other.
-  Focus stays on the button. The unusual line is `color-text-secondary`.
-- Inside an open row: the three figures in the mono family; `More than usual`
+- Month table row: 56 high, Compact 64. It is a `button` with `aria-pressed`
+  and `aria-controls` naming the detail panel. Enter and Space select it, which
+  clears the previous one. Focus stays on the button. The unusual line is
+  `color-text-secondary`. Money in and money out are hidden at Compact.
+- Inside the detail panel: the three figures in the mono family; `More than usual`
   as budget meters, 28 high with a 14 gap; `Unusual payments` as ledger rows 56
   high, Compact 80 with the note.
 - Balance chart popover: opens when `marked` is set, by pointer move, by tap,
@@ -366,4 +386,87 @@ are modal and are the wrong weight for reading a month.
 
 ## Seen
 
-Not looked at yet.
+Each state story was opened at Compact 390, Medium 834, Wide 1440 and Ultra
+1920, on fixtures, in the Storybook iframe at the regime's width. The whole page
+was read for `Populated` at all four; every other Overview story was read at the
+region it changes (the tiles and control, the month card, the recurring card),
+because the rest of its page is `Populated`'s.
+
+**Settled.**
+
+- Bar width: 60% of its month's slot, with a slot never wider than 120 px, so
+  three months are three bars and not three slabs. Twelve months at Wide and
+  Ultra fill the card.
+- Compact shows every month row. Thirteen one-line rows read as one list and
+  none needs a way to the rest.
+- Compact thins the month labels to every other one when more than eight are
+  drawn. Thirteen three-letter labels ran together.
+- Overview at every regime reads in the order the Contracts give.
+
+**Changed.**
+
+- `MonthlyNetChart`: header wraps at Compact so the span sits under the title;
+  label thinning above; slot cap above.
+- `BalanceChart`: at Compact the popover ran off the plot and hid the merchant
+  name. It now takes the room on its side of the marker, is sized by its content,
+  and wraps a mover's tag under its amount rather than dropping the name.
+- `LedgerRow`: the compact date stays on one line, so `Was expected 18 Sep` is
+  never split.
+- `MonthRow` (since replaced by `MonthDetail`): unusual payments lined up with
+  the panel's text, and gave the note room beside a short account so `first
+  payment to Auto Reparadora` was whole at Medium.
+
+**Overview.**
+
+- `Populated`: Compact, Medium, Wide, Ultra read whole. Scope control sits under
+  the two money tiles; the typical and average tiles, both sentences, the view
+  control, the chart, thirteen rows with August open, the recurring card and the
+  merchants and accounts cards follow. At Compact the two new cards follow Accounts.
+- `ADayPointedAt`: Compact, Medium, Wide, Ultra. The popover shows `3 Aug`,
+  `€9,870.12`, the change, `Leroy Merlin` with `Unusual`, `Galp`, `and 3 smaller`.
+- `AMonthWithUnusualPaymentsOpened`, `AMonthWithUnusualIncomeOpened`,
+  `ALikelyYearlyPayment`, `AMonthWithNoneOpened`, `TheMonthSoFarOpened`: Compact,
+  Medium, Wide, Ultra; the words are those of Words.
+- `WithoutUnusualPayments`, `MoreGoesOutThanComesIn`, `TwoFullMonths`,
+  `LedgerBeginsPartWayThrough`: Compact, Medium, Wide, Ultra.
+- `HouseholdScope`, `HouseholdScopeIsNarrower`, `YoursScope`: Compact, Medium,
+  Wide, Ultra. The recurring card holds three rows each, as Words gives.
+- `LedgerStartsThisMonth`, `NoTransactionHistory`, `OwnsNoAccount`,
+  `HouseholdOfOne`, `TwoCurrencies`: Compact, Medium, Wide, Ultra. The absences
+  hold; `HouseholdOfOne` has no scope control; `TwoCurrencies` has one, above the
+  first currency.
+
+**Molecules.**
+
+- `BalanceChart`: `ADayPointedAt`, `ADayWithNoTransactions`, `MoneyArriving`,
+  `UnusualIncomeArriving`, `TheFirstDay`, `ABusyDay`, `OpensFromTheKeyboard`,
+  `OpensFromATap` at all four regimes. The two interaction stories end with the
+  popover cleared, as their play functions leave them.
+- `MonthlyNetChart`: `AsItOpens`, `AMonthPointedAt`, `AMonthBelowZero`,
+  `PartlyHeldMonths`, `NoTypicalMonthYet` at all four regimes.
+- `LedgerRow`: `Unusual`, `CompactUnusual`, `UnusualIncome`, `ExpectedDate`,
+  `WithANoteAndALink` at all four regimes.
+
+**Transactions.** `AsItOpens` at all four regimes: `Unusual` on the `Galp` row
+only, `Not settled` on the transfer.
+
+**Left as it is.**
+
+- Non-compact `LedgerRow` stories are drawn with `compact` off, so at the
+  Compact regime their rows clip. Overview passes `compact` and reads correctly.
+- At Compact a recurring row's account is cut to an ellipsis on the longest
+  cadence lines (`Monthly · Current account · …`) so the date stays whole.
+- `Populated`'s meters are filled by the merchant's total and listed Galp,
+  Amazon, Zara, while Zara's `not usually paid` €120.00 is the largest rise;
+  Words lists them in that order, so the fixture was not changed.
+
+`AYoungAccountBesideOlderOnes` has not been looked at on the canvas yet; only its play function has run.
+
+**Months as a table with one detail panel (not looked at).** `MonthTable`
+(`Row`, `RowWithUnusual`, `Selected`, `SoFar`, `HeldFrom`, `Choosing`),
+`MonthDetail` (`Detail`, `DetailWithUnusual`, `DetailWithUnusualIncome`,
+`DetailSoFar`) and the Overview stories that select a month have not been seen
+on the canvas at any regime: the browser extension was not connected, so only
+their play functions have run. Still to settle by looking: whether the detail
+sits beside the table from 1200 px as written or below it, the table's column
+widths at Medium, and how thirteen rows and the panel read at Compact.

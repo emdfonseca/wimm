@@ -51,3 +51,31 @@ func TestEveryGroupHasItsOwnWireValue(t *testing.T) {
 		seen[w] = g
 	}
 }
+
+func TestAListedRowCarriesItsUnusualMark(t *testing.T) {
+	when := time.Date(2026, time.March, 12, 0, 0, 0, 0, time.UTC)
+	out := toProtoLedger(banking.Ledger{
+		Page: store.LedgerPage{Transactions: []store.Transaction{
+			{ID: "garage", AmountMinor: -165_000, Currency: "EUR", BookingDate: when},
+			{ID: "coffee", AmountMinor: -120, Currency: "EUR", BookingDate: when},
+		}},
+		Unusual: map[string]banking.UnusualMark{"garage": {TransactionID: "garage", FirstPayment: true}},
+	})
+	if !out.Transactions[0].Unusual || out.Transactions[1].Unusual {
+		t.Errorf("unusual = %v and %v, want the garage only", out.Transactions[0].Unusual, out.Transactions[1].Unusual)
+	}
+}
+
+func TestAScopeOnOfferKeepsACurrencyWithNoFullMonthAndNoRecurringPayment(t *testing.T) {
+	h := banking.History{
+		Available:  []banking.Scope{banking.ScopeHousehold, banking.ScopeOwn, banking.ScopeAll},
+		Currencies: []banking.CurrencyHistory{{Currency: "EUR"}},
+	}
+	if got := len(toProtoHistory(h).Histories); got != 1 {
+		t.Errorf("got %d histories, want the currency kept so the screen can say why it is empty", got)
+	}
+	h.Available = nil
+	if got := len(toProtoHistory(h).Histories); got != 0 {
+		t.Errorf("got %d histories, want none where no control is on offer", got)
+	}
+}

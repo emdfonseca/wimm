@@ -755,11 +755,15 @@ type TrendAccount struct {
 	Scope ConnectionScope
 }
 
-// OwnedAccountsForTrend lists every account a member owns, left-out and
-// disconnected-connection accounts excluded — the same set toProtoTotals sums
-// (visibleAccountsQuery's own filter, restricted to ownership), so a trend's
-// endpoint agrees with the total it is drawn beside.
-func (db *DB) OwnedAccountsForTrend(ctx context.Context, memberID string) ([]TrendAccount, error) {
+// OwnedAccountsForTrend lists the accounts a member owns among accountIDs,
+// left-out and disconnected-connection accounts excluded — the same set
+// toProtoTotals sums (visibleAccountsQuery's own filter, restricted to
+// ownership), so a trend's endpoint agrees with the total it is drawn beside.
+//
+// accountIDs narrows and never widens: it is applied beside the ownership join,
+// so an id the member does not own matches nothing. An empty slice is an empty
+// scope, not "every account" (ADR 0021).
+func (db *DB) OwnedAccountsForTrend(ctx context.Context, memberID string, accountIDs []string) ([]TrendAccount, error) {
 	const query = `
 		select a.id, a.currency, a.balance_minor,
 		       (select min(t.booking_date) from transactions t
@@ -769,9 +773,10 @@ func (db *DB) OwnedAccountsForTrend(ctx context.Context, memberID string) ([]Tre
 		join account_owners o on o.account_id = a.id and o.member_id = $1
 		left join bank_connections c on c.id = a.connection_id
 		where a.left_out_at is null
+		  and a.id = any($2::uuid[])
 		  and (c.id is null or c.disconnected_at is null)`
 
-	rows, err := db.pool.Query(ctx, query, memberID)
+	rows, err := db.pool.Query(ctx, query, memberID, accountIDs)
 	if err != nil {
 		return nil, fmt.Errorf("listing owned accounts for a trend: %w", err)
 	}
@@ -830,13 +835,13 @@ type WindowSum struct {
 	Rows int
 }
 
-// OwnedWindowSums sums the booked transactions of every account a member owns
-// over [from, to), per currency. Both bounds are arguments: the store never
+// OwnedWindowSums sums the booked transactions of the accounts a member owns
+// among accountIDs over [from, to), per currency. Both bounds are arguments: the store never
 // reads a clock of its own, so a window is whatever database time the caller
 // took it from (ADR 0017). Pending rows are excluded — they are replaced whole
 // on every sync (ADR 0021) — and so are left-out and disconnected accounts,
 // the same set OwnedAccountsForTrend lists.
-func (db *DB) OwnedWindowSums(ctx context.Context, memberID string, from, to time.Time) ([]WindowSum, error) {
+func (db *DB) OwnedWindowSums(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]WindowSum, error) {
 	const query = `
 		select t.currency,
 		       coalesce(sum(t.amount_minor) filter (where t.amount_minor > 0), 0)::bigint,
@@ -847,13 +852,14 @@ func (db *DB) OwnedWindowSums(ctx context.Context, memberID string, from, to tim
 		join account_owners o on o.account_id = a.id and o.member_id = $1
 		left join bank_connections c on c.id = a.connection_id
 		where a.left_out_at is null
+		  and a.id = any($2::uuid[])
 		  and (c.id is null or c.disconnected_at is null)
 		  and t.status = 'booked'
-		  and t.booking_date >= $2 and t.booking_date < $3
+		  and t.booking_date >= $3 and t.booking_date < $4
 		group by t.currency
 		order by t.currency`
 
-	rows, err := db.pool.Query(ctx, query, memberID, from, to)
+	rows, err := db.pool.Query(ctx, query, memberID, accountIDs, from, to)
 	if err != nil {
 		return nil, fmt.Errorf("summing a window: %w", err)
 	}
@@ -870,11 +876,61 @@ func (db *DB) OwnedWindowSums(ctx context.Context, memberID string, from, to tim
 	return out, rows.Err()
 }
 
-// OwnedOutgoing is every booked payment — money going out — on the accounts a
-// member owns over [from, to), newest first. Rows come back whole because the
-// merchant name they are grouped by is derived in Go, and the rows that most
-// need grouping are the ones where counterparty_name is empty.
-func (db *DB) OwnedOutgoing(ctx context.Context, memberID string, from, to time.Time) ([]Transaction, error) {
+// MonthSum is one currency's booked money in and out over one calendar month,
+// both as positive minor units.
+type MonthSum struct {
+	Currency string
+	// Month is the first of the month, midnight UTC.
+	Month    time.Time
+	InMinor  int64
+	OutMinor int64
+}
+
+// OwnedMonthlySums sums the booked transactions of the accounts a member owns
+// among accountIDs over [from, to), grouped by currency and calendar month,
+// oldest month first. The bounds are arguments for the reason OwnedWindowSums'
+// are (ADR 0017); the account filter is applied as OwnedAccountsForTrend's is.
+func (db *DB) OwnedMonthlySums(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]MonthSum, error) {
+	const query = `
+		select t.currency,
+		       date_trunc('month', t.booking_date::timestamp)::timestamp,
+		       coalesce(sum(t.amount_minor) filter (where t.amount_minor > 0), 0)::bigint,
+		       coalesce(-sum(t.amount_minor) filter (where t.amount_minor < 0), 0)::bigint
+		from transactions t
+		join accounts a on a.id = t.account_id
+		join account_owners o on o.account_id = a.id and o.member_id = $1
+		left join bank_connections c on c.id = a.connection_id
+		where a.left_out_at is null
+		  and a.id = any($2::uuid[])
+		  and (c.id is null or c.disconnected_at is null)
+		  and t.status = 'booked'
+		  and t.booking_date >= $3 and t.booking_date < $4
+		group by 1, 2
+		order by 1, 2`
+
+	rows, err := db.pool.Query(ctx, query, memberID, accountIDs, from, to)
+	if err != nil {
+		return nil, fmt.Errorf("summing months: %w", err)
+	}
+	defer rows.Close()
+
+	var out []MonthSum
+	for rows.Next() {
+		var m MonthSum
+		if err := rows.Scan(&m.Currency, &m.Month, &m.InMinor, &m.OutMinor); err != nil {
+			return nil, fmt.Errorf("summing months: %w", err)
+		}
+		m.Month = time.Date(m.Month.Year(), m.Month.Month(), 1, 0, 0, 0, 0, time.UTC)
+		out = append(out, m)
+	}
+	return out, rows.Err()
+}
+
+// OwnedBooked is every booked transaction, in either direction, on the accounts
+// a member owns among accountIDs over [from, to), newest first. Rows come back
+// whole because the merchant name they are grouped by is derived in Go, and the
+// rows that most need grouping are the ones where counterparty_name is empty.
+func (db *DB) OwnedBooked(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]Transaction, error) {
 	const query = `
 		select t.id, t.account_id, t.status, t.dedup_key, t.occurrence, t.amount_minor, t.currency,
 		       t.booking_date, t.value_date, t.transaction_date,
@@ -885,14 +941,15 @@ func (db *DB) OwnedOutgoing(ctx context.Context, memberID string, from, to time.
 		join account_owners o on o.account_id = a.id and o.member_id = $1
 		left join bank_connections c on c.id = a.connection_id
 		where a.left_out_at is null
+		  and a.id = any($2::uuid[])
 		  and (c.id is null or c.disconnected_at is null)
-		  and t.status = 'booked' and t.amount_minor < 0
-		  and t.booking_date >= $2 and t.booking_date < $3
+		  and t.status = 'booked'
+		  and t.booking_date >= $3 and t.booking_date < $4
 		order by t.booking_date desc, t.id desc`
 
-	rows, err := db.pool.Query(ctx, query, memberID, from, to)
+	rows, err := db.pool.Query(ctx, query, memberID, accountIDs, from, to)
 	if err != nil {
-		return nil, fmt.Errorf("reading outgoing payments: %w", err)
+		return nil, fmt.Errorf("reading booked transactions: %w", err)
 	}
 	defer rows.Close()
 
@@ -905,4 +962,20 @@ func (db *DB) OwnedOutgoing(ctx context.Context, memberID string, from, to time.
 		out = append(out, t)
 	}
 	return out, rows.Err()
+}
+
+// OwnedOutgoing is every booked payment — money going out — among OwnedBooked's
+// rows, newest first.
+func (db *DB) OwnedOutgoing(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]Transaction, error) {
+	booked, err := db.OwnedBooked(ctx, memberID, accountIDs, from, to)
+	if err != nil {
+		return nil, err
+	}
+	out := booked[:0]
+	for _, t := range booked {
+		if t.AmountMinor < 0 {
+			out = append(out, t)
+		}
+	}
+	return out, nil
 }

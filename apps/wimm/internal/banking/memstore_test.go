@@ -727,9 +727,12 @@ func (m *memStore) OwnedAccountLabels(_ context.Context, memberID string) (map[s
 // OwnedAccountsForTrend mirrors the SQL's own filter: owned, not left out,
 // and not at a disconnected connection — expired is fine, the same as
 // totals().
-func (m *memStore) OwnedAccountsForTrend(_ context.Context, memberID string) ([]store.TrendAccount, error) {
+func (m *memStore) OwnedAccountsForTrend(_ context.Context, memberID string, accountIDs []string) ([]store.TrendAccount, error) {
 	var out []store.TrendAccount
 	for _, id := range m.ownedBy(memberID, "") {
+		if !slices.Contains(accountIDs, id) {
+			continue
+		}
 		a := m.accounts[id]
 		var scope store.ConnectionScope
 		if a.ConnectionID != nil {
@@ -819,9 +822,9 @@ func (m *memStore) ownedNotDisconnected(memberID string) []string {
 	return out
 }
 
-func (m *memStore) OwnedWindowSums(_ context.Context, memberID string, from, to time.Time) ([]store.WindowSum, error) {
+func (m *memStore) OwnedWindowSums(_ context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.WindowSum, error) {
 	byCurrency := map[string]*store.WindowSum{}
-	for _, id := range m.ownedNotDisconnected(memberID) {
+	for _, id := range m.scopedOwned(memberID, accountIDs) {
 		for _, t := range m.transactions[id] {
 			if t.Status != store.StatusBooked || t.BookingDate.Before(from) || !t.BookingDate.Before(to) {
 				continue
@@ -847,11 +850,23 @@ func (m *memStore) OwnedWindowSums(_ context.Context, memberID string, from, to 
 	return out, nil
 }
 
-func (m *memStore) OwnedOutgoing(_ context.Context, memberID string, from, to time.Time) ([]store.Transaction, error) {
-	var out []store.Transaction
+// scopedOwned is the accounts a member owns, not disconnected, among ids: the
+// SQL's own filter, so a scope can only narrow.
+func (m *memStore) scopedOwned(memberID string, accountIDs []string) []string {
+	var out []string
 	for _, id := range m.ownedNotDisconnected(memberID) {
+		if slices.Contains(accountIDs, id) {
+			out = append(out, id)
+		}
+	}
+	return out
+}
+
+func (m *memStore) OwnedBooked(_ context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.Transaction, error) {
+	var out []store.Transaction
+	for _, id := range m.scopedOwned(memberID, accountIDs) {
 		for _, t := range m.transactions[id] {
-			if t.Status == store.StatusBooked && t.AmountMinor < 0 && !t.BookingDate.Before(from) && t.BookingDate.Before(to) {
+			if t.Status == store.StatusBooked && !t.BookingDate.Before(from) && t.BookingDate.Before(to) {
 				out = append(out, t)
 			}
 		}
@@ -861,6 +876,50 @@ func (m *memStore) OwnedOutgoing(_ context.Context, memberID string, from, to ti
 			return c
 		}
 		return cmpString(b.ID, a.ID)
+	})
+	return out, nil
+}
+
+func (m *memStore) OwnedOutgoing(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.Transaction, error) {
+	booked, _ := m.OwnedBooked(ctx, memberID, accountIDs, from, to)
+	var out []store.Transaction
+	for _, t := range booked {
+		if t.AmountMinor < 0 {
+			out = append(out, t)
+		}
+	}
+	return out, nil
+}
+
+func (m *memStore) OwnedMonthlySums(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.MonthSum, error) {
+	booked, _ := m.OwnedBooked(ctx, memberID, accountIDs, from, to)
+	type key struct {
+		currency string
+		month    time.Time
+	}
+	sums := map[key]*store.MonthSum{}
+	for _, t := range booked {
+		k := key{t.Currency, time.Date(t.BookingDate.Year(), t.BookingDate.Month(), 1, 0, 0, 0, 0, time.UTC)}
+		sum, ok := sums[k]
+		if !ok {
+			sum = &store.MonthSum{Currency: k.currency, Month: k.month}
+			sums[k] = sum
+		}
+		if t.AmountMinor > 0 {
+			sum.InMinor += t.AmountMinor
+		} else {
+			sum.OutMinor -= t.AmountMinor
+		}
+	}
+	var out []store.MonthSum
+	for _, sum := range sums {
+		out = append(out, *sum)
+	}
+	slices.SortFunc(out, func(a, b store.MonthSum) int {
+		if c := cmpString(a.Currency, b.Currency); c != 0 {
+			return c
+		}
+		return a.Month.Compare(b.Month)
 	})
 	return out, nil
 }

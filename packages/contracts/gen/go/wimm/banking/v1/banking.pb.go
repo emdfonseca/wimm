@@ -23,6 +23,116 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Which of the calling member's owned accounts the insights count. Never
+// widens to an account the member holds only a grant on (ADR 0021).
+type InsightScope int32
+
+const (
+	// Read as ALL.
+	InsightScope_INSIGHT_SCOPE_UNSPECIFIED InsightScope = 0
+	// Owned accounts in the household group (ADR 0024).
+	InsightScope_INSIGHT_SCOPE_HOUSEHOLD InsightScope = 1
+	// Owned accounts in the member's own group.
+	InsightScope_INSIGHT_SCOPE_OWN InsightScope = 2
+	// Every owned account.
+	InsightScope_INSIGHT_SCOPE_ALL InsightScope = 3
+)
+
+// Enum value maps for InsightScope.
+var (
+	InsightScope_name = map[int32]string{
+		0: "INSIGHT_SCOPE_UNSPECIFIED",
+		1: "INSIGHT_SCOPE_HOUSEHOLD",
+		2: "INSIGHT_SCOPE_OWN",
+		3: "INSIGHT_SCOPE_ALL",
+	}
+	InsightScope_value = map[string]int32{
+		"INSIGHT_SCOPE_UNSPECIFIED": 0,
+		"INSIGHT_SCOPE_HOUSEHOLD":   1,
+		"INSIGHT_SCOPE_OWN":         2,
+		"INSIGHT_SCOPE_ALL":         3,
+	}
+)
+
+func (x InsightScope) Enum() *InsightScope {
+	p := new(InsightScope)
+	*p = x
+	return p
+}
+
+func (x InsightScope) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (InsightScope) Descriptor() protoreflect.EnumDescriptor {
+	return file_wimm_banking_v1_banking_proto_enumTypes[0].Descriptor()
+}
+
+func (InsightScope) Type() protoreflect.EnumType {
+	return &file_wimm_banking_v1_banking_proto_enumTypes[0]
+}
+
+func (x InsightScope) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use InsightScope.Descriptor instead.
+func (InsightScope) EnumDescriptor() ([]byte, []int) {
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{0}
+}
+
+type Cadence int32
+
+const (
+	Cadence_CADENCE_UNSPECIFIED Cadence = 0
+	Cadence_CADENCE_WEEKLY      Cadence = 1
+	Cadence_CADENCE_MONTHLY     Cadence = 2
+	Cadence_CADENCE_YEARLY      Cadence = 3
+)
+
+// Enum value maps for Cadence.
+var (
+	Cadence_name = map[int32]string{
+		0: "CADENCE_UNSPECIFIED",
+		1: "CADENCE_WEEKLY",
+		2: "CADENCE_MONTHLY",
+		3: "CADENCE_YEARLY",
+	}
+	Cadence_value = map[string]int32{
+		"CADENCE_UNSPECIFIED": 0,
+		"CADENCE_WEEKLY":      1,
+		"CADENCE_MONTHLY":     2,
+		"CADENCE_YEARLY":      3,
+	}
+)
+
+func (x Cadence) Enum() *Cadence {
+	p := new(Cadence)
+	*p = x
+	return p
+}
+
+func (x Cadence) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Cadence) Descriptor() protoreflect.EnumDescriptor {
+	return file_wimm_banking_v1_banking_proto_enumTypes[1].Descriptor()
+}
+
+func (Cadence) Type() protoreflect.EnumType {
+	return &file_wimm_banking_v1_banking_proto_enumTypes[1]
+}
+
+func (x Cadence) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Cadence.Descriptor instead.
+func (Cadence) EnumDescriptor() ([]byte, []int) {
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{1}
+}
+
 // What one member may see of one account they do not own.
 //
 // The zero value is UNSPECIFIED because buf requires it, and the server treats
@@ -75,11 +185,11 @@ func (x Level) String() string {
 }
 
 func (Level) Descriptor() protoreflect.EnumDescriptor {
-	return file_wimm_banking_v1_banking_proto_enumTypes[0].Descriptor()
+	return file_wimm_banking_v1_banking_proto_enumTypes[2].Descriptor()
 }
 
 func (Level) Type() protoreflect.EnumType {
-	return &file_wimm_banking_v1_banking_proto_enumTypes[0]
+	return &file_wimm_banking_v1_banking_proto_enumTypes[2]
 }
 
 func (x Level) Number() protoreflect.EnumNumber {
@@ -88,7 +198,7 @@ func (x Level) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Level.Descriptor instead.
 func (Level) EnumDescriptor() ([]byte, []int) {
-	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{0}
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{2}
 }
 
 // Where an account's figures come from. An account exists on its own terms;
@@ -126,11 +236,11 @@ func (x AccountSource) String() string {
 }
 
 func (AccountSource) Descriptor() protoreflect.EnumDescriptor {
-	return file_wimm_banking_v1_banking_proto_enumTypes[1].Descriptor()
+	return file_wimm_banking_v1_banking_proto_enumTypes[3].Descriptor()
 }
 
 func (AccountSource) Type() protoreflect.EnumType {
-	return &file_wimm_banking_v1_banking_proto_enumTypes[1]
+	return &file_wimm_banking_v1_banking_proto_enumTypes[3]
 }
 
 func (x AccountSource) Number() protoreflect.EnumNumber {
@@ -139,7 +249,7 @@ func (x AccountSource) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AccountSource.Descriptor instead.
 func (AccountSource) EnumDescriptor() ([]byte, []int) {
-	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{1}
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{3}
 }
 
 // What an account counts towards for one member. Household money is the
@@ -181,11 +291,11 @@ func (x AccountGroup) String() string {
 }
 
 func (AccountGroup) Descriptor() protoreflect.EnumDescriptor {
-	return file_wimm_banking_v1_banking_proto_enumTypes[2].Descriptor()
+	return file_wimm_banking_v1_banking_proto_enumTypes[4].Descriptor()
 }
 
 func (AccountGroup) Type() protoreflect.EnumType {
-	return &file_wimm_banking_v1_banking_proto_enumTypes[2]
+	return &file_wimm_banking_v1_banking_proto_enumTypes[4]
 }
 
 func (x AccountGroup) Number() protoreflect.EnumNumber {
@@ -194,7 +304,7 @@ func (x AccountGroup) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AccountGroup.Descriptor instead.
 func (AccountGroup) EnumDescriptor() ([]byte, []int) {
-	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{2}
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{4}
 }
 
 // Why something a member tried did not work. Routed off the kind alone; no
@@ -244,11 +354,11 @@ func (x Failure) String() string {
 }
 
 func (Failure) Descriptor() protoreflect.EnumDescriptor {
-	return file_wimm_banking_v1_banking_proto_enumTypes[3].Descriptor()
+	return file_wimm_banking_v1_banking_proto_enumTypes[5].Descriptor()
 }
 
 func (Failure) Type() protoreflect.EnumType {
-	return &file_wimm_banking_v1_banking_proto_enumTypes[3]
+	return &file_wimm_banking_v1_banking_proto_enumTypes[5]
 }
 
 func (x Failure) Number() protoreflect.EnumNumber {
@@ -257,7 +367,7 @@ func (x Failure) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Failure.Descriptor instead.
 func (Failure) EnumDescriptor() ([]byte, []int) {
-	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{3}
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{5}
 }
 
 // Why a connection is being handed back to the bank. The bank and the accounts
@@ -301,11 +411,11 @@ func (x RestoreReason) String() string {
 }
 
 func (RestoreReason) Descriptor() protoreflect.EnumDescriptor {
-	return file_wimm_banking_v1_banking_proto_enumTypes[4].Descriptor()
+	return file_wimm_banking_v1_banking_proto_enumTypes[6].Descriptor()
 }
 
 func (RestoreReason) Type() protoreflect.EnumType {
-	return &file_wimm_banking_v1_banking_proto_enumTypes[4]
+	return &file_wimm_banking_v1_banking_proto_enumTypes[6]
 }
 
 func (x RestoreReason) Number() protoreflect.EnumNumber {
@@ -314,7 +424,7 @@ func (x RestoreReason) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RestoreReason.Descriptor instead.
 func (RestoreReason) EnumDescriptor() ([]byte, []int) {
-	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{4}
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{6}
 }
 
 // Whether the bank has settled a transaction.
@@ -353,11 +463,11 @@ func (x TransactionStatus) String() string {
 }
 
 func (TransactionStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_wimm_banking_v1_banking_proto_enumTypes[5].Descriptor()
+	return file_wimm_banking_v1_banking_proto_enumTypes[7].Descriptor()
 }
 
 func (TransactionStatus) Type() protoreflect.EnumType {
-	return &file_wimm_banking_v1_banking_proto_enumTypes[5]
+	return &file_wimm_banking_v1_banking_proto_enumTypes[7]
 }
 
 func (x TransactionStatus) Number() protoreflect.EnumNumber {
@@ -366,7 +476,7 @@ func (x TransactionStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use TransactionStatus.Descriptor instead.
 func (TransactionStatus) EnumDescriptor() ([]byte, []int) {
-	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{5}
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{7}
 }
 
 // A signed amount in minor units with its currency. Never a float and never a
@@ -2336,7 +2446,10 @@ type Transaction struct {
 	Remittance string `protobuf:"bytes,9,opt,name=remittance,proto3" json:"remittance,omitempty"`
 	// The name wimm shows: the merchant or person it was with, with the bank's
 	// own bookkeeping removed. Never empty. Derived on read, never stored.
-	DisplayName   string `protobuf:"bytes,10,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	DisplayName string `protobuf:"bytes,10,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	// True when the one unusual-payment rule marks this booked row, judged under
+	// the All scope. Derived on read, never stored.
+	Unusual       bool `protobuf:"varint,11,opt,name=unusual,proto3" json:"unusual,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2439,6 +2552,13 @@ func (x *Transaction) GetDisplayName() string {
 		return x.DisplayName
 	}
 	return ""
+}
+
+func (x *Transaction) GetUnusual() bool {
+	if x != nil {
+		return x.Unusual
+	}
+	return false
 }
 
 // Where a page starts. It is the sort key itself rather than an offset, because
@@ -3005,6 +3125,7 @@ func (x *PageMarker) GetOldest() *timestamppb.Timestamp {
 
 type GetBalanceTrendRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Scope         InsightScope           `protobuf:"varint,1,opt,name=scope,proto3,enum=wimm.banking.v1.InsightScope" json:"scope,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3037,6 +3158,13 @@ func (x *GetBalanceTrendRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetBalanceTrendRequest.ProtoReflect.Descriptor instead.
 func (*GetBalanceTrendRequest) Descriptor() ([]byte, []int) {
 	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *GetBalanceTrendRequest) GetScope() InsightScope {
+	if x != nil {
+		return x.Scope
+	}
+	return InsightScope_INSIGHT_SCOPE_UNSPECIFIED
 }
 
 type GetBalanceTrendResponse struct {
@@ -3168,9 +3296,14 @@ func (x *CurrencyTrend) GetShortHistory() bool {
 
 // The household's summed balance, in one currency, on one date.
 type TrendPoint struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Date          *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
-	Balance       *Money                 `protobuf:"bytes,2,opt,name=balance,proto3" json:"balance,omitempty"`
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Date    *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
+	Balance *Money                 `protobuf:"bytes,2,opt,name=balance,proto3" json:"balance,omitempty"`
+	// The rows that moved this day, largest first: enough to reach 80% of the
+	// day's gross movement, at most five.
+	Movers []*DayMover `protobuf:"bytes,3,rep,name=movers,proto3" json:"movers,omitempty"`
+	// How many booked rows that day are not in movers.
+	Smaller       int32 `protobuf:"varint,4,opt,name=smaller,proto3" json:"smaller,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3219,15 +3352,91 @@ func (x *TrendPoint) GetBalance() *Money {
 	return nil
 }
 
+func (x *TrendPoint) GetMovers() []*DayMover {
+	if x != nil {
+		return x.Movers
+	}
+	return nil
+}
+
+func (x *TrendPoint) GetSmaller() int32 {
+	if x != nil {
+		return x.Smaller
+	}
+	return 0
+}
+
+// One booked row that moved a day. Signed: money in is positive.
+type DayMover struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DisplayName   string                 `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Amount        *Money                 `protobuf:"bytes,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	Unusual       bool                   `protobuf:"varint,3,opt,name=unusual,proto3" json:"unusual,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DayMover) Reset() {
+	*x = DayMover{}
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DayMover) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DayMover) ProtoMessage() {}
+
+func (x *DayMover) ProtoReflect() protoreflect.Message {
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DayMover.ProtoReflect.Descriptor instead.
+func (*DayMover) Descriptor() ([]byte, []int) {
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{46}
+}
+
+func (x *DayMover) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *DayMover) GetAmount() *Money {
+	if x != nil {
+		return x.Amount
+	}
+	return nil
+}
+
+func (x *DayMover) GetUnusual() bool {
+	if x != nil {
+		return x.Unusual
+	}
+	return false
+}
+
 type GetMonthSummaryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Scope         InsightScope           `protobuf:"varint,1,opt,name=scope,proto3,enum=wimm.banking.v1.InsightScope" json:"scope,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetMonthSummaryRequest) Reset() {
 	*x = GetMonthSummaryRequest{}
-	mi := &file_wimm_banking_v1_banking_proto_msgTypes[46]
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3239,7 +3448,7 @@ func (x *GetMonthSummaryRequest) String() string {
 func (*GetMonthSummaryRequest) ProtoMessage() {}
 
 func (x *GetMonthSummaryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_wimm_banking_v1_banking_proto_msgTypes[46]
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3252,7 +3461,14 @@ func (x *GetMonthSummaryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMonthSummaryRequest.ProtoReflect.Descriptor instead.
 func (*GetMonthSummaryRequest) Descriptor() ([]byte, []int) {
-	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{46}
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{47}
+}
+
+func (x *GetMonthSummaryRequest) GetScope() InsightScope {
+	if x != nil {
+		return x.Scope
+	}
+	return InsightScope_INSIGHT_SCOPE_UNSPECIFIED
 }
 
 type GetMonthSummaryResponse struct {
@@ -3267,7 +3483,7 @@ type GetMonthSummaryResponse struct {
 
 func (x *GetMonthSummaryResponse) Reset() {
 	*x = GetMonthSummaryResponse{}
-	mi := &file_wimm_banking_v1_banking_proto_msgTypes[47]
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3279,7 +3495,7 @@ func (x *GetMonthSummaryResponse) String() string {
 func (*GetMonthSummaryResponse) ProtoMessage() {}
 
 func (x *GetMonthSummaryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_wimm_banking_v1_banking_proto_msgTypes[47]
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3292,7 +3508,7 @@ func (x *GetMonthSummaryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMonthSummaryResponse.ProtoReflect.Descriptor instead.
 func (*GetMonthSummaryResponse) Descriptor() ([]byte, []int) {
-	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{47}
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *GetMonthSummaryResponse) GetMonths() []*CurrencyMonth {
@@ -3331,7 +3547,7 @@ type CurrencyMonth struct {
 
 func (x *CurrencyMonth) Reset() {
 	*x = CurrencyMonth{}
-	mi := &file_wimm_banking_v1_banking_proto_msgTypes[48]
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3343,7 +3559,7 @@ func (x *CurrencyMonth) String() string {
 func (*CurrencyMonth) ProtoMessage() {}
 
 func (x *CurrencyMonth) ProtoReflect() protoreflect.Message {
-	mi := &file_wimm_banking_v1_banking_proto_msgTypes[48]
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3356,7 +3572,7 @@ func (x *CurrencyMonth) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CurrencyMonth.ProtoReflect.Descriptor instead.
 func (*CurrencyMonth) Descriptor() ([]byte, []int) {
-	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{48}
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *CurrencyMonth) GetCurrency() string {
@@ -3436,6 +3652,649 @@ func (x *CurrencyMonth) GetLargestPayments() []*Transaction {
 	return nil
 }
 
+type GetMonthHistoryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Scope         InsightScope           `protobuf:"varint,1,opt,name=scope,proto3,enum=wimm.banking.v1.InsightScope" json:"scope,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMonthHistoryRequest) Reset() {
+	*x = GetMonthHistoryRequest{}
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[50]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMonthHistoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMonthHistoryRequest) ProtoMessage() {}
+
+func (x *GetMonthHistoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[50]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMonthHistoryRequest.ProtoReflect.Descriptor instead.
+func (*GetMonthHistoryRequest) Descriptor() ([]byte, []int) {
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{50}
+}
+
+func (x *GetMonthHistoryRequest) GetScope() InsightScope {
+	if x != nil {
+		return x.Scope
+	}
+	return InsightScope_INSIGHT_SCOPE_UNSPECIFIED
+}
+
+type GetMonthHistoryResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The scope actually answered.
+	Scope InsightScope `protobuf:"varint,1,opt,name=scope,proto3,enum=wimm.banking.v1.InsightScope" json:"scope,omitempty"`
+	// Empty when no scope control is to be shown.
+	Available []InsightScope `protobuf:"varint,2,rep,packed,name=available,proto3,enum=wimm.banking.v1.InsightScope" json:"available,omitempty"`
+	// Account names, set only when Household is narrower than household money:
+	// household accounts the member owns, and household accounts they see but do
+	// not own.
+	HouseholdCounted    []string `protobuf:"bytes,3,rep,name=household_counted,json=householdCounted,proto3" json:"household_counted,omitempty"`
+	HouseholdNotCounted []string `protobuf:"bytes,4,rep,name=household_not_counted,json=householdNotCounted,proto3" json:"household_not_counted,omitempty"`
+	// One per currency with a full month or a recurring payment, or every currency
+	// held when a scope control is on offer, the currency
+	// with the most money out first.
+	Histories     []*CurrencyHistory `protobuf:"bytes,5,rep,name=histories,proto3" json:"histories,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMonthHistoryResponse) Reset() {
+	*x = GetMonthHistoryResponse{}
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[51]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMonthHistoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMonthHistoryResponse) ProtoMessage() {}
+
+func (x *GetMonthHistoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[51]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMonthHistoryResponse.ProtoReflect.Descriptor instead.
+func (*GetMonthHistoryResponse) Descriptor() ([]byte, []int) {
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{51}
+}
+
+func (x *GetMonthHistoryResponse) GetScope() InsightScope {
+	if x != nil {
+		return x.Scope
+	}
+	return InsightScope_INSIGHT_SCOPE_UNSPECIFIED
+}
+
+func (x *GetMonthHistoryResponse) GetAvailable() []InsightScope {
+	if x != nil {
+		return x.Available
+	}
+	return nil
+}
+
+func (x *GetMonthHistoryResponse) GetHouseholdCounted() []string {
+	if x != nil {
+		return x.HouseholdCounted
+	}
+	return nil
+}
+
+func (x *GetMonthHistoryResponse) GetHouseholdNotCounted() []string {
+	if x != nil {
+		return x.HouseholdNotCounted
+	}
+	return nil
+}
+
+func (x *GetMonthHistoryResponse) GetHistories() []*CurrencyHistory {
+	if x != nil {
+		return x.Histories
+	}
+	return nil
+}
+
+type CurrencyHistory struct {
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	Currency string                 `protobuf:"bytes,1,opt,name=currency,proto3" json:"currency,omitempty"`
+	// Newest first, at most 13.
+	Months     []*HistoryMonth `protobuf:"bytes,2,rep,name=months,proto3" json:"months,omitempty"`
+	FullMonths int32           `protobuf:"varint,3,opt,name=full_months,json=fullMonths,proto3" json:"full_months,omitempty"`
+	// Unset under three full months.
+	TypicalNet *Money `protobuf:"bytes,4,opt,name=typical_net,json=typicalNet,proto3" json:"typical_net,omitempty"`
+	AverageNet *Money `protobuf:"bytes,5,opt,name=average_net,json=averageNet,proto3" json:"average_net,omitempty"`
+	// The same, with every unusual payment set aside.
+	TypicalNetUsual *Money `protobuf:"bytes,6,opt,name=typical_net_usual,json=typicalNetUsual,proto3" json:"typical_net_usual,omitempty"`
+	AverageNetUsual *Money `protobuf:"bytes,7,opt,name=average_net_usual,json=averageNetUsual,proto3" json:"average_net_usual,omitempty"`
+	// Across the months shown.
+	UnusualCount int32 `protobuf:"varint,8,opt,name=unusual_count,json=unusualCount,proto3" json:"unusual_count,omitempty"`
+	// Soonest expected first.
+	Recurring []*RecurringPayment `protobuf:"bytes,9,rep,name=recurring,proto3" json:"recurring,omitempty"`
+	// Accounts missing from at least one full month shown, oldest beginning
+	// first: the months before `from` do not include them.
+	LateLedgers   []*LateLedger `protobuf:"bytes,10,rep,name=late_ledgers,json=lateLedgers,proto3" json:"late_ledgers,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CurrencyHistory) Reset() {
+	*x = CurrencyHistory{}
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[52]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CurrencyHistory) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CurrencyHistory) ProtoMessage() {}
+
+func (x *CurrencyHistory) ProtoReflect() protoreflect.Message {
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[52]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CurrencyHistory.ProtoReflect.Descriptor instead.
+func (*CurrencyHistory) Descriptor() ([]byte, []int) {
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{52}
+}
+
+func (x *CurrencyHistory) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *CurrencyHistory) GetMonths() []*HistoryMonth {
+	if x != nil {
+		return x.Months
+	}
+	return nil
+}
+
+func (x *CurrencyHistory) GetFullMonths() int32 {
+	if x != nil {
+		return x.FullMonths
+	}
+	return 0
+}
+
+func (x *CurrencyHistory) GetTypicalNet() *Money {
+	if x != nil {
+		return x.TypicalNet
+	}
+	return nil
+}
+
+func (x *CurrencyHistory) GetAverageNet() *Money {
+	if x != nil {
+		return x.AverageNet
+	}
+	return nil
+}
+
+func (x *CurrencyHistory) GetTypicalNetUsual() *Money {
+	if x != nil {
+		return x.TypicalNetUsual
+	}
+	return nil
+}
+
+func (x *CurrencyHistory) GetAverageNetUsual() *Money {
+	if x != nil {
+		return x.AverageNetUsual
+	}
+	return nil
+}
+
+func (x *CurrencyHistory) GetUnusualCount() int32 {
+	if x != nil {
+		return x.UnusualCount
+	}
+	return 0
+}
+
+func (x *CurrencyHistory) GetRecurring() []*RecurringPayment {
+	if x != nil {
+		return x.Recurring
+	}
+	return nil
+}
+
+func (x *CurrencyHistory) GetLateLedgers() []*LateLedger {
+	if x != nil {
+		return x.LateLedgers
+	}
+	return nil
+}
+
+type LateLedger struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AccountName   string                 `protobuf:"bytes,1,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
+	From          *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=from,proto3" json:"from,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LateLedger) Reset() {
+	*x = LateLedger{}
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[53]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LateLedger) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LateLedger) ProtoMessage() {}
+
+func (x *LateLedger) ProtoReflect() protoreflect.Message {
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[53]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LateLedger.ProtoReflect.Descriptor instead.
+func (*LateLedger) Descriptor() ([]byte, []int) {
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{53}
+}
+
+func (x *LateLedger) GetAccountName() string {
+	if x != nil {
+		return x.AccountName
+	}
+	return ""
+}
+
+func (x *LateLedger) GetFrom() *timestamppb.Timestamp {
+	if x != nil {
+		return x.From
+	}
+	return nil
+}
+
+type HistoryMonth struct {
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	MonthStart *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=month_start,json=monthStart,proto3" json:"month_start,omitempty"`
+	// in and out are positive; net is in minus out.
+	In  *Money `protobuf:"bytes,2,opt,name=in,proto3" json:"in,omitempty"`
+	Out *Money `protobuf:"bytes,3,opt,name=out,proto3" json:"out,omitempty"`
+	Net *Money `protobuf:"bytes,4,opt,name=net,proto3" json:"net,omitempty"`
+	// Set only when the month held an unusual payment.
+	NetUsual *Money `protobuf:"bytes,5,opt,name=net_usual,json=netUsual,proto3" json:"net_usual,omitempty"`
+	// The current month.
+	SoFar bool `protobuf:"varint,6,opt,name=so_far,json=soFar,proto3" json:"so_far,omitempty"`
+	// Set when a contributing ledger begins inside this month.
+	HeldFrom *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=held_from,json=heldFrom,proto3" json:"held_from,omitempty"`
+	// At most five, largest rise first. Empty for a partial month.
+	Risers []*MerchantRise `protobuf:"bytes,8,rep,name=risers,proto3" json:"risers,omitempty"`
+	// Newest first.
+	Unusual       []*UnusualPayment `protobuf:"bytes,9,rep,name=unusual,proto3" json:"unusual,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HistoryMonth) Reset() {
+	*x = HistoryMonth{}
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[54]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HistoryMonth) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HistoryMonth) ProtoMessage() {}
+
+func (x *HistoryMonth) ProtoReflect() protoreflect.Message {
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[54]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HistoryMonth.ProtoReflect.Descriptor instead.
+func (*HistoryMonth) Descriptor() ([]byte, []int) {
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{54}
+}
+
+func (x *HistoryMonth) GetMonthStart() *timestamppb.Timestamp {
+	if x != nil {
+		return x.MonthStart
+	}
+	return nil
+}
+
+func (x *HistoryMonth) GetIn() *Money {
+	if x != nil {
+		return x.In
+	}
+	return nil
+}
+
+func (x *HistoryMonth) GetOut() *Money {
+	if x != nil {
+		return x.Out
+	}
+	return nil
+}
+
+func (x *HistoryMonth) GetNet() *Money {
+	if x != nil {
+		return x.Net
+	}
+	return nil
+}
+
+func (x *HistoryMonth) GetNetUsual() *Money {
+	if x != nil {
+		return x.NetUsual
+	}
+	return nil
+}
+
+func (x *HistoryMonth) GetSoFar() bool {
+	if x != nil {
+		return x.SoFar
+	}
+	return false
+}
+
+func (x *HistoryMonth) GetHeldFrom() *timestamppb.Timestamp {
+	if x != nil {
+		return x.HeldFrom
+	}
+	return nil
+}
+
+func (x *HistoryMonth) GetRisers() []*MerchantRise {
+	if x != nil {
+		return x.Risers
+	}
+	return nil
+}
+
+func (x *HistoryMonth) GetUnusual() []*UnusualPayment {
+	if x != nil {
+		return x.Unusual
+	}
+	return nil
+}
+
+type MerchantRise struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Total *Money                 `protobuf:"bytes,2,opt,name=total,proto3" json:"total,omitempty"`
+	// The merchant's own median month over the full months, zeros included.
+	Usual         *Money `protobuf:"bytes,3,opt,name=usual,proto3" json:"usual,omitempty"`
+	Payments      int32  `protobuf:"varint,4,opt,name=payments,proto3" json:"payments,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MerchantRise) Reset() {
+	*x = MerchantRise{}
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[55]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MerchantRise) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MerchantRise) ProtoMessage() {}
+
+func (x *MerchantRise) ProtoReflect() protoreflect.Message {
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[55]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MerchantRise.ProtoReflect.Descriptor instead.
+func (*MerchantRise) Descriptor() ([]byte, []int) {
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{55}
+}
+
+func (x *MerchantRise) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *MerchantRise) GetTotal() *Money {
+	if x != nil {
+		return x.Total
+	}
+	return nil
+}
+
+func (x *MerchantRise) GetUsual() *Money {
+	if x != nil {
+		return x.Usual
+	}
+	return nil
+}
+
+func (x *MerchantRise) GetPayments() int32 {
+	if x != nil {
+		return x.Payments
+	}
+	return 0
+}
+
+type UnusualPayment struct {
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Transaction *Transaction           `protobuf:"bytes,1,opt,name=transaction,proto3" json:"transaction,omitempty"`
+	// What is typical for its baseline. Unset when first_payment is set.
+	Typical *Money `protobuf:"bytes,2,opt,name=typical,proto3" json:"typical,omitempty"`
+	// A first payment to a merchant never paid before.
+	FirstPayment  bool `protobuf:"varint,3,opt,name=first_payment,json=firstPayment,proto3" json:"first_payment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnusualPayment) Reset() {
+	*x = UnusualPayment{}
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[56]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnusualPayment) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnusualPayment) ProtoMessage() {}
+
+func (x *UnusualPayment) ProtoReflect() protoreflect.Message {
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[56]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnusualPayment.ProtoReflect.Descriptor instead.
+func (*UnusualPayment) Descriptor() ([]byte, []int) {
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{56}
+}
+
+func (x *UnusualPayment) GetTransaction() *Transaction {
+	if x != nil {
+		return x.Transaction
+	}
+	return nil
+}
+
+func (x *UnusualPayment) GetTypical() *Money {
+	if x != nil {
+		return x.Typical
+	}
+	return nil
+}
+
+func (x *UnusualPayment) GetFirstPayment() bool {
+	if x != nil {
+		return x.FirstPayment
+	}
+	return false
+}
+
+type RecurringPayment struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The newest payment's amount, signed as the row is.
+	Amount  *Money  `protobuf:"bytes,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	Cadence Cadence `protobuf:"varint,3,opt,name=cadence,proto3,enum=wimm.banking.v1.Cadence" json:"cadence,omitempty"`
+	// A yearly payment seen only twice.
+	Likely   bool                   `protobuf:"varint,4,opt,name=likely,proto3" json:"likely,omitempty"`
+	Expected *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=expected,proto3" json:"expected,omitempty"`
+	// Expected date passed and still inside the cadence's slack.
+	Late          bool   `protobuf:"varint,6,opt,name=late,proto3" json:"late,omitempty"`
+	AccountId     string `protobuf:"bytes,7,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RecurringPayment) Reset() {
+	*x = RecurringPayment{}
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[57]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RecurringPayment) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RecurringPayment) ProtoMessage() {}
+
+func (x *RecurringPayment) ProtoReflect() protoreflect.Message {
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[57]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RecurringPayment.ProtoReflect.Descriptor instead.
+func (*RecurringPayment) Descriptor() ([]byte, []int) {
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{57}
+}
+
+func (x *RecurringPayment) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *RecurringPayment) GetAmount() *Money {
+	if x != nil {
+		return x.Amount
+	}
+	return nil
+}
+
+func (x *RecurringPayment) GetCadence() Cadence {
+	if x != nil {
+		return x.Cadence
+	}
+	return Cadence_CADENCE_UNSPECIFIED
+}
+
+func (x *RecurringPayment) GetLikely() bool {
+	if x != nil {
+		return x.Likely
+	}
+	return false
+}
+
+func (x *RecurringPayment) GetExpected() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Expected
+	}
+	return nil
+}
+
+func (x *RecurringPayment) GetLate() bool {
+	if x != nil {
+		return x.Late
+	}
+	return false
+}
+
+func (x *RecurringPayment) GetAccountId() string {
+	if x != nil {
+		return x.AccountId
+	}
+	return ""
+}
+
 // Money out to one merchant this month.
 type MerchantTotal struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -3449,7 +4308,7 @@ type MerchantTotal struct {
 
 func (x *MerchantTotal) Reset() {
 	*x = MerchantTotal{}
-	mi := &file_wimm_banking_v1_banking_proto_msgTypes[49]
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3461,7 +4320,7 @@ func (x *MerchantTotal) String() string {
 func (*MerchantTotal) ProtoMessage() {}
 
 func (x *MerchantTotal) ProtoReflect() protoreflect.Message {
-	mi := &file_wimm_banking_v1_banking_proto_msgTypes[49]
+	mi := &file_wimm_banking_v1_banking_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3474,7 +4333,7 @@ func (x *MerchantTotal) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MerchantTotal.ProtoReflect.Descriptor instead.
 func (*MerchantTotal) Descriptor() ([]byte, []int) {
-	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{49}
+	return file_wimm_banking_v1_banking_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *MerchantTotal) GetName() string {
@@ -3636,7 +4495,7 @@ const file_wimm_banking_v1_banking_proto_rawDesc = "" +
 	"\x12consent_expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x10consentExpiresAt\"E\n" +
 	"\x15DisconnectBankRequest\x12,\n" +
 	"\rconnection_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\fconnectionId\"\x18\n" +
-	"\x16DisconnectBankResponse\"\x97\x03\n" +
+	"\x16DisconnectBankResponse\"\xb1\x03\n" +
 	"\vTransaction\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -3651,7 +4510,8 @@ const file_wimm_banking_v1_banking_proto_rawDesc = "" +
 	"remittance\x18\t \x01(\tR\n" +
 	"remittance\x12!\n" +
 	"\fdisplay_name\x18\n" +
-	" \x01(\tR\vdisplayName\"t\n" +
+	" \x01(\tR\vdisplayName\x12\x18\n" +
+	"\aunusual\x18\v \x01(\bR\aunusual\"t\n" +
 	"\fLedgerCursor\x12=\n" +
 	"\fbooking_date\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\vbookingDate\x12%\n" +
 	"\x0etransaction_id\x18\x02 \x01(\tR\rtransactionId\"T\n" +
@@ -3693,20 +4553,28 @@ const file_wimm_banking_v1_banking_proto_rawDesc = "" +
 	"PageMarker\x125\n" +
 	"\x06cursor\x18\x01 \x01(\v2\x1d.wimm.banking.v1.LedgerCursorR\x06cursor\x122\n" +
 	"\x06newest\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x06newest\x122\n" +
-	"\x06oldest\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x06oldest\"\x18\n" +
-	"\x16GetBalanceTrendRequest\"|\n" +
+	"\x06oldest\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x06oldest\"M\n" +
+	"\x16GetBalanceTrendRequest\x123\n" +
+	"\x05scope\x18\x01 \x01(\x0e2\x1d.wimm.banking.v1.InsightScopeR\x05scope\"|\n" +
 	"\x17GetBalanceTrendResponse\x126\n" +
 	"\x06trends\x18\x01 \x03(\v2\x1e.wimm.banking.v1.CurrencyTrendR\x06trends\x12)\n" +
 	"\x10partial_coverage\x18\x02 \x01(\bR\x0fpartialCoverage\"\x85\x01\n" +
 	"\rCurrencyTrend\x12\x1a\n" +
 	"\bcurrency\x18\x01 \x01(\tR\bcurrency\x123\n" +
 	"\x06points\x18\x02 \x03(\v2\x1b.wimm.banking.v1.TrendPointR\x06points\x12#\n" +
-	"\rshort_history\x18\x03 \x01(\bR\fshortHistory\"n\n" +
+	"\rshort_history\x18\x03 \x01(\bR\fshortHistory\"\xbb\x01\n" +
 	"\n" +
 	"TrendPoint\x12.\n" +
 	"\x04date\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04date\x120\n" +
-	"\abalance\x18\x02 \x01(\v2\x16.wimm.banking.v1.MoneyR\abalance\"\x18\n" +
-	"\x16GetMonthSummaryRequest\"Q\n" +
+	"\abalance\x18\x02 \x01(\v2\x16.wimm.banking.v1.MoneyR\abalance\x121\n" +
+	"\x06movers\x18\x03 \x03(\v2\x19.wimm.banking.v1.DayMoverR\x06movers\x12\x18\n" +
+	"\asmaller\x18\x04 \x01(\x05R\asmaller\"w\n" +
+	"\bDayMover\x12!\n" +
+	"\fdisplay_name\x18\x01 \x01(\tR\vdisplayName\x12.\n" +
+	"\x06amount\x18\x02 \x01(\v2\x16.wimm.banking.v1.MoneyR\x06amount\x12\x18\n" +
+	"\aunusual\x18\x03 \x01(\bR\aunusual\"M\n" +
+	"\x16GetMonthSummaryRequest\x123\n" +
+	"\x05scope\x18\x01 \x01(\x0e2\x1d.wimm.banking.v1.InsightScopeR\x05scope\"Q\n" +
 	"\x17GetMonthSummaryResponse\x126\n" +
 	"\x06months\x18\x01 \x03(\v2\x1e.wimm.banking.v1.CurrencyMonthR\x06months\"\xce\x04\n" +
 	"\rCurrencyMonth\x12\x1a\n" +
@@ -3722,11 +4590,77 @@ const file_wimm_banking_v1_banking_proto_rawDesc = "" +
 	"monthStart\x12C\n" +
 	"\rtop_merchants\x18\n" +
 	" \x03(\v2\x1e.wimm.banking.v1.MerchantTotalR\ftopMerchants\x12G\n" +
-	"\x10largest_payments\x18\v \x03(\v2\x1c.wimm.banking.v1.TransactionR\x0flargestPayments\"m\n" +
+	"\x10largest_payments\x18\v \x03(\v2\x1c.wimm.banking.v1.TransactionR\x0flargestPayments\"M\n" +
+	"\x16GetMonthHistoryRequest\x123\n" +
+	"\x05scope\x18\x01 \x01(\x0e2\x1d.wimm.banking.v1.InsightScopeR\x05scope\"\xac\x02\n" +
+	"\x17GetMonthHistoryResponse\x123\n" +
+	"\x05scope\x18\x01 \x01(\x0e2\x1d.wimm.banking.v1.InsightScopeR\x05scope\x12;\n" +
+	"\tavailable\x18\x02 \x03(\x0e2\x1d.wimm.banking.v1.InsightScopeR\tavailable\x12+\n" +
+	"\x11household_counted\x18\x03 \x03(\tR\x10householdCounted\x122\n" +
+	"\x15household_not_counted\x18\x04 \x03(\tR\x13householdNotCounted\x12>\n" +
+	"\thistories\x18\x05 \x03(\v2 .wimm.banking.v1.CurrencyHistoryR\thistories\"\xa5\x04\n" +
+	"\x0fCurrencyHistory\x12\x1a\n" +
+	"\bcurrency\x18\x01 \x01(\tR\bcurrency\x125\n" +
+	"\x06months\x18\x02 \x03(\v2\x1d.wimm.banking.v1.HistoryMonthR\x06months\x12\x1f\n" +
+	"\vfull_months\x18\x03 \x01(\x05R\n" +
+	"fullMonths\x127\n" +
+	"\vtypical_net\x18\x04 \x01(\v2\x16.wimm.banking.v1.MoneyR\n" +
+	"typicalNet\x127\n" +
+	"\vaverage_net\x18\x05 \x01(\v2\x16.wimm.banking.v1.MoneyR\n" +
+	"averageNet\x12B\n" +
+	"\x11typical_net_usual\x18\x06 \x01(\v2\x16.wimm.banking.v1.MoneyR\x0ftypicalNetUsual\x12B\n" +
+	"\x11average_net_usual\x18\a \x01(\v2\x16.wimm.banking.v1.MoneyR\x0faverageNetUsual\x12#\n" +
+	"\runusual_count\x18\b \x01(\x05R\funusualCount\x12?\n" +
+	"\trecurring\x18\t \x03(\v2!.wimm.banking.v1.RecurringPaymentR\trecurring\x12>\n" +
+	"\flate_ledgers\x18\n" +
+	" \x03(\v2\x1b.wimm.banking.v1.LateLedgerR\vlateLedgers\"_\n" +
+	"\n" +
+	"LateLedger\x12!\n" +
+	"\faccount_name\x18\x01 \x01(\tR\vaccountName\x12.\n" +
+	"\x04from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\"\xbe\x03\n" +
+	"\fHistoryMonth\x12;\n" +
+	"\vmonth_start\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"monthStart\x12&\n" +
+	"\x02in\x18\x02 \x01(\v2\x16.wimm.banking.v1.MoneyR\x02in\x12(\n" +
+	"\x03out\x18\x03 \x01(\v2\x16.wimm.banking.v1.MoneyR\x03out\x12(\n" +
+	"\x03net\x18\x04 \x01(\v2\x16.wimm.banking.v1.MoneyR\x03net\x123\n" +
+	"\tnet_usual\x18\x05 \x01(\v2\x16.wimm.banking.v1.MoneyR\bnetUsual\x12\x15\n" +
+	"\x06so_far\x18\x06 \x01(\bR\x05soFar\x127\n" +
+	"\theld_from\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\bheldFrom\x125\n" +
+	"\x06risers\x18\b \x03(\v2\x1d.wimm.banking.v1.MerchantRiseR\x06risers\x129\n" +
+	"\aunusual\x18\t \x03(\v2\x1f.wimm.banking.v1.UnusualPaymentR\aunusual\"\x9a\x01\n" +
+	"\fMerchantRise\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12,\n" +
+	"\x05total\x18\x02 \x01(\v2\x16.wimm.banking.v1.MoneyR\x05total\x12,\n" +
+	"\x05usual\x18\x03 \x01(\v2\x16.wimm.banking.v1.MoneyR\x05usual\x12\x1a\n" +
+	"\bpayments\x18\x04 \x01(\x05R\bpayments\"\xa7\x01\n" +
+	"\x0eUnusualPayment\x12>\n" +
+	"\vtransaction\x18\x01 \x01(\v2\x1c.wimm.banking.v1.TransactionR\vtransaction\x120\n" +
+	"\atypical\x18\x02 \x01(\v2\x16.wimm.banking.v1.MoneyR\atypical\x12#\n" +
+	"\rfirst_payment\x18\x03 \x01(\bR\ffirstPayment\"\x8d\x02\n" +
+	"\x10RecurringPayment\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12.\n" +
+	"\x06amount\x18\x02 \x01(\v2\x16.wimm.banking.v1.MoneyR\x06amount\x122\n" +
+	"\acadence\x18\x03 \x01(\x0e2\x18.wimm.banking.v1.CadenceR\acadence\x12\x16\n" +
+	"\x06likely\x18\x04 \x01(\bR\x06likely\x126\n" +
+	"\bexpected\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\bexpected\x12\x12\n" +
+	"\x04late\x18\x06 \x01(\bR\x04late\x12\x1d\n" +
+	"\n" +
+	"account_id\x18\a \x01(\tR\taccountId\"m\n" +
 	"\rMerchantTotal\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12,\n" +
 	"\x05total\x18\x02 \x01(\v2\x16.wimm.banking.v1.MoneyR\x05total\x12\x1a\n" +
-	"\bpayments\x18\x03 \x01(\x05R\bpayments*V\n" +
+	"\bpayments\x18\x03 \x01(\x05R\bpayments*x\n" +
+	"\fInsightScope\x12\x1d\n" +
+	"\x19INSIGHT_SCOPE_UNSPECIFIED\x10\x00\x12\x1b\n" +
+	"\x17INSIGHT_SCOPE_HOUSEHOLD\x10\x01\x12\x15\n" +
+	"\x11INSIGHT_SCOPE_OWN\x10\x02\x12\x15\n" +
+	"\x11INSIGHT_SCOPE_ALL\x10\x03*_\n" +
+	"\aCadence\x12\x17\n" +
+	"\x13CADENCE_UNSPECIFIED\x10\x00\x12\x12\n" +
+	"\x0eCADENCE_WEEKLY\x10\x01\x12\x13\n" +
+	"\x0fCADENCE_MONTHLY\x10\x02\x12\x12\n" +
+	"\x0eCADENCE_YEARLY\x10\x03*V\n" +
 	"\x05Level\x12\x15\n" +
 	"\x11LEVEL_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fLEVEL_HIDDEN\x10\x01\x12\x11\n" +
@@ -3756,7 +4690,7 @@ const file_wimm_banking_v1_banking_proto_rawDesc = "" +
 	"\x11TransactionStatus\x12\"\n" +
 	"\x1eTRANSACTION_STATUS_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19TRANSACTION_STATUS_BOOKED\x10\x01\x12\x1e\n" +
-	"\x1aTRANSACTION_STATUS_PENDING\x10\x022\x8b\r\n" +
+	"\x1aTRANSACTION_STATUS_PENDING\x10\x022\xf1\r\n" +
 	"\x0eBankingService\x12R\n" +
 	"\tListBanks\x12!.wimm.banking.v1.ListBanksRequest\x1a\".wimm.banking.v1.ListBanksResponse\x12d\n" +
 	"\x0fBeginConnection\x12'.wimm.banking.v1.BeginConnectionRequest\x1a(.wimm.banking.v1.BeginConnectionResponse\x12m\n" +
@@ -3773,7 +4707,8 @@ const file_wimm_banking_v1_banking_proto_rawDesc = "" +
 	"\x10ListTransactions\x12(.wimm.banking.v1.ListTransactionsRequest\x1a).wimm.banking.v1.ListTransactionsResponse\x12p\n" +
 	"\x13RefreshTransactions\x12+.wimm.banking.v1.RefreshTransactionsRequest\x1a,.wimm.banking.v1.RefreshTransactionsResponse\x12d\n" +
 	"\x0fGetBalanceTrend\x12'.wimm.banking.v1.GetBalanceTrendRequest\x1a(.wimm.banking.v1.GetBalanceTrendResponse\x12d\n" +
-	"\x0fGetMonthSummary\x12'.wimm.banking.v1.GetMonthSummaryRequest\x1a(.wimm.banking.v1.GetMonthSummaryResponseB\xcc\x01\n" +
+	"\x0fGetMonthSummary\x12'.wimm.banking.v1.GetMonthSummaryRequest\x1a(.wimm.banking.v1.GetMonthSummaryResponse\x12d\n" +
+	"\x0fGetMonthHistory\x12'.wimm.banking.v1.GetMonthHistoryRequest\x1a(.wimm.banking.v1.GetMonthHistoryResponseB\xcc\x01\n" +
 	"\x13com.wimm.banking.v1B\fBankingProtoP\x01ZIgithub.com/xuuid/wimm/packages/contracts/gen/go/wimm/banking/v1;bankingv1\xa2\x02\x03WBX\xaa\x02\x0fWimm.Banking.V1\xca\x02\x0fWimm\\Banking\\V1\xe2\x02\x1bWimm\\Banking\\V1\\GPBMetadata\xea\x02\x11Wimm::Banking::V1b\x06proto3"
 
 var (
@@ -3788,176 +4723,220 @@ func file_wimm_banking_v1_banking_proto_rawDescGZIP() []byte {
 	return file_wimm_banking_v1_banking_proto_rawDescData
 }
 
-var file_wimm_banking_v1_banking_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
-var file_wimm_banking_v1_banking_proto_msgTypes = make([]protoimpl.MessageInfo, 50)
+var file_wimm_banking_v1_banking_proto_enumTypes = make([]protoimpl.EnumInfo, 8)
+var file_wimm_banking_v1_banking_proto_msgTypes = make([]protoimpl.MessageInfo, 59)
 var file_wimm_banking_v1_banking_proto_goTypes = []any{
-	(Level)(0),                             // 0: wimm.banking.v1.Level
-	(AccountSource)(0),                     // 1: wimm.banking.v1.AccountSource
-	(AccountGroup)(0),                      // 2: wimm.banking.v1.AccountGroup
-	(Failure)(0),                           // 3: wimm.banking.v1.Failure
-	(RestoreReason)(0),                     // 4: wimm.banking.v1.RestoreReason
-	(TransactionStatus)(0),                 // 5: wimm.banking.v1.TransactionStatus
-	(*Money)(nil),                          // 6: wimm.banking.v1.Money
-	(*Bank)(nil),                           // 7: wimm.banking.v1.Bank
-	(*Member)(nil),                         // 8: wimm.banking.v1.Member
-	(*Balance)(nil),                        // 9: wimm.banking.v1.Balance
-	(*Account)(nil),                        // 10: wimm.banking.v1.Account
-	(*Connection)(nil),                     // 11: wimm.banking.v1.Connection
-	(*CurrencyTotal)(nil),                  // 12: wimm.banking.v1.CurrencyTotal
-	(*BankFailure)(nil),                    // 13: wimm.banking.v1.BankFailure
-	(*ListBanksRequest)(nil),               // 14: wimm.banking.v1.ListBanksRequest
-	(*ListBanksResponse)(nil),              // 15: wimm.banking.v1.ListBanksResponse
-	(*BeginConnectionRequest)(nil),         // 16: wimm.banking.v1.BeginConnectionRequest
-	(*BeginConnectionResponse)(nil),        // 17: wimm.banking.v1.BeginConnectionResponse
-	(*CompleteConnectionRequest)(nil),      // 18: wimm.banking.v1.CompleteConnectionRequest
-	(*CompleteConnectionResponse)(nil),     // 19: wimm.banking.v1.CompleteConnectionResponse
-	(*ListConnectionAccountsRequest)(nil),  // 20: wimm.banking.v1.ListConnectionAccountsRequest
-	(*ListConnectionAccountsResponse)(nil), // 21: wimm.banking.v1.ListConnectionAccountsResponse
-	(*AccountGrant)(nil),                   // 22: wimm.banking.v1.AccountGrant
-	(*SetAccountOwnersRequest)(nil),        // 23: wimm.banking.v1.SetAccountOwnersRequest
-	(*SetAccountOwnersResponse)(nil),       // 24: wimm.banking.v1.SetAccountOwnersResponse
-	(*SetAccountLevelRequest)(nil),         // 25: wimm.banking.v1.SetAccountLevelRequest
-	(*SetAccountLevelResponse)(nil),        // 26: wimm.banking.v1.SetAccountLevelResponse
-	(*SetAccountNameRequest)(nil),          // 27: wimm.banking.v1.SetAccountNameRequest
-	(*SetAccountNameResponse)(nil),         // 28: wimm.banking.v1.SetAccountNameResponse
-	(*SetAccountLeftOutRequest)(nil),       // 29: wimm.banking.v1.SetAccountLeftOutRequest
-	(*SetAccountLeftOutResponse)(nil),      // 30: wimm.banking.v1.SetAccountLeftOutResponse
-	(*ListAccountsRequest)(nil),            // 31: wimm.banking.v1.ListAccountsRequest
-	(*ListAccountsResponse)(nil),           // 32: wimm.banking.v1.ListAccountsResponse
-	(*RefreshBalancesRequest)(nil),         // 33: wimm.banking.v1.RefreshBalancesRequest
-	(*RefreshBalancesResponse)(nil),        // 34: wimm.banking.v1.RefreshBalancesResponse
-	(*RestoreConnectionRequest)(nil),       // 35: wimm.banking.v1.RestoreConnectionRequest
-	(*RestoreConnectionResponse)(nil),      // 36: wimm.banking.v1.RestoreConnectionResponse
-	(*DisconnectBankRequest)(nil),          // 37: wimm.banking.v1.DisconnectBankRequest
-	(*DisconnectBankResponse)(nil),         // 38: wimm.banking.v1.DisconnectBankResponse
-	(*Transaction)(nil),                    // 39: wimm.banking.v1.Transaction
-	(*LedgerCursor)(nil),                   // 40: wimm.banking.v1.LedgerCursor
-	(*NarrowConnection)(nil),               // 41: wimm.banking.v1.NarrowConnection
-	(*ListTransactionsRequest)(nil),        // 42: wimm.banking.v1.ListTransactionsRequest
-	(*RefreshTransactionsRequest)(nil),     // 43: wimm.banking.v1.RefreshTransactionsRequest
-	(*ListTransactionsResponse)(nil),       // 44: wimm.banking.v1.ListTransactionsResponse
-	(*RefreshTransactionsResponse)(nil),    // 45: wimm.banking.v1.RefreshTransactionsResponse
-	(*Ledger)(nil),                         // 46: wimm.banking.v1.Ledger
-	(*PageMarker)(nil),                     // 47: wimm.banking.v1.PageMarker
-	(*GetBalanceTrendRequest)(nil),         // 48: wimm.banking.v1.GetBalanceTrendRequest
-	(*GetBalanceTrendResponse)(nil),        // 49: wimm.banking.v1.GetBalanceTrendResponse
-	(*CurrencyTrend)(nil),                  // 50: wimm.banking.v1.CurrencyTrend
-	(*TrendPoint)(nil),                     // 51: wimm.banking.v1.TrendPoint
-	(*GetMonthSummaryRequest)(nil),         // 52: wimm.banking.v1.GetMonthSummaryRequest
-	(*GetMonthSummaryResponse)(nil),        // 53: wimm.banking.v1.GetMonthSummaryResponse
-	(*CurrencyMonth)(nil),                  // 54: wimm.banking.v1.CurrencyMonth
-	(*MerchantTotal)(nil),                  // 55: wimm.banking.v1.MerchantTotal
-	(*timestamppb.Timestamp)(nil),          // 56: google.protobuf.Timestamp
+	(InsightScope)(0),                      // 0: wimm.banking.v1.InsightScope
+	(Cadence)(0),                           // 1: wimm.banking.v1.Cadence
+	(Level)(0),                             // 2: wimm.banking.v1.Level
+	(AccountSource)(0),                     // 3: wimm.banking.v1.AccountSource
+	(AccountGroup)(0),                      // 4: wimm.banking.v1.AccountGroup
+	(Failure)(0),                           // 5: wimm.banking.v1.Failure
+	(RestoreReason)(0),                     // 6: wimm.banking.v1.RestoreReason
+	(TransactionStatus)(0),                 // 7: wimm.banking.v1.TransactionStatus
+	(*Money)(nil),                          // 8: wimm.banking.v1.Money
+	(*Bank)(nil),                           // 9: wimm.banking.v1.Bank
+	(*Member)(nil),                         // 10: wimm.banking.v1.Member
+	(*Balance)(nil),                        // 11: wimm.banking.v1.Balance
+	(*Account)(nil),                        // 12: wimm.banking.v1.Account
+	(*Connection)(nil),                     // 13: wimm.banking.v1.Connection
+	(*CurrencyTotal)(nil),                  // 14: wimm.banking.v1.CurrencyTotal
+	(*BankFailure)(nil),                    // 15: wimm.banking.v1.BankFailure
+	(*ListBanksRequest)(nil),               // 16: wimm.banking.v1.ListBanksRequest
+	(*ListBanksResponse)(nil),              // 17: wimm.banking.v1.ListBanksResponse
+	(*BeginConnectionRequest)(nil),         // 18: wimm.banking.v1.BeginConnectionRequest
+	(*BeginConnectionResponse)(nil),        // 19: wimm.banking.v1.BeginConnectionResponse
+	(*CompleteConnectionRequest)(nil),      // 20: wimm.banking.v1.CompleteConnectionRequest
+	(*CompleteConnectionResponse)(nil),     // 21: wimm.banking.v1.CompleteConnectionResponse
+	(*ListConnectionAccountsRequest)(nil),  // 22: wimm.banking.v1.ListConnectionAccountsRequest
+	(*ListConnectionAccountsResponse)(nil), // 23: wimm.banking.v1.ListConnectionAccountsResponse
+	(*AccountGrant)(nil),                   // 24: wimm.banking.v1.AccountGrant
+	(*SetAccountOwnersRequest)(nil),        // 25: wimm.banking.v1.SetAccountOwnersRequest
+	(*SetAccountOwnersResponse)(nil),       // 26: wimm.banking.v1.SetAccountOwnersResponse
+	(*SetAccountLevelRequest)(nil),         // 27: wimm.banking.v1.SetAccountLevelRequest
+	(*SetAccountLevelResponse)(nil),        // 28: wimm.banking.v1.SetAccountLevelResponse
+	(*SetAccountNameRequest)(nil),          // 29: wimm.banking.v1.SetAccountNameRequest
+	(*SetAccountNameResponse)(nil),         // 30: wimm.banking.v1.SetAccountNameResponse
+	(*SetAccountLeftOutRequest)(nil),       // 31: wimm.banking.v1.SetAccountLeftOutRequest
+	(*SetAccountLeftOutResponse)(nil),      // 32: wimm.banking.v1.SetAccountLeftOutResponse
+	(*ListAccountsRequest)(nil),            // 33: wimm.banking.v1.ListAccountsRequest
+	(*ListAccountsResponse)(nil),           // 34: wimm.banking.v1.ListAccountsResponse
+	(*RefreshBalancesRequest)(nil),         // 35: wimm.banking.v1.RefreshBalancesRequest
+	(*RefreshBalancesResponse)(nil),        // 36: wimm.banking.v1.RefreshBalancesResponse
+	(*RestoreConnectionRequest)(nil),       // 37: wimm.banking.v1.RestoreConnectionRequest
+	(*RestoreConnectionResponse)(nil),      // 38: wimm.banking.v1.RestoreConnectionResponse
+	(*DisconnectBankRequest)(nil),          // 39: wimm.banking.v1.DisconnectBankRequest
+	(*DisconnectBankResponse)(nil),         // 40: wimm.banking.v1.DisconnectBankResponse
+	(*Transaction)(nil),                    // 41: wimm.banking.v1.Transaction
+	(*LedgerCursor)(nil),                   // 42: wimm.banking.v1.LedgerCursor
+	(*NarrowConnection)(nil),               // 43: wimm.banking.v1.NarrowConnection
+	(*ListTransactionsRequest)(nil),        // 44: wimm.banking.v1.ListTransactionsRequest
+	(*RefreshTransactionsRequest)(nil),     // 45: wimm.banking.v1.RefreshTransactionsRequest
+	(*ListTransactionsResponse)(nil),       // 46: wimm.banking.v1.ListTransactionsResponse
+	(*RefreshTransactionsResponse)(nil),    // 47: wimm.banking.v1.RefreshTransactionsResponse
+	(*Ledger)(nil),                         // 48: wimm.banking.v1.Ledger
+	(*PageMarker)(nil),                     // 49: wimm.banking.v1.PageMarker
+	(*GetBalanceTrendRequest)(nil),         // 50: wimm.banking.v1.GetBalanceTrendRequest
+	(*GetBalanceTrendResponse)(nil),        // 51: wimm.banking.v1.GetBalanceTrendResponse
+	(*CurrencyTrend)(nil),                  // 52: wimm.banking.v1.CurrencyTrend
+	(*TrendPoint)(nil),                     // 53: wimm.banking.v1.TrendPoint
+	(*DayMover)(nil),                       // 54: wimm.banking.v1.DayMover
+	(*GetMonthSummaryRequest)(nil),         // 55: wimm.banking.v1.GetMonthSummaryRequest
+	(*GetMonthSummaryResponse)(nil),        // 56: wimm.banking.v1.GetMonthSummaryResponse
+	(*CurrencyMonth)(nil),                  // 57: wimm.banking.v1.CurrencyMonth
+	(*GetMonthHistoryRequest)(nil),         // 58: wimm.banking.v1.GetMonthHistoryRequest
+	(*GetMonthHistoryResponse)(nil),        // 59: wimm.banking.v1.GetMonthHistoryResponse
+	(*CurrencyHistory)(nil),                // 60: wimm.banking.v1.CurrencyHistory
+	(*LateLedger)(nil),                     // 61: wimm.banking.v1.LateLedger
+	(*HistoryMonth)(nil),                   // 62: wimm.banking.v1.HistoryMonth
+	(*MerchantRise)(nil),                   // 63: wimm.banking.v1.MerchantRise
+	(*UnusualPayment)(nil),                 // 64: wimm.banking.v1.UnusualPayment
+	(*RecurringPayment)(nil),               // 65: wimm.banking.v1.RecurringPayment
+	(*MerchantTotal)(nil),                  // 66: wimm.banking.v1.MerchantTotal
+	(*timestamppb.Timestamp)(nil),          // 67: google.protobuf.Timestamp
 }
 var file_wimm_banking_v1_banking_proto_depIdxs = []int32{
-	6,  // 0: wimm.banking.v1.Balance.money:type_name -> wimm.banking.v1.Money
-	56, // 1: wimm.banking.v1.Balance.read_at:type_name -> google.protobuf.Timestamp
-	1,  // 2: wimm.banking.v1.Account.source:type_name -> wimm.banking.v1.AccountSource
-	0,  // 3: wimm.banking.v1.Account.level:type_name -> wimm.banking.v1.Level
-	8,  // 4: wimm.banking.v1.Account.owners:type_name -> wimm.banking.v1.Member
-	9,  // 5: wimm.banking.v1.Account.balance:type_name -> wimm.banking.v1.Balance
-	11, // 6: wimm.banking.v1.Account.connection:type_name -> wimm.banking.v1.Connection
-	56, // 7: wimm.banking.v1.Account.left_out_at:type_name -> google.protobuf.Timestamp
-	2,  // 8: wimm.banking.v1.Account.group:type_name -> wimm.banking.v1.AccountGroup
-	8,  // 9: wimm.banking.v1.Connection.connected_by:type_name -> wimm.banking.v1.Member
-	56, // 10: wimm.banking.v1.Connection.consent_expires_at:type_name -> google.protobuf.Timestamp
-	6,  // 11: wimm.banking.v1.CurrencyTotal.total:type_name -> wimm.banking.v1.Money
-	3,  // 12: wimm.banking.v1.BankFailure.failure:type_name -> wimm.banking.v1.Failure
-	7,  // 13: wimm.banking.v1.ListBanksResponse.banks:type_name -> wimm.banking.v1.Bank
-	56, // 14: wimm.banking.v1.BeginConnectionResponse.consent_expires_at:type_name -> google.protobuf.Timestamp
-	11, // 15: wimm.banking.v1.CompleteConnectionResponse.connection:type_name -> wimm.banking.v1.Connection
-	10, // 16: wimm.banking.v1.CompleteConnectionResponse.accounts:type_name -> wimm.banking.v1.Account
-	10, // 17: wimm.banking.v1.ListConnectionAccountsResponse.accounts:type_name -> wimm.banking.v1.Account
-	8,  // 18: wimm.banking.v1.ListConnectionAccountsResponse.members:type_name -> wimm.banking.v1.Member
-	22, // 19: wimm.banking.v1.ListConnectionAccountsResponse.grants:type_name -> wimm.banking.v1.AccountGrant
-	0,  // 20: wimm.banking.v1.AccountGrant.level:type_name -> wimm.banking.v1.Level
-	10, // 21: wimm.banking.v1.SetAccountOwnersResponse.account:type_name -> wimm.banking.v1.Account
-	0,  // 22: wimm.banking.v1.SetAccountLevelRequest.level:type_name -> wimm.banking.v1.Level
-	10, // 23: wimm.banking.v1.SetAccountLevelResponse.account:type_name -> wimm.banking.v1.Account
-	10, // 24: wimm.banking.v1.SetAccountNameResponse.account:type_name -> wimm.banking.v1.Account
-	10, // 25: wimm.banking.v1.SetAccountLeftOutResponse.account:type_name -> wimm.banking.v1.Account
-	10, // 26: wimm.banking.v1.ListAccountsResponse.accounts:type_name -> wimm.banking.v1.Account
-	12, // 27: wimm.banking.v1.ListAccountsResponse.household_totals:type_name -> wimm.banking.v1.CurrencyTotal
-	12, // 28: wimm.banking.v1.ListAccountsResponse.own_totals:type_name -> wimm.banking.v1.CurrencyTotal
-	13, // 29: wimm.banking.v1.ListAccountsResponse.failures:type_name -> wimm.banking.v1.BankFailure
-	10, // 30: wimm.banking.v1.RefreshBalancesResponse.accounts:type_name -> wimm.banking.v1.Account
-	12, // 31: wimm.banking.v1.RefreshBalancesResponse.household_totals:type_name -> wimm.banking.v1.CurrencyTotal
-	12, // 32: wimm.banking.v1.RefreshBalancesResponse.own_totals:type_name -> wimm.banking.v1.CurrencyTotal
-	13, // 33: wimm.banking.v1.RefreshBalancesResponse.failures:type_name -> wimm.banking.v1.BankFailure
-	4,  // 34: wimm.banking.v1.RestoreConnectionRequest.reason:type_name -> wimm.banking.v1.RestoreReason
-	56, // 35: wimm.banking.v1.RestoreConnectionResponse.consent_expires_at:type_name -> google.protobuf.Timestamp
-	5,  // 36: wimm.banking.v1.Transaction.status:type_name -> wimm.banking.v1.TransactionStatus
-	6,  // 37: wimm.banking.v1.Transaction.amount:type_name -> wimm.banking.v1.Money
-	56, // 38: wimm.banking.v1.Transaction.booking_date:type_name -> google.protobuf.Timestamp
-	56, // 39: wimm.banking.v1.LedgerCursor.booking_date:type_name -> google.protobuf.Timestamp
-	40, // 40: wimm.banking.v1.ListTransactionsRequest.cursor:type_name -> wimm.banking.v1.LedgerCursor
-	40, // 41: wimm.banking.v1.ListTransactionsRequest.page_start:type_name -> wimm.banking.v1.LedgerCursor
-	46, // 42: wimm.banking.v1.ListTransactionsResponse.ledger:type_name -> wimm.banking.v1.Ledger
-	46, // 43: wimm.banking.v1.RefreshTransactionsResponse.ledger:type_name -> wimm.banking.v1.Ledger
-	39, // 44: wimm.banking.v1.Ledger.transactions:type_name -> wimm.banking.v1.Transaction
-	56, // 45: wimm.banking.v1.Ledger.oldest_on_page:type_name -> google.protobuf.Timestamp
-	56, // 46: wimm.banking.v1.Ledger.newest_on_page:type_name -> google.protobuf.Timestamp
-	56, // 47: wimm.banking.v1.Ledger.synced_at:type_name -> google.protobuf.Timestamp
-	56, // 48: wimm.banking.v1.Ledger.reaches_back_to:type_name -> google.protobuf.Timestamp
-	41, // 49: wimm.banking.v1.Ledger.narrow_connections:type_name -> wimm.banking.v1.NarrowConnection
-	13, // 50: wimm.banking.v1.Ledger.failures:type_name -> wimm.banking.v1.BankFailure
-	47, // 51: wimm.banking.v1.Ledger.pages:type_name -> wimm.banking.v1.PageMarker
-	40, // 52: wimm.banking.v1.PageMarker.cursor:type_name -> wimm.banking.v1.LedgerCursor
-	56, // 53: wimm.banking.v1.PageMarker.newest:type_name -> google.protobuf.Timestamp
-	56, // 54: wimm.banking.v1.PageMarker.oldest:type_name -> google.protobuf.Timestamp
-	50, // 55: wimm.banking.v1.GetBalanceTrendResponse.trends:type_name -> wimm.banking.v1.CurrencyTrend
-	51, // 56: wimm.banking.v1.CurrencyTrend.points:type_name -> wimm.banking.v1.TrendPoint
-	56, // 57: wimm.banking.v1.TrendPoint.date:type_name -> google.protobuf.Timestamp
-	6,  // 58: wimm.banking.v1.TrendPoint.balance:type_name -> wimm.banking.v1.Money
-	54, // 59: wimm.banking.v1.GetMonthSummaryResponse.months:type_name -> wimm.banking.v1.CurrencyMonth
-	6,  // 60: wimm.banking.v1.CurrencyMonth.in:type_name -> wimm.banking.v1.Money
-	6,  // 61: wimm.banking.v1.CurrencyMonth.out:type_name -> wimm.banking.v1.Money
-	6,  // 62: wimm.banking.v1.CurrencyMonth.net:type_name -> wimm.banking.v1.Money
-	6,  // 63: wimm.banking.v1.CurrencyMonth.prior_in:type_name -> wimm.banking.v1.Money
-	6,  // 64: wimm.banking.v1.CurrencyMonth.prior_out:type_name -> wimm.banking.v1.Money
-	6,  // 65: wimm.banking.v1.CurrencyMonth.prior_net:type_name -> wimm.banking.v1.Money
-	56, // 66: wimm.banking.v1.CurrencyMonth.counted_from:type_name -> google.protobuf.Timestamp
-	56, // 67: wimm.banking.v1.CurrencyMonth.month_start:type_name -> google.protobuf.Timestamp
-	55, // 68: wimm.banking.v1.CurrencyMonth.top_merchants:type_name -> wimm.banking.v1.MerchantTotal
-	39, // 69: wimm.banking.v1.CurrencyMonth.largest_payments:type_name -> wimm.banking.v1.Transaction
-	6,  // 70: wimm.banking.v1.MerchantTotal.total:type_name -> wimm.banking.v1.Money
-	14, // 71: wimm.banking.v1.BankingService.ListBanks:input_type -> wimm.banking.v1.ListBanksRequest
-	16, // 72: wimm.banking.v1.BankingService.BeginConnection:input_type -> wimm.banking.v1.BeginConnectionRequest
-	18, // 73: wimm.banking.v1.BankingService.CompleteConnection:input_type -> wimm.banking.v1.CompleteConnectionRequest
-	20, // 74: wimm.banking.v1.BankingService.ListConnectionAccounts:input_type -> wimm.banking.v1.ListConnectionAccountsRequest
-	23, // 75: wimm.banking.v1.BankingService.SetAccountOwners:input_type -> wimm.banking.v1.SetAccountOwnersRequest
-	25, // 76: wimm.banking.v1.BankingService.SetAccountLevel:input_type -> wimm.banking.v1.SetAccountLevelRequest
-	29, // 77: wimm.banking.v1.BankingService.SetAccountLeftOut:input_type -> wimm.banking.v1.SetAccountLeftOutRequest
-	27, // 78: wimm.banking.v1.BankingService.SetAccountName:input_type -> wimm.banking.v1.SetAccountNameRequest
-	31, // 79: wimm.banking.v1.BankingService.ListAccounts:input_type -> wimm.banking.v1.ListAccountsRequest
-	33, // 80: wimm.banking.v1.BankingService.RefreshBalances:input_type -> wimm.banking.v1.RefreshBalancesRequest
-	35, // 81: wimm.banking.v1.BankingService.RestoreConnection:input_type -> wimm.banking.v1.RestoreConnectionRequest
-	37, // 82: wimm.banking.v1.BankingService.DisconnectBank:input_type -> wimm.banking.v1.DisconnectBankRequest
-	42, // 83: wimm.banking.v1.BankingService.ListTransactions:input_type -> wimm.banking.v1.ListTransactionsRequest
-	43, // 84: wimm.banking.v1.BankingService.RefreshTransactions:input_type -> wimm.banking.v1.RefreshTransactionsRequest
-	48, // 85: wimm.banking.v1.BankingService.GetBalanceTrend:input_type -> wimm.banking.v1.GetBalanceTrendRequest
-	52, // 86: wimm.banking.v1.BankingService.GetMonthSummary:input_type -> wimm.banking.v1.GetMonthSummaryRequest
-	15, // 87: wimm.banking.v1.BankingService.ListBanks:output_type -> wimm.banking.v1.ListBanksResponse
-	17, // 88: wimm.banking.v1.BankingService.BeginConnection:output_type -> wimm.banking.v1.BeginConnectionResponse
-	19, // 89: wimm.banking.v1.BankingService.CompleteConnection:output_type -> wimm.banking.v1.CompleteConnectionResponse
-	21, // 90: wimm.banking.v1.BankingService.ListConnectionAccounts:output_type -> wimm.banking.v1.ListConnectionAccountsResponse
-	24, // 91: wimm.banking.v1.BankingService.SetAccountOwners:output_type -> wimm.banking.v1.SetAccountOwnersResponse
-	26, // 92: wimm.banking.v1.BankingService.SetAccountLevel:output_type -> wimm.banking.v1.SetAccountLevelResponse
-	30, // 93: wimm.banking.v1.BankingService.SetAccountLeftOut:output_type -> wimm.banking.v1.SetAccountLeftOutResponse
-	28, // 94: wimm.banking.v1.BankingService.SetAccountName:output_type -> wimm.banking.v1.SetAccountNameResponse
-	32, // 95: wimm.banking.v1.BankingService.ListAccounts:output_type -> wimm.banking.v1.ListAccountsResponse
-	34, // 96: wimm.banking.v1.BankingService.RefreshBalances:output_type -> wimm.banking.v1.RefreshBalancesResponse
-	36, // 97: wimm.banking.v1.BankingService.RestoreConnection:output_type -> wimm.banking.v1.RestoreConnectionResponse
-	38, // 98: wimm.banking.v1.BankingService.DisconnectBank:output_type -> wimm.banking.v1.DisconnectBankResponse
-	44, // 99: wimm.banking.v1.BankingService.ListTransactions:output_type -> wimm.banking.v1.ListTransactionsResponse
-	45, // 100: wimm.banking.v1.BankingService.RefreshTransactions:output_type -> wimm.banking.v1.RefreshTransactionsResponse
-	49, // 101: wimm.banking.v1.BankingService.GetBalanceTrend:output_type -> wimm.banking.v1.GetBalanceTrendResponse
-	53, // 102: wimm.banking.v1.BankingService.GetMonthSummary:output_type -> wimm.banking.v1.GetMonthSummaryResponse
-	87, // [87:103] is the sub-list for method output_type
-	71, // [71:87] is the sub-list for method input_type
-	71, // [71:71] is the sub-list for extension type_name
-	71, // [71:71] is the sub-list for extension extendee
-	0,  // [0:71] is the sub-list for field type_name
+	8,   // 0: wimm.banking.v1.Balance.money:type_name -> wimm.banking.v1.Money
+	67,  // 1: wimm.banking.v1.Balance.read_at:type_name -> google.protobuf.Timestamp
+	3,   // 2: wimm.banking.v1.Account.source:type_name -> wimm.banking.v1.AccountSource
+	2,   // 3: wimm.banking.v1.Account.level:type_name -> wimm.banking.v1.Level
+	10,  // 4: wimm.banking.v1.Account.owners:type_name -> wimm.banking.v1.Member
+	11,  // 5: wimm.banking.v1.Account.balance:type_name -> wimm.banking.v1.Balance
+	13,  // 6: wimm.banking.v1.Account.connection:type_name -> wimm.banking.v1.Connection
+	67,  // 7: wimm.banking.v1.Account.left_out_at:type_name -> google.protobuf.Timestamp
+	4,   // 8: wimm.banking.v1.Account.group:type_name -> wimm.banking.v1.AccountGroup
+	10,  // 9: wimm.banking.v1.Connection.connected_by:type_name -> wimm.banking.v1.Member
+	67,  // 10: wimm.banking.v1.Connection.consent_expires_at:type_name -> google.protobuf.Timestamp
+	8,   // 11: wimm.banking.v1.CurrencyTotal.total:type_name -> wimm.banking.v1.Money
+	5,   // 12: wimm.banking.v1.BankFailure.failure:type_name -> wimm.banking.v1.Failure
+	9,   // 13: wimm.banking.v1.ListBanksResponse.banks:type_name -> wimm.banking.v1.Bank
+	67,  // 14: wimm.banking.v1.BeginConnectionResponse.consent_expires_at:type_name -> google.protobuf.Timestamp
+	13,  // 15: wimm.banking.v1.CompleteConnectionResponse.connection:type_name -> wimm.banking.v1.Connection
+	12,  // 16: wimm.banking.v1.CompleteConnectionResponse.accounts:type_name -> wimm.banking.v1.Account
+	12,  // 17: wimm.banking.v1.ListConnectionAccountsResponse.accounts:type_name -> wimm.banking.v1.Account
+	10,  // 18: wimm.banking.v1.ListConnectionAccountsResponse.members:type_name -> wimm.banking.v1.Member
+	24,  // 19: wimm.banking.v1.ListConnectionAccountsResponse.grants:type_name -> wimm.banking.v1.AccountGrant
+	2,   // 20: wimm.banking.v1.AccountGrant.level:type_name -> wimm.banking.v1.Level
+	12,  // 21: wimm.banking.v1.SetAccountOwnersResponse.account:type_name -> wimm.banking.v1.Account
+	2,   // 22: wimm.banking.v1.SetAccountLevelRequest.level:type_name -> wimm.banking.v1.Level
+	12,  // 23: wimm.banking.v1.SetAccountLevelResponse.account:type_name -> wimm.banking.v1.Account
+	12,  // 24: wimm.banking.v1.SetAccountNameResponse.account:type_name -> wimm.banking.v1.Account
+	12,  // 25: wimm.banking.v1.SetAccountLeftOutResponse.account:type_name -> wimm.banking.v1.Account
+	12,  // 26: wimm.banking.v1.ListAccountsResponse.accounts:type_name -> wimm.banking.v1.Account
+	14,  // 27: wimm.banking.v1.ListAccountsResponse.household_totals:type_name -> wimm.banking.v1.CurrencyTotal
+	14,  // 28: wimm.banking.v1.ListAccountsResponse.own_totals:type_name -> wimm.banking.v1.CurrencyTotal
+	15,  // 29: wimm.banking.v1.ListAccountsResponse.failures:type_name -> wimm.banking.v1.BankFailure
+	12,  // 30: wimm.banking.v1.RefreshBalancesResponse.accounts:type_name -> wimm.banking.v1.Account
+	14,  // 31: wimm.banking.v1.RefreshBalancesResponse.household_totals:type_name -> wimm.banking.v1.CurrencyTotal
+	14,  // 32: wimm.banking.v1.RefreshBalancesResponse.own_totals:type_name -> wimm.banking.v1.CurrencyTotal
+	15,  // 33: wimm.banking.v1.RefreshBalancesResponse.failures:type_name -> wimm.banking.v1.BankFailure
+	6,   // 34: wimm.banking.v1.RestoreConnectionRequest.reason:type_name -> wimm.banking.v1.RestoreReason
+	67,  // 35: wimm.banking.v1.RestoreConnectionResponse.consent_expires_at:type_name -> google.protobuf.Timestamp
+	7,   // 36: wimm.banking.v1.Transaction.status:type_name -> wimm.banking.v1.TransactionStatus
+	8,   // 37: wimm.banking.v1.Transaction.amount:type_name -> wimm.banking.v1.Money
+	67,  // 38: wimm.banking.v1.Transaction.booking_date:type_name -> google.protobuf.Timestamp
+	67,  // 39: wimm.banking.v1.LedgerCursor.booking_date:type_name -> google.protobuf.Timestamp
+	42,  // 40: wimm.banking.v1.ListTransactionsRequest.cursor:type_name -> wimm.banking.v1.LedgerCursor
+	42,  // 41: wimm.banking.v1.ListTransactionsRequest.page_start:type_name -> wimm.banking.v1.LedgerCursor
+	48,  // 42: wimm.banking.v1.ListTransactionsResponse.ledger:type_name -> wimm.banking.v1.Ledger
+	48,  // 43: wimm.banking.v1.RefreshTransactionsResponse.ledger:type_name -> wimm.banking.v1.Ledger
+	41,  // 44: wimm.banking.v1.Ledger.transactions:type_name -> wimm.banking.v1.Transaction
+	67,  // 45: wimm.banking.v1.Ledger.oldest_on_page:type_name -> google.protobuf.Timestamp
+	67,  // 46: wimm.banking.v1.Ledger.newest_on_page:type_name -> google.protobuf.Timestamp
+	67,  // 47: wimm.banking.v1.Ledger.synced_at:type_name -> google.protobuf.Timestamp
+	67,  // 48: wimm.banking.v1.Ledger.reaches_back_to:type_name -> google.protobuf.Timestamp
+	43,  // 49: wimm.banking.v1.Ledger.narrow_connections:type_name -> wimm.banking.v1.NarrowConnection
+	15,  // 50: wimm.banking.v1.Ledger.failures:type_name -> wimm.banking.v1.BankFailure
+	49,  // 51: wimm.banking.v1.Ledger.pages:type_name -> wimm.banking.v1.PageMarker
+	42,  // 52: wimm.banking.v1.PageMarker.cursor:type_name -> wimm.banking.v1.LedgerCursor
+	67,  // 53: wimm.banking.v1.PageMarker.newest:type_name -> google.protobuf.Timestamp
+	67,  // 54: wimm.banking.v1.PageMarker.oldest:type_name -> google.protobuf.Timestamp
+	0,   // 55: wimm.banking.v1.GetBalanceTrendRequest.scope:type_name -> wimm.banking.v1.InsightScope
+	52,  // 56: wimm.banking.v1.GetBalanceTrendResponse.trends:type_name -> wimm.banking.v1.CurrencyTrend
+	53,  // 57: wimm.banking.v1.CurrencyTrend.points:type_name -> wimm.banking.v1.TrendPoint
+	67,  // 58: wimm.banking.v1.TrendPoint.date:type_name -> google.protobuf.Timestamp
+	8,   // 59: wimm.banking.v1.TrendPoint.balance:type_name -> wimm.banking.v1.Money
+	54,  // 60: wimm.banking.v1.TrendPoint.movers:type_name -> wimm.banking.v1.DayMover
+	8,   // 61: wimm.banking.v1.DayMover.amount:type_name -> wimm.banking.v1.Money
+	0,   // 62: wimm.banking.v1.GetMonthSummaryRequest.scope:type_name -> wimm.banking.v1.InsightScope
+	57,  // 63: wimm.banking.v1.GetMonthSummaryResponse.months:type_name -> wimm.banking.v1.CurrencyMonth
+	8,   // 64: wimm.banking.v1.CurrencyMonth.in:type_name -> wimm.banking.v1.Money
+	8,   // 65: wimm.banking.v1.CurrencyMonth.out:type_name -> wimm.banking.v1.Money
+	8,   // 66: wimm.banking.v1.CurrencyMonth.net:type_name -> wimm.banking.v1.Money
+	8,   // 67: wimm.banking.v1.CurrencyMonth.prior_in:type_name -> wimm.banking.v1.Money
+	8,   // 68: wimm.banking.v1.CurrencyMonth.prior_out:type_name -> wimm.banking.v1.Money
+	8,   // 69: wimm.banking.v1.CurrencyMonth.prior_net:type_name -> wimm.banking.v1.Money
+	67,  // 70: wimm.banking.v1.CurrencyMonth.counted_from:type_name -> google.protobuf.Timestamp
+	67,  // 71: wimm.banking.v1.CurrencyMonth.month_start:type_name -> google.protobuf.Timestamp
+	66,  // 72: wimm.banking.v1.CurrencyMonth.top_merchants:type_name -> wimm.banking.v1.MerchantTotal
+	41,  // 73: wimm.banking.v1.CurrencyMonth.largest_payments:type_name -> wimm.banking.v1.Transaction
+	0,   // 74: wimm.banking.v1.GetMonthHistoryRequest.scope:type_name -> wimm.banking.v1.InsightScope
+	0,   // 75: wimm.banking.v1.GetMonthHistoryResponse.scope:type_name -> wimm.banking.v1.InsightScope
+	0,   // 76: wimm.banking.v1.GetMonthHistoryResponse.available:type_name -> wimm.banking.v1.InsightScope
+	60,  // 77: wimm.banking.v1.GetMonthHistoryResponse.histories:type_name -> wimm.banking.v1.CurrencyHistory
+	62,  // 78: wimm.banking.v1.CurrencyHistory.months:type_name -> wimm.banking.v1.HistoryMonth
+	8,   // 79: wimm.banking.v1.CurrencyHistory.typical_net:type_name -> wimm.banking.v1.Money
+	8,   // 80: wimm.banking.v1.CurrencyHistory.average_net:type_name -> wimm.banking.v1.Money
+	8,   // 81: wimm.banking.v1.CurrencyHistory.typical_net_usual:type_name -> wimm.banking.v1.Money
+	8,   // 82: wimm.banking.v1.CurrencyHistory.average_net_usual:type_name -> wimm.banking.v1.Money
+	65,  // 83: wimm.banking.v1.CurrencyHistory.recurring:type_name -> wimm.banking.v1.RecurringPayment
+	61,  // 84: wimm.banking.v1.CurrencyHistory.late_ledgers:type_name -> wimm.banking.v1.LateLedger
+	67,  // 85: wimm.banking.v1.LateLedger.from:type_name -> google.protobuf.Timestamp
+	67,  // 86: wimm.banking.v1.HistoryMonth.month_start:type_name -> google.protobuf.Timestamp
+	8,   // 87: wimm.banking.v1.HistoryMonth.in:type_name -> wimm.banking.v1.Money
+	8,   // 88: wimm.banking.v1.HistoryMonth.out:type_name -> wimm.banking.v1.Money
+	8,   // 89: wimm.banking.v1.HistoryMonth.net:type_name -> wimm.banking.v1.Money
+	8,   // 90: wimm.banking.v1.HistoryMonth.net_usual:type_name -> wimm.banking.v1.Money
+	67,  // 91: wimm.banking.v1.HistoryMonth.held_from:type_name -> google.protobuf.Timestamp
+	63,  // 92: wimm.banking.v1.HistoryMonth.risers:type_name -> wimm.banking.v1.MerchantRise
+	64,  // 93: wimm.banking.v1.HistoryMonth.unusual:type_name -> wimm.banking.v1.UnusualPayment
+	8,   // 94: wimm.banking.v1.MerchantRise.total:type_name -> wimm.banking.v1.Money
+	8,   // 95: wimm.banking.v1.MerchantRise.usual:type_name -> wimm.banking.v1.Money
+	41,  // 96: wimm.banking.v1.UnusualPayment.transaction:type_name -> wimm.banking.v1.Transaction
+	8,   // 97: wimm.banking.v1.UnusualPayment.typical:type_name -> wimm.banking.v1.Money
+	8,   // 98: wimm.banking.v1.RecurringPayment.amount:type_name -> wimm.banking.v1.Money
+	1,   // 99: wimm.banking.v1.RecurringPayment.cadence:type_name -> wimm.banking.v1.Cadence
+	67,  // 100: wimm.banking.v1.RecurringPayment.expected:type_name -> google.protobuf.Timestamp
+	8,   // 101: wimm.banking.v1.MerchantTotal.total:type_name -> wimm.banking.v1.Money
+	16,  // 102: wimm.banking.v1.BankingService.ListBanks:input_type -> wimm.banking.v1.ListBanksRequest
+	18,  // 103: wimm.banking.v1.BankingService.BeginConnection:input_type -> wimm.banking.v1.BeginConnectionRequest
+	20,  // 104: wimm.banking.v1.BankingService.CompleteConnection:input_type -> wimm.banking.v1.CompleteConnectionRequest
+	22,  // 105: wimm.banking.v1.BankingService.ListConnectionAccounts:input_type -> wimm.banking.v1.ListConnectionAccountsRequest
+	25,  // 106: wimm.banking.v1.BankingService.SetAccountOwners:input_type -> wimm.banking.v1.SetAccountOwnersRequest
+	27,  // 107: wimm.banking.v1.BankingService.SetAccountLevel:input_type -> wimm.banking.v1.SetAccountLevelRequest
+	31,  // 108: wimm.banking.v1.BankingService.SetAccountLeftOut:input_type -> wimm.banking.v1.SetAccountLeftOutRequest
+	29,  // 109: wimm.banking.v1.BankingService.SetAccountName:input_type -> wimm.banking.v1.SetAccountNameRequest
+	33,  // 110: wimm.banking.v1.BankingService.ListAccounts:input_type -> wimm.banking.v1.ListAccountsRequest
+	35,  // 111: wimm.banking.v1.BankingService.RefreshBalances:input_type -> wimm.banking.v1.RefreshBalancesRequest
+	37,  // 112: wimm.banking.v1.BankingService.RestoreConnection:input_type -> wimm.banking.v1.RestoreConnectionRequest
+	39,  // 113: wimm.banking.v1.BankingService.DisconnectBank:input_type -> wimm.banking.v1.DisconnectBankRequest
+	44,  // 114: wimm.banking.v1.BankingService.ListTransactions:input_type -> wimm.banking.v1.ListTransactionsRequest
+	45,  // 115: wimm.banking.v1.BankingService.RefreshTransactions:input_type -> wimm.banking.v1.RefreshTransactionsRequest
+	50,  // 116: wimm.banking.v1.BankingService.GetBalanceTrend:input_type -> wimm.banking.v1.GetBalanceTrendRequest
+	55,  // 117: wimm.banking.v1.BankingService.GetMonthSummary:input_type -> wimm.banking.v1.GetMonthSummaryRequest
+	58,  // 118: wimm.banking.v1.BankingService.GetMonthHistory:input_type -> wimm.banking.v1.GetMonthHistoryRequest
+	17,  // 119: wimm.banking.v1.BankingService.ListBanks:output_type -> wimm.banking.v1.ListBanksResponse
+	19,  // 120: wimm.banking.v1.BankingService.BeginConnection:output_type -> wimm.banking.v1.BeginConnectionResponse
+	21,  // 121: wimm.banking.v1.BankingService.CompleteConnection:output_type -> wimm.banking.v1.CompleteConnectionResponse
+	23,  // 122: wimm.banking.v1.BankingService.ListConnectionAccounts:output_type -> wimm.banking.v1.ListConnectionAccountsResponse
+	26,  // 123: wimm.banking.v1.BankingService.SetAccountOwners:output_type -> wimm.banking.v1.SetAccountOwnersResponse
+	28,  // 124: wimm.banking.v1.BankingService.SetAccountLevel:output_type -> wimm.banking.v1.SetAccountLevelResponse
+	32,  // 125: wimm.banking.v1.BankingService.SetAccountLeftOut:output_type -> wimm.banking.v1.SetAccountLeftOutResponse
+	30,  // 126: wimm.banking.v1.BankingService.SetAccountName:output_type -> wimm.banking.v1.SetAccountNameResponse
+	34,  // 127: wimm.banking.v1.BankingService.ListAccounts:output_type -> wimm.banking.v1.ListAccountsResponse
+	36,  // 128: wimm.banking.v1.BankingService.RefreshBalances:output_type -> wimm.banking.v1.RefreshBalancesResponse
+	38,  // 129: wimm.banking.v1.BankingService.RestoreConnection:output_type -> wimm.banking.v1.RestoreConnectionResponse
+	40,  // 130: wimm.banking.v1.BankingService.DisconnectBank:output_type -> wimm.banking.v1.DisconnectBankResponse
+	46,  // 131: wimm.banking.v1.BankingService.ListTransactions:output_type -> wimm.banking.v1.ListTransactionsResponse
+	47,  // 132: wimm.banking.v1.BankingService.RefreshTransactions:output_type -> wimm.banking.v1.RefreshTransactionsResponse
+	51,  // 133: wimm.banking.v1.BankingService.GetBalanceTrend:output_type -> wimm.banking.v1.GetBalanceTrendResponse
+	56,  // 134: wimm.banking.v1.BankingService.GetMonthSummary:output_type -> wimm.banking.v1.GetMonthSummaryResponse
+	59,  // 135: wimm.banking.v1.BankingService.GetMonthHistory:output_type -> wimm.banking.v1.GetMonthHistoryResponse
+	119, // [119:136] is the sub-list for method output_type
+	102, // [102:119] is the sub-list for method input_type
+	102, // [102:102] is the sub-list for extension type_name
+	102, // [102:102] is the sub-list for extension extendee
+	0,   // [0:102] is the sub-list for field type_name
 }
 
 func init() { file_wimm_banking_v1_banking_proto_init() }
@@ -3970,8 +4949,8 @@ func file_wimm_banking_v1_banking_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_wimm_banking_v1_banking_proto_rawDesc), len(file_wimm_banking_v1_banking_proto_rawDesc)),
-			NumEnums:      6,
-			NumMessages:   50,
+			NumEnums:      8,
+			NumMessages:   59,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

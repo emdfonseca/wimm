@@ -39,6 +39,15 @@
 		/** Overview's lists have no settled marker, so the description takes
 		 *  the width the marker's slot would hold. */
 		hideStatus?: boolean;
+		/** The one payment rule marked it: `Unusual`, or `Unusual income` when
+		 *  the row is not `negative`. Sits in the status slot, which a booked row
+		 *  never otherwise uses. */
+		unusual?: boolean;
+		/** A second line under the name, in the bank's line's place and never
+		 *  beside one: `usually about €60`. */
+		note?: string;
+		/** Makes the whole row one link. */
+		href?: string;
 	}
 
 	let {
@@ -52,14 +61,25 @@
 		compact = false,
 		banksLine,
 		hideDate = false,
-		hideStatus = false
+		hideStatus = false,
+		unusual = false,
+		note,
+		href
 	}: Props = $props();
 
 	const mark = $derived(initials ?? (description.slice(0, 2).toUpperCase() || '—'));
-	const line = $derived(banksLine && banksLine !== description ? banksLine : undefined);
+	const line = $derived(note ?? (banksLine && banksLine !== description ? banksLine : undefined));
+	const unusualLabel = $derived(negative ? 'Unusual' : 'Unusual income');
 </script>
 
-<div class="ledger-row" class:compact class:with-line={compact && !!line}>
+<svelte:element
+	this={href ? 'a' : 'div'}
+	class="ledger-row"
+	class:compact
+	class:with-line={compact && !!line}
+	class:link={!!href}
+	{href}
+>
 	<span class="mark" aria-hidden="true">{mark}</span>
 
 	{#if compact}
@@ -71,9 +91,11 @@
 			<span class="line meta">
 				<span class="account">{account}</span>
 				<span aria-hidden="true">·</span>
-				<span>{date}</span>
+				<span class="when">{date}</span>
 				{#if unsettled}
 					<span class="badge">Not settled</span>
+				{:else if unusual}
+					<span class="tag">{unusualLabel}</span>
 				{/if}
 			</span>
 			{#if line}
@@ -92,6 +114,8 @@
 			<span class="status">
 				{#if unsettled}
 					<span class="badge">Not settled</span>
+				{:else if unusual}
+					<span class="tag">{unusualLabel}</span>
 				{/if}
 			</span>
 		{/if}
@@ -100,7 +124,7 @@
 		{/if}
 		<span class="amount" class:negative>{amount}</span>
 	{/if}
-</div>
+</svelte:element>
 
 <style>
 	.ledger-row {
@@ -111,6 +135,20 @@
 		block-size: var(--density-row-height);
 		padding-inline: var(--density-cell-padding-x);
 		background: var(--color-bg-elevated);
+	}
+
+	.link {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.link:hover {
+		background: var(--color-bg-hover);
+	}
+
+	.link:focus-visible {
+		outline: var(--focus-ring-width) solid var(--color-focus-ring);
+		outline-offset: calc(-1 * var(--focus-ring-width));
 	}
 
 	.compact {
@@ -199,13 +237,14 @@
 		display: inline-flex;
 		align-items: center;
 		flex: 0 0 auto;
-		inline-size: 92px;
+		min-inline-size: 92px;
 		block-size: 22px;
 	}
 
 	.date {
 		flex: 0 0 auto;
-		inline-size: 72px;
+		min-inline-size: 72px;
+		white-space: nowrap;
 		text-align: end;
 		color: var(--color-text-secondary);
 		font-family: var(--type-family-mono);
@@ -232,6 +271,18 @@
 		border-radius: var(--radius-pill);
 		background: var(--color-feedback-warning-bg);
 		color: var(--color-feedback-warning);
+		font-family: var(--type-family-body);
+		font-size: 11px;
+		font-weight: 500;
+		white-space: nowrap;
+	}
+
+	.tag {
+		flex: 0 0 auto;
+		padding: 2px 8px;
+		border: 1px solid var(--color-border-default);
+		border-radius: var(--radius-pill);
+		color: var(--color-text-secondary);
 		font-family: var(--type-family-body);
 		font-size: 11px;
 		font-weight: 500;
@@ -270,5 +321,10 @@
 
 	.compact .amount {
 		inline-size: 96px;
+	}
+
+	.when {
+		flex: 0 0 auto;
+		white-space: nowrap;
 	}
 </style>

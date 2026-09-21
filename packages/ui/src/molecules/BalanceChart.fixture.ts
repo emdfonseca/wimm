@@ -1,4 +1,4 @@
-import type { BalancePoint } from './BalanceChart.svelte';
+import type { BalanceMover, BalancePoint } from './BalanceChart.svelte';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -19,6 +19,50 @@ const anchors: [string, number][] = [
 
 const DAY = 86_400_000;
 
+const mover = (name: string, amount: string, extra: Partial<BalanceMover> = {}): BalanceMover => ({
+	name,
+	amount,
+	negative: amount.startsWith('−'),
+	...extra
+});
+
+/** What the stories point at, written out as the load would write it. */
+const days: Record<string, Partial<BalancePoint>> = {
+	'22 Jun': { change: undefined, empty: true },
+	'3 Aug': {
+		change: '€805.79 less than 2 Aug',
+		movers: [mover('Leroy Merlin', '−€640.00', { unusual: true }), mover('Galp', '−€92.10')],
+		smaller: 'and 3 smaller',
+		empty: false
+	},
+	'9 Aug': { amount: '€9,064.33', change: 'No change from 8 Aug', empty: true },
+	'10 Sep': {
+		change: '€214.60 less than 9 Sep',
+		movers: [
+			mover('Pingo Doce', '−€92.40'),
+			mover('Farmácia Central', '−€41.20'),
+			mover('Galp', '−€38.00'),
+			mover('Zara', '−€27.50'),
+			mover('Uber', '−€15.50')
+		],
+		smaller: 'and 7 smaller',
+		empty: false
+	},
+	'15 Sep': {
+		amount: '€11,748.72',
+		change: '€2,437.01 more than 14 Sep',
+		movers: [mover('Salary', '+€2,450.00')],
+		smaller: 'and 1 smaller',
+		empty: false
+	},
+	'28 Aug': {
+		amount: '€12,640.18',
+		change: '€9,804.00 more than 27 Aug',
+		movers: [mover('Employer Lda', '+€9,804.00', { unusual: true })],
+		empty: false
+	}
+};
+
 export const balancePoints: BalancePoint[] = (() => {
 	const points: BalancePoint[] = [];
 	for (let a = 0; a < anchors.length - 1; a++) {
@@ -36,7 +80,16 @@ export const balancePoints: BalancePoint[] = (() => {
 			});
 		}
 	}
-	return points;
+	return points.map((point, i) => {
+		const before = points[i - 1];
+		const gap = before ? Math.round((point.value - before.value) * 100) / 100 : 0;
+		const change = !before
+			? undefined
+			: gap === 0
+				? `No change from ${before.date}`
+				: `${euro(Math.abs(gap))} ${gap < 0 ? 'less' : 'more'} than ${before.date}`;
+		return { ...point, change, empty: true, ...days[point.date] };
+	});
 })();
 
 export const balanceSummary =

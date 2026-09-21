@@ -1,5 +1,10 @@
 <script lang="ts" module>
 	import type { BalancePoint } from '../molecules/BalanceChart.svelte';
+	import type {
+		MonthFigure as RowFigure,
+		MonthPayment,
+		MonthRiser
+	} from '../molecules/MonthDetail.svelte';
 
 	/**
 	 * J12 · Overview. Where a member lands after signing in: the two figures
@@ -72,6 +77,98 @@
 		negative?: boolean;
 	}
 
+	export type ScopeValue = 'household' | 'own' | 'all';
+
+	/** Which owned accounts everything drawn from transactions counts. Absent
+	 *  when the member has nothing to choose between. */
+	export interface ScopeState {
+		/** Only the choices on offer, in the order shown. */
+		choices: ScopeValue[];
+		value: ScopeValue;
+		/** Said under the control where Household counts fewer accounts than
+		 *  the household money figure does. */
+		note?: string;
+	}
+
+	/** One calendar month of Month by month. */
+	export interface HistoryMonth {
+		key: string;
+		/** `March 2026`. */
+		label: string;
+		/** `Mar`. Under its bar. */
+		short: string;
+		/** `So far`, `Held from 12 Apr`. Absent for a full month. */
+		state?: string;
+		/** Already formatted, carrying its sign. */
+		net: string;
+		/** What the bar is drawn from. */
+		value: number;
+		/** The net without unusual payments, and its bar; set only when the
+		 *  month held one. */
+		netUsual?: string;
+		valueUsual?: number;
+		/** `2 unusual · +€379.70 without them`. Absent when none. */
+		unusualLine?: string;
+		/** So far, or held from part way through. */
+		partial?: boolean;
+		span?: string;
+		figures?: RowFigure[];
+		risers?: MonthRiser[];
+		nothingRose?: string;
+		note?: string;
+		/** Unusual payments, newest first. */
+		payments?: MonthPayment[];
+	}
+
+	/** What one reading of the months says: all payments, or without the
+	 *  unusual ones. */
+	export interface HistoryView {
+		/** `+€189.40`. Absent under three full months. */
+		typical?: string;
+		/** The typical month in the bars' unit. */
+		typicalValue?: number;
+		average?: string;
+		/** `In a typical month €189.40 more comes in than goes out.` */
+		sentence?: string;
+		/** The chart in words. */
+		summary: string;
+		high: string;
+		low: string;
+	}
+
+	export interface HistorySection {
+		/** `September 2025 to September 2026`. */
+		span: string;
+		/** Newest first. */
+		months: HistoryMonth[];
+		/** `From 12 full months. The typical month is …` */
+		basis?: string;
+		/** Said in the tiles' place under three full months. */
+		waiting?: string;
+		/** One line per account missing from some full month: `Months before
+		 *  19 Sep do not include CLASSIC CEMG.` */
+		late?: string[];
+		all: HistoryView;
+		/** Absent when no month held an unusual payment: no view control. */
+		usual?: HistoryView;
+		/** `3 unusual payments are set aside. They are still listed in their
+		 *  months.` */
+		setAside?: string;
+		/** The key of the month open as the screen loads. */
+		open?: string;
+	}
+
+	export interface RecurringEntry {
+		id: string;
+		name: string;
+		/** `Monthly · Current account · Monzo`. */
+		cadence: string;
+		/** `Expected 6 Oct`, `Was expected 18 Sep`. */
+		date: string;
+		/** Already formatted, carrying its sign. */
+		amount: string;
+	}
+
 	/** Everything Overview shows for one currency. A currency is never
 	 *  combined with another. */
 	export interface CurrencySection {
@@ -88,6 +185,16 @@
 		/** `1 to 20 Sep`. */
 		merchantsSpan?: string;
 		largestPayments?: RecentTransaction[];
+		/** Absent where no full month is held. */
+		history?: HistorySection;
+		/** Said in Month by month's place where the scope's accounts hold no full
+		 *  month. Set only while a scope control is on offer. */
+		historyEmpty?: string;
+		/** Soonest first. Absent where nothing recurs. */
+		recurring?: RecurringEntry[];
+		/** Said in Recurring payments' place where the scope's accounts hold
+		 *  none. Set only while a scope control is on offer. */
+		recurringEmpty?: string;
 	}
 
 	export interface AccountEntry {
@@ -122,6 +229,10 @@
 	import EmptyState from '../molecules/EmptyState.svelte';
 	import LedgerRow from '../molecules/LedgerRow.svelte';
 	import MetricTile from '../molecules/MetricTile.svelte';
+	import MonthlyNetChart from '../molecules/MonthlyNetChart.svelte';
+	import MonthDetail from '../molecules/MonthDetail.svelte';
+	import MonthTable from '../molecules/MonthTable.svelte';
+	import SegmentedControl from '../atoms/SegmentedControl.svelte';
 	import Page from '../templates/Page.svelte';
 
 	interface Props {
@@ -139,6 +250,9 @@
 		/** Absent, not empty, where the member owns nothing or none of what
 		 *  they own has a transaction read yet. */
 		recentTransactions?: RecentTransaction[];
+		/** Absent where the member has nothing to choose between. */
+		scope?: ScopeState;
+		onscope?: (value: ScopeValue) => void;
 		ongotoaccounts?: () => void;
 		onseeall?: () => void;
 	}
@@ -149,6 +263,8 @@
 		accounts = {},
 		ownsNothing = false,
 		recentTransactions = [],
+		scope,
+		onscope,
 		ongotoaccounts,
 		onseeall
 	}: Props = $props();
@@ -177,6 +293,57 @@
 			{ key: 'shared', title: 'Shared with you', rows: accounts.shared ?? [] }
 		].filter((group) => group.rows.length > 0)
 	);
+
+	const transferNote = 'Money moved between your own accounts is counted.';
+
+	const scopeLabels: Record<ScopeValue, string> = {
+		household: 'Household',
+		own: 'Yours',
+		all: 'All'
+	};
+
+	/** Component state, gone on reload by design: the default reading is the
+	 *  true one. */
+	let views: Record<string, 'all' | 'usual'> = $state({});
+	let picked: Record<string, string | null> = $state({});
+	const uid = $props.id();
+
+	/** One selection per currency, shared by the chart's marker, the table and
+	 *  the detail panel. */
+	const selectedKey = (section: CurrencySection) =>
+		section.currency in picked ? picked[section.currency] : (section.history?.open ?? null);
+
+	const selectedMonth = (section: CurrencySection) =>
+		section.history?.months.find((m) => m.key === selectedKey(section));
+
+	const figureOf = (month: HistoryMonth, label: string) =>
+		month.figures?.find((f) => f.label === label)?.value;
+
+	const markOf = (section: CurrencySection) => {
+		const oldestFirst = [...(section.history?.months ?? [])].reverse();
+		const at = oldestFirst.findIndex((m) => m.key === selectedKey(section));
+		return at < 0 ? null : at;
+	};
+
+	const viewOf = (section: CurrencySection) => views[section.currency] ?? 'all';
+
+	const chartMonths = (section: CurrencySection) => {
+		const usual = viewOf(section) === 'usual';
+		return [...(section.history?.months ?? [])].reverse().map((m) => ({
+			label: m.label,
+			short: m.short,
+			value: usual ? (m.valueUsual ?? m.value) : m.value,
+			net: usual ? (m.netUsual ?? m.net) : m.net,
+			partial: m.partial
+		}));
+	};
+
+	function point(section: CurrencySection, index: number | null) {
+		if (index === null) return;
+		const oldestFirst = [...(section.history?.months ?? [])].reverse();
+		const month = oldestFirst[index];
+		if (month) picked[section.currency] = month.key;
+	}
 
 	const withMerchants = $derived(currencies.filter((c) => (c.merchants?.length ?? 0) > 0));
 	const withLargest = $derived(currencies.filter((c) => (c.largestPayments?.length ?? 0) > 0));
@@ -223,6 +390,188 @@
 	</div>
 {/snippet}
 
+{#snippet insights(section: CurrencySection)}
+	{@const history = section.history}
+	{#if history}
+		{@const view = viewOf(section)}
+		{@const shown = view === 'usual' && history.usual ? history.usual : history.all}
+		{@const detail = selectedMonth(section)}
+		{@const detailId = `${uid}-${section.currency}`}
+		<section class="history" aria-label={`Months${suffix(section.currency)}`}>
+			{#if shown.typical}
+				<div class="tile-row typical">
+					<MetricTile label="Typical month" value={shown.typical} />
+					<MetricTile label="Average month" value={shown.average ?? ''} />
+				</div>
+				{#if shown.sentence}<p class="note">{shown.sentence}</p>{/if}
+				{#if history.basis}<p class="note">{history.basis}</p>{/if}
+			{:else if history.waiting}
+				<p class="note">{history.waiting}</p>
+			{/if}
+			{#each history.late ?? [] as line (line)}
+				<p class="note">{line}</p>
+			{/each}
+
+			{#if history.usual}
+				<div class="view">
+					<SegmentedControl
+						label="Payments counted"
+						options={[
+							{ value: 'all', label: 'All payments' },
+							{ value: 'usual', label: 'Without unusual payments' }
+						]}
+						value={view}
+						onchange={(value) => (views[section.currency] = value as 'all' | 'usual')}
+					/>
+					{#if view === 'usual' && history.setAside}
+						<p class="note">{history.setAside}</p>
+					{/if}
+				</div>
+			{/if}
+
+			<MonthlyNetChart
+				title={`Month by month${suffix(section.currency)}`}
+				span={history.span}
+				months={chartMonths(section)}
+				typical={shown.typicalValue}
+				high={shown.high}
+				low={shown.low}
+				summary={shown.summary}
+				bind:marked={() => markOf(section), (index) => point(section, index)}
+			/>
+
+			<div class="month-layout">
+				<MonthTable
+					label={`Months${suffix(section.currency)}`}
+					rows={history.months.map((month) => ({
+						key: month.key,
+						label: month.label,
+						state: month.state,
+						moneyIn: figureOf(month, 'Money in'),
+						moneyOut: figureOf(month, 'Money out'),
+						net: view === 'usual' ? (month.netUsual ?? month.net) : month.net,
+						unusualLine: month.unusualLine
+					}))}
+					controls={detail ? detailId : undefined}
+					{compact}
+					bind:selected={() => selectedKey(section) ?? null, (key) => (picked[section.currency] = key)}
+				/>
+				{#if detail}
+					<MonthDetail
+						id={detailId}
+						month={detail.label}
+						span={detail.span}
+						figures={detail.figures}
+						risers={detail.risers}
+						nothingRose={detail.nothingRose}
+						note={detail.note}
+						payments={detail.payments}
+						{compact}
+					/>
+				{/if}
+			</div>
+			<p class="note">{transferNote}</p>
+		</section>
+	{:else if section.historyEmpty}
+		<section class="card" aria-label={`Months${suffix(section.currency)}`}>
+			<header class="card-header">
+				<h2 class="card-title">Month by month{suffix(section.currency)}</h2>
+			</header>
+			<p class="note">{section.historyEmpty}</p>
+		</section>
+	{/if}
+
+	{#if (section.recurring?.length ?? 0) === 0 && section.recurringEmpty}
+		<section class="card" aria-label={`Recurring payments${suffix(section.currency)}`}>
+			<header class="card-header">
+				<h2 class="card-title">Recurring payments{suffix(section.currency)}</h2>
+			</header>
+			<p class="note">{section.recurringEmpty}</p>
+		</section>
+	{/if}
+
+	{#if (section.recurring?.length ?? 0) > 0}
+		<section class="card" aria-label={`Recurring payments${suffix(section.currency)}`}>
+			<header class="card-header">
+				<h2 class="card-title">Recurring payments{suffix(section.currency)}</h2>
+			</header>
+			<div class="rows">
+				{#each section.recurring ?? [] as entry (entry.id)}
+					<LedgerRow
+						description={entry.name}
+						account={entry.cadence}
+						date={entry.date}
+						amount={entry.amount}
+						negative={entry.amount.startsWith('−')}
+						hideStatus
+						{compact}
+					/>
+				{/each}
+			</div>
+		</section>
+	{/if}
+{/snippet}
+
+{#snippet merchantsBlock()}
+	{#if withMerchants.length > 0}
+		<div class="stack merchants">
+			{#each withMerchants as section (section.currency)}
+				<section class="card" aria-label={`Top merchants${suffix(section.currency)}`}>
+					<header class="card-header">
+						<h2 class="card-title">Top merchants{suffix(section.currency)}</h2>
+						<span class="spacer"></span>
+						{#if section.merchantsSpan}
+							<span class="card-span">{section.merchantsSpan}</span>
+						{/if}
+					</header>
+					<div class="meters">
+						{#each section.merchants ?? [] as merchant (merchant.name)}
+							<BudgetMeter
+								label={merchant.name}
+								value={merchant.value}
+								proportion={merchant.proportion}
+							/>
+						{/each}
+					</div>
+				</section>
+			{/each}
+		</div>
+	{/if}
+{/snippet}
+
+{#snippet accountsBlock()}
+	{#if groups.length > 0}
+		<section class="card accounts" aria-label="Accounts">
+			<header class="card-header">
+				<h2 class="card-title">Accounts</h2>
+				<span class="spacer"></span>
+				{#if !ownsNothing}
+					<Button variant="secondary" onclick={ongotoaccounts}>Manage accounts</Button>
+				{/if}
+			</header>
+			{#each groups as group (group.key)}
+				<div class="group" role="group" aria-labelledby="group-{group.key}">
+					<h3 class="group-heading" id="group-{group.key}">{group.title}</h3>
+					<div class="rows inset">
+						{#each group.rows as account (account.id)}
+							<AccountRow
+								name={account.name}
+								bank={account.bank}
+								balance={account.balance}
+								readAt={account.readAt}
+								negative={account.negative}
+								stale={account.stale}
+								notUpdating={account.notUpdating}
+								href={account.href ?? '/accounts'}
+							/>
+						{/each}
+					</div>
+				</div>
+			{/each}
+		</section>
+	{/if}
+{/snippet}
+
 <Page title="Overview">
 	<div class="screen" class:compact>
 		{#if !hasAccounts}
@@ -244,6 +593,20 @@
 						<p class="note">Shown per currency. wimm does not convert between them.</p>
 					{/if}
 
+					{#if index === 0 && scope && scope.choices.length > 0}
+						<div class="scope">
+							<SegmentedControl
+								label="Accounts counted"
+								options={scope.choices.map((value) => ({ value, label: scopeLabels[value] }))}
+								value={scope.value}
+								onchange={(value) => onscope?.(value as ScopeValue)}
+							/>
+							{#if scope.note}
+								<p class="note">{scope.note}</p>
+							{/if}
+						</div>
+					{/if}
+
 					{#if section.month}
 						<div class="tile-row month" class:compared={!!section.month.moneyIn.change}>
 							{@render monthTile('Money in', section.month.moneyIn, section)}
@@ -251,7 +614,8 @@
 							{@render monthTile('Net', section.month.net, section)}
 						</div>
 						<p class="note">
-							{section.month.note} Money moved between your own accounts is counted.
+							{section.month.note}
+							{transferNote}
 						</p>
 					{/if}
 
@@ -268,64 +632,23 @@
 							marked={section.chart.marked ?? null}
 						/>
 					{/if}
+
+					{#if !compact}
+						{@render insights(section)}
+					{/if}
 				</section>
 			{/each}
 
 			<div class="pair">
-				{#if withMerchants.length > 0}
-					<div class="stack merchants">
-						{#each withMerchants as section (section.currency)}
-							<section class="card" aria-label={`Top merchants${suffix(section.currency)}`}>
-								<header class="card-header">
-									<h2 class="card-title">Top merchants{suffix(section.currency)}</h2>
-									<span class="spacer"></span>
-									{#if section.merchantsSpan}
-										<span class="card-span">{section.merchantsSpan}</span>
-									{/if}
-								</header>
-								<div class="meters">
-									{#each section.merchants ?? [] as merchant (merchant.name)}
-										<BudgetMeter
-											label={merchant.name}
-											value={merchant.value}
-											proportion={merchant.proportion}
-										/>
-									{/each}
-								</div>
-							</section>
-						{/each}
-					</div>
-				{/if}
-
-				{#if groups.length > 0}
-					<section class="card accounts" aria-label="Accounts">
-						<header class="card-header">
-							<h2 class="card-title">Accounts</h2>
-							<span class="spacer"></span>
-							{#if !ownsNothing}
-								<Button variant="secondary" onclick={ongotoaccounts}>Manage accounts</Button>
-							{/if}
-						</header>
-						{#each groups as group (group.key)}
-							<div class="group" role="group" aria-labelledby="group-{group.key}">
-								<h3 class="group-heading" id="group-{group.key}">{group.title}</h3>
-								<div class="rows inset">
-									{#each group.rows as account (account.id)}
-										<AccountRow
-											name={account.name}
-											bank={account.bank}
-											balance={account.balance}
-											readAt={account.readAt}
-											negative={account.negative}
-											stale={account.stale}
-											notUpdating={account.notUpdating}
-											href={account.href ?? '/accounts'}
-										/>
-									{/each}
-								</div>
-							</div>
-						{/each}
-					</section>
+				{#if compact}
+					{@render accountsBlock()}
+					{#each currencies as section (section.currency)}
+						{@render insights(section)}
+					{/each}
+					{@render merchantsBlock()}
+				{:else}
+					{@render merchantsBlock()}
+					{@render accountsBlock()}
 				{/if}
 			</div>
 
@@ -412,6 +735,37 @@
 		block-size: auto;
 	}
 
+	.scope,
+	.view,
+	.history {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.scope :global(.segmented),
+	.view :global(.segmented) {
+		align-self: flex-start;
+	}
+
+	.typical {
+		block-size: 82px;
+	}
+
+	.compact .typical {
+		flex-direction: column;
+		block-size: auto;
+	}
+
+	/* The table and the detail it names stack until there is room to stand
+	   them side by side. */
+	.month-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 16px;
+		align-items: start;
+	}
+
 	.note {
 		margin: 0;
 		color: var(--color-text-secondary);
@@ -437,6 +791,10 @@
 	}
 
 	@media (min-width: 1200px) {
+		.month-layout {
+			grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+		}
+
 		.pair {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			/* Half the column is too narrow for a ledger row's account column. */
