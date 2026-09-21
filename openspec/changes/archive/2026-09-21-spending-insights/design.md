@@ -402,8 +402,9 @@ none: it applies ADR 0021 and ADR 0024 and decides nothing new.
 - [Household scope is narrower than household money for a member who holds
   details on an account they do not own] → Named on screen, account by
   account.
-- [Thirteen rows are long at Compact] → Rows are two short lines and the
-  detail panel stacks below the table; the look decides the rest.
+- [Thirteen rows are long at Compact] → Rows are two short lines, and below
+  1200 px the detail panel stacks above the table, under the chart that
+  selects it, so choosing a month never changes something thirteen rows away.
 
 ## Open Questions
 

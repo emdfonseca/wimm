@@ -249,7 +249,7 @@ Every state here stands alone. `connect-a-bank` still opens on
   `/` is All, `/?scope=household` and `/?scope=yours` are the others.
 - Without unusual payments is inline and ephemeral: component state, gone on
   reload.
-- A month is selected in a table beside or above one detail panel: inline,
+- A month is selected in a table beside or below one detail panel: inline,
   non-modal, ephemeral. One is selected at a time, and pointing at a bar
   selects its row.
 - The chart's popover is inline, non-modal and ephemeral. It is not a dialog:
@@ -460,13 +460,56 @@ only, `Not settled` on the transfer.
   Amazon, Zara, while Zara's `not usually paid` €120.00 is the largest rise;
   Words lists them in that order, so the fixture was not changed.
 
-`AYoungAccountBesideOlderOnes` has not been looked at on the canvas yet; only its play function has run.
+**Months as a table with one detail panel.** Looked at on 21 September 2026 as
+the canvas's own artboards, the story frame at 390, 834, 1440 and 1920 wide.
+The canvas page itself draws nothing in a background tab and the browser
+extension could not capture a page holding frames, so `MonthTable` was seen
+through the extension at all four regimes and everything else below was
+captured with the repository's Playwright at the four artboard sizes and read
+from those captures.
 
-**Months as a table with one detail panel (not looked at).** `MonthTable`
-(`Row`, `RowWithUnusual`, `Selected`, `SoFar`, `HeldFrom`, `Choosing`),
-`MonthDetail` (`Detail`, `DetailWithUnusual`, `DetailWithUnusualIncome`,
-`DetailSoFar`) and the Overview stories that select a month have not been seen
-on the canvas at any regime: the browser extension was not connected, so only
-their play functions have run. Still to settle by looking: whether the detail
-sits beside the table from 1200 px as written or below it, the table's column
-widths at Medium, and how thirteen rows and the panel read at Compact.
+- `MonthTable`: `Row`, `RowWithUnusual`, `Selected`, `SoFar`, `HeldFrom`,
+  `Choosing` at all four regimes. One fixture under all six: `So far` and
+  `Held from 12 Apr` sit beside the month, the unusual line under it, August
+  tinted as the selection. Compact shows month and net only; Medium, Wide and
+  Ultra add In and Out as right-aligned mono columns, which read evenly at
+  Medium. Alone at Wide and Ultra the figures stand far from the name, which
+  Overview never shows because the table takes three fifths of the row there.
+- `MonthDetail`: `Detail`, `DetailWithUnusual`, `DetailWithUnusualIncome`,
+  `DetailSoFar` at all four regimes. Figures in a row, `Without unusual
+  payments` wrapping under them at Compact; meters; `first payment to Auto
+  Reparadora` and `usually about €60` under their names from Medium up.
+- Overview, at all four regimes: `Populated`, `AMonthWithUnusualPaymentsOpened`,
+  `AMonthWithUnusualIncomeOpened`, `AMonthWithNoneOpened`,
+  `TheMonthSoFarOpened`, `WithoutUnusualPayments`,
+  `AYoungAccountBesideOlderOnes`, `HouseholdScopeWithNoHistory`,
+  `HouseholdScopeWithNothingToSetAside`, `ReadingMonthsByPointing`,
+  `TwoFullMonths`, `LedgerBeginsPartWayThrough`, `TwoCurrencies`. The chart's
+  marker, the tinted row and the detail's heading name the same month in every
+  one. `AYoungAccountBesideOlderOnes` reads `Months before 19 Sep do not include
+  CLASSIC CEMG.` under the typical sentence. `HouseholdScopeWithNothingToSetAside`
+  reads `No unusual payments to set aside.` under the view control.
+
+**Changed by this look.**
+
+- The detail now comes before the table, in the markup and on screen. Stacked,
+  at Compact and Medium, it had sat under all thirteen rows, some 830 px below
+  the row that chose it; it now stays under the chart that selects it.
+- Settled: from 1200 px the table stands left at three fifths and the detail
+  right at two fifths. The detail is set sticky; a still capture cannot show
+  that, so it is not seen.
+  Below 1200 px they stack, detail first.
+- Beside the table the detail is too narrow for a full ledger row: the account
+  was cut to `Current ac…` and the note to `first payment to Auto Re…` at Wide
+  and Ultra. There its unusual payments take the stacked row form Compact uses.
+- `HouseholdScopeWithNoHistory`: `No full month is held for these accounts yet.`
+  and `No recurring payments in these accounts.` sat flush against the card's
+  edge; a card holding only a sentence now gives it the card's 16 px inset.
+- `TwoFullMonths` selected no month, which the load never produces; it now
+  opens on August like the rest, with figures and no risers.
+- Compact keeps all thirteen rows at 64 high, about 830 px, below the detail.
+
+**Left as it is.** `MonthDetail`'s own stories are drawn with `compact` off, so
+at the Compact regime their unusual payment rows clip, as `LedgerRow`'s do.
+Overview passes `compact` and reads correctly. At Wide and Ultra the detail is
+shorter than the table and leaves the rest of its column empty.

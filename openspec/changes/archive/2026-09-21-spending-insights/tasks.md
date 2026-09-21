@@ -221,6 +221,6 @@
       Overview, stories with play functions asserting `aria-pressed`, the
       selection shared with the chart, and the words of each month. Verify:
       `just check packages/ui apps/storybook`.
-- [ ] 7d.3 Look at the changed stories on the design canvas at Compact, Medium,
+- [x] 7d.3 Look at the changed stories on the design canvas at Compact, Medium,
       Wide and Ultra and write what was seen. Verify: canvas.md Seen names every
       changed story at every regime.
