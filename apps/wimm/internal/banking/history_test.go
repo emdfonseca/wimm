@@ -464,7 +464,7 @@ func TestTransactionsMarksExactlyTheRowsTheMonthsCount(t *testing.T) {
 			t.Fatal(err)
 		}
 		for _, tx := range l.Page.Transactions {
-			if _, ok := l.Unusual[tx.ID]; ok {
+			if _, ok := l.Patterns.MarkFor(tx.ID); ok {
 				marked[tx.ID] = true
 			}
 		}

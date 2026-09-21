@@ -478,3 +478,83 @@ statement it came from.
 #### Scenario: The same name everywhere
 - **WHEN** a member sees a transaction on Overview and then on Transactions
 - **THEN** it carries the same name in both places
+
+### Requirement: An unusual payment is marked in the ledger
+**Story**: S4
+Transactions SHALL mark a booked transaction that `banking/payment-patterns`
+calls unusual with the word Unusual, or Unusual income where the money came in,
+by the same rule Overview uses, judged across
+every account the member owns. The mark SHALL be words, never colour alone. It
+changes nothing else about the row: its place, its amount and its name are as
+they would be without it. Transactions MUST NOT offer to hide unusual payments.
+
+A payment older than the months Overview shows SHALL carry no mark, because
+wimm does not judge what it has no surrounding months for.
+
+#### Scenario: Finding the repair in the ledger
+- **WHEN** a member pages to March, where a €1,650.00 garage bill was unusual
+- **THEN** that row carries the word Unusual, and the rows around it do not
+
+#### Scenario: A bonus in the ledger
+- **WHEN** a member pages to May, where a €9,804.00 bonus was unusual income
+- **THEN** that row carries the words Unusual income and a plus sign
+
+#### Scenario: Arriving from Overview
+- **WHEN** a member follows an unusual payment from a month on Overview
+- **THEN** they land on a page of Transactions with that payment on it, marked
+  Unusual
+
+#### Scenario: Overview and Transactions agree
+- **WHEN** Overview counts two unusual payments in March under All
+- **THEN** exactly those two rows are marked in March's transactions
+
+#### Scenario: A payment not yet settled
+- **WHEN** a large payment is still pending at the bank
+- **THEN** it is marked as not settled and not as unusual
+
+#### Scenario: Two years ago
+- **WHEN** a member pages back past the months Overview shows
+- **THEN** no row there is marked Unusual
+
+### Requirement: A transfer between own accounts is labelled in the ledger
+**Story**: S1
+Transactions SHALL label each of the two rows of a transfer between the
+member's own accounts, as `banking/own-transfers` defines, as between their
+accounts. The label SHALL be words and never colour alone, SHALL sit where a
+row's status is shown, and SHALL be worked out across every account the member
+owns, whatever scope Overview is reading in, so a row's label does not depend
+on a control on another screen. A row so labelled SHALL never also be labelled
+unusual.
+
+Nothing about being a transfer SHALL remove a row from the list, change its
+amount or its sign, or change how the list is ordered, paged or counted. A row
+not yet settled SHALL read as not settled and nothing else.
+
+#### Scenario: Both halves are labelled
+- **WHEN** a member who moved €500.00 from their current account to their
+  savings account reads Transactions
+- **THEN** the row leaving the current account and the row arriving in savings
+  both read as between their accounts
+
+#### Scenario: Reading one account
+- **WHEN** the member reads the savings account alone
+- **THEN** the arriving row still reads as between their accounts, though its
+  other half is not in the list
+
+#### Scenario: A large transfer
+- **WHEN** the transfer is far above anything the member usually pays
+- **THEN** its rows read as between their accounts and not as unusual
+
+#### Scenario: One that could not be paired
+- **WHEN** a member sent €1,000.00 to an account wimm does not hold
+- **THEN** the row carries no such label
+
+#### Scenario: The other owner of a joint account
+- **WHEN** a member reads a joint account into which their partner paid from an
+  account only the partner owns
+- **THEN** the arriving row carries no such label
+
+#### Scenario: The count does not change
+- **WHEN** a member's ledger holds forty transfers
+- **THEN** the list holds every row it held before, and says the same number of
+  transactions

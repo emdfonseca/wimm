@@ -70,6 +70,12 @@ type HistoryMonth struct {
 	// stated.
 	Risers  []MerchantRise
 	Unusual []UnusualPayment
+	// TransfersLeftOut is how many transfers between the member's own accounts
+	// this month's figures left out, and TransfersTotal what they came to as a
+	// positive amount. A pair is counted in the month its money left, so the
+	// months' counts add up to the number of pairs (ADR 0026).
+	TransfersLeftOut int
+	TransfersTotal   Money
 }
 
 // MerchantRise is a merchant that took more in a month than in its own middle
@@ -90,29 +96,66 @@ type UnusualPayment struct {
 	FirstPayment bool
 }
 
-// marksUnderAll judges the payments Transactions is about to show against every
-// account the member owns, whatever the Overview scope: a row's mark must not
-// depend on a control on another screen. Rows older than the months shown are
-// baseline only, so a page wholly older than them is not judged at all.
-func (s *Service) marksUnderAll(ctx context.Context, memberID string, newest time.Time) (map[string]UnusualMark, error) {
+// patternsUnderAll judges the payments Transactions is about to show against
+// every account the member owns, whatever the Overview scope: a row's mark must
+// not depend on a control on another screen. Rows older than the months shown
+// are baseline only, so a page wholly older than them is not judged at all.
+//
+// Under All every pair is inside the scope by construction, so no labelled row
+// is ever also marked unusual here.
+func (s *Service) patternsUnderAll(ctx context.Context, memberID string, oldest, newest time.Time) (Patterns, error) {
 	now, err := s.store.Now(ctx)
 	if err != nil {
-		return nil, err
+		return Patterns{}, err
 	}
 	today := utcDay(now.T)
-	firstShown := time.Date(today.Year(), today.Month(), 1, 0, 0, 0, 0, time.UTC).AddDate(0, -(historyMonths - 1), 0)
-	if newest.Before(firstShown) {
-		return nil, nil
-	}
+	current := time.Date(today.Year(), today.Month(), 1, 0, 0, 0, 0, time.UTC)
+	firstShown := current.AddDate(0, -(historyMonths - 1), 0)
+	lookbackFrom := current.AddDate(0, -(recurLookbackMonths - 1), 0)
+	to := today.AddDate(0, 0, 1)
+
 	scope, err := s.scopedAccounts(ctx, memberID, ScopeAll)
 	if err != nil {
-		return nil, err
+		return Patterns{}, err
+	}
+
+	// One read covering both the lookback the marks are judged over and the
+	// page itself, which may reach further back than the lookback does. A row
+	// whose partner is on screen beside it must be labelled, and the label
+	// does not depend on a month being shown.
+	from, until := lookbackFrom, to
+	if reach := oldest.AddDate(0, 0, -ownTransferWindowDays); reach.Before(from) {
+		from = reach
+	}
+	if reach := newest.AddDate(0, 0, ownTransferWindowDays); reach.After(until) {
+		until = reach
+	}
+	rows, err := s.store.OwnedBooked(ctx, memberID, scope.OwnedIDs(), from, until)
+	if err != nil {
+		return Patterns{}, err
+	}
+	out := Patterns{Transfers: OwnTransfers(rows, scope.Owned)}
+
+	if newest.Before(firstShown) {
+		// Nothing on this page is judged: it is wholly older than the months
+		// shown, so those rows are baseline and nothing else.
+		return out, nil
 	}
 	accounts, err := s.store.OwnedAccountsForTrend(ctx, memberID, scope.AccountIDs)
 	if err != nil {
-		return nil, err
+		return Patterns{}, err
 	}
-	return s.unusualMarks(ctx, memberID, scope.AccountIDs, accounts, now.T)
+	// Under All every pair is inside the scope, so the counted rows are the
+	// lookback's rows less every pair.
+	var lookback []store.Transaction
+	for _, r := range rows {
+		if !r.BookingDate.Before(lookbackFrom) && r.BookingDate.Before(to) {
+			lookback = append(lookback, r)
+		}
+	}
+	counted, _ := countedRows(lookback, out.Transfers, scope.AccountIDs)
+	out.Unusual = marksAcross(accounts, counted, current, firstShown)
+	return out, nil
 }
 
 // MonthHistory computes the months, the recurring payments and the unusual
@@ -145,11 +188,12 @@ func (s *Service) MonthHistory(ctx context.Context, memberID string, asked Scope
 	if err != nil {
 		return History{}, err
 	}
-	sums, err := s.store.OwnedMonthlySums(ctx, memberID, scope.AccountIDs, firstShown, to)
-	if err != nil {
-		return History{}, err
-	}
-	rows, err := s.store.OwnedBooked(ctx, memberID, scope.AccountIDs, lookbackFrom, to)
+	// Read every owned account rather than the scoped ones, because a pair is
+	// a fact about the member's rows and one half may sit outside the scope.
+	// The months are then summed in Go from the counted rows, so there is one
+	// source for a figure rather than a SQL sum that cannot see a partner
+	// (ADR 0026).
+	rows, err := s.store.OwnedBooked(ctx, memberID, scope.OwnedIDs(), lookbackFrom, to)
 	if err != nil {
 		return History{}, err
 	}
@@ -157,22 +201,18 @@ func (s *Service) MonthHistory(ctx context.Context, memberID string, asked Scope
 	if err != nil {
 		return History{}, err
 	}
+	counted, leftOut := countedRows(rows, OwnTransfers(rows, scope.Owned), scope.AccountIDs)
 
-	sumsBy := map[string]map[time.Time]store.MonthSum{}
-	for _, m := range sums {
-		if sumsBy[m.Currency] == nil {
-			sumsBy[m.Currency] = map[time.Time]store.MonthSum{}
-		}
-		sumsBy[m.Currency][m.Month] = m
-	}
 	rowsBy := map[string][]store.Transaction{}
-	for _, r := range rows {
+	for _, r := range counted {
 		rowsBy[r.Currency] = append(rowsBy[r.Currency], r)
 	}
+	leftOutBy := leftOutByMonth(rows, leftOut)
 	ledgersBy := ledgersOf(accounts)
 
 	for currency, ledgers := range ledgersBy {
-		c := buildCurrencyHistory(currency, ledgers, sumsBy[currency], rowsBy[currency], today, current, firstShown, out.Labels)
+		c := buildCurrencyHistory(currency, ledgers, monthSums(rowsBy[currency], firstShown, to),
+			rowsBy[currency], leftOutBy[currency], today, current, firstShown, out.Labels)
 		if len(c.Months) == 0 && len(c.Recurring) == 0 {
 			continue
 		}
@@ -217,14 +257,75 @@ func beginsOf(ledgers []ledger) []time.Time {
 	return out
 }
 
+// monthSums sums counted rows into months over [from, to). It replaces a SQL
+// sum, which cannot leave out a row whose partner it has not seen.
+func monthSums(counted []store.Transaction, from, to time.Time) map[time.Time]store.MonthSum {
+	out := map[time.Time]store.MonthSum{}
+	for _, r := range counted {
+		if r.BookingDate.Before(from) || !r.BookingDate.Before(to) {
+			continue
+		}
+		start := time.Date(r.BookingDate.Year(), r.BookingDate.Month(), 1, 0, 0, 0, 0, time.UTC)
+		m := out[start]
+		m.Currency, m.Month = r.Currency, start
+		if r.AmountMinor < 0 {
+			m.OutMinor += -r.AmountMinor
+		} else {
+			m.InMinor += r.AmountMinor
+		}
+		out[start] = m
+	}
+	return out
+}
+
+// monthLeftOut is how many transfers one month's figures left out, and what
+// they came to.
+type monthLeftOut struct {
+	Pairs int
+	Total int64
+}
+
+// leftOutByMonth files each left-out pair under the month its money left, so
+// the months' counts add up to the number of pairs even where a pair straddles
+// two of them.
+func leftOutByMonth(rows []store.Transaction, leftOut LeftOut) map[string]map[time.Time]monthLeftOut {
+	byID := make(map[string]store.Transaction, len(rows))
+	for _, r := range rows {
+		byID[r.ID] = r
+	}
+	out := map[string]map[time.Time]monthLeftOut{}
+	for _, id := range leftOut.OutRowIDs {
+		r, ok := byID[id]
+		if !ok {
+			continue
+		}
+		start := time.Date(r.BookingDate.Year(), r.BookingDate.Month(), 1, 0, 0, 0, 0, time.UTC)
+		if out[r.Currency] == nil {
+			out[r.Currency] = map[time.Time]monthLeftOut{}
+		}
+		m := out[r.Currency][start]
+		m.Pairs++
+		m.Total += -r.AmountMinor
+		out[r.Currency][start] = m
+	}
+	return out
+}
+
 func buildCurrencyHistory(
 	currency string, ledgers []ledger, sums map[time.Time]store.MonthSum,
-	rows []store.Transaction, today, current, firstShown time.Time,
+	rows []store.Transaction, leftOut map[time.Time]monthLeftOut,
+	today, current, firstShown time.Time,
 	labels map[string]store.AccountLabel,
 ) CurrencyHistory {
 	money := func(minor int64) Money { return Money{Minor: minor, Currency: currency} }
 
 	months := shownMonths(currency, beginsOf(ledgers), sums, current, firstShown)
+	for i := range months {
+		if l, ok := leftOut[months[i].Start]; ok {
+			months[i].TransfersLeftOut = l.Pairs
+			months[i].TransfersTotal = money(l.Total)
+		}
+	}
 	c := CurrencyHistory{Currency: currency, Months: months}
 	var oldestFull time.Time
 	for _, m := range months {
@@ -395,45 +496,72 @@ func marksFor(months []HistoryMonth, rows []store.Transaction, firstShown time.T
 	return UnusualPayments(rows, medians, firstShown)
 }
 
-// unusualMarks judges every payment of the scoped accounts, all currencies at
-// once, keyed by transaction id. It reads the same rows MonthHistory does, so a
-// mark on the chart is the mark in the month.
-func (s *Service) unusualMarks(
-	ctx context.Context, memberID string, accountIDs []string, accounts []store.TrendAccount, now time.Time,
-) (map[string]UnusualMark, error) {
+// Patterns is what one read of a member's rows says about them: which are
+// unusual, and which are halves of a transfer between their own accounts. They
+// come back together because they are derived from one row set and a row that
+// is a transfer is never also unusual.
+//
+// Ask through IsTransfer and MarkFor rather than reading the maps: the
+// precedence between the two marks is the rule, and it lives here so no caller
+// can apply it differently (ADR 0026).
+type Patterns struct {
+	Unusual map[string]UnusualMark
+	// Transfers holds both directions of every pair, keyed by transaction id.
+	// A row is labelled whenever it is in here, whatever the scope.
+	Transfers map[string]string
+}
+
+// IsTransfer reports a row being one half of a movement between the member's
+// own accounts. The label takes the status slot from unusual (ADR 0026).
+func (p Patterns) IsTransfer(id string) bool { _, ok := p.Transfers[id]; return ok }
+
+// MarkFor is the unusual-payment mark on a row, and never one on a row the
+// transfer rule already claimed.
+func (p Patterns) MarkFor(id string) (UnusualMark, bool) {
+	if p.IsTransfer(id) {
+		return UnusualMark{}, false
+	}
+	m, ok := p.Unusual[id]
+	return m, ok
+}
+
+// patternsFor judges every payment of the scoped accounts, all currencies at
+// once. It reads the same rows MonthHistory does, so a mark on the chart is the
+// mark in the month, and it pairs across every owned account so a crossing pair
+// is still labelled.
+func (s *Service) patternsFor(
+	ctx context.Context, memberID string, scope scoped, accounts []store.TrendAccount, now time.Time,
+) (Patterns, error) {
 	today := utcDay(now)
 	current := time.Date(today.Year(), today.Month(), 1, 0, 0, 0, 0, time.UTC)
 	firstShown := current.AddDate(0, -(historyMonths - 1), 0)
 	to := today.AddDate(0, 0, 1)
 
-	sums, err := s.store.OwnedMonthlySums(ctx, memberID, accountIDs, firstShown, to)
+	rows, err := s.store.OwnedBooked(ctx, memberID, scope.OwnedIDs(),
+		current.AddDate(0, -(recurLookbackMonths-1), 0), to)
 	if err != nil {
-		return nil, err
+		return Patterns{}, err
 	}
-	rows, err := s.store.OwnedBooked(ctx, memberID, accountIDs, current.AddDate(0, -(recurLookbackMonths-1), 0), to)
-	if err != nil {
-		return nil, err
-	}
-	return marksAcross(accounts, sums, rows, current, firstShown), nil
+	pairs := OwnTransfers(rows, scope.Owned)
+	counted, _ := countedRows(rows, pairs, scope.AccountIDs)
+	return Patterns{Unusual: marksAcross(accounts, counted, current, firstShown), Transfers: pairs}, nil
 }
 
+// marksAcross judges the counted rows per currency. The months it measures
+// against are summed from those same rows, so a transfer the scope left out
+// moves neither a month's figure nor the baseline a payment is judged against.
 func marksAcross(
-	accounts []store.TrendAccount, sums []store.MonthSum, rows []store.Transaction, current, firstShown time.Time,
+	accounts []store.TrendAccount, counted []store.Transaction, current, firstShown time.Time,
 ) map[string]UnusualMark {
-	sumsBy := map[string]map[time.Time]store.MonthSum{}
-	for _, m := range sums {
-		if sumsBy[m.Currency] == nil {
-			sumsBy[m.Currency] = map[time.Time]store.MonthSum{}
-		}
-		sumsBy[m.Currency][m.Month] = m
-	}
 	rowsBy := map[string][]store.Transaction{}
-	for _, r := range rows {
+	for _, r := range counted {
 		rowsBy[r.Currency] = append(rowsBy[r.Currency], r)
 	}
+	to := current.AddDate(0, 1, 0)
 	out := map[string]UnusualMark{}
 	for currency, ledgers := range ledgersOf(accounts) {
-		months := shownMonths(currency, beginsOf(ledgers), sumsBy[currency], current, firstShown)
+		sums := monthSums(rowsBy[currency], firstShown, to)
+		months := shownMonths(currency, beginsOf(ledgers), sums, current, firstShown)
 		for id, mark := range marksFor(months, rowsBy[currency], firstShown) {
 			out[id] = mark
 		}

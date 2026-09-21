@@ -24,6 +24,9 @@
 		negative?: boolean;
 		/** The one payment rule marked it. */
 		unusual?: boolean;
+		/** It is one half of a movement between two accounts the member owns.
+		 *  Takes the tag from `unusual`: a transfer is never also unusual. */
+		transfer?: boolean;
 	}
 </script>
 
@@ -96,6 +99,13 @@
 		return mover.negative === false ? 'Unusual income' : 'Unusual';
 	}
 
+	// One mover carries one tag. A transfer wins it, so the popover and the
+	// announcement cannot disagree about which a row is.
+	function moverTag(mover: BalanceMover): string | undefined {
+		if (mover.transfer) return 'Between your accounts';
+		return mover.unusual ? unusualLabel(mover) : undefined;
+	}
+
 	// The popover is aria-hidden; this is the same words as one string, in the
 	// order date, balance, change, movers, smaller.
 	const readout = $derived.by(() => {
@@ -103,9 +113,8 @@
 		const parts = [`${point.date}.`, `${point.amount}.`];
 		if (point.change) parts.push(`${point.change}.`);
 		for (const mover of point.movers ?? []) {
-			parts.push(
-				`${mover.name} ${mover.amount}${mover.unusual ? `, ${unusualLabel(mover)}` : ''}.`
-			);
+			const tag = moverTag(mover);
+			parts.push(`${mover.name} ${mover.amount}${tag ? `, ${tag}` : ''}.`);
 		}
 		if (point.smaller)
 			parts.push(`${point.smaller.charAt(0).toUpperCase()}${point.smaller.slice(1)}.`);
@@ -207,8 +216,8 @@
 							<span class="mover">
 								<span class="mover-name">{mover.name}</span>
 								<span class="mover-amount">{mover.amount}</span>
-								{#if mover.unusual}
-									<span class="mover-tag">{unusualLabel(mover)}</span>
+								{#if moverTag(mover)}
+									<span class="mover-tag">{moverTag(mover)}</span>
 								{/if}
 							</span>
 						{/each}

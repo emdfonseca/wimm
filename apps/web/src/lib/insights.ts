@@ -1,5 +1,5 @@
 import { formatMoney, isNegative } from './money';
-import { dayRange, shortDay } from './overview';
+import { dayRange, leftOutLine, shortDay } from './overview';
 import {
 	Cadence,
 	type LateLedger,
@@ -226,6 +226,7 @@ export function historySection(c: CurrencyHistory, today: Date): HistorySection 
 			}),
 			nothingRose: full && c.fullMonths >= 3 && m.risers.length === 0 ? NOTHING_ROSE : undefined,
 			note: m.soFar ? UNDER_WAY : undefined,
+			leftOut: leftOutLine(m.transfersLeftOut, m.transfersTotal),
 			payments: m.unusual.length
 				? m.unusual.map((u) => {
 						const tx = u.transaction!;
@@ -346,6 +347,9 @@ function change(balance: Money | undefined, before: TrendPoint | undefined): str
 export function chartPoints(trend: CurrencyTrend): BalancePoint[] {
 	return trend.points.map((point, i) => {
 		const movers: BalanceMover[] = point.movers.map((m) => ({
+			// The label takes the slot from unusual: a transfer is never also
+			// unusual, and wimmd already refuses to send both (ADR 0026).
+			transfer: m.ownTransfer,
 			name: m.displayName,
 			amount: signed(m.amount),
 			negative: isNegative(m.amount),

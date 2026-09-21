@@ -196,4 +196,73 @@ atom under `packages/ui/src/atoms` is a tag or a badge; the pill in
 
 ## Seen
 
-Not looked at yet.
+Looked at on 21 September 2026, in Chrome, each state rendered at 390, 834,
+1440 and 1920 CSS px. Three things were wrong and were changed; the open
+question is settled.
+
+**`Between your accounts` stays in the tag at Compact.** It fits the meta line
+beside the account and the date, so it does not move to a line of its own.
+What it costs is the end of the account: `Current account…  ·  1 Sep  ·
+Between your accounts`, where `Galp` with `Unusual` keeps `Current account ·
+Monzo` whole. That is the meta line's existing ellipsis and not something the
+label uniquely causes — a longer account name does it to `Unusual` too — and
+the description, the date and the amount are untouched. Accepted.
+
+**Changed: the status column now holds its width.** At Wide, `Transactions`
+showed the two halves of the pair with their Account value about 50 px left of
+every other row's: `.status` was a 92 px minimum that grew to its words, so the
+longest label pushed the columns of the one row carrying it and the table
+stopped lining up. It is now a fixed `--ledger-status-basis`, 148 px, the width
+of its longest label. Every Account value and all three pills — `Not settled`,
+`Unusual`, `Between your accounts` — now share their left edges.
+
+**Changed: in a list with no marker column the label goes under the name.**
+Overview's Recent transactions and Largest payments are narrow cards, and the
+label inline crushed the row to `Trans…` beside `Current…` — the description
+unreadable, which is the one thing that must not happen. `hideStatus` means no
+marker column, so the label now sits on the row's second line, in the bank's
+line's place. `Transfer to savings` and `Between your accounts` are both whole;
+the account gives up four characters at Wide (`Current account · M…`) and is
+whole at Medium and above. This is canvas.md's own fallback, applied where the
+room runs out rather than only at Compact.
+
+**Seen, state by state.**
+
+- `LedgerRow` `BetweenYourAccounts`, `CompactBetweenYourAccounts`,
+  `BetweenYourAccountsArriving`: the words of each, in the pill, at all four.
+  A row given both marks shows `Between your accounts` and not `Unusual`, and
+  `Not settled` still wins over both.
+- `MonthDetail` `DetailWithTransfersLeftOut` and `DetailWithOneTransferLeftOut`:
+  one quiet line under the figures at all four. `2 transfers … · €1,400.00` and
+  `1 transfer … · €500.00`; the singular is right.
+- `BalanceChart` `ATransferLeaving`: the popover reads `1 Sep`, `€10,912.40`,
+  `€500.00 less than 31 Aug`, `Transfer to savings −€500.00`, and the tag under
+  it. The live region reads the sentence whole. No `Unusual`.
+- Overview `Populated`: the new sentence in both places, `Transfer to savings ·
+  1 Sep · −€500.00` labelled among recent transactions, and the old sentence
+  nowhere.
+- Overview `AMonthWithTransfersLeftOut`: June selected, `€2,450.00`,
+  `€2,299.80`, `+€150.20`, then `2 transfers between your accounts left out ·
+  €1,400.00`.
+- Overview `AMonthWithNoneOpened`: the words `left out` appear only in the
+  sentence under the figures, never in the month's detail.
+- Overview `YoursScope`: the narrower sentence in both places and the All
+  sentence nowhere; `Joint account` labelled among largest payments at
+  `1 Sep`, `−€800.00`, and among recurring payments at `Expected 1 Oct`; the
+  selected month leaves nothing out.
+- Overview `HouseholdScope`: the narrower sentence in both places, the All
+  sentence nowhere.
+- Overview `ADayATransferLeft`: the chart's marker on 1 Sep, its tag, its live
+  region and the labelled row in recent transactions; no `Unusual`.
+- Overview `TwoCurrencies`: the sentence once per currency in each of its two
+  places, as the old one was.
+- Transactions `AsItOpens`: `Between your accounts` exactly twice, `Unusual`
+  once on `Galp`, `Not settled` on `Transfer to Ana Reis`, which carries no
+  transfer label.
+- Transactions `OneAccount`: reading `Savings`, the arriving half labelled
+  once, its partner absent and unnamed.
+
+**Left alone, and not this change's.** `AsItOpens`' play function fails at
+Compact and Medium on `getByText('Description')`, a column heading the wide
+layout alone has; the suite runs at Wide, where it passes. It reproduces on
+`AnOlderPage`, which this change does not touch.

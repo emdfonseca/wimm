@@ -76,7 +76,7 @@ async function open(search = '') {
 		depends: () => {},
 		url: new URL(`http://localhost/transactions${search}`)
 	} as never)) as {
-		days: { date: string; entries: { id: string; unusual?: boolean }[] }[];
+		days: { date: string; entries: { id: string; unusual?: boolean; transfer?: boolean }[] }[];
 		count: number;
 		accountId?: string;
 		freshness?: string;
@@ -372,6 +372,28 @@ describe('arriving from an unusual payment on Overview', () => {
 		expect(data.days[0]?.entries.map((e) => [e.id, e.unusual])).toEqual([
 			['garage', true],
 			['coffee', false]
+		]);
+	});
+});
+
+describe('a row that is half of a transfer between the member\'s own accounts', () => {
+	it('carries the label, and never the unusual mark beside it', async () => {
+		listTransactions.mockResolvedValue(
+			ledger({
+				transactions: [
+					transaction({ id: 'out', bookingDate: at('2026-09-01T00:00:00Z'), ownTransfer: true }),
+					transaction({ id: 'in', bookingDate: at('2026-09-01T00:00:00Z'), ownTransfer: true }),
+					transaction({ id: 'coffee', bookingDate: at('2026-09-01T00:00:00Z'), unusual: true })
+				]
+			})
+		);
+
+		const data = await open('');
+
+		expect(data.days[0]?.entries.map((e) => [e.id, e.transfer ?? false, e.unusual ?? false])).toEqual([
+			['out', true, false],
+			['in', true, false],
+			['coffee', false, true]
 		]);
 	});
 });

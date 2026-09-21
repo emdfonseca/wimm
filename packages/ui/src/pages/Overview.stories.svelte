@@ -56,6 +56,13 @@
 
 	const accounts = { household: [joint], own: [current, conta], shared: [savings] };
 
+	// The two sentences the load writes. Which one is right depends on the
+	// scope in force, so the screen is given one and holds neither.
+	const transferNote =
+		'Money moved between your accounts is left out where wimm holds both. Other transfers are counted.';
+	const narrowTransferNote =
+		'Money moved between accounts counted here is left out. Money moved to or from your other accounts is counted.';
+
 	const recent: RecentTransaction[] = [
 		{
 			id: 't1',
@@ -71,6 +78,15 @@
 			description: 'Salary',
 			account: 'Current account · Monzo',
 			amount: '+€2,450.00'
+		},
+		{
+			id: 't-transfer',
+			date: '1 Sep',
+			description: 'Transfer to savings',
+			account: 'Current account · Monzo',
+			amount: '−€500.00',
+			negative: true,
+			transfer: true
 		},
 		{
 			id: 't3',
@@ -125,6 +141,27 @@
 		}
 	];
 
+	// Under Yours, ada's standing 800.00 to the joint account: money that
+	// leaves the accounts Yours counts, so it is counted, recurring and large,
+	// and still one half of a transfer.
+	const jointPayment: RecentTransaction = {
+		id: 'l-joint',
+		date: '1 Sep',
+		description: 'Joint account',
+		account: 'Current account · Monzo',
+		amount: '−€800.00',
+		negative: true,
+		transfer: true
+	};
+
+	const jointTransfer = {
+		id: 'r-joint',
+		name: 'Joint account',
+		cadence: 'Monthly · Current account · Monzo',
+		date: 'Expected 1 Oct',
+		amount: '−€800.00'
+	};
+
 	const merchants = [
 		{ name: 'Pingo Doce', value: '€412.60 · 9 payments', proportion: 1 },
 		{ name: 'Galp', value: '€186.40 · 3 payments', proportion: 0.45 },
@@ -172,7 +209,8 @@
 		merchantsSpan: '1 to 20 Sep',
 		largestPayments: largest,
 		history,
-		recurring
+		recurring,
+		transferNote
 	};
 
 	const allScope: ScopeState = { choices: ['household', 'own', 'all'], value: 'all' };
@@ -235,6 +273,7 @@
 			{ name: 'Boots', value: '£38.20 · 2 payments', proportion: 0.18 }
 		],
 		merchantsSpan: '1 to 20 Sep',
+		transferNote,
 		largestPayments: [
 			{
 				id: 'g1',
@@ -262,8 +301,6 @@
 
 	const tile = (canvas: ReturnType<typeof within>, label: string) =>
 		canvas.getByText(label).closest('.tile') as HTMLElement;
-
-	const transferNote = 'Money moved between your own accounts is counted.';
 
 	const { Story } = defineMeta({
 		title: 'Pages/Overview',
@@ -443,9 +480,18 @@
 			await expect(panel.getByText(words)).toBeInTheDocument();
 		}
 		await expect(monthRow(canvas, 'March 2026')).toHaveAttribute('aria-pressed', 'false');
+		await expect(by.getByText(transferNote)).toBeInTheDocument();
+
+		// A transfer among recent transactions is labelled, and the sentence
+		// the screen used to hold is nowhere on the page.
+		const seen = region(canvas, 'Recent transactions');
+		await expect(seen.getByText('Transfer to savings')).toBeInTheDocument();
+		await expect(seen.getByText('1 Sep')).toBeInTheDocument();
+		await expect(seen.getByText('−€500.00')).toBeInTheDocument();
+		await expect(seen.getByText('Between your accounts')).toBeInTheDocument();
 		await expect(
-			by.getByText('Money moved between your own accounts is counted.')
-		).toBeInTheDocument();
+			canvas.queryByText(/Money moved between your own accounts is counted\./)
+		).not.toBeInTheDocument();
 
 		// Recurring payments, soonest first, with no way to change them.
 		const due = region(canvas, 'Recurring payments');
@@ -1044,6 +1090,8 @@
 		for (const absent of [/Unusual payments/, /unusual/i, /Without unusual payments/]) {
 			await expect(panel.queryByText(absent)).not.toBeInTheDocument();
 		}
+		// A month that left nothing out says nothing about transfers.
+		await expect(panel.queryByText(/left out/)).not.toBeInTheDocument();
 	}}
 />
 
@@ -1140,6 +1188,7 @@
 				recurring: undefined,
 				history: {
 					span: 'July 2026 to September 2026',
+					open: 'August 2026',
 					months: historyMonths
 						.slice(0, 3)
 						.map((m) => ({ ...m, risers: undefined, open: undefined })),
@@ -1232,7 +1281,9 @@
 	tags={['kind-state']}
 	args={{
 		scope: { choices: ['household', 'own', 'all'], value: 'household' },
-		currencies: [{ ...eur, recurring: [cleaning, rent, fidelidade] }]
+		currencies: [
+			{ ...eur, recurring: [cleaning, rent, fidelidade], transferNote: narrowTransferNote }
+		]
 	}}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -1247,6 +1298,9 @@
 		await expect(tile(canvas, 'Household money')).toHaveTextContent('€6,698.00');
 		await expect(tile(canvas, 'Your money')).toHaveTextContent('€4,995.55');
 		await expect(canvas.queryByText(/Household counts/)).not.toBeInTheDocument();
+		// A narrower scope counts what crosses it, and says so.
+		await expect(canvas.getAllByText(narrowTransferNote)[0]).toBeInTheDocument();
+		await expect(canvas.queryByText(transferNote)).not.toBeInTheDocument();
 	}}
 />
 
@@ -1332,18 +1386,46 @@
 	tags={['kind-state']}
 	args={{
 		scope: { choices: ['household', 'own', 'all'], value: 'own' },
-		currencies: [{ ...eur, recurring: [spotify, netflix, nos] }]
+		currencies: [
+			{
+				...eur,
+				// Under Yours the standing transfer to the joint account is
+				// money that leaves every month, so it recurs here.
+				recurring: [spotify, netflix, nos, jointTransfer],
+				// It is also counted, and large, so it is among the largest
+				// payments — and still labelled.
+				largestPayments: [jointPayment, ...largest.slice(1)],
+				transferNote: narrowTransferNote,
+				history: { ...history, open: 'June 2026' }
+			}
+		]
 	}}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByRole('radio', { name: 'Yours' })).toBeChecked();
 		const due = region(canvas, 'Recurring payments');
-		for (const name of ['Spotify', 'Netflix', 'NOS']) {
-			await expect(due.getByText(name)).toBeInTheDocument();
+		for (const name of ['Spotify', 'Netflix', 'NOS', 'Joint account']) {
+			await expect(due.getAllByText(name)[0]).toBeInTheDocument();
 		}
 		for (const name of ['Limpeza Casa', 'Rent', 'Fidelidade']) {
 			await expect(due.queryByText(name)).not.toBeInTheDocument();
 		}
+		const row = due.getAllByText('Joint account')[0]!.closest('.ledger-row') as HTMLElement;
+		await expect(row).toHaveTextContent('Monthly · Current account · Monzo');
+		await expect(row).toHaveTextContent('Expected 1 Oct');
+		await expect(row).toHaveTextContent('−€800.00');
+
+		// Counted here, and labelled: the narrower sentence says exactly that.
+		const biggest = region(canvas, 'Largest payments');
+		await expect(biggest.getByText('Joint account')).toBeInTheDocument();
+		await expect(biggest.getByText('1 Sep')).toBeInTheDocument();
+		await expect(biggest.getByText('−€800.00')).toBeInTheDocument();
+		await expect(biggest.getByText('Between your accounts')).toBeInTheDocument();
+
+		await expect(canvas.getAllByText(narrowTransferNote)[0]).toBeInTheDocument();
+		await expect(canvas.queryByText(transferNote)).not.toBeInTheDocument();
+		// Under Yours the pair crosses the scope, so the month left none out.
+		await expect(panelOf(monthRow(canvas, 'June 2026')).queryByText(/left out/)).not.toBeInTheDocument();
 	}}
 />
 
@@ -1383,5 +1465,64 @@
 		await expect(
 			months(canvas).getByRole('region', { name: 'September 2025' })
 		).toBeVisible();
+	}}
+/>
+
+<!-- June left two transfers out, so the month says how many and what they came
+     to, under the figures it changed. -->
+<Story
+	name="AMonthWithTransfersLeftOut"
+	tags={['kind-state']}
+	args={{
+		currencies: [
+			{
+				...eur,
+				history: {
+					...history,
+					open: 'June 2026',
+					months: history.months.map((m) =>
+						m.label === 'June 2026'
+							? { ...m, leftOut: '2 transfers between your accounts left out · €1,400.00' }
+							: m
+					)
+				}
+			}
+		]
+	}}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const june = monthRow(canvas, 'June 2026');
+		await expect(june).toHaveAttribute('aria-pressed', 'true');
+		const panel = panelOf(june);
+		for (const words of ['€2,450.00', '€2,299.80', '+€150.20']) {
+			await expect(panel.getByText(words)).toBeVisible();
+		}
+		await expect(
+			panel.getByText('2 transfers between your accounts left out · €1,400.00')
+		).toBeVisible();
+	}}
+/>
+
+<!-- The day the money left. The line moved, so the chart keeps the row and
+     says what kind of movement it was. -->
+<Story
+	name="ADayATransferLeft"
+	tags={['kind-state']}
+	args={{ currencies: [{ ...eur, chart: { ...eur.chart, marked: balancePoints.findIndex((p) => p.date === '1 Sep') } }] }}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		for (const words of [
+			'1 Sep',
+			'€10,912.40',
+			'€500.00 less than 31 Aug',
+			'Transfer to savings',
+			'−€500.00',
+			'Between your accounts'
+		]) {
+			await expect(canvas.getAllByText(words)[0]).toBeInTheDocument();
+		}
+		await expect(liveOf(canvasElement)).toHaveTextContent(
+			'1 Sep. €10,912.40. €500.00 less than 31 Aug. Transfer to savings −€500.00, Between your accounts.'
+		);
 	}}
 />

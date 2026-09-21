@@ -26,6 +26,9 @@
 		/** The one payment rule marked it. Labelled `Unusual`, or `Unusual
 		 *  income` where it came in. */
 		unusual?: boolean;
+		/** One half of a movement between two accounts the member owns:
+		 *  `Between your accounts`, in the status slot. */
+		transfer?: boolean;
 	}
 
 	/** One day's transactions under the heading that names it. */
@@ -394,6 +397,7 @@
 								initials={entry.initials}
 								banksLine={entry.banksLine}
 								unusual={entry.unusual}
+								transfer={entry.transfer}
 								hideDate={!compact}
 								{compact}
 							/>

@@ -84,7 +84,7 @@ func (s *Service) BalanceTrend(ctx context.Context, memberID string, asked Scope
 	if err != nil {
 		return Trend{}, err
 	}
-	marks, err := s.unusualMarks(ctx, memberID, scope.AccountIDs, accounts, now.T)
+	pats, err := s.patternsFor(ctx, memberID, scope, accounts, now.T)
 	if err != nil {
 		return Trend{}, err
 	}
@@ -115,7 +115,7 @@ func (s *Service) BalanceTrend(ctx context.Context, memberID string, asked Scope
 			continue
 		}
 
-		trend, partial, err := s.currencyTrend(ctx, currency, group, now.T, windowStart, marks)
+		trend, partial, err := s.currencyTrend(ctx, currency, group, now.T, windowStart, pats)
 		if err != nil {
 			return Trend{}, err
 		}
@@ -184,7 +184,7 @@ func (s *Service) quietCurrency(
 // begins, which reads as money arriving.
 func (s *Service) currencyTrend(
 	ctx context.Context, currency string, accounts []store.TrendAccount, now, windowStart time.Time,
-	marks map[string]UnusualMark,
+	pats Patterns,
 ) (CurrencyTrend, bool, error) {
 	partial := false
 	var candidates []store.TrendAccount
@@ -257,7 +257,9 @@ func (s *Service) currencyTrend(
 		points[i] = TrendPoint{Date: d, Money: Money{Minor: sums[i], Currency: currency}}
 		points[i].Movers, points[i].Smaller = DayMovers(byDay[i])
 		for j := range points[i].Movers {
-			_, points[i].Movers[j].Unusual = marks[points[i].Movers[j].TransactionID]
+			id := points[i].Movers[j].TransactionID
+			points[i].Movers[j].OwnTransfer = pats.IsTransfer(id)
+			_, points[i].Movers[j].Unusual = pats.MarkFor(id)
 		}
 	}
 	return CurrencyTrend{Currency: currency, Points: points}, partial, nil

@@ -19,6 +19,11 @@ type DayMover struct {
 	Name          string
 	Amount        int64 // signed minor units
 	Unusual       bool  // set by the caller, which knows the marks
+	// OwnTransfer is set by the caller too. A mover that is half of a transfer
+	// between the member's own accounts is never also unusual, and the row
+	// stays on the chart whatever the scope: the day's money still moved, so
+	// the popover has to say why (ADR 0026).
+	OwnTransfer bool
 }
 
 // DayMovers takes a day's booked rows in either direction, largest first, until

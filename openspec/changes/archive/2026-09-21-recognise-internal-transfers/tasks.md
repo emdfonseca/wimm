@@ -1,13 +1,13 @@
 ## 1. Before anything else
 
-- [ ] 1.1 Confirm `spending-insights` is finished and archived, so
+- [x] 1.1 Confirm `spending-insights` is finished and archived, so
       `openspec/specs/banking/overview/spec.md` holds `Month by month, as far
       back as the ledger is whole` and `openspec/specs/banking/payment-patterns`
       exists. Verify: `just openspec list` no longer lists it,
       `just openspec validate recognise-internal-transfers` reports no
       archive warning, and `just check apps/wimm apps/web packages/ui` passes
       on the starting tree.
-- [ ] 1.2 Run the matcher's rule read-only against the household's local
+- [x] 1.2 Run the matcher's rule read-only against the household's local
       database, as SQL or a throwaway script kept in the scratchpad and never
       committed, with nothing written to the database. Report, for windows of
       0 to 5 days: the pairs found, how many carry evidence (the other
@@ -23,7 +23,7 @@
 
 ## 2. wimmd: the rule
 
-- [ ] 2.1 Record the decision with `/adr`: what a transfer between a member's
+- [x] 2.1 Record the decision with `/adr`: what a transfer between a member's
       own accounts is, every constant in design.md by name
       (`ownTransferWindowDays`, `ownTransferMinSuffix`,
       `ownTransferMinNameRunes`), the ranking and the refusal to pair a tie,
@@ -33,7 +33,7 @@
       non-goal in `spending-insights`' design. Include what task 1.2 found.
       Verify: `just adr-index` regenerates `.claude/rules/decisions.md` with
       the new record.
-- [ ] 2.2 Test-first (`/tdd`), `banking.OwnTransfers` in
+- [x] 2.2 Test-first (`/tdd`), `banking.OwnTransfers` in
       `apps/wimm/internal/banking/transfers.go`, with design.md's constants as
       a `const` block. Verify: one table case per scenario of "What wimm calls
       a transfer between a member's own accounts" that the function decides:
@@ -47,19 +47,19 @@
 
 ## 3. wimmd: counting
 
-- [ ] 3.1 In `packages/contracts/proto/wimm/banking/v1/banking.proto` add
+- [x] 3.1 In `packages/contracts/proto/wimm/banking/v1/banking.proto` add
       `Transaction.own_transfer`, `DayMover.own_transfer`, and
       `HistoryMonth.transfers_left_out` with `transfers_total`, as design.md
       gives them; run `just gen`. Verify: `just check packages/contracts`
       passes and no file under `gen/` was hand-edited.
-- [ ] 3.2 Test-first, a `countedRows` helper in `apps/wimm/internal/banking`:
+- [x] 3.2 Test-first, a `countedRows` helper in `apps/wimm/internal/banking`:
       given the member's owned rows, the pairs and the scoped account ids, the
       rows the scope counts and the pairs it leaves out. Give `scopedAccounts`
       the All set beside the scoped one, and the owned accounts' names and
       suffixes for evidence. Mirror in `memstore`. Verify: service-level table
       cases for a pair inside the scope, a pair crossing it in each direction,
       and no pair for a member who owns one side only.
-- [ ] 3.3 `Service.MonthSummary` (`month.go`): read `store.OwnedBooked` for
+- [x] 3.3 `Service.MonthSummary` (`month.go`): read `store.OwnedBooked` for
       the owned accounts from `priorStart − ownTransferWindowDays` to
       `windowEnd + ownTransferWindowDays`, sum both windows from counted rows,
       and take top merchants and largest payments from them. Remove
@@ -69,7 +69,7 @@
       per scenario of "The month so far" that changed: a transfer to savings in
       neither figure, a pair across the end of the month in neither month, and
       a month holding only a transfer giving no summary.
-- [ ] 3.4 `Service.MonthHistory` (`history.go`): read `OwnedBooked` for the
+- [x] 3.4 `Service.MonthHistory` (`history.go`): read `OwnedBooked` for the
       owned accounts, sum months from counted rows, hand counted rows to
       `marksFor`, `merchantMedians`, the risers and `RecurringPayments`, and
       set each month's `transfers_left_out` and total in the out row's month.
@@ -82,7 +82,7 @@
       and of "A month says how many transfers it left out", including the
       singular's count of one and twelve months' counts adding up to the
       number of pairs.
-- [ ] 3.5 `Service.BalanceTrend` (`trend.go`) and `Service.Transactions`
+- [x] 3.5 `Service.BalanceTrend` (`trend.go`) and `Service.Transactions`
       (`ledger.go`): the shared pattern helper returns pairs beside marks; a
       mover and a ledger row that is half of a pair carries the transfer mark
       and never the unusual one; the balance line is untouched. Serve the new
@@ -96,24 +96,24 @@
 
 ## 4. packages/ui: components before the screen
 
-- [ ] 4.1 In `molecules/LedgerRow.svelte`, add `transfer` to the status tag
+- [x] 4.1 In `molecules/LedgerRow.svelte`, add `transfer` to the status tag
       with canvas.md's precedence. Stories: `BetweenYourAccounts`,
       `CompactBetweenYourAccounts`, `BetweenYourAccountsArriving`. Verify: the
       existing LedgerRow stories still pass; a play function gives a row both
       `transfer` and `unusual` and finds `Between your accounts` and not
       `Unusual`; `just check packages/ui` passes.
-- [ ] 4.2 In `molecules/MonthDetail.svelte`, add `leftOut`. Stories:
+- [x] 4.2 In `molecules/MonthDetail.svelte`, add `leftOut`. Stories:
       `DetailWithTransfersLeftOut`, `DetailWithOneTransferLeftOut`. Verify:
       play functions assert both whole strings, and `Detail` asserts the
       absence of `left out`.
-- [ ] 4.3 In `molecules/BalanceChart.svelte`, add `transfer` to
+- [x] 4.3 In `molecules/BalanceChart.svelte`, add `transfer` to
       `BalanceMover`, in the tag and in the live region. Story:
       `ATransferLeaving`. Verify: the play function asserts the live region's
       whole string from canvas.md and the absence of `Unusual`.
 
 ## 5. packages/ui: the presentational screens and their state stories
 
-- [ ] 5.1 In `packages/ui/src/pages/Overview.svelte`, take `transferNote` per
+- [x] 5.1 In `packages/ui/src/pages/Overview.svelte`, take `transferNote` per
       currency section and drop the hard-coded sentence, pass `transfer` to
       recent transactions and largest payments, and pass `leftOut` to the
       selected month. In `Overview.stories.svelte` and `Overview.fixture.ts`
@@ -124,7 +124,7 @@
       `just check apps/storybook` pass; `grep -rn "own accounts is counted"
       packages/ui/src` finds nothing; `YoursScope` fails if it is given the
       All sentence.
-- [ ] 5.2 In `packages/ui/src/pages/TransactionsScreen.svelte`, pass each row
+- [x] 5.2 In `packages/ui/src/pages/TransactionsScreen.svelte`, pass each row
       its `transfer`. Bring `AsItOpens` and `OneAccount` in
       `TransactionsScreen.stories.svelte` to canvas.md's words. Verify:
       `AsItOpens` finds `Between your accounts` exactly twice, `Unusual`
@@ -132,7 +132,7 @@
 
 ## 6. The look
 
-- [ ] 6.1 Open every state story of canvas.md on the design canvas
+- [x] 6.1 Open every state story of canvas.md on the design canvas
       (`just canvas`) at compact, medium, wide and ultra. Change what is
       wrong, settle whether `Between your accounts` fits the tag at Compact or
       moves to the row's second line, then write what was seen and what
@@ -141,7 +141,7 @@
 
 ## 7. apps/web: wiring
 
-- [ ] 7.1 In `apps/web/src/lib/overview.ts` and `insights.ts`, build the
+- [x] 7.1 In `apps/web/src/lib/overview.ts` and `insights.ts`, build the
       transfers sentence from the answered scope (the All sentence when no
       control is on offer), the month's `leftOut` line with its singular, and
       `transfer` on chart movers, recent transactions and largest payments,
@@ -151,16 +151,16 @@
       sentences, and a row sent both marks coming out with `transfer` only;
       `grep -rn "own accounts is counted" apps/web/src` finds nothing;
       `just check apps/web` passes.
-- [ ] 7.2 `apps/web/src/routes/(app)/transactions/+page.server.ts` passes
+- [x] 7.2 `apps/web/src/routes/(app)/transactions/+page.server.ts` passes
       `transfer` to the screen from `own_transfer`. Verify: a Vitest case;
       `just check apps/web` passes.
 
 ## 8. Verification
 
-- [ ] 8.1 `just check apps/wimm`, `just check apps/web`,
+- [x] 8.1 `just check apps/wimm`, `just check apps/web`,
       `just check packages/ui`, `just check packages/contracts` and
       `just check apps/storybook` all pass.
-- [ ] 8.2 Walk the signed-in app with the household's real data at Compact and
+- [x] 8.2 Walk the signed-in app with the household's real data at Compact and
       Wide: every row labelled `Between your accounts` is a transfer the member
       made and none they know of between two connected accounts is missing
       without a reason the rule gives; one month added up by hand from

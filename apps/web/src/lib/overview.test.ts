@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { chartSummary, monthSection } from './overview';
+import { chartSummary, leftOutLine, monthSection, transferNote } from './overview';
 
 describe('chartSummary', () => {
 	it('names the span, both ends and the extremes with their days', () => {
@@ -39,7 +39,9 @@ describe('monthSection', () => {
 		expect(month.moneyIn).toMatchObject({ change: expect.stringMatching(/150[.,]00 more/), direction: 'up' });
 		expect(month.net).toMatchObject({ change: expect.stringMatching(/32[.,]40 less/), direction: 'down' });
 		expect(month.net.value).toMatch(/^\+/);
-		expect(month.note).toMatch(/^1 to 20 Sep, against 1 to 20 Aug\. Money moved between your own accounts is counted\.$/);
+		// The transfers sentence is no longer part of the window: it depends on
+		// the scope, which the month summary does not know.
+		expect(month.note).toBe('1 to 20 Sep, against 1 to 20 Aug.');
 	});
 
 	it('says where it counts from and states no comparison when a ledger starts late', () => {
@@ -56,6 +58,53 @@ describe('monthSection', () => {
 
 		expect(month.moneyIn.change).toBeUndefined();
 		expect(month.moneyIn.period).toBeUndefined();
-		expect(month.note).toBe('Counted from 19 Sep. Money moved between your own accounts is counted.');
+		expect(month.note).toBe('Counted from 19 Sep.');
+	});
+});
+
+describe('the transfers sentence', () => {
+	it('says both halves are left out under All', () => {
+		expect(transferNote('all')).toBe(
+			'Money moved between your accounts is left out where wimm holds both. Other transfers are counted.'
+		);
+	});
+
+	it('says the same under no control on offer, which is All', () => {
+		expect(transferNote(undefined)).toBe(transferNote('all'));
+	});
+
+	it('says what a narrower scope counts, under Household and under Yours', () => {
+		const narrow =
+			'Money moved between accounts counted here is left out. Money moved to or from your other accounts is counted.';
+		expect(transferNote('household')).toBe(narrow);
+		expect(transferNote('own')).toBe(narrow);
+	});
+
+	it('never says the old sentence', () => {
+		for (const scope of ['all', 'household', 'own', undefined] as const) {
+			expect(transferNote(scope)).not.toContain('own accounts is counted');
+		}
+	});
+});
+
+describe("a month's left-out line", () => {
+	const eur = (minor: bigint) => ({ minor, currency: 'EUR' });
+
+	it('counts two transfers with their total', () => {
+		expect(leftOutLine(2, eur(140_000n))).toBe(
+			'2 transfers between your accounts left out · €1,400.00'
+		);
+	});
+
+	it('says one transfer in the singular', () => {
+		expect(leftOutLine(1, eur(50_000n))).toBe(
+			'1 transfer between your accounts left out · €500.00'
+		);
+	});
+
+	it('is absent, not empty, where the scope left none out', () => {
+		expect(leftOutLine(0, eur(0n))).toBeUndefined();
+		expect(leftOutLine(0, undefined)).toBeUndefined();
+		expect(leftOutLine(2, undefined)).toBeUndefined();
 	});
 });

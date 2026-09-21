@@ -75,6 +75,9 @@
 		/** The account and its bank: `Current account · Monzo`. */
 		account: string;
 		negative?: boolean;
+		/** One half of a movement between two accounts the member owns:
+		 *  `Between your accounts`. */
+		transfer?: boolean;
 	}
 
 	export type ScopeValue = 'household' | 'own' | 'all';
@@ -116,6 +119,9 @@
 		risers?: MonthRiser[];
 		nothingRose?: string;
 		note?: string;
+		/** `2 transfers between your accounts left out · €1,400.00`, written
+		 *  by the load. Absent where the scope left none out. */
+		leftOut?: string;
 		/** Unusual payments, newest first. */
 		payments?: MonthPayment[];
 	}
@@ -195,6 +201,11 @@
 		/** Said in Recurring payments' place where the scope's accounts hold
 		 *  none. Set only while a scope control is on offer. */
 		recurringEmpty?: string;
+		/** How this scope treats movements between the member's own accounts,
+		 *  written by the load because which sentence is right depends on the
+		 *  scope in force. Shown under the month summary and under the months.
+		 */
+		transferNote?: string;
 	}
 
 	export interface AccountEntry {
@@ -283,6 +294,19 @@
 		return () => query.removeEventListener('change', onchange);
 	});
 
+	/** From `1200px` the month detail stands beside the table, in a panel too
+	 *  narrow for a full ledger row, so its payments take the stacked form. */
+	let beside = $state(false);
+
+	$effect(() => {
+		if (typeof window === 'undefined' || !window.matchMedia) return;
+		const query = window.matchMedia('(min-width: 1200px)');
+		beside = query.matches;
+		const onchange = (e: MediaQueryListEvent) => (beside = e.matches);
+		query.addEventListener('change', onchange);
+		return () => query.removeEventListener('change', onchange);
+	});
+
 	const several = $derived(currencies.length > 1);
 	const suffix = (currency: string) => (several ? ` · ${currency}` : '');
 
@@ -293,8 +317,6 @@
 			{ key: 'shared', title: 'Shared with you', rows: accounts.shared ?? [] }
 		].filter((group) => group.rows.length > 0)
 	);
-
-	const transferNote = 'Money moved between your own accounts is counted.';
 
 	const scopeLabels: Record<ScopeValue, string> = {
 		household: 'Household',
@@ -383,6 +405,7 @@
 				amount={entry.amount}
 				date={entry.date}
 				negative={entry.negative}
+				transfer={entry.transfer}
 				hideStatus
 				{compact}
 			/>
@@ -441,36 +464,45 @@
 			/>
 
 			<div class="month-layout">
-				<MonthTable
-					label={`Months${suffix(section.currency)}`}
-					rows={history.months.map((month) => ({
-						key: month.key,
-						label: month.label,
-						state: month.state,
-						moneyIn: figureOf(month, 'Money in'),
-						moneyOut: figureOf(month, 'Money out'),
-						net: view === 'usual' ? (month.netUsual ?? month.net) : month.net,
-						unusualLine: month.unusualLine
-					}))}
-					controls={detail ? detailId : undefined}
-					{compact}
-					bind:selected={() => selectedKey(section) ?? null, (key) => (picked[section.currency] = key)}
-				/>
+				<!-- The detail comes first: stacked, it stays under the chart that
+				     selects it rather than below thirteen rows. -->
 				{#if detail}
-					<MonthDetail
-						id={detailId}
-						month={detail.label}
-						span={detail.span}
-						figures={detail.figures}
-						risers={detail.risers}
-						nothingRose={detail.nothingRose}
-						note={detail.note}
-						payments={detail.payments}
-						{compact}
-					/>
+					<div class="month-detail">
+						<MonthDetail
+							id={detailId}
+							month={detail.label}
+							span={detail.span}
+							figures={detail.figures}
+							risers={detail.risers}
+							nothingRose={detail.nothingRose}
+							note={detail.note}
+							leftOut={detail.leftOut}
+							payments={detail.payments}
+							compact={compact || beside}
+						/>
+					</div>
 				{/if}
+				<div class="month-table">
+					<MonthTable
+						label={`Months${suffix(section.currency)}`}
+						rows={history.months.map((month) => ({
+							key: month.key,
+							label: month.label,
+							state: month.state,
+							moneyIn: figureOf(month, 'Money in'),
+							moneyOut: figureOf(month, 'Money out'),
+							net: view === 'usual' ? (month.netUsual ?? month.net) : month.net,
+							unusualLine: month.unusualLine
+						}))}
+						controls={detail ? detailId : undefined}
+						{compact}
+						bind:selected={() => selectedKey(section) ?? null, (key) => (picked[section.currency] = key)}
+					/>
+				</div>
 			</div>
-			<p class="note">{transferNote}</p>
+			{#if section.transferNote}
+				<p class="note">{section.transferNote}</p>
+			{/if}
 		</section>
 	{:else if section.historyEmpty}
 		<section class="card" aria-label={`Months${suffix(section.currency)}`}>
@@ -615,7 +647,7 @@
 						</div>
 						<p class="note">
 							{section.month.note}
-							{transferNote}
+							{section.transferNote}
 						</p>
 					{/if}
 
@@ -757,8 +789,8 @@
 		block-size: auto;
 	}
 
-	/* The table and the detail it names stack until there is room to stand
-	   them side by side. */
+	/* The detail and the table stack, detail first, until there is room to
+	   stand the table beside it. */
 	.month-layout {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr);
@@ -793,6 +825,22 @@
 	@media (min-width: 1200px) {
 		.month-layout {
 			grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+		}
+
+		.month-table {
+			grid-column: 1;
+			grid-row: 1;
+		}
+
+		.month-table:only-child {
+			grid-column: 1 / -1;
+		}
+
+		.month-detail {
+			grid-column: 2;
+			grid-row: 1;
+			position: sticky;
+			inset-block-start: 16px;
 		}
 
 		.pair {
@@ -850,6 +898,11 @@
 
 	.spacer {
 		flex: 1 1 auto;
+	}
+
+	/* A card holding only a sentence: the sentence takes the card's own inset. */
+	.card > .note {
+		padding: 16px;
 	}
 
 	.rows {

@@ -9,7 +9,8 @@ import {
 	isQuiet,
 	monthSection,
 	readAt,
-	shortDay
+	shortDay,
+	transferNote
 } from '$lib/overview';
 import {
 	chartPoints,
@@ -138,6 +139,9 @@ function currenciesFrom(
 	const offered = historyView.available.length > 0;
 	const histories = new Map(historyView.histories.map((h) => [h.currency, h]));
 	const today = new Date();
+	// One sentence per section, chosen by the scope actually answered rather
+	// than the one asked for: with no control on offer that is All.
+	const note = transferNote(offered ? scopeState(historyView)?.value : undefined);
 
 	const codes = new Set([...household.keys(), ...own.keys(), ...trends.keys(), ...months.keys(), ...histories.keys()]);
 	const sections: { section: CurrencySection; weight: number }[] = [];
@@ -174,7 +178,8 @@ function currenciesFrom(
 				history: historyShown,
 				historyEmpty: offered && !historyShown ? HISTORY_EMPTY : undefined,
 				recurring: recurringShown,
-				recurringEmpty: offered && !recurringShown ? RECURRING_EMPTY : undefined
+				recurringEmpty: offered && !recurringShown ? RECURRING_EMPTY : undefined,
+				transferNote: note
 			}
 		});
 	}
@@ -257,6 +262,9 @@ function entryOf(transaction: Transaction, withBank: boolean): RecentTransaction
 			withBank && transaction.bankName
 				? `${transaction.accountName} · ${transaction.bankName}`
 				: transaction.accountName,
-		negative: isNegative(transaction.amount)
+		negative: isNegative(transaction.amount),
+		// The label takes the status slot from unusual, which the row would
+		// otherwise show; wimmd never sends both (ADR 0026).
+		transfer: transaction.ownTransfer
 	};
 }

@@ -48,6 +48,11 @@
 		/** Said under the figures: `A month under way is not set against whole
 		 *  months.` */
 		note?: string;
+		/** Said under the figures when the month's figures left transfers
+		 *  between the member's own accounts out: `2 transfers between your
+		 *  accounts left out · €1,400.00`. Written by the load, singular and
+		 *  all. Absent, not empty, when nothing was left out. */
+		leftOut?: string;
 	}
 
 	let {
@@ -59,7 +64,8 @@
 		risers = [],
 		nothingRose,
 		payments = [],
-		note
+		note,
+		leftOut
 	}: Props = $props();
 
 </script>
@@ -81,6 +87,9 @@
 	{/if}
 	{#if note}
 		<p class="note">{note}</p>
+	{/if}
+	{#if leftOut}
+		<p class="note">{leftOut}</p>
 	{/if}
 	{#if risers.length}
 		<section class="section">

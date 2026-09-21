@@ -26,9 +26,24 @@ type scoped struct {
 	// AccountIDs are owned accounts only. An account the member merely holds a
 	// grant on is in no scope (ADR 0021).
 	AccountIDs []string
+	// Owned is every account the member owns, whatever the scope, with what
+	// the transfer rule needs to tell two of them apart. Pairs are found
+	// across all of them and leaving one out is then decided per scope, so a
+	// transfer to a household account is money out under Yours and money in
+	// under Household rather than vanishing from both (ADR 0026).
+	Owned []OwnedAccount
 	// Counted and NotCounted name household accounts, and are set only under
 	// Household when it counts fewer accounts than the household figure does.
 	Counted, NotCounted []string
+}
+
+// OwnedIDs is the All set: every account the member owns.
+func (s scoped) OwnedIDs() []string {
+	out := make([]string, len(s.Owned))
+	for i, a := range s.Owned {
+		out[i] = a.ID
+	}
+	return out
 }
 
 // scopedAccounts resolves a scope to the ids of the owned accounts it counts.
@@ -45,7 +60,17 @@ func (s *Service) scopedAccounts(ctx context.Context, memberID string, asked Sco
 	}
 
 	var household, yours, notOwned, householdNames []string
+	var owned []OwnedAccount
 	for _, a := range visible {
+		if a.Owned {
+			owned = append(owned, OwnedAccount{
+				ID:            a.ID,
+				Name:          a.Name,
+				HouseholdName: a.HouseholdName,
+				NumberSuffix:  a.NumberSuffix,
+				HolderName:    a.HolderName,
+			})
+		}
 		switch groups[a.ID] {
 		case GroupHousehold:
 			if a.Owned {
@@ -59,7 +84,7 @@ func (s *Service) scopedAccounts(ctx context.Context, memberID string, asked Sco
 		}
 	}
 
-	out := scoped{Answered: ScopeAll}
+	out := scoped{Answered: ScopeAll, Owned: owned}
 	if len(household) > 0 && len(yours) > 0 {
 		out.Available = []Scope{ScopeHousehold, ScopeOwn, ScopeAll}
 		if slices.Contains(out.Available, asked) {

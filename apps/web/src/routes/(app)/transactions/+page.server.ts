@@ -222,7 +222,10 @@ function group(transactions: Transaction[]): LedgerDay[] {
 			date: shortDate(seconds),
 			negative: isNegative(transaction.amount),
 			unsettled: transaction.status === TransactionStatus.PENDING,
-			unusual: transaction.unusual
+			unusual: transaction.unusual,
+			// The label takes the status slot from unusual; under All every
+			// pair is inside the scope, so wimmd never sends both (ADR 0026).
+			transfer: transaction.ownTransfer
 		};
 
 		if (last && last.date === date) last.entries.push(entry);

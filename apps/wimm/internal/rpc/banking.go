@@ -473,6 +473,11 @@ func toProtoCurrencyHistory(c banking.CurrencyHistory, labels map[string]store.A
 			Net:        toProtoMoney(m.Net),
 			NetUsual:   toProtoMoneyPtr(m.NetUsual),
 			SoFar:      m.SoFar,
+
+			TransfersLeftOut: int32(m.TransfersLeftOut),
+		}
+		if m.TransfersLeftOut > 0 {
+			month.TransfersTotal = toProtoMoney(m.TransfersTotal)
 		}
 		if m.HeldFrom != nil {
 			month.HeldFrom = timestamppb.New(*m.HeldFrom)
@@ -634,7 +639,8 @@ func toProtoLedger(l banking.Ledger) *bankingv1.Ledger {
 
 	for _, t := range l.Page.Transactions {
 		row := toProtoTransaction(t, l.Accounts[t.AccountID])
-		_, row.Unusual = l.Unusual[t.ID]
+		row.OwnTransfer = l.Patterns.IsTransfer(t.ID)
+		_, row.Unusual = l.Patterns.MarkFor(t.ID)
 		out.Transactions = append(out.Transactions, row)
 	}
 
@@ -818,6 +824,7 @@ func toProtoTrends(trends []banking.CurrencyTrend) []*bankingv1.CurrencyTrend {
 					DisplayName: m.Name,
 					Amount:      &bankingv1.Money{Minor: m.Amount, Currency: p.Money.Currency},
 					Unusual:     m.Unusual,
+					OwnTransfer: m.OwnTransfer,
 				})
 			}
 			points = append(points, point)

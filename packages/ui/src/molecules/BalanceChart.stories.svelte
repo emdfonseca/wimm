@@ -248,3 +248,27 @@
 		await expect(canvas.queryByText('22 Jun to 20 Sep')).not.toBeInTheDocument();
 	}}
 />
+
+<!-- The day a transfer left. The line moved, so the row is here and says what
+     kind of movement it was rather than being dropped. -->
+<Story
+	name="ATransferLeaving"
+	args={{ marked: index('1 Sep') }}
+	play={async ({ canvasElement }) => {
+		const pop = within(popover(canvasElement)!);
+		for (const words of [
+			'1 Sep',
+			'€10,912.40',
+			'€500.00 less than 31 Aug',
+			'Transfer to savings',
+			'−€500.00',
+			'Between your accounts'
+		]) {
+			await expect(pop.getByText(words)).toBeInTheDocument();
+		}
+		await expect(pop.queryByText('Unusual')).not.toBeInTheDocument();
+		await expect(live(canvasElement)).toHaveTextContent(
+			'1 Sep. €10,912.40. €500.00 less than 31 Aug. Transfer to savings −€500.00, Between your accounts.'
+		);
+	}}
+/>

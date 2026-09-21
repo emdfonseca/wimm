@@ -70,21 +70,34 @@ func (s *Service) MonthSummary(ctx context.Context, memberID string, asked Scope
 	priorDays := min(today.Day(), daysIn(priorStart))
 	priorEnd := priorStart.AddDate(0, 0, priorDays)
 
-	current, err := s.store.OwnedWindowSums(ctx, memberID, scope.AccountIDs, monthStart, windowEnd)
+	// One read of every owned account, widened by the transfer window at each
+	// end so a pair straddling the edge of a window is still found. The sums
+	// are then taken in Go, because SQL cannot leave out a row whose partner it
+	// has not seen (ADR 0026). It stays a read of about two months, which is
+	// the property that kept this a separate RPC.
+	rows, err := s.store.OwnedBooked(ctx, memberID, scope.OwnedIDs(),
+		priorStart.AddDate(0, 0, -ownTransferWindowDays),
+		windowEnd.AddDate(0, 0, ownTransferWindowDays))
 	if err != nil {
 		return MonthSummary{}, err
 	}
+	counted, _ := countedRows(rows, OwnTransfers(rows, scope.Owned), scope.AccountIDs)
+
+	current := windowSums(counted, monthStart, windowEnd)
 	if len(current) == 0 {
 		return MonthSummary{}, nil
 	}
-	prior, err := s.store.OwnedWindowSums(ctx, memberID, scope.AccountIDs, priorStart, priorEnd)
-	if err != nil {
-		return MonthSummary{}, err
+	prior := windowSums(counted, priorStart, priorEnd)
+
+	// Outgoing is the same rows filtered, so a transfer the scope left out is
+	// in neither top merchants nor largest payments.
+	var outgoing []store.Transaction
+	for _, t := range counted {
+		if t.AmountMinor < 0 && !t.BookingDate.Before(monthStart) && t.BookingDate.Before(windowEnd) {
+			outgoing = append(outgoing, t)
+		}
 	}
-	outgoing, err := s.store.OwnedOutgoing(ctx, memberID, scope.AccountIDs, monthStart, windowEnd)
-	if err != nil {
-		return MonthSummary{}, err
-	}
+
 	accounts, err := s.store.OwnedAccountsForTrend(ctx, memberID, scope.AccountIDs)
 	if err != nil {
 		return MonthSummary{}, err
@@ -163,6 +176,46 @@ func (s *Service) MonthSummary(ctx context.Context, memberID string, asked Scope
 
 func daysIn(monthStart time.Time) int {
 	return int(monthStart.AddDate(0, 1, 0).Sub(monthStart).Hours() / 24)
+}
+
+// windowSums sums counted rows over [from, to) per currency, the currency with
+// the most money out first. Rows is the count of counted rows, so a window
+// holding nothing but a transfer has no summary: nothing was spent or received.
+func windowSums(counted []store.Transaction, from, to time.Time) []store.WindowSum {
+	byCurrency := map[string]*store.WindowSum{}
+	var order []string
+	for _, t := range counted {
+		if t.BookingDate.Before(from) || !t.BookingDate.Before(to) {
+			continue
+		}
+		w, ok := byCurrency[t.Currency]
+		if !ok {
+			w = &store.WindowSum{Currency: t.Currency}
+			byCurrency[t.Currency] = w
+			order = append(order, t.Currency)
+		}
+		if t.AmountMinor < 0 {
+			w.OutMinor += -t.AmountMinor
+		} else {
+			w.InMinor += t.AmountMinor
+		}
+		w.Rows++
+	}
+
+	out := make([]store.WindowSum, 0, len(order))
+	for _, c := range order {
+		out = append(out, *byCurrency[c])
+	}
+	slices.SortStableFunc(out, func(a, b store.WindowSum) int {
+		if a.OutMinor != b.OutMinor {
+			if a.OutMinor > b.OutMinor {
+				return -1
+			}
+			return 1
+		}
+		return strings.Compare(a.Currency, b.Currency)
+	})
+	return out
 }
 
 // topMerchants groups outgoing payments on the lower-cased merchant name and

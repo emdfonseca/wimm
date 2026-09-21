@@ -822,34 +822,6 @@ func (m *memStore) ownedNotDisconnected(memberID string) []string {
 	return out
 }
 
-func (m *memStore) OwnedWindowSums(_ context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.WindowSum, error) {
-	byCurrency := map[string]*store.WindowSum{}
-	for _, id := range m.scopedOwned(memberID, accountIDs) {
-		for _, t := range m.transactions[id] {
-			if t.Status != store.StatusBooked || t.BookingDate.Before(from) || !t.BookingDate.Before(to) {
-				continue
-			}
-			w, ok := byCurrency[t.Currency]
-			if !ok {
-				w = &store.WindowSum{Currency: t.Currency}
-				byCurrency[t.Currency] = w
-			}
-			if t.AmountMinor > 0 {
-				w.InMinor += t.AmountMinor
-			} else {
-				w.OutMinor -= t.AmountMinor
-			}
-			w.Rows++
-		}
-	}
-	var out []store.WindowSum
-	for _, w := range byCurrency {
-		out = append(out, *w)
-	}
-	slices.SortFunc(out, func(a, b store.WindowSum) int { return cmpString(a.Currency, b.Currency) })
-	return out, nil
-}
-
 // scopedOwned is the accounts a member owns, not disconnected, among ids: the
 // SQL's own filter, so a scope can only narrow.
 func (m *memStore) scopedOwned(memberID string, accountIDs []string) []string {
@@ -876,50 +848,6 @@ func (m *memStore) OwnedBooked(_ context.Context, memberID string, accountIDs []
 			return c
 		}
 		return cmpString(b.ID, a.ID)
-	})
-	return out, nil
-}
-
-func (m *memStore) OwnedOutgoing(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.Transaction, error) {
-	booked, _ := m.OwnedBooked(ctx, memberID, accountIDs, from, to)
-	var out []store.Transaction
-	for _, t := range booked {
-		if t.AmountMinor < 0 {
-			out = append(out, t)
-		}
-	}
-	return out, nil
-}
-
-func (m *memStore) OwnedMonthlySums(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.MonthSum, error) {
-	booked, _ := m.OwnedBooked(ctx, memberID, accountIDs, from, to)
-	type key struct {
-		currency string
-		month    time.Time
-	}
-	sums := map[key]*store.MonthSum{}
-	for _, t := range booked {
-		k := key{t.Currency, time.Date(t.BookingDate.Year(), t.BookingDate.Month(), 1, 0, 0, 0, 0, time.UTC)}
-		sum, ok := sums[k]
-		if !ok {
-			sum = &store.MonthSum{Currency: k.currency, Month: k.month}
-			sums[k] = sum
-		}
-		if t.AmountMinor > 0 {
-			sum.InMinor += t.AmountMinor
-		} else {
-			sum.OutMinor -= t.AmountMinor
-		}
-	}
-	var out []store.MonthSum
-	for _, sum := range sums {
-		out = append(out, *sum)
-	}
-	slices.SortFunc(out, func(a, b store.MonthSum) int {
-		if c := cmpString(a.Currency, b.Currency); c != 0 {
-			return c
-		}
-		return a.Month.Compare(b.Month)
 	})
 	return out, nil
 }

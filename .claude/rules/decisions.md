@@ -1092,3 +1092,68 @@ rest are counted as smaller.
 A percentile was rejected: the top twentieth is unusual by construction in every
 month, including one where nothing was. Exempting recurring payments was
 rejected: one rule was the brief, and a yearly premium can be both.
+
+## 0026 · Transfers between a member's own accounts — Accepted
+
+**A transfer between a member's own accounts is two booked rows, in opposite
+directions, of the same currency and exactly equal amounts, on two different
+accounts the member owns, whose booking dates are at most
+`ownTransferWindowDays` (3) apart in either order.** `banking.OwnTransfers` in
+`apps/wimm/internal/banking/transfers.go` is a pure function over the rows
+already in hand, like ADR 0025's rules, returning both directions of every pair.
+
+The window is three because the ledger's own pairs end at two and a weekend adds
+one; four and five find nothing more and double the room for a coincidence.
+
+**Amounts are exact and same-currency.** A tolerance for a fee or a conversion is
+where false pairs come from, and exactness is the only rule that needs no
+constant.
+
+**Candidates are ranked by date gap, then by evidence, and a tie is refused.**
+Two rows pair when each is the other's single best-ranked unpaired candidate;
+a row whose best rank is shared by two candidates is not paired in that round and
+may be in a later one. Pairing greedily in date order was rejected: with two outs
+and two ins of one amount it pairs the first with the first even when the second
+is the same-day one, and the result then depends on row order.
+
+**Evidence is a row's text naming the other row's account, and it only breaks a
+tie.** A token is that account's `number_suffix` when it is all digits and at
+least `ownTransferMinSuffix` (4) long, or its `name` or `household_name` when at
+least `ownTransferMinNameRunes` (4) runes long — minus every value a second
+account the member owns also carries. A shared value says "mine" and not
+"which": three of the household's accounts repeat `holder_name` in `name`, and
+the two Revolut accounts share all three fields because nothing distinguishes
+them. `holder_name` is therefore never a token, and neither is a value that
+behaves like one. A suffix must be digits because a length minimum was standing
+in for that: the household's PayPal account has the suffix `.com`.
+
+Requiring evidence for every pair was rejected: Portuguese banks write
+`TRF P/ <name>` as often as a number, and two of the household's fourteen pairs —
+both recognised — carry none.
+
+**A pair is found across every account the member owns; leaving it out is decided
+per scope.** Both halves inside the scope in force means the pair is left out of
+that scope's figures; one half outside means the pair is **crossing** and is
+counted. So money from a joint account to a personal one is money out under
+Household and money in under Yours, and left out only under All, where both
+accounts are the member's. Leaving a crossing pair out wherever either half is in
+scope was rejected: an owner's Household would lose money the other owner's keeps,
+and Yours would stop showing what leaves it every month, which is the most useful
+thing Yours says. There is no fraction of an account to move — ADR 0019 makes
+ownership whole — so a crossing pair is the only place the change of hands lands.
+
+**A row is labelled whenever it is half of any pair, in every scope, and the
+label takes the status slot from `Unusual`.** The wire carries
+`Transaction.own_transfer`, `DayMover.own_transfer`, and
+`HistoryMonth.transfers_left_out` with `transfers_total`. **No partner id is
+sent**: the browser has no way to show the other row, and an id is one more thing
+that could point at an account the reader may not own.
+
+**Pairs are derived on read**, for ADR 0025's reason: the window and the evidence
+rule will be tuned, a stored pair needs a backfill each time, and a late-arriving
+row can turn an unpaired row into a pair.
+
+**An unpaired row whose counterparty is the member's own `holder_name` stays
+counted.** It is a likely transfer to an account wimm does not hold, and leaving
+it out would change what money out means. On the household's ledger there is one,
+€160.80.

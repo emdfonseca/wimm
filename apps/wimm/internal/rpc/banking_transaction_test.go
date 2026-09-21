@@ -59,7 +59,9 @@ func TestAListedRowCarriesItsUnusualMark(t *testing.T) {
 			{ID: "garage", AmountMinor: -165_000, Currency: "EUR", BookingDate: when},
 			{ID: "coffee", AmountMinor: -120, Currency: "EUR", BookingDate: when},
 		}},
-		Unusual: map[string]banking.UnusualMark{"garage": {TransactionID: "garage", FirstPayment: true}},
+		Patterns: banking.Patterns{
+			Unusual: map[string]banking.UnusualMark{"garage": {TransactionID: "garage", FirstPayment: true}},
+		},
 	})
 	if !out.Transactions[0].Unusual || out.Transactions[1].Unusual {
 		t.Errorf("unusual = %v and %v, want the garage only", out.Transactions[0].Unusual, out.Transactions[1].Unusual)
@@ -77,5 +79,86 @@ func TestAScopeOnOfferKeepsACurrencyWithNoFullMonthAndNoRecurringPayment(t *test
 	h.Available = nil
 	if got := len(toProtoHistory(h).Histories); got != 0 {
 		t.Errorf("got %d histories, want none where no control is on offer", got)
+	}
+}
+
+func TestAListedRowSaysWhenItIsHalfOfATransfer(t *testing.T) {
+	when := time.Date(2026, time.September, 10, 0, 0, 0, 0, time.UTC)
+	out := toProtoLedger(banking.Ledger{
+		Page: store.LedgerPage{Transactions: []store.Transaction{
+			{ID: "out", AmountMinor: -50_000, Currency: "EUR", BookingDate: when},
+			{ID: "in", AmountMinor: 50_000, Currency: "EUR", BookingDate: when},
+			{ID: "coffee", AmountMinor: -120, Currency: "EUR", BookingDate: when},
+		}},
+		Patterns: banking.Patterns{
+			// The coffee is marked unusual; the out row is marked both, and
+			// the label takes the slot.
+			Unusual: map[string]banking.UnusualMark{
+				"coffee": {TransactionID: "coffee"},
+				"out":    {TransactionID: "out"},
+			},
+			Transfers: map[string]string{"out": "in", "in": "out"},
+		},
+	})
+
+	if !out.Transactions[0].GetOwnTransfer() || !out.Transactions[1].GetOwnTransfer() {
+		t.Error("both halves of the pair must carry own_transfer")
+	}
+	if out.Transactions[2].GetOwnTransfer() {
+		t.Error("the coffee is half of nothing")
+	}
+	if out.Transactions[0].GetUnusual() {
+		t.Error("the out row is unusual as well as a transfer, and the label takes the slot")
+	}
+	if !out.Transactions[2].GetUnusual() {
+		t.Error("the coffee lost its unusual mark")
+	}
+}
+
+func TestAMonthSaysHowManyTransfersItLeftOut(t *testing.T) {
+	out := toProtoCurrencyHistory(banking.CurrencyHistory{
+		Currency: "EUR",
+		Months: []banking.HistoryMonth{
+			{
+				Start:            time.Date(2026, time.September, 1, 0, 0, 0, 0, time.UTC),
+				In:               banking.Money{Minor: 245_000, Currency: "EUR"},
+				Out:              banking.Money{Minor: 190_000, Currency: "EUR"},
+				Net:              banking.Money{Minor: 55_000, Currency: "EUR"},
+				TransfersLeftOut: 2,
+				TransfersTotal:   banking.Money{Minor: 140_000, Currency: "EUR"},
+			},
+			{
+				Start: time.Date(2026, time.August, 1, 0, 0, 0, 0, time.UTC),
+				In:    banking.Money{Minor: 1, Currency: "EUR"},
+				Out:   banking.Money{Minor: 1, Currency: "EUR"},
+				Net:   banking.Money{Currency: "EUR"},
+			},
+		},
+	}, nil)
+
+	sep, aug := out.GetMonths()[0], out.GetMonths()[1]
+	if sep.GetTransfersLeftOut() != 2 {
+		t.Errorf("September left out %d, want 2", sep.GetTransfersLeftOut())
+	}
+	if sep.GetTransfersTotal().GetMinor() != 140_000 || sep.GetTransfersTotal().GetCurrency() != "EUR" {
+		t.Errorf("September total = %+v, want 140000 EUR", sep.GetTransfersTotal())
+	}
+	if aug.GetTransfersLeftOut() != 0 || aug.GetTransfersTotal() != nil {
+		t.Errorf("August = %d left out, total %+v, want nothing",
+			aug.GetTransfersLeftOut(), aug.GetTransfersTotal())
+	}
+}
+
+func TestAMoverSaysWhenItIsHalfOfATransfer(t *testing.T) {
+	m := banking.DayMover{TransactionID: "out", Name: "Transfer", Amount: -50_000, OwnTransfer: true}
+	got := &bankingv1.DayMover{
+		DisplayName: m.Name,
+		Amount:      &bankingv1.Money{Minor: m.Amount, Currency: "EUR"},
+		Unusual:     m.Unusual,
+		OwnTransfer: m.OwnTransfer,
+	}
+	if !got.GetOwnTransfer() || got.GetUnusual() {
+		t.Errorf("mover = own_transfer %v unusual %v, want true and false",
+			got.GetOwnTransfer(), got.GetUnusual())
 	}
 }

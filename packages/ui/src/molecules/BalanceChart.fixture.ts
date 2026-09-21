@@ -55,6 +55,12 @@ const days: Record<string, Partial<BalancePoint>> = {
 		smaller: 'and 1 smaller',
 		empty: false
 	},
+	'1 Sep': {
+		amount: '€10,912.40',
+		change: '€500.00 less than 31 Aug',
+		movers: [mover('Transfer to savings', '−€500.00', { transfer: true })],
+		empty: false
+	},
 	'28 Aug': {
 		amount: '€12,640.18',
 		change: '€9,804.00 more than 27 Aug',

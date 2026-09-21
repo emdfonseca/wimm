@@ -1,4 +1,4 @@
-import type { CurrencySection } from '@wimm/ui';
+import type { CurrencySection, ScopeValue } from '@wimm/ui';
 import { formatMoney } from './money';
 
 type Money = { minor: bigint; currency: string };
@@ -77,7 +77,36 @@ export interface MonthInput {
 	monthStart?: { seconds: bigint };
 }
 
-const TRANSFERS = 'Money moved between your own accounts is counted.';
+/**
+ * How the scope in force treats movements between the member's own accounts.
+ * Which sentence is right depends on the scope, so the screen is given one
+ * and holds neither (ADR 0026).
+ *
+ * Under All both halves of a pair are counted by the same figures, so the
+ * pair is left out. Under a narrower scope a pair may have one half outside
+ * it, and that half is money that left the accounts counted or arrived in
+ * them, so it stays counted — which is what the second sentence says.
+ */
+export const TRANSFERS_ALL =
+	'Money moved between your accounts is left out where wimm holds both. Other transfers are counted.';
+export const TRANSFERS_NARROW =
+	'Money moved between accounts counted here is left out. Money moved to or from your other accounts is counted.';
+
+/** The sentence for the scope actually answered. All, or no control on offer. */
+export function transferNote(scope: ScopeValue | undefined): string {
+	return scope === 'household' || scope === 'own' ? TRANSFERS_NARROW : TRANSFERS_ALL;
+}
+
+/**
+ * `2 transfers between your accounts left out · €1,400.00`, or nothing where
+ * the scope left none out. The line is absent, not empty.
+ */
+export function leftOutLine(count: number, total: Money | undefined): string | undefined {
+	if (count <= 0) return undefined;
+	const amount = formatMoney(total);
+	if (!amount) return undefined;
+	return `${count} ${count === 1 ? 'transfer' : 'transfers'} between your accounts left out · ${amount}`;
+}
 
 /**
  * The month's three tiles and the sentence under them. `today` is the last
@@ -114,7 +143,7 @@ export function monthSection(month: MonthInput, today: Date): NonNullable<Curren
 
 	return {
 		...figures,
-		note: `${window} ${TRANSFERS}`,
+		note: window,
 		href: `/transactions?month=${start.toISOString().slice(0, 7)}`
 	};
 }

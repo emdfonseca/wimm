@@ -109,6 +109,9 @@
 		}
 		await expect(canvas.queryByText('Unusual payments')).not.toBeInTheDocument();
 		await expect(canvas.queryByText(/unusual/)).not.toBeInTheDocument();
+		// A month that left nothing out says nothing: the line is absent, not
+		// empty.
+		await expect(canvas.queryByText(/left out/)).not.toBeInTheDocument();
 		await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
 	}}
 />
@@ -188,5 +191,53 @@
 			canvas.getByText('A month under way is not set against whole months.')
 		).toBeVisible();
 		await expect(canvas.queryByText('More than usual')).not.toBeInTheDocument();
+	}}
+/>
+
+<!-- A month whose figures left two transfers out says so, under the figures,
+     in the same quiet line the month-so-far note uses. -->
+<Story
+	name="DetailWithTransfersLeftOut"
+	args={{
+		month: 'June 2026',
+		figures: [
+			{ label: 'Money in', value: '€2,450.00' },
+			{ label: 'Money out', value: '€2,299.80' },
+			{ label: 'Net', value: '+€150.20' }
+		],
+		leftOut: '2 transfers between your accounts left out · €1,400.00'
+	}}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('June 2026')).toBeVisible();
+		for (const words of ['Money in', '€2,450.00', 'Money out', '€2,299.80', 'Net', '+€150.20']) {
+			await expect(canvas.getAllByText(words)[0]).toBeVisible();
+		}
+		await expect(
+			canvas.getByText('2 transfers between your accounts left out · €1,400.00')
+		).toBeVisible();
+	}}
+/>
+
+<!-- One transfer reads `1 transfer`, never `1 transfers`. The load writes the
+     singular; this is where it is seen. -->
+<Story
+	name="DetailWithOneTransferLeftOut"
+	args={{
+		month: 'July 2026',
+		figures: [
+			{ label: 'Money in', value: '€2,450.00' },
+			{ label: 'Money out', value: '€1,880.00' },
+			{ label: 'Net', value: '+€570.00' }
+		],
+		leftOut: '1 transfer between your accounts left out · €500.00'
+	}}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('July 2026')).toBeVisible();
+		await expect(
+			canvas.getByText('1 transfer between your accounts left out · €500.00')
+		).toBeVisible();
+		await expect(canvas.queryByText(/1 transfers/)).not.toBeInTheDocument();
 	}}
 />

@@ -36,13 +36,19 @@
 		/** Transactions files a row under a day header, so the row itself
 		 *  carries no date in columns. Compact keeps it in the second line. */
 		hideDate?: boolean;
-		/** Overview's lists have no settled marker, so the description takes
-		 *  the width the marker's slot would hold. */
+		/** Overview's lists reserve no room for a marker, so the description
+		 *  takes the width the slot would hold. A row that does carry a status
+		 *  still shows it: this gives up the reserved column, not the fact. */
 		hideStatus?: boolean;
 		/** The one payment rule marked it: `Unusual`, or `Unusual income` when
 		 *  the row is not `negative`. Sits in the status slot, which a booked row
 		 *  never otherwise uses. */
 		unusual?: boolean;
+		/** The row is one half of a movement between two accounts the member
+		 *  owns: `Between your accounts`. Shares the status slot and wins it
+		 *  from `unusual`, because a transfer is never also unusual. `Not
+		 *  settled` still wins over both. */
+		transfer?: boolean;
 		/** A second line under the name, in the bank's line's place and never
 		 *  beside one: `usually about €60`. */
 		note?: string;
@@ -63,6 +69,7 @@
 		hideDate = false,
 		hideStatus = false,
 		unusual = false,
+		transfer = false,
 		note,
 		href
 	}: Props = $props();
@@ -70,6 +77,12 @@
 	const mark = $derived(initials ?? (description.slice(0, 2).toUpperCase() || '—'));
 	const line = $derived(note ?? (banksLine && banksLine !== description ? banksLine : undefined));
 	const unusualLabel = $derived(negative ? 'Unusual' : 'Unusual income');
+	// One row shows at most one status: Not settled, then Between your
+	// accounts, then Unusual. The load never sends two, and the order is here
+	// so a row that carries both cannot render both.
+	const status = $derived(
+		unsettled ? 'Not settled' : transfer ? 'Between your accounts' : unusual ? unusualLabel : undefined
+	);
 </script>
 
 <svelte:element
@@ -94,8 +107,8 @@
 				<span class="when">{date}</span>
 				{#if unsettled}
 					<span class="badge">Not settled</span>
-				{:else if unusual}
-					<span class="tag">{unusualLabel}</span>
+				{:else if status}
+					<span class="tag">{status}</span>
 				{/if}
 			</span>
 			{#if line}
@@ -108,14 +121,26 @@
 			{#if line}
 				<span class="banks-line" title={line}>{line}</span>
 			{/if}
+			<!-- A list with no marker column has no room for a long label
+			     beside the name, and squeezing it there costs the name its
+			     words. It goes under the name instead, where it is whole. -->
+			{#if hideStatus && status}
+				<span class="second-line">
+					{#if unsettled}
+						<span class="badge">Not settled</span>
+					{:else}
+						<span class="tag">{status}</span>
+					{/if}
+				</span>
+			{/if}
 		</span>
 		<span class="account">{account}</span>
 		{#if !hideStatus}
 			<span class="status">
 				{#if unsettled}
 					<span class="badge">Not settled</span>
-				{:else if unusual}
-					<span class="tag">{unusualLabel}</span>
+				{:else if status}
+					<span class="tag">{status}</span>
 				{/if}
 			</span>
 		{/if}
@@ -233,11 +258,23 @@
 		font-size: 12px;
 	}
 
+	/* A column, not a tag. It holds its width for the reason the account
+	   above it does: sized from its own words, the longest label indents the
+	   account of the one row that carries it and the table stops lining up.
+	   The basis is the widest label, `Between your accounts`. */
 	.status {
 		display: inline-flex;
 		align-items: center;
-		flex: 0 0 auto;
-		min-inline-size: 92px;
+		flex: 0 0 var(--ledger-status-basis, 148px);
+		block-size: 22px;
+	}
+
+	/* Under the name, in the bank's line's place: its own line, so the label
+	   is whole and the name keeps its words. */
+	.second-line {
+		display: inline-flex;
+		align-items: center;
+		align-self: start;
 		block-size: 22px;
 	}
 

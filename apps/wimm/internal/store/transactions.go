@@ -826,104 +826,26 @@ func (db *DB) TransactionsSince(ctx context.Context, accountID string, since tim
 }
 
 // WindowSum is one currency's booked money in and out over a window, both as
-// positive minor units.
+// positive minor units. The domain sums it from rows it has already read,
+// because SQL cannot leave out a transfer whose partner it has not seen
+// (ADR 0026).
 type WindowSum struct {
 	Currency string
 	InMinor  int64
 	OutMinor int64
-	// Rows is how many booked transactions the window holds.
+	// Rows is how many counted transactions the window holds, so a window
+	// holding nothing but a transfer has no summary.
 	Rows int
 }
 
-// OwnedWindowSums sums the booked transactions of the accounts a member owns
-// among accountIDs over [from, to), per currency. Both bounds are arguments: the store never
-// reads a clock of its own, so a window is whatever database time the caller
-// took it from (ADR 0017). Pending rows are excluded — they are replaced whole
-// on every sync (ADR 0021) — and so are left-out and disconnected accounts,
-// the same set OwnedAccountsForTrend lists.
-func (db *DB) OwnedWindowSums(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]WindowSum, error) {
-	const query = `
-		select t.currency,
-		       coalesce(sum(t.amount_minor) filter (where t.amount_minor > 0), 0)::bigint,
-		       coalesce(-sum(t.amount_minor) filter (where t.amount_minor < 0), 0)::bigint,
-		       count(*)::int
-		from transactions t
-		join accounts a on a.id = t.account_id
-		join account_owners o on o.account_id = a.id and o.member_id = $1
-		left join bank_connections c on c.id = a.connection_id
-		where a.left_out_at is null
-		  and a.id = any($2::uuid[])
-		  and (c.id is null or c.disconnected_at is null)
-		  and t.status = 'booked'
-		  and t.booking_date >= $3 and t.booking_date < $4
-		group by t.currency
-		order by t.currency`
-
-	rows, err := db.pool.Query(ctx, query, memberID, accountIDs, from, to)
-	if err != nil {
-		return nil, fmt.Errorf("summing a window: %w", err)
-	}
-	defer rows.Close()
-
-	var out []WindowSum
-	for rows.Next() {
-		var w WindowSum
-		if err := rows.Scan(&w.Currency, &w.InMinor, &w.OutMinor, &w.Rows); err != nil {
-			return nil, fmt.Errorf("summing a window: %w", err)
-		}
-		out = append(out, w)
-	}
-	return out, rows.Err()
-}
-
 // MonthSum is one currency's booked money in and out over one calendar month,
-// both as positive minor units.
+// both as positive minor units, summed the same way and for the same reason.
 type MonthSum struct {
 	Currency string
 	// Month is the first of the month, midnight UTC.
 	Month    time.Time
 	InMinor  int64
 	OutMinor int64
-}
-
-// OwnedMonthlySums sums the booked transactions of the accounts a member owns
-// among accountIDs over [from, to), grouped by currency and calendar month,
-// oldest month first. The bounds are arguments for the reason OwnedWindowSums'
-// are (ADR 0017); the account filter is applied as OwnedAccountsForTrend's is.
-func (db *DB) OwnedMonthlySums(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]MonthSum, error) {
-	const query = `
-		select t.currency,
-		       date_trunc('month', t.booking_date::timestamp)::timestamp,
-		       coalesce(sum(t.amount_minor) filter (where t.amount_minor > 0), 0)::bigint,
-		       coalesce(-sum(t.amount_minor) filter (where t.amount_minor < 0), 0)::bigint
-		from transactions t
-		join accounts a on a.id = t.account_id
-		join account_owners o on o.account_id = a.id and o.member_id = $1
-		left join bank_connections c on c.id = a.connection_id
-		where a.left_out_at is null
-		  and a.id = any($2::uuid[])
-		  and (c.id is null or c.disconnected_at is null)
-		  and t.status = 'booked'
-		  and t.booking_date >= $3 and t.booking_date < $4
-		group by 1, 2
-		order by 1, 2`
-
-	rows, err := db.pool.Query(ctx, query, memberID, accountIDs, from, to)
-	if err != nil {
-		return nil, fmt.Errorf("summing months: %w", err)
-	}
-	defer rows.Close()
-
-	var out []MonthSum
-	for rows.Next() {
-		var m MonthSum
-		if err := rows.Scan(&m.Currency, &m.Month, &m.InMinor, &m.OutMinor); err != nil {
-			return nil, fmt.Errorf("summing months: %w", err)
-		}
-		m.Month = time.Date(m.Month.Year(), m.Month.Month(), 1, 0, 0, 0, 0, time.UTC)
-		out = append(out, m)
-	}
-	return out, rows.Err()
 }
 
 // OwnedBooked is every booked transaction, in either direction, on the accounts
@@ -962,20 +884,4 @@ func (db *DB) OwnedBooked(ctx context.Context, memberID string, accountIDs []str
 		out = append(out, t)
 	}
 	return out, rows.Err()
-}
-
-// OwnedOutgoing is every booked payment — money going out — among OwnedBooked's
-// rows, newest first.
-func (db *DB) OwnedOutgoing(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]Transaction, error) {
-	booked, err := db.OwnedBooked(ctx, memberID, accountIDs, from, to)
-	if err != nil {
-		return nil, err
-	}
-	out := booked[:0]
-	for _, t := range booked {
-		if t.AmountMinor < 0 {
-			out = append(out, t)
-		}
-	}
-	return out, nil
 }

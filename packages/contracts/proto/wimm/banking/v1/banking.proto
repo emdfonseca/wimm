@@ -478,6 +478,12 @@ message Transaction {
   // True when the one unusual-payment rule marks this booked row, judged under
   // the All scope. Derived on read, never stored.
   bool unusual = 11;
+  // True when this booked row is one half of a movement between two accounts
+  // the calling member owns. Set whenever the row is half of any pair, in every
+  // scope, and it takes the status slot from unusual. No partner id is sent:
+  // the browser cannot show the other row, and an id is one more thing that
+  // could point at an account. Derived on read, never stored.
+  bool own_transfer = 12;
 }
 
 // Where a page starts. It is the sort key itself rather than an offset, because
@@ -631,6 +637,10 @@ message DayMover {
   string display_name = 1;
   Money amount = 2;
   bool unusual = 3;
+  // True when this row is one half of a movement between two accounts the
+  // member owns. A mover that is a transfer is never also unusual. The balance
+  // line is unaffected: the day's money still moved, so the row is still here.
+  bool own_transfer = 4;
 }
 
 message GetMonthSummaryRequest {
@@ -729,6 +739,12 @@ message HistoryMonth {
   repeated MerchantRise risers = 8;
   // Newest first.
   repeated UnusualPayment unusual = 9;
+  // How many transfers between the member's own accounts this month's figures
+  // left out, and what they came to. A pair is counted in the month its money
+  // left, so twelve months' counts add up to the number of pairs. Zero and
+  // unset where the scope left none out; the total is positive.
+  int32 transfers_left_out = 10;
+  Money transfers_total = 11;
 }
 
 message MerchantRise {

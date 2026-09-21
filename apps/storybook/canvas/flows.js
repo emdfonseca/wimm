@@ -528,5 +528,7 @@ export const unplaced = [
 	'pages-overview--household-scope-with-no-history',
 	'pages-overview--household-scope-with-nothing-to-set-aside',
 	'pages-overview--household-scope-is-narrower',
-	'pages-overview--yours-scope'
+	'pages-overview--yours-scope',
+	'pages-overview--a-month-with-transfers-left-out',
+	'pages-overview--a-day-a-transfer-left'
 ];

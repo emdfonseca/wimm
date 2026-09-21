@@ -23,9 +23,13 @@ archived; everything below describes the code as that change leaves it.
   constant in `apps/web/src/lib/overview.ts` and a second, hard-coded copy in
   `packages/ui/src/pages/Overview.svelte`.
 - Measured on the household's local ledger, read-only, on 21 September 2026:
-  about 1,200 booked rows on six owned accounts hold 16 candidate pairs (same
-  currency, equal opposite amounts, different accounts), 5 on the same day, 7
-  one day apart, 4 two days apart, and none from three to five days apart.
+  1,222 booked rows on six owned accounts. The rule pairs 14, all of which the
+  member recognises: 5 at a gap of zero days, 7 at one, 2 at two, and none from
+  three to five. Twelve carry evidence. The ambiguity rule refused nothing. One
+  unpaired out row names the member's own `holder_name`, €160.80, so the
+  transfers wimm holds one side of do not outweigh the pairs. Household leaves
+  out no pair; Yours leaves out 4, all in one month; All leaves out all 14. No
+  net figure moves in any scope, because both halves of a pair leave together.
 
 ## Language
 
@@ -85,18 +89,21 @@ returns `map[transactionID]partnerID`, holding both directions of every pair.
 
 ```text
 ownTransferWindowDays   = 3    booking dates at most 3 days apart, either order
-ownTransferMinSuffix    = 4    a number suffix shorter than this is not evidence
+ownTransferMinSuffix    = 4    a number suffix shorter than this is not a token
 ownTransferMinNameRunes = 4    nor is an account name shorter than this
 
 candidate   = out row o and in row i with o.currency == i.currency,
               o.amount == −i.amount, o.account != i.account,
               |o.booking_date − i.booking_date| <= ownTransferWindowDays,
               both booked
+tokens(a)   = an owned account's number_suffix when it is all digits and at
+              least ownTransferMinSuffix long, plus its name and its
+              household_name when at least ownTransferMinNameRunes long, each
+              lower cased with spaces collapsed; MINUS every value carried by
+              a second account the member owns
 evidence    = the text of either row (counterparty name and remittance, lower
-              cased, spaces collapsed) contains the OTHER row's account's
-              number_suffix, name or household_name, above the minimum lengths.
-              holder_name is not evidence: it is the same on every account
-              the member holds, so it says "mine" and not "which"
+              cased, spaces collapsed) contains a token of the OTHER row's
+              account
 rank        = smaller date gap first; at equal gap, evidence before none
 pairing     = repeat until nothing changes: pair (o, i) when i is o's single
               best-ranked unpaired candidate AND o is i's; remove both.
@@ -104,6 +111,17 @@ pairing     = repeat until nothing changes: pair (o, i) when i is o's single
               in that round, and may be in a later one once one of them has
               been paired elsewhere. What is left is unpaired
 ```
+
+**A token is dropped when a second owned account carries it**, which is the
+`holder_name` exclusion stated as the property rather than as a column. Three of
+the household's accounts carry the same string in `name` as in `holder_name`, so
+excluding the column and admitting the value said "mine" and not "which" all the
+same; the two Revolut accounts share `name`, `household_name` and
+`number_suffix`, and nothing distinguishes them because nothing does. **A number
+suffix must be digits** for the same reason a length minimum was reached for: the
+household's PayPal account has the suffix `.com`, which is four characters and is
+not an account number. Neither rule moves a pair on the household's ledger —
+evidence only breaks a rank tie, and the ambiguity rule refused nothing there.
 
 The window is three because the ledger's own pairs end at two and a weekend
 adds one; five would have found nothing more and doubles the room for a

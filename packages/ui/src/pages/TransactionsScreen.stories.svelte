@@ -70,6 +70,33 @@
 		}
 	];
 
+	/** Both halves of one movement between two accounts the member owns, on
+	 *  the day it happened. Each is labelled; neither names the other. */
+	const transferDay: LedgerDay = {
+		date: '2026-09-01',
+		entries: [
+			{
+				id: '9',
+				description: 'Transfer to savings',
+				account: 'Current account · Monzo',
+				amount: '−€500.00',
+				date: '1 Sep',
+				negative: true,
+				transfer: true,
+				initials: 'TS'
+			},
+			{
+				id: '10',
+				description: 'Transfer from current account',
+				account: 'Savings · Monzo',
+				amount: '+€500.00',
+				date: '1 Sep',
+				transfer: true,
+				initials: 'TC'
+			}
+		]
+	};
+
 	const olderDays: LedgerDay[] = [
 		{
 			date: '2026-08-04',
@@ -124,8 +151,8 @@
 		tags: ['autodocs'],
 		parameters: { layout: 'fullscreen', shell: '/transactions' },
 		args: {
-			days,
-			count: 382,
+			days: [...days, transferDay],
+			count: 384,
 			freshness,
 			span,
 			today
@@ -144,7 +171,7 @@
 		).toBeInTheDocument();
 		await expect(canvas.getByText('Every account you own, newest first.')).toBeInTheDocument();
 		await expect(canvas.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
-		await expect(canvas.getByText('382 transactions')).toBeInTheDocument();
+		await expect(canvas.getByText('384 transactions')).toBeInTheDocument();
 		await expect(canvas.getByText(freshness)).toBeInTheDocument();
 
 		for (const heading of ['Description', 'Account', 'Amount']) {
@@ -189,6 +216,20 @@
 		const transfer = canvas.getByText('Transfer to Ana Reis').closest('.ledger-row') as HTMLElement;
 		await expect(transfer).toHaveTextContent('Not settled');
 		await expect(transfer).not.toHaveTextContent('Unusual');
+		// A payment to somebody else is not a transfer between your accounts,
+		// however much it reads like one.
+		await expect(transfer).not.toHaveTextContent('Between your accounts');
+
+		// Both halves of the pair, labelled, and nothing else on the page is.
+		await expect(canvas.getAllByText('Between your accounts')).toHaveLength(2);
+		for (const [name, amount] of [
+			['Transfer to savings', '−€500.00'],
+			['Transfer from current account', '+€500.00']
+		] as const) {
+			const row = canvas.getByText(name).closest('.ledger-row') as HTMLElement;
+			await expect(row).toHaveTextContent(amount);
+			await expect(row).toHaveTextContent('Between your accounts');
+		}
 	}}
 />
 
@@ -196,13 +237,33 @@
 <Story
 	name="OneAccount"
 	tags={['kind-state']}
-	args={{ count: 204, filterAccount: 'Current account · Monzo' }}
+	args={{
+		count: 204,
+		filterAccount: 'Savings · Monzo',
+		days: [
+			{
+				date: '2026-09-01',
+				entries: [transferDay.entries[1]!]
+			}
+		]
+	}}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Showing one account')).toBeInTheDocument();
 		await expect(canvas.getByRole('link', { name: 'Show all accounts' })).toBeInTheDocument();
 		// A filter is not containment: there is no breadcrumb.
 		await expect(canvas.queryByRole('navigation', { name: /breadcrumb/i })).not.toBeInTheDocument();
+
+		// Reading one account still labels the half that is in it: pairing is
+		// done across every account the member owns, and only the page is
+		// narrowed. Its partner is not here, and nothing names it.
+		const row = canvas
+			.getByText('Transfer from current account')
+			.closest('.ledger-row') as HTMLElement;
+		await expect(row).toHaveTextContent('+€500.00');
+		await expect(row).toHaveTextContent('Between your accounts');
+		await expect(canvas.getAllByText('Between your accounts')).toHaveLength(1);
+		await expect(canvas.queryByText('Transfer to savings')).not.toBeInTheDocument();
 	}}
 />
 
@@ -340,7 +401,7 @@
 	args={{ refreshing: true }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getByText('382 transactions')).toBeInTheDocument();
+		await expect(canvas.getByText('384 transactions')).toBeInTheDocument();
 		await expect(canvas.getByText('Pingo Doce')).toBeInTheDocument();
 		await expect(canvas.getByRole('button', { name: 'Refreshing…' })).toBeDisabled();
 	}}
@@ -384,7 +445,7 @@
 		await expect(
 			canvas.getAllByText(/What is below was\s+already read, and it has not changed/).length
 		).toBeGreaterThan(0);
-		await expect(canvas.getByText('382 transactions')).toBeInTheDocument();
+		await expect(canvas.getByText('384 transactions')).toBeInTheDocument();
 		await expect(canvas.getByText(freshness)).toBeInTheDocument();
 	}}
 />
@@ -429,7 +490,7 @@
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Monzo has stopped sending transactions')).toBeInTheDocument();
 		await expect(canvas.getByText(/The access you gave Monzo has run out/)).toBeInTheDocument();
-		await expect(canvas.getByText('382 transactions')).toBeInTheDocument();
+		await expect(canvas.getByText('384 transactions')).toBeInTheDocument();
 	}}
 />
 
@@ -447,7 +508,7 @@
 			canvas.getByText(/Its accounts have left Overview and its balances are gone/)
 		).toBeInTheDocument();
 		await expect(canvas.getByText(/still here/)).toBeInTheDocument();
-		await expect(canvas.getByText('382 transactions')).toBeInTheDocument();
+		await expect(canvas.getByText('384 transactions')).toBeInTheDocument();
 	}}
 />
 
@@ -474,7 +535,7 @@
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Every account you own, newest first.')).toBeInTheDocument();
 		await expect(canvas.getByText(freshness)).toBeInTheDocument();
-		await expect(canvas.getByText('382 transactions')).toBeInTheDocument();
+		await expect(canvas.getByText('384 transactions')).toBeInTheDocument();
 		await expect(canvas.queryByText('Description')).not.toBeInTheDocument();
 		await expect(canvas.getByText('Today, 17 September')).toBeInTheDocument();
 		await expect(canvas.getByText('DD NOS COMUNICACOES SA 000000234058260')).toBeInTheDocument();

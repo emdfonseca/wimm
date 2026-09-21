@@ -268,3 +268,104 @@
 		</div>
 	{/snippet}
 </Story>
+
+<!-- Half of a movement between two accounts the member owns. The label is text
+     in the same pill `Unusual` uses, never colour and never an icon. -->
+<Story
+	name="BetweenYourAccounts"
+	args={{
+		description: 'Transfer to savings',
+		account: 'Current account',
+		amount: '−€500.00',
+		date: '1 Sep',
+		transfer: true
+	}}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Transfer to savings')).toBeInTheDocument();
+		await expect(canvas.getByText('Current account')).toBeInTheDocument();
+		await expect(canvas.getByText('1 Sep')).toBeInTheDocument();
+		await expect(canvas.getByText('−€500.00')).toBeInTheDocument();
+		await expect(canvas.getByText('Between your accounts')).toBeInTheDocument();
+	}}
+/>
+
+<Story
+	name="CompactBetweenYourAccounts"
+	args={{
+		description: 'Transfer to savings',
+		account: 'Current account',
+		amount: '−€500.00',
+		date: '1 Sep',
+		transfer: true,
+		compact: true
+	}}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Transfer to savings')).toBeInTheDocument();
+		await expect(canvas.getByText('Current account')).toBeInTheDocument();
+		await expect(canvas.getByText('1 Sep')).toBeInTheDocument();
+		await expect(canvas.getByText('−€500.00')).toBeInTheDocument();
+		await expect(canvas.getByText('Between your accounts')).toBeInTheDocument();
+	}}
+/>
+
+<!-- The arriving half reads the same way. Nothing on it names the account the
+     money came from. -->
+<Story
+	name="BetweenYourAccountsArriving"
+	args={{
+		description: 'Transfer from current account',
+		account: 'Savings',
+		amount: '+€500.00',
+		date: '1 Sep',
+		negative: false,
+		transfer: true
+	}}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Transfer from current account')).toBeInTheDocument();
+		await expect(canvas.getByText('Savings')).toBeInTheDocument();
+		await expect(canvas.getByText('1 Sep')).toBeInTheDocument();
+		await expect(canvas.getByText('+€500.00')).toBeInTheDocument();
+		await expect(canvas.getByText('Between your accounts')).toBeInTheDocument();
+	}}
+/>
+
+<!-- The slot holds one status. A row told it is both shows the transfer, which
+     is the stronger statement: a transfer is never also unusual. -->
+<Story
+	name="ATransferIsNeverAlsoUnusual"
+	args={{
+		description: 'Transfer to savings',
+		account: 'Current account',
+		amount: '−€6,000.00',
+		date: '1 Sep',
+		transfer: true,
+		unusual: true
+	}}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Between your accounts')).toBeInTheDocument();
+		await expect(canvas.queryByText('Unusual')).not.toBeInTheDocument();
+	}}
+/>
+
+<!-- Not settled wins over both: whether the money has moved outranks what kind
+     of movement it is. -->
+<Story
+	name="NotSettledWinsOverATransfer"
+	args={{
+		description: 'Transfer to savings',
+		account: 'Current account',
+		amount: '−€500.00',
+		date: '1 Sep',
+		transfer: true,
+		unsettled: true
+	}}
+	play={async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await expect(canvas.getByText('Not settled')).toBeInTheDocument();
+		await expect(canvas.queryByText('Between your accounts')).not.toBeInTheDocument();
+	}}
+/>

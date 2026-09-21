@@ -81,9 +81,6 @@ type Store interface {
 	//
 	// Every owned query takes the account ids a scope resolved to, applied in
 	// SQL beside ownership: an id the member does not own matches nothing.
-	OwnedWindowSums(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.WindowSum, error)
-	OwnedOutgoing(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.Transaction, error)
-	OwnedMonthlySums(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.MonthSum, error)
 	OwnedBooked(ctx context.Context, memberID string, accountIDs []string, from, to time.Time) ([]store.Transaction, error)
 }
 
