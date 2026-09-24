@@ -13,6 +13,8 @@ per account, who else in the household sees the balance and the details.
 Overview then shows each person the money they are allowed to see, and a
 typical month drawn from the last six.
 
+> **Project status: active side project.** Something I use and may turn into a product. Unreleased. Expect breaking changes.
+
 ## Why I built it
 
 Every money app I tried assumes one person per login, so a household ends up
