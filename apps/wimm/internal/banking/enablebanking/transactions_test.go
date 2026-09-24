@@ -31,7 +31,7 @@ const (
 		{"transaction_amount":{"amount":"2400.00","currency":"EUR"},
 		 "credit_debit_indicator":"CRDT","status":"BOOK",
 		 "booking_date":"2026-03-01","value_date":"2026-03-01",
-		 "debtor":{"name":"Xuuid Lda"},
+		 "debtor":{"name":"Acme Lda"},
 		 "remittance_information":["Salário Março"]},
 		{"entry_reference":"ref-c",
 		 "transaction_amount":{"amount":"4.50","currency":"EUR"},
@@ -145,7 +145,7 @@ func TestOnePageIsReadIntoWimmsVocabulary(t *testing.T) {
 	if credit.Amount.Minor != 240_000 {
 		t.Errorf("Amount = %d, want +240000: money arriving is positive", credit.Amount.Minor)
 	}
-	if credit.CounterpartyName != "Xuuid Lda" {
+	if credit.CounterpartyName != "Acme Lda" {
 		t.Errorf("CounterpartyName = %q, want the debtor on a credit", credit.CounterpartyName)
 	}
 	if !credit.TransactionDate.IsZero() {
