@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // Store is the part of the database this service uses. Declared here, where it

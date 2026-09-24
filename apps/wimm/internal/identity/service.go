@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-webauthn/webauthn/webauthn"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/config"
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/config"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // Service is the identity domain: who a member is, how they prove it, and what

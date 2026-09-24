@@ -3,7 +3,7 @@ package banking
 import (
 	"slices"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // LeftOut is how many transfers between the member's own accounts a scope left

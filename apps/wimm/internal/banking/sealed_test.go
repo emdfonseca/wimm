@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
 )
 
 // testKey returns 32 deterministic bytes. Deterministic because a test that

@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 const (

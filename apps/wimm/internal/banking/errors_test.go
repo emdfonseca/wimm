@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
 )
 
 // The taxonomy exists so a caller can route a page banner, an inline alert or a

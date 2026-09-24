@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // signed is a magnitude with the direction its party implies: employers pay in.

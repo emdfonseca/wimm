@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // View is what a member sees: the accounts they may see, which figure each

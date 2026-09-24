@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/config"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/config"
 )
 
 func env(pairs map[string]string) func(string) string {

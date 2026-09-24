@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 func day(d int) time.Time {

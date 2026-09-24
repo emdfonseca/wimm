@@ -8,8 +8,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
-	"github.com/xuuid/wimm/apps/wimm/internal/store/storetest"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store/storetest"
 )
 
 func day(n int) time.Time { return time.Date(2026, time.March, n, 0, 0, 0, 0, time.UTC) }

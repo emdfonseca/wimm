@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
 )
 
 // Config is wimmd's startup configuration, already validated.

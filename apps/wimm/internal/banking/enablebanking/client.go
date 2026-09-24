@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
 )
 
 // DefaultBaseURL is the production API. Overridden in tests and against the

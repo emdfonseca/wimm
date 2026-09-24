@@ -737,8 +737,8 @@ const file_wimm_identity_v1_public_proto_rawDesc = "" +
 	"\vBeginSignIn\x12$.wimm.identity.v1.BeginSignInRequest\x1a%.wimm.identity.v1.BeginSignInResponse\x12]\n" +
 	"\fFinishSignIn\x12%.wimm.identity.v1.FinishSignInRequest\x1a&.wimm.identity.v1.FinishSignInResponse\x12N\n" +
 	"\aSignOut\x12 .wimm.identity.v1.SignOutRequest\x1a!.wimm.identity.v1.SignOutResponse\x12i\n" +
-	"\x10GetCurrentMember\x12).wimm.identity.v1.GetCurrentMemberRequest\x1a*.wimm.identity.v1.GetCurrentMemberResponseB\xd2\x01\n" +
-	"\x14com.wimm.identity.v1B\vPublicProtoP\x01ZKgithub.com/xuuid/wimm/packages/contracts/gen/go/wimm/identity/v1;identityv1\xa2\x02\x03WIX\xaa\x02\x10Wimm.Identity.V1\xca\x02\x10Wimm\\Identity\\V1\xe2\x02\x1cWimm\\Identity\\V1\\GPBMetadata\xea\x02\x12Wimm::Identity::V1b\x06proto3"
+	"\x10GetCurrentMember\x12).wimm.identity.v1.GetCurrentMemberRequest\x1a*.wimm.identity.v1.GetCurrentMemberResponseB\xd7\x01\n" +
+	"\x14com.wimm.identity.v1B\vPublicProtoP\x01ZPgithub.com/emdfonseca/wimm/packages/contracts/gen/go/wimm/identity/v1;identityv1\xa2\x02\x03WIX\xaa\x02\x10Wimm.Identity.V1\xca\x02\x10Wimm\\Identity\\V1\xe2\x02\x1cWimm\\Identity\\V1\\GPBMetadata\xea\x02\x12Wimm::Identity::V1b\x06proto3"
 
 var (
 	file_wimm_identity_v1_public_proto_rawDescOnce sync.Once

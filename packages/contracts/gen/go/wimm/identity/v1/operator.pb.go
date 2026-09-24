@@ -250,8 +250,8 @@ const file_wimm_identity_v1_operator_proto_rawDesc = "" +
 	"\x0eenrolment_link\x18\x02 \x01(\v2\x1f.wimm.identity.v1.EnrolmentLinkR\renrolmentLink2\xe7\x01\n" +
 	"\x0fOperatorService\x12c\n" +
 	"\x0eRegisterMember\x12'.wimm.identity.v1.RegisterMemberRequest\x1a(.wimm.identity.v1.RegisterMemberResponse\x12o\n" +
-	"\x12IssueEnrolmentLink\x12+.wimm.identity.v1.IssueEnrolmentLinkRequest\x1a,.wimm.identity.v1.IssueEnrolmentLinkResponseB\xd4\x01\n" +
-	"\x14com.wimm.identity.v1B\rOperatorProtoP\x01ZKgithub.com/xuuid/wimm/packages/contracts/gen/go/wimm/identity/v1;identityv1\xa2\x02\x03WIX\xaa\x02\x10Wimm.Identity.V1\xca\x02\x10Wimm\\Identity\\V1\xe2\x02\x1cWimm\\Identity\\V1\\GPBMetadata\xea\x02\x12Wimm::Identity::V1b\x06proto3"
+	"\x12IssueEnrolmentLink\x12+.wimm.identity.v1.IssueEnrolmentLinkRequest\x1a,.wimm.identity.v1.IssueEnrolmentLinkResponseB\xd9\x01\n" +
+	"\x14com.wimm.identity.v1B\rOperatorProtoP\x01ZPgithub.com/emdfonseca/wimm/packages/contracts/gen/go/wimm/identity/v1;identityv1\xa2\x02\x03WIX\xaa\x02\x10Wimm.Identity.V1\xca\x02\x10Wimm\\Identity\\V1\xe2\x02\x1cWimm\\Identity\\V1\\GPBMetadata\xea\x02\x12Wimm::Identity::V1b\x06proto3"
 
 var (
 	file_wimm_identity_v1_operator_proto_rawDescOnce sync.Once

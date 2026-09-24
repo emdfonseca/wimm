@@ -6,8 +6,8 @@ import (
 	"slices"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // memStore is banking.Store in memory, so the service's own rules are tested

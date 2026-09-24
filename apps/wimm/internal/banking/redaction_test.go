@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
 )
 
 // connection stands in for any struct that carries a sealed value and might be

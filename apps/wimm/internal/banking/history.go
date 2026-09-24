@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // riserCount is the most merchants listed as having taken more than usual.

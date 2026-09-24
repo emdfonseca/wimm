@@ -1,4 +1,4 @@
-module github.com/xuuid/wimm/apps/wimm
+module github.com/emdfonseca/wimm/apps/wimm
 
 go 1.27
 

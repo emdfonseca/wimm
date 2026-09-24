@@ -4,10 +4,10 @@ import (
 	"testing"
 	"time"
 
-	bankingv1 "github.com/xuuid/wimm/packages/contracts/gen/go/wimm/banking/v1"
+	bankingv1 "github.com/emdfonseca/wimm/packages/contracts/gen/go/wimm/banking/v1"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 func TestAListedTransactionCarriesTheMerchantNameAndTheBanksLine(t *testing.T) {

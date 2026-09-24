@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
-	"github.com/xuuid/wimm/apps/wimm/internal/banking/bankingtest"
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking/bankingtest"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // trendAccount connects one owned account at Montepio and gives it a current

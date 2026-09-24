@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // Ledger is what a member sees on Transactions: the page they are looking at,

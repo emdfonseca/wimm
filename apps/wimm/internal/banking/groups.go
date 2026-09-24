@@ -3,7 +3,7 @@ package banking
 import (
 	"context"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // Group is what an account counts towards for one member.

@@ -29,7 +29,7 @@ linters:
           files:
             - "!**/apps/wimm/internal/banking/**"
           deny:
-            - pkg: github.com/xuuid/wimm/apps/wimm/internal/banking/enablebanking
+            - pkg: github.com/emdfonseca/wimm/apps/wimm/internal/banking/enablebanking
               desc: >-
                 import internal/banking and depend on banking.Gateway; only
                 code inside internal/banking may name a gateway adapter

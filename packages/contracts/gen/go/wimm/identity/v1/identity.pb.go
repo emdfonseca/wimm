@@ -321,8 +321,8 @@ const file_wimm_identity_v1_identity_proto_rawDesc = "" +
 	"\x10EnrolmentFailure\x12!\n" +
 	"\x1dENROLMENT_FAILURE_UNSPECIFIED\x10\x00\x12&\n" +
 	"\"ENROLMENT_FAILURE_NOT_DISCOVERABLE\x10\x01\x12\x1f\n" +
-	"\x1bENROLMENT_FAILURE_DISMISSED\x10\x02B\xd4\x01\n" +
-	"\x14com.wimm.identity.v1B\rIdentityProtoP\x01ZKgithub.com/xuuid/wimm/packages/contracts/gen/go/wimm/identity/v1;identityv1\xa2\x02\x03WIX\xaa\x02\x10Wimm.Identity.V1\xca\x02\x10Wimm\\Identity\\V1\xe2\x02\x1cWimm\\Identity\\V1\\GPBMetadata\xea\x02\x12Wimm::Identity::V1b\x06proto3"
+	"\x1bENROLMENT_FAILURE_DISMISSED\x10\x02B\xd9\x01\n" +
+	"\x14com.wimm.identity.v1B\rIdentityProtoP\x01ZPgithub.com/emdfonseca/wimm/packages/contracts/gen/go/wimm/identity/v1;identityv1\xa2\x02\x03WIX\xaa\x02\x10Wimm.Identity.V1\xca\x02\x10Wimm\\Identity\\V1\xe2\x02\x1cWimm\\Identity\\V1\\GPBMetadata\xea\x02\x12Wimm::Identity::V1b\x06proto3"
 
 var (
 	file_wimm_identity_v1_identity_proto_rawDescOnce sync.Once

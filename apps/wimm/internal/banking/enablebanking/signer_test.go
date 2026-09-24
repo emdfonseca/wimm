@@ -17,7 +17,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
 )
 
 const applicationID = "16560d8b-2dc5-4b4d-ac41-8266f62e719b"

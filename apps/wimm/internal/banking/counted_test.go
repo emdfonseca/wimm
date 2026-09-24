@@ -4,7 +4,7 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 func TestCountedRows(t *testing.T) {

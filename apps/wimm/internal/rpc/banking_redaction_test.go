@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	bankingv1 "github.com/xuuid/wimm/packages/contracts/gen/go/wimm/banking/v1"
+	bankingv1 "github.com/emdfonseca/wimm/packages/contracts/gen/go/wimm/banking/v1"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // Redaction happens on the way out, not on the way in to the browser. These

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
 )
 
 // Rotation is a line added at the top of the key file. The old key stays until

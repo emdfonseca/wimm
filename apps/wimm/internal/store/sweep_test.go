@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
-	"github.com/xuuid/wimm/apps/wimm/internal/store/storetest"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store/storetest"
 )
 
 // revokedRetention is what the sweep tests hold a revoked session for. It is

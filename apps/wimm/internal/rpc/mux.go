@@ -6,8 +6,8 @@ import (
 
 	"connectrpc.com/connect"
 
-	"github.com/xuuid/wimm/packages/contracts/gen/go/wimm/banking/v1/bankingv1connect"
-	"github.com/xuuid/wimm/packages/contracts/gen/go/wimm/identity/v1/identityv1connect"
+	"github.com/emdfonseca/wimm/packages/contracts/gen/go/wimm/banking/v1/bankingv1connect"
+	"github.com/emdfonseca/wimm/packages/contracts/gen/go/wimm/identity/v1/identityv1connect"
 )
 
 // OperatorHandler returns the operator service behind the operator credential.

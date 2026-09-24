@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
-	"github.com/xuuid/wimm/apps/wimm/internal/store/storetest"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store/storetest"
 )
 
 func sealed(v string) store.Sealed {

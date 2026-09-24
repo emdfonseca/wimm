@@ -8,9 +8,9 @@ import (
 
 	"connectrpc.com/connect"
 
-	identityv1 "github.com/xuuid/wimm/packages/contracts/gen/go/wimm/identity/v1"
+	identityv1 "github.com/emdfonseca/wimm/packages/contracts/gen/go/wimm/identity/v1"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/identity"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/identity"
 )
 
 func TestRegisterMemberIssuesOneLinkWithItsExpiry(t *testing.T) {

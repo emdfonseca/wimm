@@ -3,7 +3,7 @@ package banking_test
 import (
 	"testing"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
 )
 
 func eur(minor int64) banking.Money { return banking.Money{Minor: minor, Currency: "EUR"} }

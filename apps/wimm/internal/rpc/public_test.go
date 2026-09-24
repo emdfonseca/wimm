@@ -12,15 +12,15 @@ import (
 
 	"connectrpc.com/connect"
 
-	identityv1 "github.com/xuuid/wimm/packages/contracts/gen/go/wimm/identity/v1"
-	"github.com/xuuid/wimm/packages/contracts/gen/go/wimm/identity/v1/identityv1connect"
+	identityv1 "github.com/emdfonseca/wimm/packages/contracts/gen/go/wimm/identity/v1"
+	"github.com/emdfonseca/wimm/packages/contracts/gen/go/wimm/identity/v1/identityv1connect"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/config"
-	"github.com/xuuid/wimm/apps/wimm/internal/identity"
-	"github.com/xuuid/wimm/apps/wimm/internal/identity/authenticatortest"
-	"github.com/xuuid/wimm/apps/wimm/internal/rpc"
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
-	"github.com/xuuid/wimm/apps/wimm/internal/store/storetest"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/config"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/identity"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/identity/authenticatortest"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/rpc"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store/storetest"
 )
 
 type publicFixture struct {

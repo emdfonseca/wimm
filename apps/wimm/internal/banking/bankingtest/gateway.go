@@ -17,7 +17,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
 )
 
 // Gateway is a banking.Gateway whose every outcome is scriptable. The zero

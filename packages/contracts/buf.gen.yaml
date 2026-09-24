@@ -8,7 +8,7 @@ managed:
       module: buf.build/bufbuild/protovalidate
   override:
     - file_option: go_package_prefix
-      value: github.com/xuuid/wimm/packages/contracts/gen/go
+      value: github.com/emdfonseca/wimm/packages/contracts/gen/go
 # Local plugins, all three. Remote plugins put a rate-limited network service
 # between `just check` and a green build: two invocations of `just gen` in one
 # check is enough to be refused by the BSR. devbox pins these the way it pins

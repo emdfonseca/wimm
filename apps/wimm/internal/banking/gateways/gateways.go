@@ -13,8 +13,8 @@ package gateways
 import (
 	"fmt"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
-	"github.com/xuuid/wimm/apps/wimm/internal/banking/enablebanking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking/enablebanking"
 )
 
 // Config is what building a gateway needs, in wimm's own terms. No field here

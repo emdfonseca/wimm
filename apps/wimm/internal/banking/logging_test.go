@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
-	"github.com/xuuid/wimm/apps/wimm/internal/banking/bankingtest"
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking/bankingtest"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // Task 10.1, as a committed test rather than an inspection.

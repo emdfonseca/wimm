@@ -6,10 +6,10 @@ import (
 	"connectrpc.com/connect"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	identityv1 "github.com/xuuid/wimm/packages/contracts/gen/go/wimm/identity/v1"
+	identityv1 "github.com/emdfonseca/wimm/packages/contracts/gen/go/wimm/identity/v1"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/identity"
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/identity"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // OperatorServer answers the operator surface. It converts, calls the domain,

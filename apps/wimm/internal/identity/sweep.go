@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/config"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/config"
 )
 
 // SweepStore is the part of the store a sweep uses: four deletes, each its own

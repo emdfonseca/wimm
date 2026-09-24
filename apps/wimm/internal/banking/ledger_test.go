@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
-	"github.com/xuuid/wimm/apps/wimm/internal/banking/bankingtest"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking/bankingtest"
 )
 
 func gwTx(ref string, day int, minor int64, status banking.TransactionStatus) banking.Transaction {

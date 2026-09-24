@@ -5,8 +5,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/identity"
-	"github.com/xuuid/wimm/apps/wimm/internal/identity/authenticatortest"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/identity"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/identity/authenticatortest"
 )
 
 // Coming back after closing the browser: no email, no username, nothing typed.

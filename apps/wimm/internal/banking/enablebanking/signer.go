@@ -14,7 +14,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
 )
 
 // Enable Banking authenticates every request with a short-lived RS256 JWT.

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // Session is what makes a browser signed in. The value goes into the cookie

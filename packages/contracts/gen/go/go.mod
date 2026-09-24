@@ -1,4 +1,4 @@
-module github.com/xuuid/wimm/packages/contracts/gen/go
+module github.com/emdfonseca/wimm/packages/contracts/gen/go
 
 go 1.27
 

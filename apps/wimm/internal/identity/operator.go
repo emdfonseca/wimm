@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // EnrolmentLink is what the operator is handed: a URL to pass on and the

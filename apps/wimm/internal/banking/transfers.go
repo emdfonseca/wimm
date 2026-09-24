@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // The rule for a transfer between a member's own accounts (ADR 0026).

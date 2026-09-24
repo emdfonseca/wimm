@@ -4768,8 +4768,8 @@ const file_wimm_banking_v1_banking_proto_rawDesc = "" +
 	"\x13RefreshTransactions\x12+.wimm.banking.v1.RefreshTransactionsRequest\x1a,.wimm.banking.v1.RefreshTransactionsResponse\x12d\n" +
 	"\x0fGetBalanceTrend\x12'.wimm.banking.v1.GetBalanceTrendRequest\x1a(.wimm.banking.v1.GetBalanceTrendResponse\x12d\n" +
 	"\x0fGetMonthSummary\x12'.wimm.banking.v1.GetMonthSummaryRequest\x1a(.wimm.banking.v1.GetMonthSummaryResponse\x12d\n" +
-	"\x0fGetMonthHistory\x12'.wimm.banking.v1.GetMonthHistoryRequest\x1a(.wimm.banking.v1.GetMonthHistoryResponseB\xcc\x01\n" +
-	"\x13com.wimm.banking.v1B\fBankingProtoP\x01ZIgithub.com/xuuid/wimm/packages/contracts/gen/go/wimm/banking/v1;bankingv1\xa2\x02\x03WBX\xaa\x02\x0fWimm.Banking.V1\xca\x02\x0fWimm\\Banking\\V1\xe2\x02\x1bWimm\\Banking\\V1\\GPBMetadata\xea\x02\x11Wimm::Banking::V1b\x06proto3"
+	"\x0fGetMonthHistory\x12'.wimm.banking.v1.GetMonthHistoryRequest\x1a(.wimm.banking.v1.GetMonthHistoryResponseB\xd1\x01\n" +
+	"\x13com.wimm.banking.v1B\fBankingProtoP\x01ZNgithub.com/emdfonseca/wimm/packages/contracts/gen/go/wimm/banking/v1;bankingv1\xa2\x02\x03WBX\xaa\x02\x0fWimm.Banking.V1\xca\x02\x0fWimm\\Banking\\V1\xe2\x02\x1bWimm\\Banking\\V1\\GPBMetadata\xea\x02\x11Wimm::Banking::V1b\x06proto3"
 
 var (
 	file_wimm_banking_v1_banking_proto_rawDescOnce sync.Once

@@ -10,13 +10,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
-	"github.com/xuuid/wimm/apps/wimm/internal/banking/gateways"
-	"github.com/xuuid/wimm/apps/wimm/internal/config"
-	"github.com/xuuid/wimm/apps/wimm/internal/identity"
-	"github.com/xuuid/wimm/apps/wimm/internal/rpc"
-	"github.com/xuuid/wimm/apps/wimm/internal/server"
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking/gateways"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/config"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/identity"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/rpc"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/server"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 func main() {

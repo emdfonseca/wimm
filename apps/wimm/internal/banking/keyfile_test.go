@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
 )
 
 func writeKeyFile(t *testing.T, contents string, mode os.FileMode) string {

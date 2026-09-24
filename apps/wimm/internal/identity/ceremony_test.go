@@ -5,9 +5,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/identity"
-	"github.com/xuuid/wimm/apps/wimm/internal/identity/authenticatortest"
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/identity"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/identity/authenticatortest"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 // testOrigin matches the WIMM_BASE_URL the test service is configured with,
