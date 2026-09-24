@@ -8,6 +8,36 @@ each person and hands them a link, and the link is how they create a passkey.
 That is deliberate — in a household product the operator already knows who lives
 there, so vouching is a better answer than an email round trip.
 
+Members connect their own banks through an open-banking gateway and decide,
+per account, who else in the household sees the balance and the details.
+Overview then shows each person the money they are allowed to see, and a
+typical month drawn from the last six.
+
+## Why I built it
+
+Every money app I tried assumes one person per login, so a household ends up
+sharing one password or keeping two sets of books. I wanted the opposite: one
+instance for the house, one passkey per person, and each account's visibility
+decided by whoever owns it rather than by whoever set the software up. It is
+also where I try out a way of working I believe in — the code is the design of
+record, every screen state is a story, and a screen counts as done when a
+person has looked at it and approved that exact render.
+
+## Stack
+
+```text
+apps/wimm            Go 1.27: wimmd (the service) and wimmctl (the operator CLI)
+                     Postgres 18 via pgx, goose migrations, go-webauthn, Connect RPC
+apps/web             SvelteKit 2 / Svelte 5; server routes hold the session and speak Connect
+apps/storybook       Storybook 10, Vitest browser mode on Chromium, the design canvas
+packages/ui          the design system: tokens, components, the pure screens
+packages/contracts   protobuf schemas; buf generates Go and TypeScript into gen/
+```
+
+devbox pins the toolchain, `just` owns every task, process-compose runs the
+stack. CI is `devbox run -- just ci` and nothing else
+(`.github/workflows/ci.yml`).
+
 ## Run it
 
 Everything is one command. It starts Postgres, the service, the web app and
@@ -24,55 +54,6 @@ http://localhost:9469    Storybook, the design system in isolation
 127.0.0.1:9468           wimmd's operator listener, loopback only
 ```
 
-`just canvas` opens the design canvas: one screen at a time, its state stories
-at real sizes, one row per kind of story: States, Waiting, Errors, Outcomes,
-then Behaviour for the stories that only assert something. A page story says
-which with one tag, `tags={['kind-error']}`; the kinds are defined in
-`apps/storybook/canvas/lib.js`, and `just check apps/storybook` fails for a page
-story with none. A story that pins its own viewport adds `size-compact` and is
-drawn at that size only. Pan and zoom as usual. The sidebar lists every screen and
-story, and `/` finds one. Alt-click an element to copy its source location. It
-needs `just up` running and starts nothing itself. Append `?flow=connect-a-bank`
-to `/canvas/index.html` to see a flow as a map: its happy path left to right, and
-under each step the ways off it, or `?play=connect-a-bank` to click through the
-happy path; play mode swaps fixture screens and runs no route, load function or
-bank. Flows are declared in `apps/storybook/canvas/flows.js`, one per journey a
-member would name. Every page story that shows something is on a flow or on that
-file's `unplaced` list, and `just check apps/storybook` fails for one that is on
-neither; a `kind-behaviour` story only asserts something and is on neither.
-
-Every page story has a version: a fingerprint of what it renders, shown as seven
-characters and the date first seen. It moves when the markup, a component's
-styles, the tokens, base styles or fonts move, and not for a refactor that
-changes none of them. `just check apps/storybook` brings
-`apps/storybook/canvas/versions.json` up to date and never fails because it was
-behind, so it can leave a diff to commit; that diff lists the pages whose look
-changed. Each artboard's badge shows the approved and the implemented version:
-one line when they are the same, both when the page changed since approval, and
-the implemented one alone when nobody approved it. History opens a story's
-approved versions, and the sidebar filter `Needs approval` (kept as `?needs=1`)
-lists what to look at. To approve a page after looking at it, run
-`just approve pages-overview--populated "a note"` in your own terminal. Name
-several stories to approve them in one run, or use `just approve --needs` for
-every page story that needs approval; either asks once, and one refused story
-refuses the run. It refuses
-inside an agent session or without a terminal, and an agent never runs it. The
-record only grows; two people approving on two branches merge by keeping both
-lines.
-
-Approving also keeps a picture of the page at every size it is drawn at, light
-theme and comfortable density only, taken from the same run that settled the
-version approved. Only a story's last approved version keeps pictures, under
-`apps/storybook/canvas/approved/<story>/`; approving again replaces them. Commit
-the record and the pictures together, on their own, as the command says:
-`apps/storybook/canvas/approvals.jsonl` and
-`apps/storybook/canvas/approved/pages-overview--populated/`. On an artboard that
-changed since approval, viewed light and comfortable, `Approved look` switches
-between the page as implemented and that picture; an approval recorded with no
-picture says so instead. Open the canvas with `?data=changed` (or
-`changed-pictured`, `approved`, `never`, `mixed`, `history`) to see a state on
-fixtures without approving anything.
-
 Postgres listens on a Unix socket under `.devbox/`, not a port, so it cannot
 collide with a system-wide install or another checkout of this repo.
 
@@ -85,234 +66,75 @@ devbox run -- just db-psql  # a shell on the database
 First run is slow: devbox fetches the toolchain and `initdb` creates the
 cluster. After that it is a few seconds.
 
+
 ## Bring a member in
 
-Two steps, both yours. Registering creates the person; enrolling creates their
-passkey.
+Registering creates the person; enrolling creates their passkey. Both are the
+operator's, from `apps/wimm`:
 
 ```bash
-cd apps/wimm
-go run ./cmd/wimmctl register ada@example.com Ada Lovelace
+go run ./cmd/wimmctl register ada@example.com Ada Lovelace   # prints an enrolment link
+go run ./cmd/wimmctl link ada@example.com                    # a fresh link, for a new or lost device
 ```
 
-That prints a link and the moment it stops working:
-
-```text
-Registered Ada Lovelace <ada@example.com>.
-
-  http://localhost:9466/enrol/Lrdk1cOpFfb_vsw-rW92elot5BBoJ0V3krZ7JZQgbGQ
-
-It stops working at 12:00 on 17 September 2026.
-Send it over a channel you trust: whoever opens it becomes this member.
-```
-
-Send it however you already talk to them. **Whoever opens that link becomes that
-member**, so the channel is the security boundary — it is a bearer credential,
-not an invitation that later checks who accepted it.
-
-They open it, confirm with their fingerprint, face or device PIN, and they are
-in. No password is chosen and nothing is typed.
-
-## When a member needs a new link
-
-Same command, for someone already registered. Use it for a new device, or for
-one they have lost:
-
-```bash
-go run ./cmd/wimmctl link ada@example.com
-```
-
-Issuing a new link **stops any earlier link working** and **leaves their existing
-passkeys working**. So a lost phone is: issue a link, they enrol on the new
-device. Their old passkey keeps working until there is a way to remove it —
-that is the next change, not this one.
+Whoever opens the link becomes that member, so the channel you send it over is
+the security boundary. Links are single use and last a day. The rest — what the
+operator can and cannot do, bank consent expiry, the relying-party identifier
+being a one-way door, every `WIMM_*` variable — is in
+[docs/operating.md](docs/operating.md).
 
 ## Connect a bank
 
-A member connects their own bank and then decides who in the household sees
-each account it exposes.
-
-```text
-1. Choose a bank            /connect
-2. See what will be shared  /connect/<bank> — states the real date access ends
-3. Confirm at the bank      off wimm entirely; wimm never sees the password
-4. Choose who sees what     /connect/<bank>/accounts
-5. Overview                 the accounts, their balances, and a total
-```
-
-**Every account the bank exposes is stored, and starts as yours.** The details
-come back once and no endpoint lists them again, so wimm keeps them all. You
-then release the ones that are not yours and give each other member a level:
-
-```text
-nothing   they do not know the account exists — the default for everyone
-balance   the bank, the account's name, and the balance with its read time
-details   the above, plus the number's last digits, the type, the holder name
-```
-
-An account with no owner and no level given to anyone is **never read**: wimm
-knows it exists and does not know what is in it. Any owner can change owners
-and levels later; whoever connected the bank gets no standing power over it.
-
-Two people in one household see different screens and different totals, and
+Optional and off by default; `wimmd` runs without a gateway configured. With
+one, a member picks a bank at `/connect`, confirms at the bank (wimm never sees
+the password), and then chooses who in the household sees each account and at
+which level: `nothing`, `balance` or `details`. An account nobody is allowed to
+see is never read. Two members see different screens and different totals, and
 neither is told what the other sees.
-
-## When access runs out
-
-Open banking has no renewal. Consent lasts until a date **the bank** sets, and
-restoring is the whole flow again — which is why Overview offers it rather than
-just reporting a failure.
-
-```text
-Revolut, Montepio    90 days
-ActivoBank            1 day
-```
-
-One day is not a variation on ninety: with ActivoBank connected, reconnecting
-is a daily routine and "has stopped updating" is that connection's normal
-resting state rather than an incident. Restoring keeps every owner and level,
-matched on an identifier that survives a new authorisation. An account the bank
-newly offers arrives as yours with nobody else granted; one it no longer offers
-goes, and you are told which.
-
-A bank that simply does not answer is different: the balances already on screen
-stay exactly where they are, with their original read times, and the page says
-which bank could not be reached.
-
-## What the operator can and cannot do
-
-```text
-can     register a person, issue them a link
-cannot  see or recover a link after it is printed — only its hash is stored
-cannot  remove a passkey or revoke a session yet
-cannot  change a member's name or address yet
-cannot  connect a bank on anyone's behalf, or see any balance
-cannot  change who owns an account or who sees it
-```
-
-Banking has no operator surface at all. A member connects their own bank by
-confirming at it, and only an owner of an account changes who sees it — there
-is nothing here for an operator to do, and so no way for them to do it.
-
-## Things that will bite you
-
-**Links are single use and last a day.** Single use means one passkey, not one
-page load: if their device refuses to save a passkey, or they close the prompt,
-the same link still works so they can try elsewhere. It closes the moment a
-passkey is actually saved.
-
-**A member needs a device that saves passkeys.** wimm requires a discoverable
-credential, which is what lets them sign in later without typing anything. An old
-security key with no room to store one is refused, at enrolment, with the link
-still usable.
-
-**The relying-party identifier is a one-way door.** `WIMM_RP_ID` defaults to
-`localhost`. Changing it after anyone has enrolled invalidates every passkey ever
-created, with no migration. Pick the broadest domain the instance will ever use
-before the first member enrols against a deployment.
-
-**Banking is optional, and off by default.** With `WIMM_BANKING_GATEWAY` unset,
-`wimmd` starts normally and Overview shows its empty state. Set it and every
-credential it needs must be present and every key file must be readable by its
-owner alone, or the process refuses to start rather than running half
-configured.
-
-**The free tier of the bank gateway covers one person's accounts.** Enable
-Banking's terms reach only accounts the Control Panel user links as themselves,
-so one member connects the banks they can authenticate at — joint accounts
-included — and wimm's owners and levels decide what the rest of the household
-sees of them. Lifting that needs a contract and a company.
-
-**Connecting a bank needs https, even on localhost.** Enable Banking refuses a
-plain-http redirect URI. `just dev-cert` issues a locally-trusted certificate
-with mkcert and the dev server picks it up; without one the app still runs over
-http and everything except the bank hand-off works.
-
-Serving https changes the origin, which WebAuthn validates. `WIMM_BASE_URL` and
-`WIMM_ORIGINS` are derived from whether that certificate exists rather than set
-by hand, so they cannot disagree with what the dev server is actually doing —
-they did, once, and every passkey ceremony would have been rejected for it.
-
-Passkeys already enrolled survive the switch: the relying-party identifier
-stays `localhost`, and that — not the scheme — is the value that cannot be
-changed after anyone enrols.
-
-**A phone can be the authenticator, but not the browser.** Over the cross-device
-(QR) flow the ceremony runs in your laptop's browser and the phone just confirms,
-which works on `localhost`. A phone browsing _to_ this instance needs a hostname
-and a certificate.
-
-## Configuration
-
-`wimmd` reads its configuration from the environment and refuses to start if the
-operator listener is reachable with no credential set. Inside `devbox run` these
-all have working defaults.
-
-```text
-WIMM_DATABASE_URL           Postgres connection string
-WIMM_RP_ID                  WebAuthn relying party, default localhost
-WIMM_ORIGINS                origins a ceremony may come from, comma separated
-WIMM_BASE_URL               the origin enrolment links are built against
-WIMM_PUBLIC_ADDR            the listener the web app calls
-WIMM_OPERATOR_ADDR          the listener wimmctl calls, loopback by default
-WIMM_OPERATOR_ENABLED       false turns the operator surface off entirely
-WIMM_OPERATOR_CREDENTIAL    what wimmctl presents; minted per checkout into
-                            .devbox on first use, never committed
-WIMM_ENROLMENT_LINK_LIFETIME  default 24h
-WIMM_SESSION_LIFETIME         default 14 days
-```
-
-Banking, all unset by default. Naming a gateway requires the rest of them.
-
-Put them in `local.env`, which the devbox shell sources before anything else
-and which is gitignored:
-
-```bash
-cp local.env.example local.env   # then fill it in
-```
-
-It is sourced rather than declared with devbox's `env_from`, because `env_from`
-refuses to start when the file is absent and a clean checkout has none.
-
-```text
-WIMM_BANKING_GATEWAY              which adapter; unset disables connecting
-WIMM_BANKING_ENCRYPTION_KEY       path to the file holding the sealing keys
-WIMM_ENABLEBANKING_APPLICATION_ID the registered application
-WIMM_ENABLEBANKING_PRIVATE_KEY    path to the request signing key
-WIMM_ENABLEBANKING_REDIRECT_URL   must match one registered with the gateway
-WIMM_BALANCE_STALE_AFTER          default 24h
-```
-
-**Both key variables are paths, never the material.** A key in an environment
-variable reaches every child process and every crash report. Both files must be
-readable by their owner alone — mode `600` — and `wimmd` refuses to start
-otherwise.
-
-The sealing key file is lines of `<key-id> <base64 of 32 bytes>`. The first line
-seals new values; the rest only open old ones, so rotating is a line added at
-the top and the old key kept until nothing references it:
-
-```text
-# newest first
-2026-01 aGVyZSBiZSAzMiBieXRlcyBvZiBrZXkgbWF0ZXJpYWw=
-2025-07 c29tZSBvdGhlciAzMiBieXRlcyBvZiBrZXkgbWF0ZXJpYWw=
-```
 
 ## Working on it
 
 ```bash
 devbox run -- just ci             # everything CI runs, and nothing else
-devbox run -- just check apps/web # one package
-devbox run -- just gen            # regenerate contracts and tokens
+devbox run -- just check apps/web # one package: lint, typecheck, test
+devbox run -- just gen            # regenerate contracts, tokens and the decision index
 ```
 
-`just check <dir>` is the only test, lint and typecheck entry point. If it fails,
-the work is not done.
+`just check <dir>` is the only test, lint and typecheck entry point. Go tests
+run with `-race` against their own database, `wimm_test`, on the same local
+cluster; the suite truncates every table it finds. Stories are the UI tests:
+their play functions run in a real Chromium under Vitest.
 
-Tests use their own database, `wimm_test`, on the same cluster. The suite
-truncates every table it finds, so pointing it at the development database would
-delete whatever you were working with.
+The design canvas, page versions and approvals — including the pictures kept
+under `apps/storybook/canvas/approved/` — are described in
+[apps/storybook/README.md](apps/storybook/README.md).
 
-Decisions live in `docs/decisions/`. Read them before proposing something they
-already settle — particularly ADR 0016, which covers why enrolment works this
-way.
+## Architecture
+
+Three API surfaces with one job each (ADR 0001): the web app's server routes
+call `wimmd` over Connect; the browser speaks only to SvelteKit; a third-party
+REST surface is reserved and not built. Identity is passkeys with
+operator-issued enrolment links (ADR 0016). Banks are read through a gateway
+adapter, currently Enable Banking (ADR 0018); accounts always have an owner and
+per-member levels (ADRs 0019, 0022); transactions are stored in a ledger the
+consent fills (ADR 0021).
+
+```text
+docs/decisions/      29 ADRs, the reasons behind anything that looks odd
+docs/design/         tokens, surfaces, the project setup record
+openspec/            specs and change proposals (ADR 0007)
+.claude/skills/      engineering standards: API contract, migrations, Storybook, TDD
+```
+
+Start with ADR 0016 (enrolment), 0023 (code is the design of record) and
+0027–0029 (versioned, approved page stories).
+
+## Status
+
+Pre-release, unreleased. It runs locally under devbox; there is no deployment
+story yet. The operator cannot remove a passkey or revoke a session, and the
+bank gateway's free tier reaches one person's accounts only.
+
+## License
+
+MIT, see [LICENSE](LICENSE).
