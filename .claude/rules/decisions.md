@@ -1183,3 +1183,24 @@ validates every line and requires the file at `HEAD` (and at the merge base with
 
 Seen in `canvas.md` still says what a change looked at. An approval is the
 standing record against a version.
+
+## 0028 · The typical month is drawn from the last six full months — Accepted
+
+The typical month, the average month and their set-aside pair are drawn from the
+newest six full months held, or from every full month held when fewer. Six is
+`typicalMonths` in `unusual.go`, beside `historyMonths` (13) and `minFullMonths`
+(3); the computation walks the months newest first and takes the first six
+marked full. Six is the largest count that holds the household's later accounts,
+and half the months shown.
+
+`CurrencyHistory.typical_months` (field 11) says how many full months the figures
+were drawn from, unset when there are none. The web client writes
+`From the last {n} full months.` when it is less than `full_months`, and
+`From {n} full months.` otherwise. It never computes the six itself: a second
+copy of the constant, in another language, drifts the first time it moves.
+
+The months shown, the chart's span, the three-month threshold, the unusual-payment
+baselines (including the median monthly money out behind the first-payment and
+floor rules) and the merchants' usual month behind a month's rise are unchanged
+and keep every full month shown, under ADR 0025. The chart's dashed typical line
+and its spoken summary read the same field as the tile, so they follow it.

@@ -21,6 +21,7 @@ const (
 
 	historyMonths = 13
 	minFullMonths = 3
+	typicalMonths = 6
 )
 
 // MonthlyMedians are the median monthly money out and money in over the full

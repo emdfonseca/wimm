@@ -168,6 +168,10 @@ function view(
 	};
 }
 
+/** `From the last 6 full months.` where older full months are held too. */
+const basisFrom = (used: number, held: number) =>
+	used < held ? `From the last ${used} full months.` : `From ${used} full months.`;
+
 const WAITING = 'A typical month and an average month appear once three full months are held.';
 export const HISTORY_EMPTY = 'No full month is held for these accounts yet.';
 export const RECURRING_EMPTY = 'No recurring payments in these accounts.';
@@ -265,7 +269,7 @@ export function historySection(c: CurrencyHistory, today: Date): HistorySection 
 		months,
 		basis:
 			c.typicalNet && c.fullMonths >= 3
-				? `From ${c.fullMonths} full months. The typical month is the middle one, so one exceptional month barely moves it.`
+				? `${basisFrom(c.typicalMonths, c.fullMonths)} The typical month is the middle one, so one exceptional month barely moves it.`
 				: undefined,
 		waiting: c.typicalNet ? undefined : WAITING,
 		late: c.lateLedgers.length ? c.lateLedgers.map(lateLine) : undefined,

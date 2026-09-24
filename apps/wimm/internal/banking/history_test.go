@@ -265,7 +265,7 @@ func TestABonusIsUnusualIncomeAndComesOffTheNet(t *testing.T) {
 	if c.TypicalNet.Minor != 163_000 {
 		t.Errorf("typical = %d, want 163000: one month barely moves the middle one", c.TypicalNet.Minor)
 	}
-	if want := int64((11*163_000 + 163_000 + 980_400 + 6) / 12); c.AverageNet.Minor != want {
+	if want := int64((5*163_000 + 163_000 + 980_400 + 3) / 6); c.AverageNet.Minor != want { // May is in the last six
 		t.Errorf("average = %d, want %d", c.AverageNet.Minor, want)
 	}
 	if c.AverageNetUsual.Minor != 163_000 || c.TypicalNetUsual.Minor != 163_000 {
@@ -476,5 +476,77 @@ func TestTransactionsMarksExactlyTheRowsTheMonthsCount(t *testing.T) {
 	}
 	if len(marked) != len(counted) || !marked["garage"] || !marked["bonus"] {
 		t.Errorf("Transactions marks %v, the months count %v", marked, counted)
+	}
+}
+
+// lastSixLedger is yearLedger with a small, distinct extra income in each of
+// the last six full months, March to August 2026, and a €4,000.00 repair in
+// January 2026, the eighth newest full month.
+func lastSixLedger(t *testing.T) (*banking.Service, *memStore) {
+	t.Helper()
+	svc, st, id := yearLedger(t)
+	for i := range 6 { // March +100 to August +600, under any unusual floor
+		seedRow(st, "extra"+string(rune('a'+i)), id, int64(100*(i+1)), on(2026, time.Month(3+i), 15), "Client")
+	}
+	seedRow(st, "repair", id, -400_000, on(2026, time.January, 12), "Garage")
+	return svc, st
+}
+
+func TestTheTypicalMonthIsDrawnFromTheLastSixFullMonths(t *testing.T) {
+	svc, _ := lastSixLedger(t)
+
+	c := onlyCurrency(t, historyOf(t, svc, ada, banking.ScopeAll))
+	if c.FullMonths != 12 || len(c.Months) != 13 {
+		t.Fatalf("FullMonths %d over %d months, want 12 over 13", c.FullMonths, len(c.Months))
+	}
+	if c.TypicalMonths != 6 {
+		t.Errorf("TypicalMonths = %d, want 6", c.TypicalMonths)
+	}
+	// March to August net 163100 to 163600: the middle two are 163300 and 163400.
+	if c.TypicalNet == nil || c.TypicalNet.Minor != 163_350 {
+		t.Errorf("typical = %v, want 163350", c.TypicalNet)
+	}
+	if c.AverageNet == nil || c.AverageNet.Minor != 163_350 {
+		t.Errorf("average = %v, want 163350: the repair is older than the last six", c.AverageNet)
+	}
+	if c.TypicalNetUsual == nil || c.TypicalNetUsual.Minor != 163_350 ||
+		c.AverageNetUsual == nil || c.AverageNetUsual.Minor != 163_350 {
+		t.Errorf("without unusual payments: typical %v, average %v, want 163350 for both", c.TypicalNetUsual, c.AverageNetUsual)
+	}
+	if jan := monthNamed(t, c, 2026, time.January); jan.Net.Minor != 163_000-400_000 {
+		t.Errorf("January net = %d, want %d: the month is still shown with its repair", jan.Net.Minor, 163_000-400_000)
+	}
+}
+
+func TestFourFullMonthsAreAllDrawnFrom(t *testing.T) {
+	svc, gw, st := newService(t)
+	st.now = theTwentieth
+	id, _ := trendAccount(t, svc, gw, st, "EUR", 500_000)
+	seedRow(st, "anchor", id, -1, on(2026, time.May, 1), "Anchor")
+	for i, minor := range []int64{100, 201, 300, 401} { // May to August
+		seedRow(st, "m"+string(rune('a'+i)), id, minor, on(2026, time.Month(5+i), 10), "Client")
+	}
+
+	c := onlyCurrency(t, historyOf(t, svc, ada, banking.ScopeAll))
+	if c.FullMonths != 4 || c.TypicalMonths != 4 {
+		t.Fatalf("FullMonths %d, TypicalMonths %d, want 4 and 4", c.FullMonths, c.TypicalMonths)
+	}
+	if c.TypicalNet.Minor != 251 || c.AverageNet.Minor != 250 ||
+		c.TypicalNetUsual.Minor != 251 || c.AverageNetUsual.Minor != 250 {
+		t.Errorf("typical %d, average %d, usual %d and %d, want 251, 250, 251, 250",
+			c.TypicalNet.Minor, c.AverageNet.Minor, c.TypicalNetUsual.Minor, c.AverageNetUsual.Minor)
+	}
+}
+
+func TestTwoFullMonthsAreDrawnFromByNothing(t *testing.T) {
+	svc, gw, st := newService(t)
+	st.now = theTwentieth
+	id, _ := trendAccount(t, svc, gw, st, "EUR", 500_000)
+	seedRow(st, "anchor", id, -1, on(2026, time.July, 1), "Anchor")
+	seedMonthly(st, "sal", id, 245_000, 1, "Salary", on(2026, time.July, 1), on(2026, time.September, 1))
+
+	c := onlyCurrency(t, historyOf(t, svc, ada, banking.ScopeAll))
+	if c.FullMonths != 2 || c.TypicalMonths != 0 {
+		t.Errorf("FullMonths %d, TypicalMonths %d, want 2 and 0", c.FullMonths, c.TypicalMonths)
 	}
 }

@@ -1,4 +1,4 @@
-import { netMonths, netSummary } from '../molecules/MonthlyNetChart.fixture';
+import { netMonths } from '../molecules/MonthlyNetChart.fixture';
 import type { HistoryMonth, HistorySection, RecurringEntry } from './Overview.svelte';
 
 const euro = (n: number) =>
@@ -134,28 +134,29 @@ export const historyMonths: HistoryMonth[] = [...netMonths].reverse().map((m) =>
 }));
 
 export const allView = {
-	typical: '+€189.40',
-	typicalValue: 189.4,
-	average: '−€37.80',
-	sentence: 'In a typical month €189.40 more comes in than goes out.',
-	summary: netSummary,
+	typical: '+€174.45',
+	typicalValue: 174.45,
+	average: '−€110.24',
+	sentence: 'In a typical month €174.45 more comes in than goes out.',
+	summary:
+		'Net by month from September 2025 to September 2026. 8 of 12 full months ended with more in than out. Highest +€310.00 in February 2026. Lowest −€1,480.30 in March 2026. A typical month is +€174.45.',
 	high: '+€637',
 	low: '−€1,480'
 };
 
 export const usualView = {
-	typical: '+€205.55',
-	typicalValue: 205.55,
-	average: '+€157.20',
-	sentence: 'In a typical month €205.55 more comes in than goes out.',
+	typical: '+€211.85',
+	typicalValue: 211.85,
+	average: '+€199.76',
+	sentence: 'In a typical month €211.85 more comes in than goes out.',
 	summary:
-		'Net by month from September 2025 to September 2026. 9 of 12 full months ended with more in than out. Highest +€310.00 in February 2026. Lowest −€160.00 in December 2025. A typical month is +€205.55.',
+		'Net by month from September 2025 to September 2026. 9 of 12 full months ended with more in than out. Highest +€310.00 in February 2026. Lowest −€160.00 in December 2025. A typical month is +€211.85.',
 	high: '+€637',
 	low: '−€160'
 };
 
 export const basis =
-	'From 12 full months. The typical month is the middle one, so one exceptional month barely moves it.';
+	'From the last 6 full months. The typical month is the middle one, so one exceptional month barely moves it.';
 
 export const history: HistorySection = {
 	span: 'September 2025 to September 2026',

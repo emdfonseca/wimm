@@ -459,6 +459,7 @@ func toProtoCurrencyHistory(c banking.CurrencyHistory, labels map[string]store.A
 	out := &bankingv1.CurrencyHistory{
 		Currency:        c.Currency,
 		FullMonths:      int32(c.FullMonths),
+		TypicalMonths:   int32(c.TypicalMonths),
 		TypicalNet:      toProtoMoneyPtr(c.TypicalNet),
 		AverageNet:      toProtoMoneyPtr(c.AverageNet),
 		TypicalNetUsual: toProtoMoneyPtr(c.TypicalNetUsual),

@@ -30,6 +30,10 @@ type CurrencyHistory struct {
 	Currency   string
 	Months     []HistoryMonth
 	FullMonths int
+	// TypicalMonths is how many full months the Typical* and Average* figures
+	// are drawn from: the newest typicalMonths, or every full month when fewer,
+	// and zero when there are no figures.
+	TypicalMonths int
 	// Typical* and Average* are nil under minFullMonths full months. The Usual
 	// pair is the same with every unusual payment set aside.
 	TypicalNet, AverageNet           *Money
@@ -421,8 +425,8 @@ func buildCurrencyHistory(
 
 	if c.FullMonths >= minFullMonths {
 		var nets, netsUsual []int64
-		for _, m := range months {
-			if !m.Full {
+		for _, m := range months { // newest first, so the first full ones are the last six
+			if !m.Full || len(nets) == typicalMonths {
 				continue
 			}
 			nets = append(nets, m.Net.Minor)
@@ -434,6 +438,7 @@ func buildCurrencyHistory(
 		}
 		typical, average := money(medianMinor(nets)), money(meanMinor(nets))
 		typicalUsual, averageUsual := money(medianMinor(netsUsual)), money(meanMinor(netsUsual))
+		c.TypicalMonths = len(nets)
 		c.TypicalNet, c.AverageNet = &typical, &average
 		c.TypicalNetUsual, c.AverageNetUsual = &typicalUsual, &averageUsual
 	}

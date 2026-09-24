@@ -227,6 +227,7 @@ function historyOf(months: unknown[], extra: Record<string, unknown> = {}) {
 				currency: 'EUR',
 				months,
 				fullMonths: 12,
+				typicalMonths: 6,
 				typicalNet: eur(18_940n),
 				averageNet: eur(-3_780n),
 				typicalNetUsual: eur(20_555n),
@@ -310,9 +311,26 @@ describe('Month by month', () => {
 			'3 unusual payments are set aside. They are still listed in their months.'
 		);
 		expect(history.basis).toBe(
-			'From 12 full months. The typical month is the middle one, so one exceptional month barely moves it.'
+			'From the last 6 full months. The typical month is the middle one, so one exceptional month barely moves it.'
 		);
 	});
+
+	it.each([
+		[4, 4, 'From 4 full months.'],
+		[6, 6, 'From 6 full months.']
+	])(
+		'says every full month is drawn from when %i are held and %i used',
+		async (fullMonths, typicalMonths, first) => {
+			quietAccounts();
+			getMonthHistory.mockResolvedValue(
+				historyOf([month('2026-08-01T00:00:00Z', 100n)], { fullMonths, typicalMonths })
+			);
+
+			expect(sectionOf(await overview()).basis).toBe(
+				`${first} The typical month is the middle one, so one exceptional month barely moves it.`
+			);
+		}
+	);
 
 	it('reads a typical month below zero in words, and links each unusual payment', async () => {
 		quietAccounts();

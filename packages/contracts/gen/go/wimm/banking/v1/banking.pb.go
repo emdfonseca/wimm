@@ -3822,7 +3822,10 @@ type CurrencyHistory struct {
 	Recurring []*RecurringPayment `protobuf:"bytes,9,rep,name=recurring,proto3" json:"recurring,omitempty"`
 	// Accounts missing from at least one full month shown, oldest beginning
 	// first: the months before `from` do not include them.
-	LateLedgers   []*LateLedger `protobuf:"bytes,10,rep,name=late_ledgers,json=lateLedgers,proto3" json:"late_ledgers,omitempty"`
+	LateLedgers []*LateLedger `protobuf:"bytes,10,rep,name=late_ledgers,json=lateLedgers,proto3" json:"late_ledgers,omitempty"`
+	// How many full months the typical and average month are drawn from: the
+	// newest six, or every full month when fewer. Unset when they are.
+	TypicalMonths int32 `protobuf:"varint,11,opt,name=typical_months,json=typicalMonths,proto3" json:"typical_months,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3925,6 +3928,13 @@ func (x *CurrencyHistory) GetLateLedgers() []*LateLedger {
 		return x.LateLedgers
 	}
 	return nil
+}
+
+func (x *CurrencyHistory) GetTypicalMonths() int32 {
+	if x != nil {
+		return x.TypicalMonths
+	}
+	return 0
 }
 
 type LateLedger struct {
@@ -4644,7 +4654,7 @@ const file_wimm_banking_v1_banking_proto_rawDesc = "" +
 	"\tavailable\x18\x02 \x03(\x0e2\x1d.wimm.banking.v1.InsightScopeR\tavailable\x12+\n" +
 	"\x11household_counted\x18\x03 \x03(\tR\x10householdCounted\x122\n" +
 	"\x15household_not_counted\x18\x04 \x03(\tR\x13householdNotCounted\x12>\n" +
-	"\thistories\x18\x05 \x03(\v2 .wimm.banking.v1.CurrencyHistoryR\thistories\"\xa5\x04\n" +
+	"\thistories\x18\x05 \x03(\v2 .wimm.banking.v1.CurrencyHistoryR\thistories\"\xcc\x04\n" +
 	"\x0fCurrencyHistory\x12\x1a\n" +
 	"\bcurrency\x18\x01 \x01(\tR\bcurrency\x125\n" +
 	"\x06months\x18\x02 \x03(\v2\x1d.wimm.banking.v1.HistoryMonthR\x06months\x12\x1f\n" +
@@ -4659,7 +4669,8 @@ const file_wimm_banking_v1_banking_proto_rawDesc = "" +
 	"\runusual_count\x18\b \x01(\x05R\funusualCount\x12?\n" +
 	"\trecurring\x18\t \x03(\v2!.wimm.banking.v1.RecurringPaymentR\trecurring\x12>\n" +
 	"\flate_ledgers\x18\n" +
-	" \x03(\v2\x1b.wimm.banking.v1.LateLedgerR\vlateLedgers\"_\n" +
+	" \x03(\v2\x1b.wimm.banking.v1.LateLedgerR\vlateLedgers\x12%\n" +
+	"\x0etypical_months\x18\v \x01(\x05R\rtypicalMonths\"_\n" +
 	"\n" +
 	"LateLedger\x12!\n" +
 	"\faccount_name\x18\x01 \x01(\tR\vaccountName\x12.\n" +

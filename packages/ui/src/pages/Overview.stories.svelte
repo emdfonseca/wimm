@@ -11,7 +11,6 @@
 	} from './Overview.svelte';
 	import {
 		allView,
-		basis,
 		bonusPayment,
 		cleaning,
 		fidelidade,
@@ -425,12 +424,16 @@
 			canvas.getByRole('heading', { name: 'Month by month', level: 2 })
 		).toBeInTheDocument();
 		await expect(by.getByText('September 2025 to September 2026')).toBeInTheDocument();
-		await expect(tile(canvas, 'Typical month')).toHaveTextContent('+€189.40');
-		await expect(tile(canvas, 'Average month')).toHaveTextContent('−€37.80');
+		await expect(tile(canvas, 'Typical month')).toHaveTextContent('+€174.45');
+		await expect(tile(canvas, 'Average month')).toHaveTextContent('−€110.24');
 		await expect(
-			by.getByText('In a typical month €189.40 more comes in than goes out.')
+			by.getByText('In a typical month €174.45 more comes in than goes out.')
 		).toBeInTheDocument();
-		await expect(by.getByText(basis)).toBeInTheDocument();
+		await expect(
+			by.getByText(
+				'From the last 6 full months. The typical month is the middle one, so one exceptional month barely moves it.'
+			)
+		).toBeInTheDocument();
 		const view = canvas.getByRole('radiogroup', { name: 'Payments counted' });
 		await expect(within(view).getByRole('radio', { name: 'All payments' })).toBeChecked();
 		await expect(
@@ -985,8 +988,8 @@
 				history: {
 					...history,
 					open: 'May 2026',
-					all: { ...allView, average: '+€779.20' },
-					usual: { ...usualView, average: '+€157.20' },
+					all: { ...allView, average: '+€1,523.76' },
+					usual: { ...usualView, average: '+€199.76' },
 					months: historyMonths.map((m) =>
 						m.label === 'May 2026'
 							? {
@@ -1012,8 +1015,8 @@
 	}}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(tile(canvas, 'Average month')).toHaveTextContent('+€779.20');
-		await expect(tile(canvas, 'Typical month')).toHaveTextContent('+€189.40');
+		await expect(tile(canvas, 'Average month')).toHaveTextContent('+€1,523.76');
+		await expect(tile(canvas, 'Typical month')).toHaveTextContent('+€174.45');
 		const may = monthRow(canvas, 'May 2026');
 		await expect(may).toHaveTextContent('+€10,029.00');
 		await expect(may).toHaveTextContent('1 unusual · +€225.00 without it');
@@ -1039,7 +1042,7 @@
 			await expect(bonus).toHaveTextContent(words);
 		}
 		await userEvent.click(canvas.getByRole('radio', { name: 'Without unusual payments' }));
-		await expect(tile(canvas, 'Average month')).toHaveTextContent('+€157.20');
+		await expect(tile(canvas, 'Average month')).toHaveTextContent('+€199.76');
 	}}
 />
 
@@ -1125,11 +1128,11 @@
 		const canvas = within(canvasElement);
 		await userEvent.click(canvas.getByRole('radio', { name: 'Without unusual payments' }));
 		await expect(canvas.getByRole('radio', { name: 'Without unusual payments' })).toBeChecked();
-		await expect(tile(canvas, 'Typical month')).toHaveTextContent('+€205.55');
-		await expect(tile(canvas, 'Average month')).toHaveTextContent('+€157.20');
+		await expect(tile(canvas, 'Typical month')).toHaveTextContent('+€211.85');
+		await expect(tile(canvas, 'Average month')).toHaveTextContent('+€199.76');
 		const by = months(canvas);
 		await expect(
-			by.getByText('In a typical month €205.55 more comes in than goes out.')
+			by.getByText('In a typical month €211.85 more comes in than goes out.')
 		).toBeInTheDocument();
 		await expect(
 			by.getByText('3 unusual payments are set aside. They are still listed in their months.')
@@ -1139,7 +1142,7 @@
 		);
 		await expect(by.getByRole('img', { name: usualView.summary })).toBeInTheDocument();
 		await expect(
-			usualView.summary.endsWith('Lowest −€160.00 in December 2025. A typical month is +€205.55.')
+			usualView.summary.endsWith('Lowest −€160.00 in December 2025. A typical month is +€211.85.')
 		).toBe(true);
 	}}
 />

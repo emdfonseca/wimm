@@ -716,6 +716,9 @@ message CurrencyHistory {
   // Accounts missing from at least one full month shown, oldest beginning
   // first: the months before `from` do not include them.
   repeated LateLedger late_ledgers = 10;
+  // How many full months the typical and average month are drawn from: the
+  // newest six, or every full month when fewer. Unset when they are.
+  int32 typical_months = 11;
 }
 
 message LateLedger {

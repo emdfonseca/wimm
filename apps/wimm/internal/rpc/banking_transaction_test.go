@@ -162,3 +162,15 @@ func TestAMoverSaysWhenItIsHalfOfATransfer(t *testing.T) {
 			got.GetOwnTransfer(), got.GetUnusual())
 	}
 }
+
+func TestACurrencySaysHowManyMonthsItsTypicalMonthIsDrawnFrom(t *testing.T) {
+	typical := banking.Money{Minor: 163_350, Currency: "EUR"}
+	out := toProtoCurrencyHistory(banking.CurrencyHistory{
+		Currency: "EUR", FullMonths: 12, TypicalMonths: 6,
+		TypicalNet: &typical, AverageNet: &typical,
+	}, nil)
+
+	if out.GetFullMonths() != 12 || out.GetTypicalMonths() != 6 {
+		t.Errorf("full %d, typical %d, want 12 and 6", out.GetFullMonths(), out.GetTypicalMonths())
+	}
+}
