@@ -1,10 +1,18 @@
-# Claude Code per-machine state (config dir selected by .envrc).
-# The harness itself is tracked: CLAUDE.md and settings.json below.
-.claude-home/*
-!.claude-home/CLAUDE.md
-!.claude-home/settings.json
-.claude/plans/
+# Per-person agent harness: config, hooks, plans, an isolated config dir.
+# The engineering standards under .claude/rules/ and .claude/skills/ are tracked.
+.claude-home/
+.claude/settings.json
 .claude/settings.local.json
+.claude/hooks/
+.claude/statusline.sh
+.claude/plans/
+.envrc
+.mcp.json
+.agents/
+.scratch/
+.opencode/
+.specify/
+skills-lock.json
 
 .devbox/
 node_modules/
