@@ -2,6 +2,7 @@
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import { expect, fn, within } from 'storybook/test';
 	import SignedInLanding from './SignedInLanding.svelte';
+	import Page from './Page.svelte';
 	import EmptyState from '../molecules/EmptyState.svelte';
 	import { destinations } from '../destinations.js';
 
@@ -159,6 +160,51 @@
 	{#snippet template(args)}
 		<SignedInLanding {...args}>
 			<EmptyState title="Signed in as Ana Reis" elevated>There is nothing here yet.</EmptyState>
+		</SignedInLanding>
+	{/snippet}
+</Story>
+
+<!-- A page taller than the viewport scrolls inside the body, to both its ends,
+     and the document itself never scrolls. Three ways this broke: Page sizing
+     itself to the viewport and spilling the rest past its own bottom; the body
+     centring an overflowing page so its top sat above the scroll origin; and a
+     visually hidden label, absolutely positioned deep in the page, placed
+     against the document and stretching it. scrollTop is clamped, so it proves
+     nothing; the page's own edges against the body's are what is measured. -->
+<Story
+	name="A page taller than the viewport scrolls to both its ends"
+	play={async ({ canvasElement }) => {
+		const body = within(canvasElement).getByRole('main');
+		const page = body.firstElementChild;
+		if (!page) throw new Error('.body rendered no page to measure');
+		const doc = canvasElement.ownerDocument.scrollingElement;
+		if (!doc) throw new Error('no scrolling element to measure');
+		await expect(doc.scrollHeight).toBeLessThanOrEqual(doc.clientHeight + 1);
+		body.scrollTop = 0;
+		const top = page.getBoundingClientRect().top - body.getBoundingClientRect().top;
+		await expect(Math.abs(top)).toBeLessThan(2);
+		body.scrollTop = body.scrollHeight;
+		const bottom = body.getBoundingClientRect().bottom - page.getBoundingClientRect().bottom;
+		await expect(Math.abs(bottom)).toBeLessThan(2);
+	}}
+>
+	{#snippet template(args)}
+		<SignedInLanding {...args}>
+			<Page title="Overview">
+				<!-- A block, not a flex item: an absolute child of a flex container
+				     sits at the container's start, never deep in the page. -->
+				<div style:inline-size="100%" style:flex-shrink="0">
+					<div style:block-size="2000px"></div>
+					<button type="button">Last row, at the very end of the content</button>
+					<span
+						style:position="absolute"
+						style:inline-size="1px"
+						style:block-size="1px"
+						style:overflow="hidden"
+						style:clip-path="inset(50%)">A label only a screen reader hears</span
+					>
+				</div>
+			</Page>
 		</SignedInLanding>
 	{/snippet}
 </Story>

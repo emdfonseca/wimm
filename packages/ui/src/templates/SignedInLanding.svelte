@@ -187,10 +187,16 @@
 		display: flex;
 		flex: 1;
 		flex-direction: column;
-		justify-content: center;
-		align-items: center;
+		/* `safe`: a page taller than this box, centred, overflows above the
+		   scroll origin too, where no scrolling can reach its top. */
+		justify-content: safe center;
+		align-items: safe center;
 		min-block-size: 0;
 		overflow-y: auto;
+		/* The containing block for anything absolutely positioned in a page —
+		   every visually hidden label is. Without it they are placed against the
+		   document, deep in a long page, and the whole document scrolls. */
+		position: relative;
 	}
 
 	/* Medium: the rail. Labels do not fit beside a content column at this

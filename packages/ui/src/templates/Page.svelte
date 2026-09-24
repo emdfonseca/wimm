@@ -72,7 +72,12 @@
 	.page {
 		display: flex;
 		flex-direction: column;
-		flex: 1;
+		/* Not the `flex: 1` shorthand: that sets flex-basis 0%, which the flex
+		   algorithm clamps straight to min-block-size once content overflows,
+		   discarding the rest to render past this box's own bottom edge — the
+		   scrolling region then measures content that is not where it draws it.
+		   flex-basis auto sizes to content first; shrink 0 stops the clamp. */
+		flex: 1 0 auto;
 		min-block-size: 100%;
 		inline-size: 100%;
 	}
