@@ -55,9 +55,11 @@ canvas:
         echo "run \`just up\` first: Storybook is not answering on port $port" >&2; exit 1; \
     fi
 
-# Approve a page story's implemented version, in your own terminal, never an agent's
-approve story *note:
-    @node apps/storybook/scripts/approvals.mjs --approve -- {{quote(story)}} {{quote(note)}}
+# Approve page stories' implemented versions, in your own terminal, never an agent's:
+# `just approve <story>... [note]`, or `just approve --needs [note]`
+[positional-arguments]
+approve +args:
+    @node apps/storybook/scripts/approvals.mjs --approve "$@"
 
 # Stop it.
 down:

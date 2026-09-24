@@ -2,7 +2,15 @@
 // the history button and panel, the sidebar filter, and a story's copyable id.
 // Each function takes a document and data and returns elements; nothing runs on
 // import, so a browser test can mount them. canvas.js does the wiring.
-import { badgeWords, filterWords, historyWords } from './lib.js';
+import {
+	badgeWords,
+	filterWords,
+	historyWords,
+	offersApprovedLook,
+	pictureLine,
+	pictureName,
+	shortVersion
+} from './lib.js';
 
 const SHAPES = /** @type {Record<string, string>} */ ({ approved: '✓', changed: '●', never: '○' });
 
@@ -35,6 +43,81 @@ export function badge(doc, result) {
 	}
 	el.append(text);
 	return el;
+}
+
+/**
+ * Adds one line to a badge's words, and returns it so it can be taken away.
+ * @param {HTMLElement} mark a badge made by `badge()`
+ * @param {string} words
+ */
+function badgeLine(mark, words) {
+	const row = mark.ownerDocument.createElement('div');
+	row.textContent = words;
+	mark.lastElementChild?.append(row);
+	return row;
+}
+
+/**
+ * On a changed artboard viewed light and comfortable, a toggle between the page
+ * as implemented and the picture kept of its last approved version. The iframe
+ * is hidden rather than removed, so switching back does not render it again.
+ * Anywhere else nothing is drawn and nothing is asked for.
+ * @param {Document} doc
+ * @param {{
+ *   story: { id: string, title: string, name: string },
+ *   size: string,
+ *   width: number,
+ *   result: ReturnType<typeof import('./lib.js').statusOf>,
+ *   view: { theme: string, density: string },
+ *   base: string,
+ *   label: HTMLElement,
+ *   badge: HTMLElement | null,
+ *   frame: HTMLElement,
+ *   iframe: HTMLIFrameElement,
+ *   exists: (url: string) => Promise<boolean>
+ * }} options
+ * @returns {Promise<HTMLButtonElement | null>} the toggle, when there is a picture to show
+ */
+export async function approvedLook(doc, options) {
+	const { story, size, width, result, view, base, label, badge: mark, frame, iframe, exists } = options;
+	const fingerprint = result.approved?.fingerprint;
+	if (!fingerprint || !offersApprovedLook(result.status, view)) return null;
+	const url = `${base}/approved/${pictureName(story.id, fingerprint, size)}`;
+	if (!(await exists(url))) {
+		if (mark) badgeLine(mark, pictureLine('missing', fingerprint));
+		return null;
+	}
+
+	const button = doc.createElement('button');
+	button.type = 'button';
+	button.className = 'history-button';
+	button.textContent = 'Approved look';
+	button.setAttribute('aria-label', `Approved look of ${story.name} at ${size}`);
+	button.setAttribute('aria-pressed', 'false');
+	label.append(' ', button);
+
+	const screen = story.title.split('/').slice(1).join('/') || story.title;
+	/** @type {{ img: HTMLImageElement, line: HTMLElement | null } | null} */
+	let shown = null;
+	button.addEventListener('click', () => {
+		if (shown) {
+			shown.img.remove();
+			shown.line?.remove();
+			shown = null;
+			iframe.hidden = false;
+		} else {
+			const img = doc.createElement('img');
+			img.className = 'approved-look';
+			img.src = url;
+			img.width = width;
+			img.alt = `${screen} · ${story.name} at ${size}, approved ${shortVersion(fingerprint)}`;
+			iframe.hidden = true;
+			frame.prepend(img);
+			shown = { img, line: mark ? badgeLine(mark, pictureLine('showing', fingerprint)) : null };
+		}
+		button.setAttribute('aria-pressed', String(shown !== null));
+	});
+	return button;
 }
 
 /**

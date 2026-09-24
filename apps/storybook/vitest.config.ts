@@ -1,12 +1,17 @@
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { playwright } from '@vitest/browser-playwright';
-import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs';
+import { appendFileSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { defineConfig } from 'vitest/config';
-import { RUN_FILE } from './canvas/lib.js';
+import { PICTURES_DIR, RUN_FILE } from './canvas/lib.js';
 
 const runFile = resolve(import.meta.dirname, RUN_FILE);
+const picturesDir = resolve(import.meta.dirname, PICTURES_DIR);
+
+/** Room around the frame, so the runner's fit-to-window scale stays at 1. */
+const WINDOW_MARGIN = 100;
+let outerViewport: { width: number; height: number } | undefined;
 
 /**
  * The run file the page versions are written from: emptied when a run starts,
@@ -17,6 +22,7 @@ const runRecorder = {
 	onTestRunStart() {
 		mkdirSync(dirname(runFile), { recursive: true });
 		writeFileSync(runFile, '');
+		rmSync(picturesDir, { recursive: true, force: true });
 	},
 	onTestRunEnd(_modules: unknown, errors: readonly unknown[], reason: string) {
 		const run = reason === 'passed' && errors.length === 0 ? 'passed' : 'failed';
@@ -95,6 +101,37 @@ export default defineConfig({
 						commands: {
 							recordPageVersion(_context, id: string, digest: string) {
 								appendFileSync(runFile, `${JSON.stringify({ id, digest })}\n`);
+							},
+							// The runner scales its frame down to fit the window, and a
+							// picture of a scaled frame is a thumbnail. Growing the window
+							// past the frame keeps the scale at 1; `null` puts it back.
+							async pictureWindow(context, size: { width: number; height: number } | null) {
+								if (!size) {
+									if (outerViewport) await context.page.setViewportSize(outerViewport);
+									outerViewport = undefined;
+									return;
+								}
+								outerViewport ??= context.page.viewportSize() ?? undefined;
+								await context.page.setViewportSize({
+									width: size.width + WINDOW_MARGIN,
+									height: size.height + WINDOW_MARGIN
+								});
+							},
+							// The stories `just approve` is approving, or none.
+							pictureStories() {
+								return (process.env.WIMM_PICTURE_STORIES ?? '').split(',').filter(Boolean);
+							},
+							// Named by size alone: the fingerprint is only known once
+							// versions.mjs has added the shared styles to `digest`, so
+							// approvals.mjs names the picture when it keeps it.
+							keepPicture(_context, story: string, size: string, digest: string, png: string) {
+								const file = resolve(picturesDir, story, `${size}.png`);
+								mkdirSync(dirname(file), { recursive: true });
+								writeFileSync(file, Buffer.from(png, 'base64'));
+								appendFileSync(
+									resolve(picturesDir, 'pictures.jsonl'),
+									`${JSON.stringify({ story, size, digest })}\n`
+								);
 							}
 						}
 					}

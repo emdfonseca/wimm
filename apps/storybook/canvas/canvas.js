@@ -9,8 +9,10 @@ import {
 	flowFrom,
 	flowStatus,
 	flowWords,
+	hiddenHeight,
 	historyOf,
 	kindOf,
+	MAX_HEIGHT,
 	nearestLocation,
 	nearestRecorded,
 	needsApproval,
@@ -23,6 +25,7 @@ import {
 	storyUrl
 } from './lib.js';
 import {
+	approvedLook,
 	badge,
 	filterControl,
 	historyButton,
@@ -39,8 +42,6 @@ const find = /** @type {HTMLInputElement} */ (document.getElementById('find'));
 const tree = /** @type {HTMLElement} */ (document.getElementById('tree'));
 const world = /** @type {HTMLElement} */ (document.getElementById('world'));
 
-/** Taller than this is a runaway layout, not a screen. */
-const MAX_HEIGHT = 20000;
 const MIN_SCALE = 0.05;
 const MAX_SCALE = 4;
 
@@ -74,6 +75,23 @@ let unreadable = '';
 
 /** @param {string} message */
 const withNotice = (message) => (unreadable ? `${unreadable} · ${message}` : message);
+
+/** Where the two approval files, and the pictures beside them, are read from. */
+const base = dataBase(new URLSearchParams(location.search));
+
+/**
+ * Whether a picture was kept. A dev server can answer a missing file with a
+ * page, so only an image counts.
+ * @param {string} url
+ */
+async function pictureExists(url) {
+	try {
+		const response = await fetch(url, { method: 'HEAD' });
+		return response.ok && (response.headers.get('content-type') ?? '').startsWith('image/');
+	} catch {
+		return false;
+	}
+}
 
 /** @param {string} id */
 const statusFor = (id) =>
@@ -291,24 +309,6 @@ async function copy(text) {
 	} catch {
 		return false;
 	}
-}
-
-/**
- * How much taller the artboard must be for nothing in it to sit behind a
- * scrollbar: the page's own overflow, or the deepest inner scroller's. An app
- * shell fills the viewport and scrolls its content inside, so the page has to
- * be as tall as the content for the shell to show all of it.
- * @param {Document} doc
- * @param {Window} win
- */
-function hiddenHeight(doc, win) {
-	let excess = Math.max(0, doc.documentElement.scrollHeight - doc.documentElement.clientHeight);
-	for (const el of doc.body.querySelectorAll('*')) {
-		const over = el.scrollHeight - el.clientHeight;
-		if (over <= 1 || over <= excess) continue;
-		if (/auto|scroll/.test(win.getComputedStyle(el).overflowY)) excess = over;
-	}
-	return excess;
 }
 
 /**
@@ -551,6 +551,21 @@ function artboard(board) {
 	waiting.add(iframe);
 
 	el.append(label, ...(mark ? [mark] : []), frame);
+	if (approvalData) {
+		approvedLook(document, {
+			story: board,
+			size: board.size,
+			width,
+			result,
+			view: board,
+			base,
+			label,
+			badge: mark,
+			frame,
+			iframe,
+			exists: pictureExists
+		});
+	}
 	return el;
 }
 
@@ -960,7 +975,7 @@ async function main() {
 	try {
 		index = await (await fetch('/index.json')).json();
 		storyEntries = index.entries;
-		const loaded = await readData((url) => fetch(url), dataBase(query));
+		const loaded = await readData((url) => fetch(url), base);
 		if (loaded.ok) approvalData = loaded;
 		else unreadable = loaded.message;
 		const name = query.get('play') ?? query.get('flow');

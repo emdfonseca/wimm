@@ -28,6 +28,11 @@ import {
 	statusOf,
 	versionWords,
 	approvalProblems,
+	offersApprovedLook,
+	parsePictureName,
+	pictureLine,
+	pictureName,
+	pictureProblems,
 	sitemapFrom,
 	sizesFor,
 	relativeToRepo,
@@ -1050,3 +1055,101 @@ describe('reading the two files', () => {
 		expect(dataBase(new URLSearchParams('data=../x'))).toBe('./fixtures/invalid');
 	});
 });
+
+describe('pictures of the last approved version', () => {
+	const a = 'a'.repeat(64);
+
+	it('names a picture by story, fingerprint and size, and reads the name back', () => {
+		const name = pictureName('pages-overview--populated', a, 'wide');
+		expect(name).toBe(`pages-overview--populated/${a}-wide.png`);
+		expect(parsePictureName(name)).toEqual({
+			story: 'pages-overview--populated',
+			fingerprint: a,
+			size: 'wide'
+		});
+	});
+
+	const b = 'b'.repeat(64);
+	const sizes = ['compact', 'medium', 'wide', 'ultra'];
+	const story = 'pages-overview--populated';
+	/** @param {string} fingerprint @param {string} at */
+	const approval = (fingerprint, at, email = 'e@x.test') => ({
+		story,
+		fingerprint,
+		name: 'E',
+		email,
+		at,
+		note: ''
+	});
+	const dir = 'apps/storybook/canvas/approved';
+
+	it('refuses a picture left from an earlier approved version', () => {
+		const approvals = [approval(a, '2026-09-20T10:00:00Z'), approval(b, '2026-09-21T10:00:00Z')];
+		expect(pictureProblems([pictureName(story, a, 'wide')], approvals, sizes)).toEqual([
+			`${dir}/${story}/${a}-wide.png is not of the last approved version, bbbbbbb.`
+		]);
+		expect(pictureProblems([pictureName(story, b, 'wide')], approvals, sizes)).toEqual([]);
+	});
+
+	it('refuses a picture of a story nobody approved', () => {
+		const approvals = [approval(a, '2026-09-20T10:00:00Z')];
+		expect(pictureProblems([pictureName('pages-x--y', a, 'wide')], approvals, sizes)).toEqual([
+			`${dir}/pages-x--y/${a}-wide.png belongs to no approved story.`
+		]);
+	});
+
+	it('refuses a picture at a size the canvas does not have', () => {
+		const approvals = [approval(a, '2026-09-20T10:00:00Z')];
+		expect(pictureProblems([pictureName(story, a, 'tablet')], approvals, sizes)).toEqual([
+			`${dir}/${story}/${a}-tablet.png names a size the canvas does not have.`
+		]);
+	});
+
+	it('refuses a folder left from an approval that did not finish, once per folder', () => {
+		const approvals = [approval(a, '2026-09-20T10:00:00Z')];
+		const next = [`${story}.next/${a}-compact.png`, `${story}.next/${a}-wide.png`];
+		expect(pictureProblems(next, approvals, sizes)).toEqual([
+			`${dir}/${story}.next/ is left from an approval that did not finish. Delete it.`
+		]);
+	});
+
+	it('refuses a file not named for a fingerprint and a size', () => {
+		const approvals = [approval(a, '2026-09-20T10:00:00Z')];
+		expect(pictureProblems([`${story}/wide.png`], approvals, sizes)).toEqual([
+			`${dir}/${story}/wide.png is not named <fingerprint>-<size>.png.`
+		]);
+	});
+
+	it('passes a story with no pictures, and one with a picture of its last approval', () => {
+		const approvals = [approval(a, '2026-09-20T10:00:00Z'), approval(b, '2026-09-21T10:00:00Z')];
+		expect(pictureProblems([], approvals, sizes)).toEqual([]);
+		const current = sizes.map((size) => pictureName(story, b, size));
+		expect(pictureProblems(current, approvals, sizes)).toEqual([]);
+	});
+});
+
+describe('the approved look on an artboard', () => {
+	const light = { theme: 'light', density: 'comfortable' };
+
+	it('is offered on a changed artboard, light and comfortable', () => {
+		expect(offersApprovedLook('changed', light)).toBe(true);
+	});
+
+	it.each([
+		['approved', light],
+		['never', light],
+		['exempt', light],
+		['unversioned', light],
+		['changed', { theme: 'dark', density: 'comfortable' }],
+		['changed', { theme: 'light', density: 'compact' }]
+	])('is not offered on a %s artboard viewed %o', (status, view) => {
+		expect(offersApprovedLook(/** @type {any} */ (status), view)).toBe(false);
+	});
+
+	it('says which approved version the picture shows, or that there is none', () => {
+		const fingerprint = `77b0d4a${'0'.repeat(57)}`;
+		expect(pictureLine('showing', fingerprint)).toBe('Showing approved 77b0d4a');
+		expect(pictureLine('missing', fingerprint)).toBe('No picture of the approved version');
+	});
+});
+

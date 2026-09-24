@@ -406,6 +406,20 @@ html {
 	background: var(--color-bg-hover);
 }
 
+/* Approved look reuses the History button's look; pressed, it reads as held. */
+.history-button[aria-pressed='true'] {
+	background: var(--color-bg-active);
+}
+
+.frame img.approved-look {
+	display: block;
+	block-size: auto;
+}
+
+.frame iframe[hidden] {
+	display: none;
+}
+
 dialog.history {
 	position: fixed;
 	z-index: 20;

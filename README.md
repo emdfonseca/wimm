@@ -52,12 +52,26 @@ one line when they are the same, both when the page changed since approval, and
 the implemented one alone when nobody approved it. History opens a story's
 approved versions, and the sidebar filter `Needs approval` (kept as `?needs=1`)
 lists what to look at. To approve a page after looking at it, run
-`just approve pages-overview--populated "a note"` in your own terminal and commit
-`apps/storybook/canvas/approvals.jsonl` on its own. It refuses inside an agent
-session or without a terminal, and an agent never runs it. The record only grows;
-two people approving on two branches merge by keeping both lines. Open the canvas
-with `?data=changed` (or `approved`, `never`, `mixed`, `history`) to see a state
-on fixtures without approving anything.
+`just approve pages-overview--populated "a note"` in your own terminal. Name
+several stories to approve them in one run, or use `just approve --needs` for
+every page story that needs approval; either asks once, and one refused story
+refuses the run. It refuses
+inside an agent session or without a terminal, and an agent never runs it. The
+record only grows; two people approving on two branches merge by keeping both
+lines.
+
+Approving also keeps a picture of the page at every size it is drawn at, light
+theme and comfortable density only, taken from the same run that settled the
+version approved. Only a story's last approved version keeps pictures, under
+`apps/storybook/canvas/approved/<story>/`; approving again replaces them. Commit
+the record and the pictures together, on their own, as the command says:
+`apps/storybook/canvas/approvals.jsonl` and
+`apps/storybook/canvas/approved/pages-overview--populated/`. On an artboard that
+changed since approval, viewed light and comfortable, `Approved look` switches
+between the page as implemented and that picture; an approval recorded with no
+picture says so instead. Open the canvas with `?data=changed` (or
+`changed-pictured`, `approved`, `never`, `mixed`, `history`) to see a state on
+fixtures without approving anything.
 
 Postgres listens on a Unix socket under `.devbox/`, not a port, so it cannot
 collide with a system-wide install or another checkout of this repo.

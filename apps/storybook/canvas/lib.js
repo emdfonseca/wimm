@@ -671,6 +671,84 @@ export function formatDate(value) {
 /** @param {string} fingerprint the seven characters a person sees */
 export const shortVersion = (fingerprint) => fingerprint.slice(0, 7);
 
+/** Taller than this is a runaway layout, not a screen. */
+export const MAX_HEIGHT = 20000;
+
+/**
+ * How much taller the artboard must be for nothing in it to sit behind a
+ * scrollbar: the page's own overflow, or the deepest inner scroller's. An app
+ * shell fills the viewport and scrolls its content inside, so the page has to
+ * be as tall as the content for the shell to show all of it.
+ * @param {Document} doc
+ * @param {Window} win
+ */
+export function hiddenHeight(doc, win) {
+	let excess = Math.max(0, doc.documentElement.scrollHeight - doc.documentElement.clientHeight);
+	for (const el of doc.body.querySelectorAll('*')) {
+		const over = el.scrollHeight - el.clientHeight;
+		if (over <= 1 || over <= excess) continue;
+		if (/auto|scroll/.test(win.getComputedStyle(el).overflowY)) excess = over;
+	}
+	return excess;
+}
+
+/** Where the approve run leaves the pictures it took, before any is kept. */
+export const PICTURES_DIR = 'node_modules/.cache/wimm-canvas/pictures';
+
+/**
+ * A picture's path under `canvas/approved/`. The name carries the fingerprint,
+ * so a picture cannot claim a version other than its own.
+ * @param {string} story @param {string} fingerprint @param {string} size
+ */
+export const pictureName = (story, fingerprint, size) => `${story}/${fingerprint}-${size}.png`;
+
+const PICTURE = /^([^/]+)\/([0-9a-f]{64})-([a-z]+)\.png$/;
+
+/**
+ * @param {string} path a path under `canvas/approved/`
+ * @returns {{ story: string, fingerprint: string, size: string } | undefined}
+ */
+export function parsePictureName(path) {
+	const match = PICTURE.exec(path);
+	return match ? { story: match[1], fingerprint: match[2], size: match[3] } : undefined;
+}
+
+const APPROVED_DIR = 'apps/storybook/canvas/approved';
+
+/**
+ * What is wrong with the pictures kept under `canvas/approved/`, one line per
+ * file. Only the last approved version of a story may have pictures.
+ * @param {string[]} paths every path under `canvas/approved/`
+ * @param {Approval[]} approvals in the order written
+ * @param {string[]} sizes the sizes the canvas draws
+ * @returns {string[]}
+ */
+export function pictureProblems(paths, approvals, sizes) {
+	/** @type {Map<string, string>} */
+	const last = new Map();
+	for (const a of approvals) last.set(a.story, a.fingerprint);
+	/** @type {Set<string>} */
+	const unfinished = new Set();
+	return paths.flatMap((path) => {
+		const folder = path.split('/')[0];
+		if (folder.endsWith('.next')) {
+			if (unfinished.has(folder)) return [];
+			unfinished.add(folder);
+			return [`${APPROVED_DIR}/${folder}/ is left from an approval that did not finish. Delete it.`];
+		}
+		const at = `${APPROVED_DIR}/${path}`;
+		const picture = parsePictureName(path);
+		if (!picture) return [`${at} is not named <fingerprint>-<size>.png.`];
+		const approved = last.get(picture.story);
+		if (!approved) return [`${at} belongs to no approved story.`];
+		if (!sizes.includes(picture.size)) return [`${at} names a size the canvas does not have.`];
+		if (picture.fingerprint !== approved) {
+			return [`${at} is not of the last approved version, ${shortVersion(approved)}.`];
+		}
+		return [];
+	});
+}
+
 /**
  * The story ids nearest to one a person typed, for a typo.
  * @param {string} wanted
@@ -725,6 +803,24 @@ export function parseApprovals(text) {
 /** @param {Approval[]} approvals @param {string} fingerprint */
 const approvalsOf = (approvals, fingerprint) =>
 	approvals.filter((a) => a.fingerprint === fingerprint).sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
+
+/**
+ * Whether an artboard offers to switch to the picture of its last approved
+ * version. Pictures are light and comfortable only.
+ * @param {Status} status
+ * @param {{ theme: string, density: string }} view
+ */
+export const offersApprovedLook = (status, view) =>
+	status === 'changed' && view.theme === 'light' && view.density === 'comfortable';
+
+/**
+ * The badge line an offered artboard gains: the version its picture shows, or
+ * that no picture was kept of it.
+ * @param {'showing' | 'missing'} state
+ * @param {string} fingerprint the last approved version
+ */
+export const pictureLine = (state, fingerprint) =>
+	state === 'showing' ? `Showing approved ${shortVersion(fingerprint)}` : 'No picture of the approved version';
 
 /**
  * Both versions travel together: the one implemented now, always, and the newest

@@ -146,3 +146,54 @@ describe('--check with nothing to compare against', () => {
 		expect(readFileSync(file, 'utf8')).toBe(approval('a@example.com'));
 	});
 });
+
+describe('--check on the pictures of the last approved version', () => {
+	const APPROVED = 'apps/storybook/canvas/approved';
+	const NEW = 'a'.repeat(64);
+	const OLD = 'b'.repeat(64);
+
+	/** Runs the check on one committed fixture under fixtures/pictures/. @param {string} name */
+	const checkFixture = (name) => {
+		const at = join(import.meta.dirname, 'fixtures', 'pictures', name);
+		return spawnSync(
+			'node',
+			[
+				script,
+				'--check',
+				'--file', join(at, 'approvals.jsonl'),
+				'--versions', join(at, 'versions.json'),
+				'--approved', join(at, 'approved')
+			],
+			{ encoding: 'utf8', env: hermetic }
+		);
+	};
+
+	it('refuses a picture left from an earlier approved version, naming it', () => {
+		const result = checkFixture('stale');
+		expect(result.status).not.toBe(0);
+		expect(result.stderr).toContain(
+			`${APPROVED}/${STORY}/${OLD}-wide.png is not of the last approved version, aaaaaaa.`
+		);
+	});
+
+	it.each([
+		['no-story', `${APPROVED}/pages-x--y/${NEW}-wide.png belongs to no approved story.`],
+		['unknown-size', `${APPROVED}/${STORY}/${NEW}-tablet.png names a size the canvas does not have.`],
+		[
+			'unfinished',
+			`${APPROVED}/${STORY}.next/ is left from an approval that did not finish. Delete it.`
+		],
+		['misnamed', `${APPROVED}/${STORY}/wide.png is not named <fingerprint>-<size>.png.`]
+	])('refuses the %s fixture with its line', (name, line) => {
+		const result = checkFixture(name);
+		expect(result.status).not.toBe(0);
+		expect(result.stderr).toContain(line);
+	});
+
+	it.each(['kept', 'unpictured'])('passes the %s fixture', (name) => {
+		const result = checkFixture(name);
+		expect(result.stderr).toBe('');
+		expect(result.status).toBe(0);
+	});
+});
+

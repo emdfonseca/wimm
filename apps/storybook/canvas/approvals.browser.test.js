@@ -1,6 +1,7 @@
 import { userEvent } from 'vitest/browser';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
+	approvedLook,
 	badge,
 	closeHistory,
 	filterControl,
@@ -206,3 +207,123 @@ describe('the Needs approval filter', () => {
 		);
 	});
 });
+
+describe('the approved look on a changed artboard', () => {
+	// The picture the changed-pictured fixture keeps of the approved version.
+	const approved = '20f7800a2e231414a46bcf96107cace1bd0481bd5e390dffc7d40a71c270a654';
+	const base = '/canvas/fixtures/changed-pictured';
+	const light = { theme: 'light', density: 'comfortable' };
+	const changed = statusOf(
+		{
+			implemented: fp('a'),
+			versions: [
+				{ fingerprint: fp('a'), firstSeen: '2026-09-20' },
+				{ fingerprint: approved, firstSeen: '2026-09-12' }
+			]
+		},
+		[emanuel(approved)],
+		'state'
+	);
+
+	/**
+	 * One artboard as canvas.js draws it: a label, a badge and a frame holding
+	 * the story's iframe.
+	 * @param {Partial<Parameters<typeof approvedLook>[1]>} [options]
+	 */
+	async function mountBoard(options = {}) {
+		const label = document.createElement('div');
+		const mark = badge(document, options.result ?? changed);
+		const frame = document.createElement('div');
+		const iframe = document.createElement('iframe');
+		iframe.srcdoc = '<p>The page as implemented</p>';
+		frame.append(iframe);
+		document.body.append(label, ...(mark ? [mark] : []), frame);
+		await new Promise((done) => iframe.addEventListener('load', done, { once: true }));
+		const asked = [];
+		const button = await approvedLook(document, {
+			story,
+			size: 'wide',
+			width: 1440,
+			result: changed,
+			view: light,
+			base,
+			label,
+			badge: mark,
+			frame,
+			iframe,
+			exists: async (url) => {
+				asked.push(url);
+				return (await fetch(url, { method: 'HEAD' })).ok;
+			},
+			...options
+		});
+		return { label, mark, frame, iframe, button, asked };
+	}
+
+	it('is a toggle button, not pressed, reached with Tab, named for the story and size', async () => {
+		const { button } = await mountBoard();
+		expect(button?.tagName).toBe('BUTTON');
+		expect(button?.textContent).toBe('Approved look');
+		expect(button?.getAttribute('aria-pressed')).toBe('false');
+		expect(button?.getAttribute('aria-label')).toBe('Approved look of Populated at wide');
+		await userEvent.tab();
+		expect(document.activeElement).toBe(button);
+	});
+
+	it('shows the picture in place of the page, says which version, and keeps focus', async () => {
+		const { button, frame, iframe, mark } = await mountBoard();
+		button?.focus();
+		await userEvent.keyboard('{Enter}');
+		expect(button?.getAttribute('aria-pressed')).toBe('true');
+		expect(iframe.isConnected).toBe(true);
+		expect(iframe.hidden).toBe(true);
+		const img = frame.querySelector('img');
+		expect(img?.alt).toBe('Overview · Populated at wide, approved 20f7800');
+		await expect.poll(() => img?.naturalWidth).toBe(1440);
+		expect(mark?.textContent).toContain('Showing approved 20f7800');
+		expect(document.activeElement).toBe(button);
+	});
+
+	it('switches back to the same page, not a reloaded one', async () => {
+		const { button, frame, iframe, mark } = await mountBoard();
+		const page = iframe.contentDocument;
+		const src = iframe.srcdoc;
+		button?.click();
+		button?.click();
+		expect(button?.getAttribute('aria-pressed')).toBe('false');
+		expect(iframe.hidden).toBe(false);
+		expect(frame.querySelector('img')).toBeNull();
+		expect(mark?.textContent).not.toContain('Showing approved');
+		expect(iframe.contentDocument).toBe(page);
+		expect(iframe.srcdoc).toBe(src);
+	});
+
+	it('says there is no picture, and offers nothing, when none was kept', async () => {
+		const { button, label, mark } = await mountBoard({ base: '/canvas/fixtures/changed' });
+		expect(button).toBeNull();
+		expect(label.querySelector('button')).toBeNull();
+		expect(mark?.textContent).toContain('No picture of the approved version');
+	});
+
+	it.each([
+		['dark', { theme: 'dark', density: 'comfortable' }],
+		['compact density', { theme: 'light', density: 'compact' }]
+	])('offers nothing and asks for nothing viewed %s', async (_name, view) => {
+		const { button, mark, asked } = await mountBoard({ view });
+		expect(button).toBeNull();
+		expect(mark?.textContent).not.toContain('No picture');
+		expect(asked).toEqual([]);
+	});
+
+	it('asks for no picture on an artboard that has not changed', async () => {
+		const same = statusOf(
+			{ implemented: approved, versions: [{ fingerprint: approved, firstSeen: '2026-09-12' }] },
+			[emanuel(approved)],
+			'state'
+		);
+		const { button, asked } = await mountBoard({ result: same });
+		expect(button).toBeNull();
+		expect(asked).toEqual([]);
+	});
+});
+

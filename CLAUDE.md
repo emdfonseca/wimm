@@ -8,5 +8,5 @@
 - Once a change's scope is confirmed, carry it through every artifact to tasks without stopping to ask whether to continue. Ask only when an answer would change what gets built.
 - Code is the design of record (ADR 0023). Anything with a user-facing surface gets a state plan in `canvas.md` before tasks are written: the state stories, the words each shows, and what was seen. Components are built before the screen that uses them, the presentational screen and its state stories before a look at all four regimes on the design canvas (`just canvas`), and that look before any wiring.
 - Never hand-edit `gen/` output; regenerate with `just gen`.
-- An agent never runs `just approve` and never writes to `apps/storybook/canvas/approvals.jsonl`; approvals are a person's, made in their own terminal and committed on their own.
+- An agent never runs `just approve` and never writes to `apps/storybook/canvas/approvals.jsonl` or `apps/storybook/canvas/approved/`; approvals are a person's, made in their own terminal and committed on their own.
 - This repo is self-contained. Never read or write outside its root, whatever a tool reports as reachable or already open — including other repos on this machine.
