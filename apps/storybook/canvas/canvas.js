@@ -4,16 +4,32 @@ import {
 	callbacksFor,
 	connectorLabels,
 	branchBoards,
+	dataBase,
 	flowBoards,
 	flowFrom,
+	flowStatus,
+	flowWords,
+	historyOf,
+	kindOf,
 	nearestLocation,
 	nearestRecorded,
+	needsApproval,
 	nextStory,
+	readData,
 	routeFor,
 	sitemapFrom,
 	screenUrl,
+	statusOf,
 	storyUrl
 } from './lib.js';
+import {
+	badge,
+	filterControl,
+	historyButton,
+	idTag,
+	openHistory,
+	shortcutsInert
+} from './approvals-ui.js';
 import { flows, routes } from './flows.js';
 import { viewportOptions } from './viewports.js';
 
@@ -28,10 +44,14 @@ const MAX_HEIGHT = 20000;
 const MIN_SCALE = 0.05;
 const MAX_SCALE = 4;
 
-document.documentElement.style.setProperty(
-	'--bar-height',
-	`${document.getElementById('bar')?.offsetHeight ?? 40}px`
-);
+// Watched, not measured once: the status text changes after load and wraps the
+// bar in a narrow window, which would otherwise cover the top of the sidebar.
+const bar = document.getElementById('bar');
+if (bar) {
+	new ResizeObserver(() =>
+		document.documentElement.style.setProperty('--bar-height', `${bar.offsetHeight}px`)
+	).observe(bar);
+}
 
 /** @param {string} size */
 const sizeOf = (size) => {
@@ -44,6 +64,24 @@ const sizeOf = (size) => {
 const say = (message) => {
 	status.textContent = message;
 };
+
+/** @type {{ versions: import('./lib.js').Versions, approvals: import('./lib.js').Approval[] } | null} */
+let approvalData = null;
+/** @type {Record<string, { id: string, tags?: string[] }>} */
+let storyEntries = {};
+/** Why no status is drawn, when the two files could not be read. */
+let unreadable = '';
+
+/** @param {string} message */
+const withNotice = (message) => (unreadable ? `${unreadable} · ${message}` : message);
+
+/** @param {string} id */
+const statusFor = (id) =>
+	statusOf(
+		approvalData?.versions[id],
+		(approvalData?.approvals ?? []).filter((a) => a.story === id),
+		kindOf(storyEntries[id] ?? {})
+	);
 
 /** True while a flow is being played: one live artboard, no pan or zoom. */
 let playing = false;
@@ -179,6 +217,9 @@ stage.addEventListener(
 let drag = null;
 stage.addEventListener('pointerdown', (event) => {
 	if (playing || event.altKey || event.button !== 0) return;
+	// A button on an artboard's label takes its own click; capturing the pointer
+	// here would send that click to the stage instead.
+	if (event.target instanceof Element && event.target.closest('button')) return;
 	drag = { x: event.clientX, y: event.clientY };
 	stage.setPointerCapture(event.pointerId);
 });
@@ -202,7 +243,7 @@ stage.addEventListener('scroll', () => {
 /** @param {KeyboardEvent} event */
 function onKey(event) {
 	document.body.classList.toggle('alt', event.altKey);
-	if (event.target === find) return;
+	if (event.target === find || shortcutsInert(event)) return;
 	if (event.type !== 'keydown' || event.ctrlKey || event.metaKey || event.altKey) return;
 	if (playing) {
 		playKey(event);
@@ -298,15 +339,23 @@ function attach(iframe, sizeLabel, box, fixed = false) {
 		// Content height: the artboard is as tall as its story, never behind a
 		// scrollbar. Re-measured whenever the story reflows.
 		const measure = () => {
+			measureFrame = 0;
 			const height = Math.min(MAX_HEIGHT, iframe.offsetHeight + hiddenHeight(doc, win));
 			if (Math.abs(height - iframe.offsetHeight) < 1) return;
 			iframe.style.height = `${height}px`;
 			sizeLabel.textContent = `${iframe.offsetWidth} × ${height}`;
 		};
+		// A story settling (fonts, nested async mounts) can resize several times
+		// in quick succession; writing every one moves whatever a person is
+		// pointing at elsewhere on the canvas. Coalesced to the last one per frame.
+		let measureFrame = 0;
+		const scheduleMeasure = () => {
+			if (!measureFrame) measureFrame = requestAnimationFrame(measure);
+		};
 		measure();
 		// The story renders after the frame loads, and it is the body that grows
 		// with it: the root element stays as tall as the frame.
-		const observer = new win.ResizeObserver(measure);
+		const observer = new win.ResizeObserver(scheduleMeasure);
 		observer.observe(doc.documentElement);
 		observer.observe(doc.body);
 	}
@@ -413,10 +462,10 @@ function unloadFurthest() {
 }
 
 function report() {
-	if (live.size === total) say(`${total} artboards`);
+	if (live.size === total) say(withNotice(`${total} artboards`));
 	else if (view.scale < READABLE_SCALE)
-		say(`${live.size} of ${total} artboards rendered · zoom in to render more`);
-	else say(`${live.size} of ${total} artboards rendered · the rest as they come near`);
+		say(withNotice(`${live.size} of ${total} artboards rendered · zoom in to render more`));
+	else say(withNotice(`${live.size} of ${total} artboards rendered · the rest as they come near`));
 }
 
 function pump() {
@@ -463,7 +512,26 @@ function artboard(board) {
 	name.textContent = board.name;
 	const size = document.createElement('span');
 	size.textContent = `${width} × ${height}`;
-	label.append(`${board.title} · `, name, ` · ${board.size} `, size);
+	label.append(`${board.title} · `, name, ` · ${board.size} `, size, ' ', idTag(document, board.id, { copy, say }));
+	const result = statusFor(board.id);
+	const mark = approvalData ? badge(document, result) : null;
+	if (approvalData && result.status !== 'unversioned') {
+		const button = historyButton(document, board);
+		button.addEventListener('click', () =>
+			openHistory(document, {
+				button,
+				story: board,
+				history: historyOf(
+					approvalData?.versions[board.id],
+					approvalData?.approvals.filter((a) => a.story === board.id) ?? [],
+					kindOf(storyEntries[board.id] ?? {})
+				),
+				copy,
+				say
+			})
+		);
+		label.append(' ', button);
+	}
 
 	const frame = document.createElement('div');
 	frame.className = 'frame';
@@ -482,7 +550,7 @@ function artboard(board) {
 	iframe.addEventListener('load', () => attach(iframe, size, box));
 	waiting.add(iframe);
 
-	el.append(label, frame);
+	el.append(label, ...(mark ? [mark] : []), frame);
 	return el;
 }
 
@@ -516,9 +584,17 @@ function buildSitemap(boards, shown) {
 				button.dataset.id = story.id;
 				button.dataset.search = `${title} ${story.name}`.toLowerCase();
 				button.textContent = story.name;
+				const { status } = statusFor(story.id);
+				if (approvalData && needsApproval(status)) {
+					button.dataset.needs = '1';
+					const tag = document.createElement('span');
+					tag.className = 'tag';
+					tag.textContent = ` ${status}`;
+					button.append(tag);
+				}
 				button.addEventListener('click', () => {
 					if (boardsByStory.has(story.id)) jumpTo(story.id);
-					else location.assign(screenUrl(query, title, story.id));
+					else location.assign(screenUrl(new URLSearchParams(location.search), title, story.id));
 				});
 				section.append(button);
 			}
@@ -535,7 +611,7 @@ function buildSitemap(boards, shown) {
 function flowUrl(mode, name) {
 	const query = new URLSearchParams(location.search);
 	const next = new URLSearchParams([[mode, name]]);
-	for (const key of ['theme', 'density']) {
+	for (const key of ['theme', 'density', 'data', 'needs']) {
 		const value = query.get(key);
 		if (value) next.set(key, value);
 	}
@@ -552,6 +628,7 @@ function buildFlows(index) {
 	for (const [name, flow] of Object.entries(flows)) {
 		const section = document.createElement('div');
 		section.className = 'entry';
+		section.dataset.flow = name;
 		const heading = document.createElement('div');
 		heading.className = 'title';
 		heading.textContent = flow.title;
@@ -565,6 +642,15 @@ function buildFlows(index) {
 			section.append(problem);
 			group.append(section);
 			continue;
+		}
+		const counts = approvalData
+			? flowWords(flowStatus(flow, { ...approvalData, entries: storyEntries }))
+			: '';
+		if (counts) {
+			const line = document.createElement('div');
+			line.className = 'flow-status';
+			line.textContent = counts;
+			section.append(line);
 		}
 		for (const [mode, label] of /** @type {const} */ ([
 			['flow', 'View'],
@@ -621,6 +707,15 @@ function drawFlow(flow, boards, branches) {
 	row.className = 'row';
 	const heading = document.createElement('h2');
 	heading.textContent = flow.title;
+	const counts = approvalData
+		? flowWords(flowStatus(flow, { ...approvalData, entries: storyEntries }))
+		: '';
+	if (counts) {
+		const tag = document.createElement('span');
+		tag.className = 'flow-status';
+		tag.textContent = ` ${counts}`;
+		heading.append(tag);
+	}
 	const strip = document.createElement('div');
 	strip.className = 'boards';
 	row.append(heading, strip);
@@ -809,19 +904,32 @@ function play(name, flow, index, query) {
 	show(start);
 }
 
-find.addEventListener('input', () => {
+let needsOnly = new URLSearchParams(location.search).get('needs') === '1';
+/** @type {ReturnType<typeof filterControl> | null} */
+let needsFilter = null;
+
+/** Finding by name and the Needs approval filter, applied together to the sitemap. */
+function refilter() {
 	const words = find.value.toLowerCase().split(/\s+/).filter(Boolean);
 	for (const button of tree.querySelectorAll('button')) {
 		const hit = words.every((w) => (button.dataset.search ?? '').includes(w));
-		button.hidden = !hit;
+		button.hidden = !(hit && (!needsOnly || button.dataset.needs === '1'));
 	}
 	for (const section of tree.querySelectorAll('.entry')) {
+		// A flow has no button to find by; it stays until someone types.
+		if (section.hasAttribute('data-flow') && words.length === 0) continue;
 		section.toggleAttribute('hidden', !section.querySelector('button:not([hidden])'));
 	}
 	for (const group of tree.querySelectorAll('details')) {
 		group.toggleAttribute('hidden', !group.querySelector('.entry:not([hidden])'));
 	}
-});
+	needsFilter?.update(
+		tree.querySelectorAll('button[data-needs="1"]').length,
+		tree.querySelectorAll('button:not([hidden])').length,
+		find.value
+	);
+}
+find.addEventListener('input', refilter);
 // A story that autofocuses pulls focus into its iframe as it renders. A
 // person cannot click into an artboard (the cover takes the click), so focus
 // landing in an iframe while browsing is never theirs: hand it back.
@@ -851,6 +959,10 @@ async function main() {
 	let flow = null;
 	try {
 		index = await (await fetch('/index.json')).json();
+		storyEntries = index.entries;
+		const loaded = await readData((url) => fetch(url), dataBase(query));
+		if (loaded.ok) approvalData = loaded;
+		else unreadable = loaded.message;
 		const name = query.get('play') ?? query.get('flow');
 		if (name) {
 			flow = flowFrom(flows, name, index);
@@ -874,9 +986,34 @@ async function main() {
 	}
 	buildSitemap(every, flow ? null : query.get('title'));
 	buildFlows(index);
+	if (approvalData) {
+		needsFilter = filterControl(document, {
+			checked: needsOnly,
+			onChange(checked) {
+				needsOnly = checked;
+				const next = new URLSearchParams(location.search);
+				if (checked) next.set('needs', '1');
+				else next.delete('needs');
+				const search = next.size > 0 ? `?${next}` : '';
+				history.replaceState(null, '', `${location.pathname}${search}${location.hash}`);
+				// The sidebar's links were addressed at load, so they carry the old filter.
+				for (const link of tree.querySelectorAll('a[href]')) {
+					const url = new URL(/** @type {HTMLAnchorElement} */ (link).href);
+					if (checked) url.searchParams.set('needs', '1');
+					else url.searchParams.delete('needs');
+					link.setAttribute('href', `${url.pathname}${url.search}${url.hash}`);
+				}
+				refilter();
+			}
+		});
+		find.after(needsFilter.el);
+		refilter();
+	}
 	if (boards.length === 0) {
 		say(
-			query.has('title') ? 'No stories match this view.' : 'Choose a screen, or find one with /.'
+			withNotice(
+				query.has('title') ? 'No stories match this view.' : 'Choose a screen, or find one with /.'
+			)
 		);
 		return;
 	}

@@ -27,10 +27,14 @@ fmt:
 typecheck:
     pnpm svelte-kit sync && pnpm svelte-check --tsconfig ./tsconfig.json
 
-check: lint typecheck test
+# The versions file is written from the run that just passed, chained so a
+# failed run cannot be followed by a write. It never fails a check for being
+# out of date: it is brought up to date, and can leave a diff to commit.
+check: lint typecheck
+    pnpm test && node scripts/versions.mjs && node scripts/approvals.mjs --check
 
 gen:
-    @echo "nothing generated here"
+    pnpm test && node scripts/versions.mjs
 
 clean:
     rm -rf dist .svelte-kit storybook-static

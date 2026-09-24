@@ -13,6 +13,21 @@ import {
 	placementProblems,
 	routeFor,
 	nearestLocation,
+	normaliseMarkup,
+	approvalLines,
+	badgeWords,
+	filterWords,
+	flowStatus,
+	flowWords,
+	historyOf,
+	historyWords,
+	needsApproval,
+	parseApprovals,
+	readData,
+	dataBase,
+	statusOf,
+	versionWords,
+	approvalProblems,
 	sitemapFrom,
 	sizesFor,
 	relativeToRepo,
@@ -508,6 +523,11 @@ describe('screenUrl', () => {
 			'?title=Pages%2FOverview&theme=dark&density=compact&sizes=ultra'
 		);
 	});
+
+	it('keeps the fixture and the approval filter, so moving on does not leave them', () => {
+		const query = new URLSearchParams('flow=connect&data=mixed&needs=1');
+		expect(screenUrl(query, 'Pages/Overview')).toBe('?title=Pages%2FOverview&data=mixed&needs=1');
+	});
 });
 
 describe('kinds', () => {
@@ -599,5 +619,434 @@ describe('sizesFor', () => {
 		expect(kindProblems([{ id: 'a--one', tags: ['kind-state', 'size-huge'] }])).toEqual([
 			'"a--one" has the unknown size tag "size-huge"; sizes are compact, medium, wide, ultra'
 		]);
+	});
+});
+
+describe('normaliseMarkup', () => {
+	it('drops hydration and block comments', () => {
+		expect(normaliseMarkup('<div><!----><!--[--><p>a</p><!--]--><!--[!--></div>')).toBe(
+			'<div><p>a</p></div>'
+		);
+	});
+
+	it('collapses whitespace', () => {
+		expect(normaliseMarkup('<ul>\n\t<li>a   \n b</li>\n  <li>c</li>\n</ul>')).toBe(
+			'<ul><li>a b</li><li>c</li></ul>'
+		);
+	});
+
+	it('treats two renders with different generated ids alike, and keeps the wiring', () => {
+		const one = '<label for="input-a1">Name</label><input id="input-a1">';
+		const two = '<label for="input-zz9">Name</label><input id="input-zz9">';
+		expect(normaliseMarkup(one)).toBe(normaliseMarkup(two));
+		expect(normaliseMarkup(one)).toBe('<label for="id-1">Name</label><input id="id-1">');
+	});
+
+	it('numbers ids by first appearance across aria references and fragment links', () => {
+		const html =
+			'<a href="#b7">x</a><div id="q1" aria-labelledby="q2 b7" aria-controls="q1"></div><p id="q2"></p>';
+		expect(normaliseMarkup(html)).toBe(
+			'<a href="#id-1">x</a><div aria-controls="id-2" aria-labelledby="id-3 id-1" id="id-2"></div><p id="id-3"></p>'
+		);
+	});
+
+	it('leaves an unrelated pair of ids distinct', () => {
+		expect(normaliseMarkup('<i id="a"></i><b for="b"></b>')).toBe('<i id="id-1"></i><b for="id-2"></b>');
+	});
+
+	it('ignores attribute order', () => {
+		expect(normaliseMarkup('<a href="/x" class="c" title="t">a</a>')).toBe(
+			normaliseMarkup('<a title="t" href="/x" class="c">a</a>')
+		);
+	});
+
+	it('is changed by a word', () => {
+		expect(normaliseMarkup('<p>Balance</p>')).not.toBe(normaliseMarkup('<p>Balances</p>'));
+	});
+
+	it('is changed by a scoped class', () => {
+		expect(normaliseMarkup('<p class="svelte-a1b2c3">a</p>')).not.toBe(
+			normaliseMarkup('<p class="svelte-d4e5f6">a</p>')
+		);
+	});
+
+	it('keeps inline style', () => {
+		expect(normaliseMarkup('<p style="margin: 0">a</p>')).not.toBe(
+			normaliseMarkup('<p style="margin: 4px">a</p>')
+		);
+	});
+
+	it('drops attributes the harness adds', () => {
+		expect(normaliseMarkup('<div data-vitest-x="1" data-storybook-y="2"><p>a</p></div>')).toBe(
+			'<div><p>a</p></div>'
+		);
+	});
+});
+
+describe('approvalProblems', () => {
+	const FP = 'a'.repeat(64);
+	const OTHER = 'b'.repeat(64);
+	const versions = {
+		'pages-overview--populated': {
+			implemented: FP,
+			versions: [
+				{ fingerprint: FP, firstSeen: '2026-09-20' },
+				{ fingerprint: OTHER, firstSeen: '2026-09-12' }
+			]
+		}
+	};
+	const record = (over = {}) => ({
+		story: 'pages-overview--populated',
+		fingerprint: FP,
+		name: 'Emanuel Fonseca',
+		email: 'e@example.com',
+		at: '2026-09-20T18:04:11Z',
+		note: '',
+		...over
+	});
+	const line = (over) => JSON.stringify(record(over));
+	const problems = (...lines) => approvalProblems(lines, versions);
+
+	it('passes a well formed record, and two people on one version', () => {
+		expect(problems(line(), line({ email: 'g@example.com', name: 'Grace' }))).toEqual([]);
+		expect(problems()).toEqual([]);
+	});
+
+	it('refuses a line that is not JSON', () => {
+		expect(problems(line(), '{oops')).toEqual(['line 2: not valid JSON']);
+	});
+
+	it('refuses a line that is not an object', () => {
+		expect(problems('[1]')).toEqual(['line 1: not a record']);
+	});
+
+	it('refuses a field it does not know', () => {
+		expect(problems(JSON.stringify({ ...record(), extra: 1 }))).toEqual([
+			'line 1: unknown field "extra"'
+		]);
+	});
+
+	it('refuses a missing field', () => {
+		const rest = record();
+		delete rest.email;
+		expect(problems(JSON.stringify(rest))).toEqual(['line 1: missing field "email"']);
+	});
+
+	it('refuses a fingerprint that is not 64 hex', () => {
+		expect(problems(line({ fingerprint: 'abc' }))).toContain(
+			'line 1: fingerprint is not 64 hex characters'
+		);
+	});
+
+	it('refuses a time that is not ISO', () => {
+		expect(problems(line({ at: '20 Sep 2026' }))).toEqual([
+			'line 1: time is not an ISO 8601 UTC time'
+		]);
+	});
+
+	it('refuses a story the versions file has never held', () => {
+		expect(problems(line({ story: 'pages-x--y' }))).toEqual([
+			'line 1: story "pages-x--y" is not in versions.json'
+		]);
+	});
+
+	it('refuses a version the story never had', () => {
+		expect(problems(line({ fingerprint: 'c'.repeat(64) }))).toEqual([
+			'line 1: story "pages-overview--populated" never had version ccccccc'
+		]);
+	});
+
+	it('refuses one person approving one version twice', () => {
+		expect(problems(line(), line({ at: '2026-09-21T09:00:00Z' }))).toEqual([
+			'line 2: e@example.com already approved this version on line 1'
+		]);
+	});
+
+	it('splits a file into lines without inventing a last one', () => {
+		expect(approvalLines('a\nb\n')).toEqual(['a', 'b']);
+		expect(approvalLines('')).toEqual([]);
+	});
+});
+
+describe('the status of a page story', () => {
+	const fp = (c) => c.repeat(64);
+	const entry = {
+		implemented: fp('a'),
+		versions: [
+			{ fingerprint: fp('a'), firstSeen: '2026-09-20' },
+			{ fingerprint: fp('b'), firstSeen: '2026-09-12' }
+		]
+	};
+	const by = (name, email, fingerprint, at, note = '') => ({
+		story: 's',
+		fingerprint,
+		name,
+		email,
+		at,
+		note
+	});
+	const emanuel = (f, at = '2026-09-20T18:04:11Z') => by('Emanuel Fonseca', 'e@x', f, at);
+	const grace = (f, at = '2026-09-21T09:00:00Z') => by('Grace Hopper', 'g@x', f, at);
+
+	it('is approved when the approved version is the implemented one', () => {
+		const got = statusOf(entry, [emanuel(fp('a'))], 'state');
+		expect(got.status).toBe('approved');
+		expect(got.implemented?.fingerprint).toBe(fp('a'));
+		expect(got.approved?.fingerprint).toBe(fp('a'));
+		expect(got.approved?.approvals).toHaveLength(1);
+	});
+
+	it('is changed when only an earlier version was approved, and carries both versions', () => {
+		const got = statusOf(entry, [emanuel(fp('b'), '2026-09-12T10:00:00Z')], 'state');
+		expect(got.status).toBe('changed');
+		expect(got.implemented?.fingerprint).toBe(fp('a'));
+		expect(got.approved?.fingerprint).toBe(fp('b'));
+		expect(got.approved?.firstSeen).toBe('2026-09-12');
+	});
+
+	it('is never approved when there are no approvals, carrying the implemented version alone', () => {
+		const got = statusOf(entry, [], 'state');
+		expect(got.status).toBe('never');
+		expect(got.implemented?.fingerprint).toBe(fp('a'));
+		expect(got.approved).toBeUndefined();
+	});
+
+	it('is exempt for a behaviour story, whatever was approved', () => {
+		expect(statusOf(entry, [], 'behaviour').status).toBe('exempt');
+		expect(statusOf(entry, [emanuel(fp('a'))], 'behaviour').status).toBe('exempt');
+		expect(statusOf(entry, [], 'behaviour').implemented?.fingerprint).toBe(fp('a'));
+	});
+
+	it('has no status for a story the versions file lacks', () => {
+		expect(statusOf(undefined, [], 'state').status).toBe('unversioned');
+	});
+
+	it('takes the newest approved version as the approved one', () => {
+		const got = statusOf(entry, [emanuel(fp('b'))], 'state');
+		expect(got.approved?.fingerprint).toBe(fp('b'));
+		const both = statusOf(entry, [emanuel(fp('b')), emanuel(fp('a'))], 'state');
+		expect(both.approved?.fingerprint).toBe(fp('a'));
+	});
+
+	it('lists approvals oldest first', () => {
+		const got = statusOf(entry, [grace(fp('a')), emanuel(fp('a'))], 'state');
+		expect(got.approved?.approvals.map((a) => a.name)).toEqual(['Emanuel Fonseca', 'Grace Hopper']);
+	});
+
+	it('needs approval when changed or never approved, and not otherwise', () => {
+		expect(['changed', 'never'].every(needsApproval)).toBe(true);
+		expect(['approved', 'exempt', 'unversioned'].some(needsApproval)).toBe(false);
+	});
+
+	describe('badge words', () => {
+		const words = (approvals, kind = 'state') => badgeWords(statusOf(entry, approvals, kind));
+		it('approved, one version, one person', () => {
+			expect(words([emanuel(fp('a'))])).toEqual(['Approved aaaaaaa · 20 Sep 2026 by Emanuel']);
+		});
+		it('approved by two, dated by the later approval', () => {
+			expect(words([emanuel(fp('a')), grace(fp('a'))])).toEqual([
+				'Approved aaaaaaa · 21 Sep 2026 by Emanuel and Grace'
+			]);
+		});
+		it('approved by three or more', () => {
+			const third = by('Ada Lovelace', 'a@x', fp('a'), '2026-09-22T09:00:00Z');
+			expect(words([emanuel(fp('a')), grace(fp('a')), third])).toEqual([
+				'Approved aaaaaaa · 22 Sep 2026 by Emanuel, Grace and 1 other'
+			]);
+			const fourth = by('Alan Turing', 't@x', fp('a'), '2026-09-23T09:00:00Z');
+			expect(words([emanuel(fp('a')), grace(fp('a')), third, fourth])[0]).toContain(
+				'Emanuel, Grace and 2 others'
+			);
+		});
+		it('changed, both versions', () => {
+			expect(words([emanuel(fp('b'), '2026-09-12T10:00:00Z')])).toEqual([
+				'Changed since approval',
+				'Approved bbbbbbb · 12 Sep 2026 by Emanuel',
+				'Implemented aaaaaaa · 20 Sep 2026'
+			]);
+		});
+		it('never approved', () => {
+			expect(words([])).toEqual(['Never approved', 'Implemented aaaaaaa · 20 Sep 2026']);
+		});
+		it('exempt shows the implemented version and no status', () => {
+			expect(words([], 'behaviour')).toEqual(['Implemented aaaaaaa · 20 Sep 2026']);
+		});
+		it('unversioned shows nothing', () => {
+			expect(badgeWords(statusOf(undefined, [], 'state'))).toEqual([]);
+		});
+		it('writes a version as seven characters, a dot and a date', () => {
+			expect(versionWords({ fingerprint: `a3f9c21${'0'.repeat(57)}`, firstSeen: '2026-09-20' })).toBe(
+				'a3f9c21 · 20 Sep 2026'
+			);
+		});
+	});
+
+	describe('history', () => {
+		const three = {
+			implemented: fp('c'),
+			versions: [
+				{ fingerprint: fp('c'), firstSeen: '2026-09-20' },
+				{ fingerprint: fp('b'), firstSeen: '2026-09-15' },
+				{ fingerprint: fp('a'), firstSeen: '2026-09-08' }
+			]
+		};
+		it('marks the implemented version, the latest approved, and leaves the rest unmarked', () => {
+			const got = historyOf(three, [emanuel(fp('a')), emanuel(fp('b')), grace(fp('b'))], 'state');
+			expect(got.map((h) => h.mark)).toEqual([
+				'Implemented now, not approved',
+				'Latest approved',
+				''
+			]);
+			expect(got[1].approvals.map((a) => a.name)).toEqual(['Emanuel Fonseca', 'Grace Hopper']);
+		});
+		it('carries both marks on one entry when the implemented version is the latest approved', () => {
+			const got = historyOf(three, [emanuel(fp('c'))], 'state');
+			expect(got[0].mark).toBe('Implemented now · Latest approved');
+			expect(got).toHaveLength(3);
+		});
+		it('says nobody approved a page nobody approved', () => {
+			const got = historyOf(three, [], 'state');
+			expect(got[0].mark).toBe('Implemented now, not approved');
+			expect(historyWords({ title: 'Pages/Overview', name: 'Populated', id: 'pages-overview--populated' }, got)).toMatchObject({
+				heading: 'Overview · Populated',
+				nobody: 'Nobody has approved this page yet.',
+				approveIntro: 'To approve this version, run this in your own terminal:',
+				command: 'just approve pages-overview--populated'
+			});
+		});
+		it('writes each version and each approval with its note', () => {
+			const got = historyOf(
+				three,
+				[by('Emanuel Fonseca', 'e@x', fp('b'), '2026-09-15T12:00:00Z', 'after the rows were tightened')],
+				'state'
+			);
+			const words = historyWords({ title: 'Pages/Overview', name: 'Populated', id: 'pages-overview--populated' }, got);
+			expect(words.entries[1]).toEqual({
+				version: 'bbbbbbb · first seen 15 Sep 2026',
+				mark: 'Latest approved',
+				approvals: [{ line: 'Emanuel, 15 Sep 2026', note: 'after the rows were tightened' }]
+			});
+			expect(words.nobody).toBeUndefined();
+		});
+		it('marks an exempt story implemented, and does not ask for approval', () => {
+			expect(historyOf(three, [], 'behaviour')[0].mark).toBe('Implemented now');
+		});
+	});
+
+	describe('a flow', () => {
+		const ids = (prefix, n) => Array.from({ length: n }, (_, i) => `${prefix}${i}`);
+		const stepIds = ids('step', 8);
+		const branchIds = ids('branch', 4);
+		const flow = {
+			title: 't',
+			steps: stepIds,
+			transitions: [],
+			branches: branchIds.map((to) => ({ from: 'step0', outcome: 'o', to }))
+		};
+		const all = [...stepIds, ...branchIds];
+		const versions = Object.fromEntries(
+			all.map((id) => [
+				id,
+				{
+					implemented: fp('a'),
+					versions: [
+						{ fingerprint: fp('a'), firstSeen: '2026-09-20' },
+						{ fingerprint: fp('b'), firstSeen: '2026-09-12' }
+					]
+				}
+			])
+		);
+		const entries = Object.fromEntries(all.map((id) => [id, { id, tags: ['kind-state'] }]));
+		const approve = (list, f) =>
+			list.map((id) => ({ ...emanuel(f), story: id }));
+
+		it('counts approved, changed and never once each', () => {
+			const approvals = [
+				...approve(all.slice(0, 7), fp('a')),
+				...approve(all.slice(7, 10), fp('b'))
+			];
+			const got = flowStatus(flow, { versions, approvals, entries });
+			expect(got).toEqual({ total: 12, approved: 7, changed: 3, never: 2 });
+			expect(flowWords(got)).toBe('7 of 12 approved · 3 changed since approval · 2 never approved');
+		});
+		it('leaves out a part that counts none', () => {
+			const got = flowStatus(flow, { versions, approvals: approve(all.slice(0, 10), fp('a')), entries });
+			expect(flowWords(got)).toBe('10 of 12 approved · 2 never approved');
+		});
+		it('reads Approved when every page is approved at its implemented version', () => {
+			const got = flowStatus(flow, { versions, approvals: approve(all, fp('a')), entries });
+			expect(flowWords(got)).toBe('Approved');
+			const later = flowStatus(flow, {
+				versions,
+				approvals: [...approve(all.slice(1), fp('a')), ...approve(['step0'], fp('b'))],
+				entries
+			});
+			expect(flowWords(later)).toBe('11 of 12 approved · 1 changed since approval');
+		});
+		it('does not count a behaviour story, and shows nothing when nothing needs approval', () => {
+			const quiet = Object.fromEntries(all.map((id) => [id, { id, tags: ['kind-behaviour'] }]));
+			const got = flowStatus(flow, { versions, approvals: [], entries: quiet });
+			expect(got.total).toBe(0);
+			expect(flowWords(got)).toBe('');
+		});
+		it('counts a story once when it is a step and a branch target', () => {
+			const twice = { ...flow, branches: [{ from: 'step0', outcome: 'o', to: 'branch0' }, { from: 'step1', outcome: 'o', to: 'branch0' }] };
+			expect(flowStatus(twice, { versions, approvals: [], entries }).total).toBe(9);
+		});
+	});
+
+	describe('the sidebar filter', () => {
+		it('writes the label with the count', () => {
+			expect(filterWords(23, 23, '').label).toBe('Needs approval (23)');
+		});
+		it('says everything is approved when nothing needs a look', () => {
+			expect(filterWords(0, 0, '').empty).toBe('Every page is approved at its implemented version.');
+		});
+		it('says nothing matches when a find leaves nothing', () => {
+			expect(filterWords(5, 0, 'zzz').empty).toBe('No page needing approval matches that.');
+		});
+		it('says nothing when there is something to list', () => {
+			expect(filterWords(5, 2, '').empty).toBeUndefined();
+		});
+	});
+
+	it('reads approvals from a record, keeping the well formed lines', () => {
+		const text = `${JSON.stringify(emanuel(fp('a')))}\nnot json\n`;
+		expect(parseApprovals(text)).toHaveLength(1);
+	});
+});
+
+describe('reading the two files', () => {
+	const ok = (body) => ({ ok: true, json: async () => JSON.parse(body), text: async () => body });
+	const fail = { ok: false, json: async () => ({}), text: async () => '' };
+	const line = JSON.stringify({ story: 's', fingerprint: 'a'.repeat(64) });
+
+	it('reads versions and approvals from beside the page', async () => {
+		const seen = [];
+		const got = await readData(async (url) => {
+			seen.push(url);
+			return url.endsWith('versions.json') ? ok('{"s":{"versions":[]}}') : ok(`${line}\n`);
+		}, '.');
+		expect(seen).toEqual(['./versions.json', './approvals.jsonl']);
+		expect(got).toMatchObject({ ok: true, versions: { s: { versions: [] } } });
+		expect(got.ok && got.approvals).toHaveLength(1);
+	});
+
+	it('says versions could not be read when they are missing or not JSON', async () => {
+		const message = 'Versions could not be read. Run just gen apps/storybook.';
+		expect(await readData(async () => fail, '.')).toEqual({ ok: false, message });
+		expect(await readData(async () => ok('<html>'), '.')).toEqual({ ok: false, message });
+		expect(await readData(async () => { throw new Error('network'); }, '.')).toEqual({ ok: false, message });
+	});
+
+	it('says approvals could not be read when only they are missing', async () => {
+		const got = await readData(async (url) => (url.endsWith('versions.json') ? ok('{}') : fail), '.');
+		expect(got).toEqual({ ok: false, message: 'Approvals could not be read. Statuses are hidden.' });
+	});
+
+	it('reads a fixture pair for ?data=<name>, and refuses a name that is not a fixture name', () => {
+		expect(dataBase(new URLSearchParams(''))).toBe('.');
+		expect(dataBase(new URLSearchParams('data=never-some'))).toBe('./fixtures/never-some');
+		expect(dataBase(new URLSearchParams('data=../x'))).toBe('./fixtures/invalid');
 	});
 });

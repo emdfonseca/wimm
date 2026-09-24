@@ -326,3 +326,168 @@ html {
 	margin: 0;
 	color: var(--color-text-primary);
 }
+
+/* ---- Approvals: colours are the feedback tokens, and every status has a shape and words too ---- */
+
+.board > .approval {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--space-2);
+	min-block-size: calc(3 * 1.4em + var(--space-2));
+	padding: var(--space-1) var(--space-2);
+	border-radius: var(--radius-sm);
+	color: var(--color-text-secondary);
+	font-size: var(--type-size-body-sm);
+	line-height: 1.4;
+}
+
+/* Every badge takes three lines of room so artboards in a row stay level, but
+   the tint covers only the lines it has. */
+.board > .approval:has(> div > :only-child) {
+	min-block-size: 0;
+	margin-block-end: calc(2 * 1.4em);
+}
+
+.board > .approval:has(> div > :nth-child(2):last-child) {
+	min-block-size: 0;
+	margin-block-end: 1.4em;
+}
+
+.approval[data-status='approved'] {
+	background: var(--color-feedback-success-bg);
+	color: var(--color-feedback-success);
+}
+
+.approval[data-status='changed'] {
+	background: var(--color-feedback-warning-bg);
+	color: var(--color-feedback-warning);
+}
+
+.approval .mark {
+	font-weight: 700;
+}
+
+.id-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-1);
+	color: var(--color-text-secondary);
+	font-family: var(--type-family-mono);
+}
+
+.id-copy {
+	padding: 0 var(--space-1);
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: transparent;
+	color: var(--color-text-secondary);
+	font: inherit;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.id-copy:hover {
+	background: var(--color-bg-hover);
+	color: var(--color-text-primary);
+}
+
+.history-button {
+	margin-inline-start: var(--space-2);
+	padding: 0 var(--space-2);
+	border: 1px solid var(--color-border-strong);
+	border-radius: var(--radius-sm);
+	background: transparent;
+	color: var(--color-text-primary);
+	font: inherit;
+	cursor: pointer;
+}
+
+.history-button:hover {
+	background: var(--color-bg-hover);
+}
+
+dialog.history {
+	position: fixed;
+	z-index: 20;
+	inline-size: 340px;
+	max-inline-size: calc(100vw - 2 * var(--space-4));
+	max-block-size: 60vh;
+	margin: 0;
+	padding: var(--space-4);
+	overflow: auto;
+	border: 1px solid var(--color-border-strong);
+	border-radius: var(--radius-md);
+	background: var(--color-bg-elevated);
+	color: var(--color-text-primary);
+	font-size: var(--type-size-body-sm);
+}
+
+dialog.history h2 {
+	margin: 0 0 var(--space-3);
+	font-size: var(--type-size-heading-sm);
+}
+
+dialog.history ol {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+	margin: 0 0 var(--space-3);
+	padding: 0;
+	list-style: none;
+}
+
+dialog.history .version,
+dialog.history code {
+	font-family: var(--type-family-mono);
+}
+
+dialog.history .kept {
+	font-weight: 600;
+}
+
+dialog.history .note {
+	color: var(--color-text-secondary);
+}
+
+dialog.history code {
+	display: block;
+	margin: var(--space-1) 0 var(--space-2);
+}
+
+dialog.history button {
+	margin-inline-end: var(--space-2);
+	padding: var(--space-1) var(--space-3);
+	border: 1px solid var(--color-border-strong);
+	border-radius: var(--radius-sm);
+	background: transparent;
+	color: var(--color-text-primary);
+	font: inherit;
+	cursor: pointer;
+}
+
+.needs {
+	padding: var(--space-1) var(--space-2);
+}
+
+.needs label {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	cursor: pointer;
+}
+
+.needs .empty {
+	margin: var(--space-1) 0 0;
+	color: var(--color-text-secondary);
+}
+
+#tree .tag {
+	margin-inline-start: var(--space-1);
+	color: var(--color-feedback-warning);
+}
+
+.flow-status {
+	color: var(--color-text-secondary);
+	font-size: var(--type-size-body-sm);
+	font-weight: 400;
+}

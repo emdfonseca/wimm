@@ -41,6 +41,24 @@ member would name. Every page story that shows something is on a flow or on that
 file's `unplaced` list, and `just check apps/storybook` fails for one that is on
 neither; a `kind-behaviour` story only asserts something and is on neither.
 
+Every page story has a version: a fingerprint of what it renders, shown as seven
+characters and the date first seen. It moves when the markup, a component's
+styles, the tokens, base styles or fonts move, and not for a refactor that
+changes none of them. `just check apps/storybook` brings
+`apps/storybook/canvas/versions.json` up to date and never fails because it was
+behind, so it can leave a diff to commit; that diff lists the pages whose look
+changed. Each artboard's badge shows the approved and the implemented version:
+one line when they are the same, both when the page changed since approval, and
+the implemented one alone when nobody approved it. History opens a story's
+approved versions, and the sidebar filter `Needs approval` (kept as `?needs=1`)
+lists what to look at. To approve a page after looking at it, run
+`just approve pages-overview--populated "a note"` in your own terminal and commit
+`apps/storybook/canvas/approvals.jsonl` on its own. It refuses inside an agent
+session or without a terminal, and an agent never runs it. The record only grows;
+two people approving on two branches merge by keeping both lines. Open the canvas
+with `?data=changed` (or `approved`, `never`, `mixed`, `history`) to see a state
+on fixtures without approving anything.
+
 Postgres listens on a Unix socket under `.devbox/`, not a port, so it cannot
 collide with a system-wide install or another checkout of this repo.
 

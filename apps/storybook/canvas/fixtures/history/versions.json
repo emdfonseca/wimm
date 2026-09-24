@@ -1,0 +1,1722 @@
+{
+	"pages-accountsscreen--a-bank-that-could-not-be-connected": {
+		"implemented": "9912fcc47604a427ad52432cbf8f63171e85d77a5a5102e1f197a30f738688ab",
+		"versions": [
+			{
+				"fingerprint": "9912fcc47604a427ad52432cbf8f63171e85d77a5a5102e1f197a30f738688ab",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "10ec3d4ab63072b220f37ec5fcf87f450e2248b6ab1e933909f0c440f7b83b1c",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--a-bank-that-offered-no-accounts": {
+		"implemented": "642873edba403b984454285901f5ecd535625b45c0101e6cd123fd526c9a3c49",
+		"versions": [
+			{
+				"fingerprint": "642873edba403b984454285901f5ecd535625b45c0101e6cd123fd526c9a3c49",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "2f57a860febb1bc92cee190aa3659fb50d5305c04554926c37ae234a79ed7c70",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--a-bank-the-member-cannot-manage": {
+		"implemented": "0fcca725bde3c997ad67cf50b820aa857239abfc9ce0a57fb363080e87d5cc66",
+		"versions": [
+			{
+				"fingerprint": "0fcca725bde3c997ad67cf50b820aa857239abfc9ce0a57fb363080e87d5cc66",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "8c2c7e37cf1e89d3fa2207106f57ccd45909915e9ec6db2cae9cdaff030e8651",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--a-reading-says-it-was-read": {
+		"implemented": "d46ea13cccebfad30ef598cc9a6bb2e09aa9d80ca53865070c9f679478e3a17b",
+		"versions": [
+			{
+				"fingerprint": "d46ea13cccebfad30ef598cc9a6bb2e09aa9d80ca53865070c9f679478e3a17b",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "7f683485bc4d359ce14d22a89dae29da70fd9ee0ccef9c63f69c8bb3a1a4871f",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--a-refusal-is-announced": {
+		"implemented": "35864ddb3a0ae4541c8dfd667387949cc0aecac571f733b67573ef7aa6ffa6dc",
+		"versions": [
+			{
+				"fingerprint": "35864ddb3a0ae4541c8dfd667387949cc0aecac571f733b67573ef7aa6ffa6dc",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "ebfbeeaed80bb0b243f518daf3df1b08413e86da037bcd9c8bedce1c5b4b60b7",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--a-return-that-was-already-used": {
+		"implemented": "7e38adf5e95e958d202115ee5b1e1a2fd5787932ba3bf62c251d1885ec3c739c",
+		"versions": [
+			{
+				"fingerprint": "7e38adf5e95e958d202115ee5b1e1a2fd5787932ba3bf62c251d1885ec3c739c",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "baca702e2bdf047fdad2a6ab9f4851fe044c7822ba80edaa87452c8037bdc634",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--access-restored": {
+		"implemented": "ecb9065cb846dffcb59505c6566b1bf531804ce5208b20a6f6fd3c9d753d442e",
+		"versions": [
+			{
+				"fingerprint": "ecb9065cb846dffcb59505c6566b1bf531804ce5208b20a6f6fd3c9d753d442e",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "4fd6aba9cd30796a2d0c5461e07b971da011c8d7632f304369b3595c2d727e24",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--access-run-out": {
+		"implemented": "a55f6c1010e282237637effb59b21c491d9b700fa6276f5def4c19247df772a9",
+		"versions": [
+			{
+				"fingerprint": "a55f6c1010e282237637effb59b21c491d9b700fa6276f5def4c19247df772a9",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "ead76029bd758421f15c6efe5e58f12ff47048bfb6ec4a3578abc618f73ed794",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--accounts-sit-under-their-bank": {
+		"implemented": "d46ea13cccebfad30ef598cc9a6bb2e09aa9d80ca53865070c9f679478e3a17b",
+		"versions": [
+			{
+				"fingerprint": "d46ea13cccebfad30ef598cc9a6bb2e09aa9d80ca53865070c9f679478e3a17b",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "bae03e749c1bb5364acdc400111f9509057deb5ddf57a07717b21010ebdb5394",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--an-account-left-out": {
+		"implemented": "1cb584d98b4ecae7a2e205a44002242de4985e2bd9c70e58a7dd147f466be4ac",
+		"versions": [
+			{
+				"fingerprint": "1cb584d98b4ecae7a2e205a44002242de4985e2bd9c70e58a7dd147f466be4ac",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "0028c38cdeef3391c20ae6aaeb7c4e5546f03451720190a97937da800bf04b72",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--an-account-seen-at-balance-level": {
+		"implemented": "97e9e4cf0bc550cf1ee2c7ccf39d5d66a7aedbee9c1b5c78d8a56f5d60cb222e",
+		"versions": [
+			{
+				"fingerprint": "97e9e4cf0bc550cf1ee2c7ccf39d5d66a7aedbee9c1b5c78d8a56f5d60cb222e",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "9c61fa6d11c0d9d31ed396ae1c6dc4d8f2e28805ebf2baeae79eaee195ac9918",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--an-overdrawn-account": {
+		"implemented": "143504f7bc788940859e9593bac2642cba3396982f8641601588ebc4309ceb77",
+		"versions": [
+			{
+				"fingerprint": "143504f7bc788940859e9593bac2642cba3396982f8641601588ebc4309ceb77",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "dcb024d21408208a0df76bbdbaa1c50d9ebd5490cca0559b981e8ea55e9f7abd",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--connected": {
+		"implemented": "d46ea13cccebfad30ef598cc9a6bb2e09aa9d80ca53865070c9f679478e3a17b",
+		"versions": [
+			{
+				"fingerprint": "d46ea13cccebfad30ef598cc9a6bb2e09aa9d80ca53865070c9f679478e3a17b",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "7c1b0d4294eefc8529c99b7bfd230440d05a34bcf015b6b7e7832af2d1a9fc0d",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--connected-banks": {
+		"implemented": "6c1a65eec4c45871486d78a43ea817ea894e95ff557af552b11813ba0dca1d4b",
+		"versions": [
+			{
+				"fingerprint": "6c1a65eec4c45871486d78a43ea817ea894e95ff557af552b11813ba0dca1d4b",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "9c8999289afb2ae8beb5357f1c0ce9ec948997339031c7a54e7aac4389991a7e",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--consent-declined": {
+		"implemented": "e59ecf0ea148016db576b5502dc3449a3482d0f5b56cd71ca71b93770c07a751",
+		"versions": [
+			{
+				"fingerprint": "e59ecf0ea148016db576b5502dc3449a3482d0f5b56cd71ca71b93770c07a751",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "afd4114e53df99f9ab092faee26530d1975c8c30f0ae1c8c3fb492a43b7d3bf1",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--disconnect-is-reachable": {
+		"implemented": "5831a8319f13416125fa432ebea6d78fcc933225d71750eeff25e1e2b15b70db",
+		"versions": [
+			{
+				"fingerprint": "5831a8319f13416125fa432ebea6d78fcc933225d71750eeff25e1e2b15b70db",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "45ab4a9c3e3b78cf972cfe0c781f5ac95860f5bf4acdcb2b6ddf0cd3e0619770",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--disconnected": {
+		"implemented": "d482ab44fdfa1e0c68943f5c64f4606d83626d26a6aee7cffa26e6e5ecf09a1b",
+		"versions": [
+			{
+				"fingerprint": "d482ab44fdfa1e0c68943f5c64f4606d83626d26a6aee7cffa26e6e5ecf09a1b",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "c033d40b26a6ec66761e9047276381ecadd4b5bdb8eca33f75253a78fb738386",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--empty": {
+		"implemented": "0535b781a003931614d55e04824fd8c1fb7833c4e37cbc1196ea3af5799d2b63",
+		"versions": [
+			{
+				"fingerprint": "0535b781a003931614d55e04824fd8c1fb7833c4e37cbc1196ea3af5799d2b63",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "49295f2f74ae1e7a7e9dfb017985ae23f080398ece591d560f660bec5c30594c",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--focus-lands-on-the-banner": {
+		"implemented": "c0dd15d4a003d5b7827541fc107d1ce7e939633189ce8a6a4076a669f903e6f0",
+		"versions": [
+			{
+				"fingerprint": "c0dd15d4a003d5b7827541fc107d1ce7e939633189ce8a6a4076a669f903e6f0",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "d4d874e4a91065db48fda371f4d069563bac47f0c3cb304530c8d2aed1cc8ed0",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--just-connected": {
+		"implemented": "bafe8bf1bcc60f0b755519f4551bbd509cf824333c5a7da103047af890302ff2",
+		"versions": [
+			{
+				"fingerprint": "bafe8bf1bcc60f0b755519f4551bbd509cf824333c5a7da103047af890302ff2",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "b3379597c539359533c890e30d9791221f10ab7a0a3c38c8cac8a635af7e9811",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--no-outcome-is-silent": {
+		"implemented": "d46ea13cccebfad30ef598cc9a6bb2e09aa9d80ca53865070c9f679478e3a17b",
+		"versions": [
+			{
+				"fingerprint": "d46ea13cccebfad30ef598cc9a6bb2e09aa9d80ca53865070c9f679478e3a17b",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "c510c29e245b30458096cc9e4f3a4906b1172a39200ac6eb29cdc5d9f4869fbd",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--one-bank-not-answering": {
+		"implemented": "4cc5e8def1a6f4d67a05a700f613eaac573797e83dc4ff6704203347da55cbba",
+		"versions": [
+			{
+				"fingerprint": "4cc5e8def1a6f4d67a05a700f613eaac573797e83dc4ff6704203347da55cbba",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "593218faa9a688da948d6f54e3cb73c22104c229aec9b3f0d00c21294a59a7bc",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--rate-limited-with-no-retry-time": {
+		"implemented": "0a475d0366d7c09dda37346853eb61bc8be9fb3d94721d7dadcec467b42d5b3e",
+		"versions": [
+			{
+				"fingerprint": "0a475d0366d7c09dda37346853eb61bc8be9fb3d94721d7dadcec467b42d5b3e",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "04548f53f34f564d4a70be42433a40ad28f847a9954176416e66c96f286ab0df",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--refresh-refused": {
+		"implemented": "0801ca71f45d009a85ff96f3720c94097d789ad6914d127bb4772a19f5941cf3",
+		"versions": [
+			{
+				"fingerprint": "0801ca71f45d009a85ff96f3720c94097d789ad6914d127bb4772a19f5941cf3",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "0a358d42f0dc2381f16bc30631eee6626c205c3e5996802bd44fb73be6c1d07d",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--refreshing": {
+		"implemented": "e1796ac5dc27b7d7f1ed71dcd0f2abbb3e37418c7991f96676083d2b14b27bbe",
+		"versions": [
+			{
+				"fingerprint": "e1796ac5dc27b7d7f1ed71dcd0f2abbb3e37418c7991f96676083d2b14b27bbe",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "a1c5333588c70db214e7f6710f6213c2c80e5fed0b5b1c5ef5ba929ad777b919",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--refreshing-is-announced-while-it-runs": {
+		"implemented": "e1796ac5dc27b7d7f1ed71dcd0f2abbb3e37418c7991f96676083d2b14b27bbe",
+		"versions": [
+			{
+				"fingerprint": "e1796ac5dc27b7d7f1ed71dcd0f2abbb3e37418c7991f96676083d2b14b27bbe",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "9cb97366c6334c0de0e5cd52e15759a4450af3f60760586c7f6f04d51ad535f4",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--refreshing-on-request": {
+		"implemented": "d46ea13cccebfad30ef598cc9a6bb2e09aa9d80ca53865070c9f679478e3a17b",
+		"versions": [
+			{
+				"fingerprint": "d46ea13cccebfad30ef598cc9a6bb2e09aa9d80ca53865070c9f679478e3a17b",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "5073b323ccbb7fb23ff49dca738e15fbd8a9954f8caa72c2ebcc39a60c6c323e",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-accountsscreen--which-bank-did-not-answer-is-announced": {
+		"implemented": "16d13024dacb0459ebad0151e1a15061004092c3432bbb567b65cd9ba91eb295",
+		"versions": [
+			{
+				"fingerprint": "16d13024dacb0459ebad0151e1a15061004092c3432bbb567b65cd9ba91eb295",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "9961b9ddb6008321a00980586903e06c49ac9be65570284fb27f1bad6dd4e318",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--a-household-of-one": {
+		"implemented": "fa7dcca80dbbf4a68ec547042af914d19b57649aa02a24043d9da74a0ba21d65",
+		"versions": [
+			{
+				"fingerprint": "fa7dcca80dbbf4a68ec547042af914d19b57649aa02a24043d9da74a0ba21d65",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "a8584a3612ce93f74b9a86a3d4bd690ac607dbd2d08bbf41458c94923f522e8f",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--a-member-who-owns-none-of-it": {
+		"implemented": "f596e3f1a450309abe13c56aa2b7096712c3a0b07cc0ac756141349e276cd569",
+		"versions": [
+			{
+				"fingerprint": "f596e3f1a450309abe13c56aa2b7096712c3a0b07cc0ac756141349e276cd569",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "8f48ecc02951838d52ea06d6b6ccfc97d54ee042fc6eb8c0e323352b1f9f8ee9",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--as-it-opens": {
+		"implemented": "880c13664cad8e01927eb34a466d8fbdc0be80e0b231cc4bb6bb66fc7399de10",
+		"versions": [
+			{
+				"fingerprint": "880c13664cad8e01927eb34a466d8fbdc0be80e0b231cc4bb6bb66fc7399de10",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "66a5055c0469c92ba1916c1de621b118f1b1b715e850666283a76d63494968e7",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--bringing-it-back": {
+		"implemented": "0edb6c0e30f8c5bc057a802568d6b85f57ae9cfab7fe61d0ff0bf8da9242ce52",
+		"versions": [
+			{
+				"fingerprint": "0edb6c0e30f8c5bc057a802568d6b85f57ae9cfab7fe61d0ff0bf8da9242ce52",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "b4c0bcbec32ef3d73a29995f3dc82aca56a9ba1d4ef6a08541b5a1f1175ec71e",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--changing-a-level-is-announced": {
+		"implemented": "ee194774ea6de14d3af68e552c4b4dc83cc649f2c23929d913b898a0a4a4a398",
+		"versions": [
+			{
+				"fingerprint": "ee194774ea6de14d3af68e552c4b4dc83cc649f2c23929d913b898a0a4a4a398",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "2a4d908255a090ad40e71f7026acef7c699213e3c9e1ccc310765f53f4579bbc",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--disowning-is-announced": {
+		"implemented": "8866598a11633767f9339971b3068d17b1001a734bd06ec07e867ddd7d87ba2f",
+		"versions": [
+			{
+				"fingerprint": "8866598a11633767f9339971b3068d17b1001a734bd06ec07e867ddd7d87ba2f",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "9216979cf2c768fc70db83d1f9450534cd9389f8ea8ece4005deab461839487f",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--finish-is-always-enabled": {
+		"implemented": "880c13664cad8e01927eb34a466d8fbdc0be80e0b231cc4bb6bb66fc7399de10",
+		"versions": [
+			{
+				"fingerprint": "880c13664cad8e01927eb34a466d8fbdc0be80e0b231cc4bb6bb66fc7399de10",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "8e40efbf04f0f77c6d85c65904a617ffaefc11db5ad9f356d2eeda33b2fad8c8",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--focus-lands-on-the-heading": {
+		"implemented": "880c13664cad8e01927eb34a466d8fbdc0be80e0b231cc4bb6bb66fc7399de10",
+		"versions": [
+			{
+				"fingerprint": "880c13664cad8e01927eb34a466d8fbdc0be80e0b231cc4bb6bb66fc7399de10",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "0f3d869cb48ec22de2a166752fd273dee2c99358b88afe6047f6cc38c43a4b6e",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--handed-on": {
+		"implemented": "69f69d13aafb4dd6b771202bd73db6c6871624237b1c743dd788a68b81416aae",
+		"versions": [
+			{
+				"fingerprint": "69f69d13aafb4dd6b771202bd73db6c6871624237b1c743dd788a68b81416aae",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "a54811e29fab0d093a120adf815d639a2b2f796d1674790c813d5b7c48d4500a",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--leaving-an-account-out": {
+		"implemented": "880c13664cad8e01927eb34a466d8fbdc0be80e0b231cc4bb6bb66fc7399de10",
+		"versions": [
+			{
+				"fingerprint": "880c13664cad8e01927eb34a466d8fbdc0be80e0b231cc4bb6bb66fc7399de10",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "ca82530628aae05f82790c70536e7e84684bf4b7bea02d7ac80fbf9425ed51f6",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--making-an-owner": {
+		"implemented": "31ba2c0eb8095b0592cc8a90bda14bb33815b125bb942e59b0e9c4232d45d3af",
+		"versions": [
+			{
+				"fingerprint": "31ba2c0eb8095b0592cc8a90bda14bb33815b125bb942e59b0e9c4232d45d3af",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "6689202f9f39d62d30730809c3710c6ceed52005b3a9a512663c664778d23385",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--naming-an-account": {
+		"implemented": "880c13664cad8e01927eb34a466d8fbdc0be80e0b231cc4bb6bb66fc7399de10",
+		"versions": [
+			{
+				"fingerprint": "880c13664cad8e01927eb34a466d8fbdc0be80e0b231cc4bb6bb66fc7399de10",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "65bfca5ed1b2980263c1e0fa0cad9ffb807299dab8f74f1214a6a18b286b0f7a",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--one-disowned": {
+		"implemented": "c5514e0d53674f35c58db93a3e9addb1ab9dafb88ce50144b141bea3c23872a4",
+		"versions": [
+			{
+				"fingerprint": "c5514e0d53674f35c58db93a3e9addb1ab9dafb88ce50144b141bea3c23872a4",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "90061979c0116e6ad92ab58bec218b6b6f06de50464c814e02cfb24288af2529",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--one-granted-at-balance": {
+		"implemented": "54ba132311318ed92845c78a2e10b99036d1c0d8f4c4fe2fada01b0e6d2393e6",
+		"versions": [
+			{
+				"fingerprint": "54ba132311318ed92845c78a2e10b99036d1c0d8f4c4fe2fada01b0e6d2393e6",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "ed279d7228ec0de0f1a70c2de8733ef7913c2451b8af1b408a9dbd3f4fc62b7d",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--reopened-with-an-existing-choice": {
+		"implemented": "a863406cea53b5385bc4defe140a3433c3713186cf7302482c944551ecee7317",
+		"versions": [
+			{
+				"fingerprint": "a863406cea53b5385bc4defe140a3433c3713186cf7302482c944551ecee7317",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "99231d83c00966dd5a88c8a3afeb5c554d6dfd6f5efebe3bbddb8f08656c7c41",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--restoring-with-something-new": {
+		"implemented": "ea6904531b63123a93acda8d06e452607cd2eb48cf46456d926faea2a4089dbb",
+		"versions": [
+			{
+				"fingerprint": "ea6904531b63123a93acda8d06e452607cd2eb48cf46456d926faea2a4089dbb",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "9193a3acd3a259aceb253de1523c05fb46ebea34e4ea7b6752f8abc9891c2939",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--the-bring-back-confirmation": {
+		"implemented": "28b49b50cdee1242e35fc6a1935eb4ae46c8ef03f25bf4b52a800c48388a248c",
+		"versions": [
+			{
+				"fingerprint": "28b49b50cdee1242e35fc6a1935eb4ae46c8ef03f25bf4b52a800c48388a248c",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "d4f13d6d795e7e1d9e0c2266379c59d86813aa226b3f257283cb6bf25bf17999",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--the-last-owner-cannot-step-back": {
+		"implemented": "b1c4db961692f4a61575e61b352433d6c044d694af6127917ca9ecd685ed8844",
+		"versions": [
+			{
+				"fingerprint": "b1c4db961692f4a61575e61b352433d6c044d694af6127917ca9ecd685ed8844",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "bb817145ac3800a08f05da91d78512bf79ec9d33ebed00328965d6b7e2614b20",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--the-leave-out-confirmation": {
+		"implemented": "6ed30ee6e9344dffa307aa67cc06e492787ea9a21a25db51390ad34f8c607074",
+		"versions": [
+			{
+				"fingerprint": "6ed30ee6e9344dffa307aa67cc06e492787ea9a21a25db51390ad34f8c607074",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "6471b460855fe45ab8e3af126a9088b2195d59b791f2fd526726b0c28e933667",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--the-rename-field": {
+		"implemented": "06a0260b8ecedf0b790c54f5c1693e4177cf2e6975e5eac9d11c3a73af8f04b4",
+		"versions": [
+			{
+				"fingerprint": "06a0260b8ecedf0b790c54f5c1693e4177cf2e6975e5eac9d11c3a73af8f04b4",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "67af06fa306d557c4b57956127eb103f6e115a589cce57c56d233c2889f9d251",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-chooseaccountsscreen--two-members-at-different-levels": {
+		"implemented": "78c4ed921d413e5e88d4dbaa0f88b7d1eb11aba66750bddb09b6a57836f0bdc9",
+		"versions": [
+			{
+				"fingerprint": "78c4ed921d413e5e88d4dbaa0f88b7d1eb11aba66750bddb09b6a57836f0bdc9",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "a731e6a0a6ded188fed84243d114a06d484b8df501d456e5d66217835d486dc1",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-choosebankscreen--default": {
+		"implemented": "f156dc5ba7e00264390b4b65fa09be7fe4a98106892143a26840aedf6d040f5b",
+		"versions": [
+			{
+				"fingerprint": "f156dc5ba7e00264390b4b65fa09be7fe4a98106892143a26840aedf6d040f5b",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "b952e5a10e0f2cf2b8bf0617aeaa4e6160453534f595e748740ed07834d98443",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-choosebankscreen--it-says-wimm-never-sees-a-password": {
+		"implemented": "f156dc5ba7e00264390b4b65fa09be7fe4a98106892143a26840aedf6d040f5b",
+		"versions": [
+			{
+				"fingerprint": "f156dc5ba7e00264390b4b65fa09be7fe4a98106892143a26840aedf6d040f5b",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "44a132f85022f7de2425cd59eb7f5e451dc94aef22b648615c790053da6b03bb",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-choosebankscreen--list-unavailable": {
+		"implemented": "d7731b0ef92b1f0268f881bc2dec00b323a386231c21f1f11d39acf8ba455c36",
+		"versions": [
+			{
+				"fingerprint": "d7731b0ef92b1f0268f881bc2dec00b323a386231c21f1f11d39acf8ba455c36",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "3ea1ec8a5806c18135e5997c5afad5705e8eedd053dccbe515a00f0ae97baf4d",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-choosebankscreen--loading": {
+		"implemented": "0b4462c95c15bd1d57296dfaa60a160168d0c8ec854e55049c9d7f44c3d9587e",
+		"versions": [
+			{
+				"fingerprint": "0b4462c95c15bd1d57296dfaa60a160168d0c8ec854e55049c9d7f44c3d9587e",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "f0fcac2ae38dec4d17720ba73300a9c12915835b49df6e59e44f74794364d182",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-choosebankscreen--narrowed": {
+		"implemented": "d8d02e06527cee6e6140b91f1faf0bae488cc1369622b1f7c80467acff4256ce",
+		"versions": [
+			{
+				"fingerprint": "d8d02e06527cee6e6140b91f1faf0bae488cc1369622b1f7c80467acff4256ce",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "f788f575bc18f15329fdacfefdd5f24fa4fd219f76261fa504e4e5bde35cb688",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-choosebankscreen--no-match": {
+		"implemented": "c694658813bfb95faadfc78ae1596ad8609860f6202032552ca7baf2d985a5ec",
+		"versions": [
+			{
+				"fingerprint": "c694658813bfb95faadfc78ae1596ad8609860f6202032552ca7baf2d985a5ec",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "7875f1eac58af91c0de061da94007a1bcd2cdb2ed4f52dbe362ca59ce0e2881e",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-choosebankscreen--one-match-is-singular": {
+		"implemented": "d977ba1d053c1d9e12b96babeee85a2cfa49f63f54534abdac205d68972f0a84",
+		"versions": [
+			{
+				"fingerprint": "d977ba1d053c1d9e12b96babeee85a2cfa49f63f54534abdac205d68972f0a84",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "5d48f043a044b3012fa963da85f6613cfc182d0f6df9a7dccb61916013ff2bb1",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-consentexplainerscreen--cancelling": {
+		"implemented": "5c5714a521faf598674f1cd5691329d48a03af3f86812ed4df809ceae29d5c25",
+		"versions": [
+			{
+				"fingerprint": "5c5714a521faf598674f1cd5691329d48a03af3f86812ed4df809ceae29d5c25",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "f68d019fa9a5f3872f3465132af0231d0d2835a7d779d3af33610598d235f719",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-consentexplainerscreen--compact": {
+		"implemented": "a2bfa085c0a9358d782f0ed9f05ad61bace26241fdbb15b9681dbc35d04ca3cc",
+		"versions": [
+			{
+				"fingerprint": "a2bfa085c0a9358d782f0ed9f05ad61bace26241fdbb15b9681dbc35d04ca3cc",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "9c6059159c1af1869c75f38a8e76023ed6f05c73a0b8f1e576a7060114ae076f",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-consentexplainerscreen--default": {
+		"implemented": "5c5714a521faf598674f1cd5691329d48a03af3f86812ed4df809ceae29d5c25",
+		"versions": [
+			{
+				"fingerprint": "5c5714a521faf598674f1cd5691329d48a03af3f86812ed4df809ceae29d5c25",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "784f32b0c2bf1a78e40c7e697f94bc876afecfd8beb66176f9333d47b36646f1",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-consentexplainerscreen--it-says-the-member-is-about-to-leave": {
+		"implemented": "5c5714a521faf598674f1cd5691329d48a03af3f86812ed4df809ceae29d5c25",
+		"versions": [
+			{
+				"fingerprint": "5c5714a521faf598674f1cd5691329d48a03af3f86812ed4df809ceae29d5c25",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "70751a16204917771138ec3110dcd92097a085be9c0841b3a684d3d74ada4ccd",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-consentexplainerscreen--it-says-who-can-see-it": {
+		"implemented": "5c5714a521faf598674f1cd5691329d48a03af3f86812ed4df809ceae29d5c25",
+		"versions": [
+			{
+				"fingerprint": "5c5714a521faf598674f1cd5691329d48a03af3f86812ed4df809ceae29d5c25",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "78f149311377f98a1984f5dea66d73d77b45b5c67f6f81e792a6a2e3141c4db1",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-consentexplainerscreen--it-states-what-is-and-is-not-read": {
+		"implemented": "5c5714a521faf598674f1cd5691329d48a03af3f86812ed4df809ceae29d5c25",
+		"versions": [
+			{
+				"fingerprint": "5c5714a521faf598674f1cd5691329d48a03af3f86812ed4df809ceae29d5c25",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "8ea4fb809d56778e7fe02ad195990664b130c473be662132dba1fa1507ed2ffb",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-enrolscreen--creating": {
+		"implemented": "ef19dd46dccb418d1dee2e34cff7adc4531ff7802c03c441af1caa4b49583dfa",
+		"versions": [
+			{
+				"fingerprint": "ef19dd46dccb418d1dee2e34cff7adc4531ff7802c03c441af1caa4b49583dfa",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "af9df52c4becdc1dadd55dc84dd7264f3b7e54c36c9dbe90fd83903380202185",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-enrolscreen--default": {
+		"implemented": "de66d2ee81be5d7f31a0afa8d473208e3587c4cf759aaebf2c7065af36793d64",
+		"versions": [
+			{
+				"fingerprint": "de66d2ee81be5d7f31a0afa8d473208e3587c4cf759aaebf2c7065af36793d64",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "d9e4b5998d13b2235afc69dfa57a99bc87ad595db9e72c8d70d31b838bc97a10",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-enrolscreen--passkey-not-saved": {
+		"implemented": "9709567df29551939f35b3f94274cb3a2a7e1b0162586539d2c0da46f0b0137e",
+		"versions": [
+			{
+				"fingerprint": "9709567df29551939f35b3f94274cb3a2a7e1b0162586539d2c0da46f0b0137e",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "f6b3db26a88502e048601fbf851e882b801a2a94e0923a46f703c21ec1ab2a73",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-enrolscreen--prompt-dismissed": {
+		"implemented": "c0fafc6aa28b334a490341617335b1f156e395841699249734b09fa9bcb671a1",
+		"versions": [
+			{
+				"fingerprint": "c0fafc6aa28b334a490341617335b1f156e395841699249734b09fa9bcb671a1",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "3b92953e6edb3bf7bee5eb708a665769f3011a39161f5f19ce26f61913142dae",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-linkunusablescreen--default": {
+		"implemented": "2f65e448515233038462ff7dd5fb12b0e8c811d86f5f4fc1e328234f36cb8386",
+		"versions": [
+			{
+				"fingerprint": "2f65e448515233038462ff7dd5fb12b0e8c811d86f5f4fc1e328234f36cb8386",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "eaa79a82c4c8e2c841206c74959afbff1a39ff438f3ca3e3bef3caba730dea98",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--a-day-a-transfer-left": {
+		"implemented": "93bf8dcba70673a91a0bc3a68cabbbb925559465e7f2efaff79f930b7d3ceba9",
+		"versions": [
+			{
+				"fingerprint": "93bf8dcba70673a91a0bc3a68cabbbb925559465e7f2efaff79f930b7d3ceba9",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "61f4a1fa78920415528e231364b4c0620ded9f3f97d5f9e608105bbc24f96a7e",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--a-day-pointed-at": {
+		"implemented": "81137d719c3a9c89c88732b4488736b65f9360ef4085a71e618d227d55c7747d",
+		"versions": [
+			{
+				"fingerprint": "81137d719c3a9c89c88732b4488736b65f9360ef4085a71e618d227d55c7747d",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "786caf16e4e08a189de8df8002599222b0c35d3c408f744430d3476ab9407c78",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--a-likely-yearly-payment": {
+		"implemented": "551d8decc09e4cf20c190e101c6f276632ec746656de298ef1505b617f92799a",
+		"versions": [
+			{
+				"fingerprint": "551d8decc09e4cf20c190e101c6f276632ec746656de298ef1505b617f92799a",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "4f9d1a68c7fea370db50c0119e8a0dd218af8d1d61bcca66d64ac49f326465a9",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--a-month-with-none-opened": {
+		"implemented": "09b136d82dc11fab694fd6b51e4587a6fcafbea7f4f0797166a3ee49acf6ba0b",
+		"versions": [
+			{
+				"fingerprint": "09b136d82dc11fab694fd6b51e4587a6fcafbea7f4f0797166a3ee49acf6ba0b",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "e4e9655de5cf8ca55973e8c2833f95e25dd0938167ca38a154f60412b0c05929",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--a-month-with-transfers-left-out": {
+		"implemented": "6babca5275fc9fcc9aae855943f355991eb72ef1992bc77d7a72ddbd8108ede8",
+		"versions": [
+			{
+				"fingerprint": "6babca5275fc9fcc9aae855943f355991eb72ef1992bc77d7a72ddbd8108ede8",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "cf46dabd9dd33ee0274a5ffcaec3b8500f999d6026f400c53f8b3e2ea88490a4",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--a-month-with-unusual-income-opened": {
+		"implemented": "542b812cb9d42f5269b33d7a98534162fc52b6f77168cf951cb0f4fe802ab521",
+		"versions": [
+			{
+				"fingerprint": "542b812cb9d42f5269b33d7a98534162fc52b6f77168cf951cb0f4fe802ab521",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "03b6908f566a06386eaec7d9d59524dc23a617b258fe4f33fb5ebb81cf5a4334",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--a-month-with-unusual-payments-opened": {
+		"implemented": "c4e510e6db06da604eefdf04a3fa95351eaef169e25005c5c9bbf335020d4a93",
+		"versions": [
+			{
+				"fingerprint": "c4e510e6db06da604eefdf04a3fa95351eaef169e25005c5c9bbf335020d4a93",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "f49b241bd4735710a76f9efe8175f244aabec0b4a17cced4daeb039999dd1919",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--a-young-account-beside-older-ones": {
+		"implemented": "6e6623f2844553b4fd3cf6058da7e09a34c1c1eca650a13ef0a18271573a0b9a",
+		"versions": [
+			{
+				"fingerprint": "6e6623f2844553b4fd3cf6058da7e09a34c1c1eca650a13ef0a18271573a0b9a",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "99d7bff8513115e2b6566d7b49169a90fca096cbd48bc44174176f42b5b034e3",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--before-any-bank-connected": {
+		"implemented": "5207d6edb1807aefe5520fd23a92145684bb4d5ec318df84d55ae7e013eebf3a",
+		"versions": [
+			{
+				"fingerprint": "5207d6edb1807aefe5520fd23a92145684bb4d5ec318df84d55ae7e013eebf3a",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "5f201c614c5c2df84404ce162017ddca4c519d5c1e4cf22d64afb068e378f915",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--chart-does-not-cover-every-account": {
+		"implemented": "6869a570368336ac13a31c2189671f46173c4ad633cf6502f2d681aa647777fd",
+		"versions": [
+			{
+				"fingerprint": "6869a570368336ac13a31c2189671f46173c4ad633cf6502f2d681aa647777fd",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "40313a2d7ed5d8ce8f343bb8adbab5b83fac8579c30bcb4d07bde434a7c67388",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--choosing-a-scope": {
+		"implemented": "941ee25bc0c3eb7826b00524f401675baf3a9c295fc58f061927d2935b544165",
+		"versions": [
+			{
+				"fingerprint": "941ee25bc0c3eb7826b00524f401675baf3a9c295fc58f061927d2935b544165",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "499f287c4548cb763b3116fd4da0559e10c5405958bc95b3c4caa9b0c47002db",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--currency-holding-nothing": {
+		"implemented": "46d15af3cd4eb0a00ec7d7423845ffb8f9cb180956319d1636716db85bbc05e8",
+		"versions": [
+			{
+				"fingerprint": "46d15af3cd4eb0a00ec7d7423845ffb8f9cb180956319d1636716db85bbc05e8",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "bed51a5ef90d0d50b9f66e8bd1485e06b6bd798d8f29d5b93796c29167af510b",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--household-of-one": {
+		"implemented": "8fc7430eed6c49caa567a4cc5fcf9a79861a113d0edbd44f1b74c209aad9a849",
+		"versions": [
+			{
+				"fingerprint": "8fc7430eed6c49caa567a4cc5fcf9a79861a113d0edbd44f1b74c209aad9a849",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "bf1286700746d2a4a9e66964408437040e1cf8d5ccf9b88f86dd15c4e91f4421",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--household-scope": {
+		"implemented": "51fc8607c77c404135c983601b8dde5c05457e56153f3c677c8e62c2e12c280d",
+		"versions": [
+			{
+				"fingerprint": "51fc8607c77c404135c983601b8dde5c05457e56153f3c677c8e62c2e12c280d",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "1543470f7438b99afab2a99d346055a6020e6e23b879727f3a4eb9273fb9a0fe",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--household-scope-is-narrower": {
+		"implemented": "ab32ac3b2a4f786e1c6a809a2c8783e7c8d88035caafd90b28cd17ecac276494",
+		"versions": [
+			{
+				"fingerprint": "ab32ac3b2a4f786e1c6a809a2c8783e7c8d88035caafd90b28cd17ecac276494",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "5e9bf05fa365c0633c36fa824c164c4d658015bae1160ce7d244f795cf2f29bf",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--household-scope-with-no-history": {
+		"implemented": "c9a80c7cae55d0a0dd4a894bf3c7f1beba9aad06f86a29155d0276e03dbb5845",
+		"versions": [
+			{
+				"fingerprint": "c9a80c7cae55d0a0dd4a894bf3c7f1beba9aad06f86a29155d0276e03dbb5845",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "0cf99f13b07337816134907af42e1590e1ad7b23602def3e5acaea89751669a3",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--household-scope-with-nothing-to-set-aside": {
+		"implemented": "d73e3613241e6a537bd5b6e6cc71c42fe038b817bf4475c7add89b21a5a6d487",
+		"versions": [
+			{
+				"fingerprint": "d73e3613241e6a537bd5b6e6cc71c42fe038b817bf4475c7add89b21a5a6d487",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "43e5d3b0099c913bb42cc18a58c2f62c2720808420dc22abca6758d7c2bd8d40",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--ledger-begins-part-way-through": {
+		"implemented": "575c56a0f4e21b814089c0e35aa653ab6a006a78b346cbf8004b36c43a1c933f",
+		"versions": [
+			{
+				"fingerprint": "575c56a0f4e21b814089c0e35aa653ab6a006a78b346cbf8004b36c43a1c933f",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "92beb4a1814f26754a0c2550ce79a79aeac9f6202a30fdff47809a48387a9a89",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--ledger-starts-this-month": {
+		"implemented": "ef9704e8c340d69e33e19d50456cf427b0ef521b3feb658d646b02654c784847",
+		"versions": [
+			{
+				"fingerprint": "ef9704e8c340d69e33e19d50456cf427b0ef521b3feb658d646b02654c784847",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "01628c6d3cb9001d2c5b3379a1a4ad1286efd3c635b5b77cc2127152a58091e8",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--member-may-nothing": {
+		"implemented": "5207d6edb1807aefe5520fd23a92145684bb4d5ec318df84d55ae7e013eebf3a",
+		"versions": [
+			{
+				"fingerprint": "5207d6edb1807aefe5520fd23a92145684bb4d5ec318df84d55ae7e013eebf3a",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "077b3dcdc144086404689be166e089b92ab4aaf2a5c6710ecd8b04751f6dddc4",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--more-goes-out-than-comes-in": {
+		"implemented": "bb2b06121035eef77acd67304cd43e9ee22051a6d8aad974a60e40ded7396417",
+		"versions": [
+			{
+				"fingerprint": "bb2b06121035eef77acd67304cd43e9ee22051a6d8aad974a60e40ded7396417",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "c75ded87106ea8b93ed86282164be4d9a3fbe57778023166a88aea5cc685fd6d",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--no-transaction-history": {
+		"implemented": "2df516887c3fb25f19fc2b1fb245d07bc98c771ad5fc5f498ca69265444b84e9",
+		"versions": [
+			{
+				"fingerprint": "2df516887c3fb25f19fc2b1fb245d07bc98c771ad5fc5f498ca69265444b84e9",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "b9f689606029964ff4b3620f67ff49f38f6382684b6867aa335338f09fb0621c",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--nothing-spent-yet": {
+		"implemented": "620a6d3ef7047090d4b050635b3e4abb95cd34187617f2539fefed5ff6866b6e",
+		"versions": [
+			{
+				"fingerprint": "620a6d3ef7047090d4b050635b3e4abb95cd34187617f2539fefed5ff6866b6e",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "0dea7d523e21b159e8278391a684de5bcf629bff4416b4c287397421165bfcc1",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--owns-no-account": {
+		"implemented": "f0f15140cf22011ae7df91111775f1b8bddda61f559362769f05e7c0d3fb06ad",
+		"versions": [
+			{
+				"fingerprint": "f0f15140cf22011ae7df91111775f1b8bddda61f559362769f05e7c0d3fb06ad",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "5b912866cb88cbc2d69fb79f3847eacdaee9d0f98ce4ec27d82a7d477994709e",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--populated": {
+		"implemented": "4f9a1d0abe842a6a2c712b22f18e56c14e24ab216f9f5ed6c097d65202f382fd",
+		"versions": [
+			{
+				"fingerprint": "4f9a1d0abe842a6a2c712b22f18e56c14e24ab216f9f5ed6c097d65202f382fd",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "efaadb79ee078e72ca4e6df7a5eda6b8761b9131a6c05c3c303108b14d1d0442",
+				"firstSeen": "2026-09-15"
+			},
+			{
+				"fingerprint": "99599aceb48d683be2ad7b19170335833fab5a894628832daaa9b8fe7c6d4e8f",
+				"firstSeen": "2026-09-08"
+			}
+		]
+	},
+	"pages-overview--reaches-the-full-ledger": {
+		"implemented": "964f836a7dd9933845dead624706b3df2a53ae944a02cc111b0fa8d5254a6bb4",
+		"versions": [
+			{
+				"fingerprint": "964f836a7dd9933845dead624706b3df2a53ae944a02cc111b0fa8d5254a6bb4",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "0cf4012847486022cbf6175f9a199ff645af895da3ce343d8e1803ce81ac2c57",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--reading-months-by-pointing": {
+		"implemented": "5b1196eef72b6be606eee69a5ab18ba8c0fc42fd7924f11f5ba5d482d2872cc4",
+		"versions": [
+			{
+				"fingerprint": "5b1196eef72b6be606eee69a5ab18ba8c0fc42fd7924f11f5ba5d482d2872cc4",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "f9762f3aa06d9884c347094b93f334269dcfc67141c887fd6ee9c2c305ad4aac",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--the-month-so-far-opened": {
+		"implemented": "650f677440caf838e1107b5d83dca11ab3af7339e1c9a3a0ed80903f226ec99d",
+		"versions": [
+			{
+				"fingerprint": "650f677440caf838e1107b5d83dca11ab3af7339e1c9a3a0ed80903f226ec99d",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "ef916555a798e1bae1db8f8f1d013cacee64db059262b8b75126159565dab355",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--three-merchants": {
+		"implemented": "f16533b89af26a2552605317df4fbd57bb52887507f359fb104ce62737f47ba9",
+		"versions": [
+			{
+				"fingerprint": "f16533b89af26a2552605317df4fbd57bb52887507f359fb104ce62737f47ba9",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "044f925f01ca79739148652bf34d136ddb0c97ca313d2d96ae0b58a6b5f5eccb",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--two-currencies": {
+		"implemented": "eb36a7bedc404d2befbc1986666bc018fced4aea83ea91195f426400c6f7a6b4",
+		"versions": [
+			{
+				"fingerprint": "eb36a7bedc404d2befbc1986666bc018fced4aea83ea91195f426400c6f7a6b4",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "ee322ebcfb2df0764da59d3d70d53ff82a15bd8d97ac65da5172f4a02e1aa091",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--two-full-months": {
+		"implemented": "f5c02be635dc595e371d7c7f4b5e17ddb5da0d76dbe7f3d60021309ee7a15706",
+		"versions": [
+			{
+				"fingerprint": "f5c02be635dc595e371d7c7f4b5e17ddb5da0d76dbe7f3d60021309ee7a15706",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "05d9a530a6b72633f035a37a6ba2f05b815b49ef27de0b342b92cf675e0092ff",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--without-unusual-payments": {
+		"implemented": "b885f8c2999b24eb2e809a996dbabb3171e0c4fe239b4e6d780308f4992c0d8c",
+		"versions": [
+			{
+				"fingerprint": "b885f8c2999b24eb2e809a996dbabb3171e0c4fe239b4e6d780308f4992c0d8c",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "8fc7c802f54e5300784fee7e668bf165eb13b741d5e1988ca6e3ac99db293627",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-overview--yours-scope": {
+		"implemented": "178d1cc5f383ed24c65ec39137a3c2133039fec0461dd5a7786938e7ffdf5062",
+		"versions": [
+			{
+				"fingerprint": "178d1cc5f383ed24c65ec39137a3c2133039fec0461dd5a7786938e7ffdf5062",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "e940ebc406f546e6b0fdad9da435c50f87248b530763e12f7ae57e80a701e1c9",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-settingsscreen--choosing-a-theme": {
+		"implemented": "6afc58cba908a3919bce8b3a3220054e93495bdf3a933158c12fca67a3d022af",
+		"versions": [
+			{
+				"fingerprint": "6afc58cba908a3919bce8b3a3220054e93495bdf3a933158c12fca67a3d022af",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "dcf3e9d81d1e107a6b75ddd148f27824fc55f8dcd0c699469a3f0d198fbc56d2",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-settingsscreen--choosing-row-height": {
+		"implemented": "f4357b82b4f51a2eb5e041732f3d59d5112b538b5b68667621efd0263d63a78c",
+		"versions": [
+			{
+				"fingerprint": "f4357b82b4f51a2eb5e041732f3d59d5112b538b5b68667621efd0263d63a78c",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "720278809e565714c9f48964c2ed8c6e976f4dfd37cfb7d5460115f743f8c1c7",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-settingsscreen--default": {
+		"implemented": "448cf9320c7ee20b2c04dc014d1b05bdb1a36cb938f75679b183094bd0265c03",
+		"versions": [
+			{
+				"fingerprint": "448cf9320c7ee20b2c04dc014d1b05bdb1a36cb938f75679b183094bd0265c03",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "58222e12735afb949cf2ff49b59bb9b27f035937a7ec1d3b7be92ab66314a2f8",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-settingsscreen--on-a-touch-screen-see-the-rule-in-settings-screen-svelte": {
+		"implemented": "448cf9320c7ee20b2c04dc014d1b05bdb1a36cb938f75679b183094bd0265c03",
+		"versions": [
+			{
+				"fingerprint": "448cf9320c7ee20b2c04dc014d1b05bdb1a36cb938f75679b183094bd0265c03",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "8da477fa777edecd803050245ac6f0e9fd6cde113d29151c9a4b7541a1dafdf3",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-signinscreen--default": {
+		"implemented": "d84c602c4c18e27aac538ee500473f32042fcf4af4ace692be2d4b288328dbea",
+		"versions": [
+			{
+				"fingerprint": "d84c602c4c18e27aac538ee500473f32042fcf4af4ace692be2d4b288328dbea",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "c7f5739ff688b6ebfc1f61ef8bed05928959533d820c67312b7bfa627f0c5006",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-signinscreen--passkey-not-recognised": {
+		"implemented": "f314588c04ffdf08cbd42896a21857940b58e0e6426f3558f07afff9a9c74f15",
+		"versions": [
+			{
+				"fingerprint": "f314588c04ffdf08cbd42896a21857940b58e0e6426f3558f07afff9a9c74f15",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "6c6dc9dea669b4867305682c9ac431235f63cabd54eba5535e831222b2737ef6",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-signinscreen--prompt-dismissed": {
+		"implemented": "cf0fa14182321945832cae2116eba9643c10963f6b1c9c482e0cd56c3bac33eb",
+		"versions": [
+			{
+				"fingerprint": "cf0fa14182321945832cae2116eba9643c10963f6b1c9c482e0cd56c3bac33eb",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "c52f2ecfc1bd92fdfd142a1afd2e46f78f6d836a0539113fc587fc6764363cd1",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-signinscreen--session-expired": {
+		"implemented": "79f2b5d20863e5dab12822f05ff0309c00fb5fa8b3c6fbcea536b9afeab67a3f",
+		"versions": [
+			{
+				"fingerprint": "79f2b5d20863e5dab12822f05ff0309c00fb5fa8b3c6fbcea536b9afeab67a3f",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "739533487864f1c2320322d8c5dc38ab2b97ef955e5fb4023660a7b8f4393545",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-signinscreen--signing-in": {
+		"implemented": "7418780d4193d1908178cc897bf3e9833e731bc0d6770e434d245c926cb43ad3",
+		"versions": [
+			{
+				"fingerprint": "7418780d4193d1908178cc897bf3e9833e731bc0d6770e434d245c926cb43ad3",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "3709bf534e7c1e5a0e12db3c43c9c07d9551d0ce8ed29633793b3a7f085a4b59",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--access-has-run-out": {
+		"implemented": "3e2b4e5a572461ff0dd62897db9de65be0f0bc20a8a6953fee635a9ff569a67f",
+		"versions": [
+			{
+				"fingerprint": "3e2b4e5a572461ff0dd62897db9de65be0f0bc20a8a6953fee635a9ff569a67f",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "f7e39350ad38fe5fdc61de2ae3ecf50897efc36aec41735d2112f35cb77b63c3",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--an-older-page": {
+		"implemented": "10ec03017b0b15e9e943eec6972b7051c1c30fc0a0f97a14d0a45639716112b2",
+		"versions": [
+			{
+				"fingerprint": "10ec03017b0b15e9e943eec6972b7051c1c30fc0a0f97a14d0a45639716112b2",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "40d6e0e07192f4ff82d4f4bb8978481edd21dd696c7d856e1cd14fdb3438a076",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--as-it-opens": {
+		"implemented": "1671d76cc3264739c12dba22da26f801d2ff2457ef390a1f2f5924501c7a20fd",
+		"versions": [
+			{
+				"fingerprint": "1671d76cc3264739c12dba22da26f801d2ff2457ef390a1f2f5924501c7a20fd",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "ac403f0213ccd96aac157be0d04e0432cad175d4f68124e5188c744a1acf4864",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--bank-disconnected": {
+		"implemented": "34433ebc901e25a18661f1bf513a54ac82e7902c9be3ba9f0ecdb198dbebdf0f",
+		"versions": [
+			{
+				"fingerprint": "34433ebc901e25a18661f1bf513a54ac82e7902c9be3ba9f0ecdb198dbebdf0f",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "54d5c12ec73769734d645b118d98c2668835074e10e1e376047a3f17e2593f69",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--bank-not-sending-transactions": {
+		"implemented": "a8e57dd798a712cc0cd42754c1bb04c4a286075d118d4a7b063e63b9930ee1f0",
+		"versions": [
+			{
+				"fingerprint": "a8e57dd798a712cc0cd42754c1bb04c4a286075d118d4a7b063e63b9930ee1f0",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "c27e5071e4dc3176b876a534862deda65775998c6ac84ee353fb5658f38c30f3",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--bank-now-included": {
+		"implemented": "90e5f38decd89db5950eac043d129ca68ec6ac52b29a83d85bbf3fadfefe181a",
+		"versions": [
+			{
+				"fingerprint": "90e5f38decd89db5950eac043d129ca68ec6ac52b29a83d85bbf3fadfefe181a",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "14b02aaa3bcbe12f402b072b4bbb3bf7791e2111265dfb51f80ebb2d0fe3e12e",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--compact": {
+		"implemented": "d5e41497492ae9e9fbc11548b6353b94389ed5ad3bd0e8d6b402994240b94552",
+		"versions": [
+			{
+				"fingerprint": "d5e41497492ae9e9fbc11548b6353b94389ed5ad3bd0e8d6b402994240b94552",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "f6455d90f423ecb593c8c5f854b44a2b0013557087639bbf6e4bcb2a62fe1772",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--compact-one-account": {
+		"implemented": "511aa6047d71e9d5297cf5d23ba884fcf5e733a90f82df2af30c486f011fee53",
+		"versions": [
+			{
+				"fingerprint": "511aa6047d71e9d5297cf5d23ba884fcf5e733a90f82df2af30c486f011fee53",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "0d66609d792a3e782f1c1f483c4a554b0472cdb5370f3f029ca380bca87784b2",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--everything-fits-on-one-page": {
+		"implemented": "257ccad69084c29130e7c274c785f6eb7eb55319ce7eba4d90d038c48aa4b476",
+		"versions": [
+			{
+				"fingerprint": "257ccad69084c29130e7c274c785f6eb7eb55319ce7eba4d90d038c48aa4b476",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "bf226972891694061a65f59ce03717c361971deb49c50ac05df266c9259ab185",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--no-bank-connected": {
+		"implemented": "a1e188e6d2e8f9a7a7f05ce0a373933c356ed4a0103804f29ecd4ae612d05ffc",
+		"versions": [
+			{
+				"fingerprint": "a1e188e6d2e8f9a7a7f05ce0a373933c356ed4a0103804f29ecd4ae612d05ffc",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "cf4a7eab5825e44421ced2d031fa49d964d9acb12eacdc1fbe2e35b0b8769a16",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--one-account": {
+		"implemented": "eb28c651042ab4795bd48174868416c8c7c6339d6b5edd40dcacc03ccc04a832",
+		"versions": [
+			{
+				"fingerprint": "eb28c651042ab4795bd48174868416c8c7c6339d6b5edd40dcacc03ccc04a832",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "8c317c63f013c471ae454f8e155e7457f1afa9cce99f3e08298d992d99077653",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--one-bank-did-not-answer": {
+		"implemented": "0078bd740d061ba93c2858d89cda1f36c2183a1bbd870837d3f7d846cd82ec2a",
+		"versions": [
+			{
+				"fingerprint": "0078bd740d061ba93c2858d89cda1f36c2183a1bbd870837d3f7d846cd82ec2a",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "ec56080e3c3778b10c6cb939752d54810198cf927f0b42d18dd5d44ea6477ef2",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--owns-no-account": {
+		"implemented": "c0c5ec473ab59ee281bd200da66575fedfdaf849b1eb628382f0f967f2750974",
+		"versions": [
+			{
+				"fingerprint": "c0c5ec473ab59ee281bd200da66575fedfdaf849b1eb628382f0f967f2750974",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "b756994b4b3e96afdd5dde5ccbe2eaa292453d930162b5404dec1ce5e04a7d02",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--reading-for-the-first-time": {
+		"implemented": "e3762d789409cd367b0b9de1c00136eb20b2d651bef8dab76e939d293071f920",
+		"versions": [
+			{
+				"fingerprint": "e3762d789409cd367b0b9de1c00136eb20b2d651bef8dab76e939d293071f920",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "7073448cbcbe3b319d11a6ba3b30729874340aa2402134b592c807336042f74d",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--refresh-refused": {
+		"implemented": "178633e0023d1c6ba656dda2061451bca8d9239975d893beeaadd941cc18cbfb",
+		"versions": [
+			{
+				"fingerprint": "178633e0023d1c6ba656dda2061451bca8d9239975d893beeaadd941cc18cbfb",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "3e8165c23bc5fa1815244b926fffffd79a7c463ecfd7a7090336cfa0aff200f0",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--syncing-on-arrival": {
+		"implemented": "37eb60ba71501bce1c609b0d3e94923b7eebb329621cb7444e890d6e7ed4739d",
+		"versions": [
+			{
+				"fingerprint": "37eb60ba71501bce1c609b0d3e94923b7eebb329621cb7444e890d6e7ed4739d",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "dc99e922a3c44da110033c1f22a3c598d95896b38519c1edc09400da2c3ec3f1",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--syncing-with-rows-already-held": {
+		"implemented": "6af5e775b4703ff0b68a207441abbd107d6e511d3cc1502143fc8b8f064d66d1",
+		"versions": [
+			{
+				"fingerprint": "6af5e775b4703ff0b68a207441abbd107d6e511d3cc1502143fc8b8f064d66d1",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "79d5dbd44753f4aeb7008151c30713f645ce9afc7e781ccba3d950eb76853238",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-transactionsscreen--the-oldest-page": {
+		"implemented": "0e9a98e978f1f9c21b1f50e8dc281611e741f81a1a05d686f383fce407b98e5d",
+		"versions": [
+			{
+				"fingerprint": "0e9a98e978f1f9c21b1f50e8dc281611e741f81a1a05d686f383fce407b98e5d",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "26f3978a516a93b4b5199d8641b0fbe96a3261085eace292f8f4da8e8400e46b",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-widenconsentscreen--a-short-lived-consent": {
+		"implemented": "163e3114dbb87fb92bfa226d6d1519ccaefdc46ecd5f816545dcbebc30d62d83",
+		"versions": [
+			{
+				"fingerprint": "163e3114dbb87fb92bfa226d6d1519ccaefdc46ecd5f816545dcbebc30d62d83",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "86e5d274a79862d664ff01f04cdf7d9cfe376c5a72e4da29a1d318eac978b320",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-widenconsentscreen--compact": {
+		"implemented": "f30eadaa54ad0d44816406ef5b10ba9954a2f299a2ff46e7299fad2638c7f53c",
+		"versions": [
+			{
+				"fingerprint": "f30eadaa54ad0d44816406ef5b10ba9954a2f299a2ff46e7299fad2638c7f53c",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "277766956cf19953c3d177777d844d0cae81bdff80e39bf4da9f1118a6adf8a3",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-widenconsentscreen--declining-is-a-link-back": {
+		"implemented": "f30eadaa54ad0d44816406ef5b10ba9954a2f299a2ff46e7299fad2638c7f53c",
+		"versions": [
+			{
+				"fingerprint": "f30eadaa54ad0d44816406ef5b10ba9954a2f299a2ff46e7299fad2638c7f53c",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "e9fbd73413df988248a57acfd999a88ad42d8d22fd78eed9e6d4d8f1ef5147c8",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-widenconsentscreen--never-described-as-broken": {
+		"implemented": "f30eadaa54ad0d44816406ef5b10ba9954a2f299a2ff46e7299fad2638c7f53c",
+		"versions": [
+			{
+				"fingerprint": "f30eadaa54ad0d44816406ef5b10ba9954a2f299a2ff46e7299fad2638c7f53c",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "2e0fea715ca6d2189db24f4be7d0c773a31f59fc140ec4b0d1f3fbbccabd5e44",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	},
+	"pages-widenconsentscreen--widening": {
+		"implemented": "f30eadaa54ad0d44816406ef5b10ba9954a2f299a2ff46e7299fad2638c7f53c",
+		"versions": [
+			{
+				"fingerprint": "f30eadaa54ad0d44816406ef5b10ba9954a2f299a2ff46e7299fad2638c7f53c",
+				"firstSeen": "2026-09-20"
+			},
+			{
+				"fingerprint": "058ac0d5cffc769518be956225b700789c7c5c0a6caf6bd5ef1bf4244dcfa71d",
+				"firstSeen": "2026-09-12"
+			}
+		]
+	}
+}

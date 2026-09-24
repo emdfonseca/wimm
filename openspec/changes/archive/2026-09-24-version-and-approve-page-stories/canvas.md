@@ -198,4 +198,66 @@ function returns, against the fixtures named in the table above.
 
 ## Seen
 
-Not looked at yet.
+Looked at in Chrome against the running Storybook at two widths: a window 1440
+wide, and the canvas in a 600-wide frame, since the Chrome window would not
+narrow. The four regimes are the artboards' own sizes, which this change does
+not alter. The canvas chrome has one theme; light and dark are the artboards'
+`theme`.
+
+Screen view is Pages/Overview; flow view is See where the money is unless named.
+The flow views of `changed`, `approved-by-two`, `history`, `history-long` and
+`missing` were opened and their words read from the page rather than looked at.
+
+- `approved`: screen, light, and flow, dark. Every badge one line with a tick,
+  every flow reads `Approved`, `Needs approval (0)`.
+- `approved-by-two`: screen and flow. `Approved 964f836 · 21 Sep 2026 by
+  Emanuel and Grace`; the filter on shows the everything-approved sentence and
+  puts `needs=1` in the address.
+- `changed`: screen, and flow reading `0 of 14 approved · 14 changed since
+  approval`. Three lines with a dot, History on every label.
+- `never`: screen, and flow Enrol a passkey reading `0 of 6 approved · 6 never
+  approved`. Two lines with a ring.
+- `never-some`: screen, sidebar open and closed, and flow Sign in reading `5 of
+  6 approved · 1 never approved`.
+- `mixed`: screen, light, measured with every artboard level whatever its
+  badge's length, and flow with the filter on, reading `9 of 14
+  approved · 3 changed since approval · 2 never approved`.
+- `history`: screen, dark, the panel listing three versions with marks,
+  approvers, notes, the command, Copy and Close; flow reading `0 of 14 approved
+  · 1 changed since approval · 13 never approved`.
+- `history-long`: screen, dark. The panel stays inside the window and scrolls;
+  the command, Copy and Close are reached by scrolling it. Flow as `history`.
+- `missing`: screen and flow. Every artboard draws, no badge, no filter, and
+  the status bar reads the unreadable sentence.
+
+At 600 wide:
+
+- `approved`: screen. Tick badge, every flow `Approved`, `Needs approval (0)`.
+- `approved-by-two`: flow. Tick badge `Approved 964f836 · 21 Sep 2026 by ...`,
+  running past the frame's edge as every label does.
+- `changed`: flow. Three-line badge with a dot; each sidebar flow count wraps
+  to two lines and stays readable.
+- `never`: screen, sidebar closed. Two-line badge with a ring.
+- `never-some`: flow Sign in reading `5 of 6 approved · 1 never approved`.
+- `mixed`: screen and flow with the filter on, `Needs approval (30)`.
+- `history`: screen, dark, the panel open with three versions, notes, the
+  command, Copy and Close, all inside the frame.
+- `history-long`: screen, the panel inside the frame and scrolling.
+- `missing`: screen. The status bar wraps to three lines and the find box sits
+  below it.
+
+Changed after looking:
+
+- A one-line or two-line badge filled three lines of tint. The badge still
+  takes three lines of room so artboards in a row stay level, but the tint now
+  covers only its lines (`canvas.css`).
+- Every sidebar link dropped `data` and `needs`, so leaving a screen for a flow
+  left the fixture and the filter. `screenUrl` and `flowUrl` carry both, and
+  turning the filter on or off readdresses the sidebar's links (`lib.js`,
+  `canvas.js`, one unit test).
+- At 600 wide the status bar wraps after load and covered the top of the find
+  box, because its height was measured once. It is now watched with a
+  `ResizeObserver` (`canvas.js`).
+- At 600 wide the history panel opened at its button's left edge, which is past
+  the window's right edge on a long label, so the panel was off screen. It is
+  now kept inside the window (`approvals-ui.js`, one browser test).

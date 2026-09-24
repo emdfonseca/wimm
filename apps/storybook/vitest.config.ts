@@ -1,8 +1,28 @@
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { playwright } from '@vitest/browser-playwright';
-import { resolve } from 'node:path';
+import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import { defineConfig } from 'vitest/config';
+import { RUN_FILE } from './canvas/lib.js';
+
+const runFile = resolve(import.meta.dirname, RUN_FILE);
+
+/**
+ * The run file the page versions are written from: emptied when a run starts,
+ * given one line per page story by the `recordPageVersion` command, and closed
+ * with whether the run as a whole passed.
+ */
+const runRecorder = {
+	onTestRunStart() {
+		mkdirSync(dirname(runFile), { recursive: true });
+		writeFileSync(runFile, '');
+	},
+	onTestRunEnd(_modules: unknown, errors: readonly unknown[], reason: string) {
+		const run = reason === 'passed' && errors.length === 0 ? 'passed' : 'failed';
+		appendFileSync(runFile, `${JSON.stringify({ run })}\n`);
+	}
+};
 
 /**
  * Stories run as tests. The play functions are the component assertions
@@ -19,6 +39,7 @@ export default defineConfig({
 	// root, so the browser cannot fetch them until the workspace root is allowed.
 	server: { fs: { allow: [resolve(import.meta.dirname, '../..')] } },
 	test: {
+		reporters: ['default', runRecorder],
 		projects: [
 			// Pure functions for the design canvas page, which has no DOM of its
 			// own worth a browser: node is enough and far faster.
@@ -26,7 +47,7 @@ export default defineConfig({
 				test: {
 					name: 'unit',
 					environment: 'node',
-					include: ['canvas/**/*.test.js'],
+					include: ['canvas/**/*.test.js', 'scripts/**/*.test.js'],
 					exclude: ['canvas/**/*.browser.test.js']
 				}
 			},
@@ -70,7 +91,12 @@ export default defineConfig({
 						enabled: true,
 						headless: true,
 						provider: playwright(),
-						instances: [{ browser: 'chromium' }]
+						instances: [{ browser: 'chromium' }],
+						commands: {
+							recordPageVersion(_context, id: string, digest: string) {
+								appendFileSync(runFile, `${JSON.stringify({ id, digest })}\n`);
+							}
+						}
 					}
 				}
 			}

@@ -1157,3 +1157,29 @@ row can turn an unpaired row into a pair.
 counted.** It is a likely transfer to an account wimm does not hold, and leaving
 it out would change what money out means. On the household's ledger there is one,
 €160.80.
+
+## 0027 · Page stories are versioned by what they render, and only a person approves one — Accepted
+
+A page story's version is a fingerprint: sha256 of the normalised markup of the
+story's root, taken after its play function, plus one digest of `tokens.css`,
+`base.css`, `fonts.css` and the font files. In the headless run the Storybook app hashes each component's CSS into its scoped
+class (`compilerOptions.cssHash`), so a style change moves the markup; dev keeps
+the file-name hash and its hot reload. One version covers a story at every size.
+
+The headless run records a digest per page story. `apps/storybook/scripts/
+versions.mjs` validates the run, then writes `apps/storybook/canvas/versions.json`:
+the implemented version, and each earlier version only if an approval names it.
+`just gen` and `just check` both write it; a check never fails because the file
+was out of date, so a visible change never fails CI.
+
+An approval is one line of `apps/storybook/canvas/approvals.jsonl`: story,
+fingerprint, name, email, time, note. `just approve <story> [note]` is the only
+writer. It refuses inside an agent session (`CLAUDECODE`,
+`CLAUDE_CODE_ENTRYPOINT`) and without a terminal, regenerates first and refuses
+if the implemented version moved, asks for `yes`, and appends. `just check`
+validates every line and requires the file at `HEAD` (and at the merge base with
+`origin/main`, where reachable) to be a byte prefix of the file on disk.
+`CLAUDE.md` forbids an agent from running the command or writing the file.
+
+Seen in `canvas.md` still says what a change looked at. An approval is the
+standing record against a version.

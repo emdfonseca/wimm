@@ -6,6 +6,7 @@ import '@wimm/ui/base.css';
 import { DENSITY_KEY, THEME_KEY } from '@wimm/ui';
 
 import ShellDecorator from './ShellDecorator.svelte';
+import { normaliseMarkup, sha256Hex } from '../canvas/lib.js';
 import { viewportOptions } from '../canvas/viewports.js';
 
 /**
@@ -64,6 +65,16 @@ const preview: Preview = {
 	beforeEach() {
 		localStorage.removeItem(THEME_KEY);
 		localStorage.removeItem(DENSITY_KEY);
+	},
+
+	// Under vitest only (its mode is `test`), and only for page stories: what the story rendered, after
+	// its play function, goes to the run file the versions are written from.
+	async afterEach({ id, title, canvasElement }) {
+		if (import.meta.env.MODE !== 'test' || !title.startsWith('Pages/')) return;
+		const { commands } = await import('vitest/browser');
+		const digest = await sha256Hex(normaliseMarkup(canvasElement.outerHTML));
+		await (commands as unknown as Record<string, (...args: unknown[]) => Promise<void>>)
+			.recordPageVersion!(id, digest);
 	},
 
 	decorators: [
