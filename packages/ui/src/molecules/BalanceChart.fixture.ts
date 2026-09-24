@@ -42,7 +42,9 @@ const days: Record<string, Partial<BalancePoint>> = {
 			mover('Pingo Doce', '−€92.40'),
 			mover('Farmácia Central', '−€41.20'),
 			mover('Galp', '−€38.00'),
-			mover('Zara', '−€27.50'),
+			// Two rides at the same fare: same name, same amount. DayMovers keeps
+			// both (ADR 0025), so the popover must too.
+			mover('Uber', '−€15.50'),
 			mover('Uber', '−€15.50')
 		],
 		smaller: 'and 7 smaller',

@@ -212,7 +212,7 @@
 						{#if point.change}
 							<span class="pop-change">{point.change}</span>
 						{/if}
-						{#each point.movers ?? [] as mover (mover.name + mover.amount)}
+						{#each point.movers ?? [] as mover, i (mover.name + mover.amount + i)}
 							<span class="mover">
 								<span class="mover-name">{mover.name}</span>
 								<span class="mover-amount">{mover.amount}</span>

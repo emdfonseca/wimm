@@ -215,6 +215,9 @@
 		const pop = popover(canvasElement)!;
 		await expect(pop.querySelectorAll('.mover')).toHaveLength(5);
 		await expect(within(pop).getByText('and 7 smaller')).toBeInTheDocument();
+		// Two movers share a name and an amount. A keyed each on that pair alone
+		// throws (Svelte's each_key_duplicate); both must still render.
+		await expect(within(pop).getAllByText('Uber')).toHaveLength(2);
 	}}
 />
 
