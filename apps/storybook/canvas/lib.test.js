@@ -703,7 +703,7 @@ describe('approvalProblems', () => {
 	const record = (over = {}) => ({
 		story: 'pages-overview--populated',
 		fingerprint: FP,
-		name: 'Emanuel Fonseca',
+		name: 'Ada Lovelace',
 		email: 'e@example.com',
 		at: '2026-09-20T18:04:11Z',
 		note: '',
@@ -790,11 +790,11 @@ describe('the status of a page story', () => {
 		at,
 		note
 	});
-	const emanuel = (f, at = '2026-09-20T18:04:11Z') => by('Emanuel Fonseca', 'e@x', f, at);
+	const ada = (f, at = '2026-09-20T18:04:11Z') => by('Ada Lovelace', 'e@x', f, at);
 	const grace = (f, at = '2026-09-21T09:00:00Z') => by('Grace Hopper', 'g@x', f, at);
 
 	it('is approved when the approved version is the implemented one', () => {
-		const got = statusOf(entry, [emanuel(fp('a'))], 'state');
+		const got = statusOf(entry, [ada(fp('a'))], 'state');
 		expect(got.status).toBe('approved');
 		expect(got.implemented?.fingerprint).toBe(fp('a'));
 		expect(got.approved?.fingerprint).toBe(fp('a'));
@@ -802,7 +802,7 @@ describe('the status of a page story', () => {
 	});
 
 	it('is changed when only an earlier version was approved, and carries both versions', () => {
-		const got = statusOf(entry, [emanuel(fp('b'), '2026-09-12T10:00:00Z')], 'state');
+		const got = statusOf(entry, [ada(fp('b'), '2026-09-12T10:00:00Z')], 'state');
 		expect(got.status).toBe('changed');
 		expect(got.implemented?.fingerprint).toBe(fp('a'));
 		expect(got.approved?.fingerprint).toBe(fp('b'));
@@ -818,7 +818,7 @@ describe('the status of a page story', () => {
 
 	it('is exempt for a behaviour story, whatever was approved', () => {
 		expect(statusOf(entry, [], 'behaviour').status).toBe('exempt');
-		expect(statusOf(entry, [emanuel(fp('a'))], 'behaviour').status).toBe('exempt');
+		expect(statusOf(entry, [ada(fp('a'))], 'behaviour').status).toBe('exempt');
 		expect(statusOf(entry, [], 'behaviour').implemented?.fingerprint).toBe(fp('a'));
 	});
 
@@ -827,15 +827,15 @@ describe('the status of a page story', () => {
 	});
 
 	it('takes the newest approved version as the approved one', () => {
-		const got = statusOf(entry, [emanuel(fp('b'))], 'state');
+		const got = statusOf(entry, [ada(fp('b'))], 'state');
 		expect(got.approved?.fingerprint).toBe(fp('b'));
-		const both = statusOf(entry, [emanuel(fp('b')), emanuel(fp('a'))], 'state');
+		const both = statusOf(entry, [ada(fp('b')), ada(fp('a'))], 'state');
 		expect(both.approved?.fingerprint).toBe(fp('a'));
 	});
 
 	it('lists approvals oldest first', () => {
-		const got = statusOf(entry, [grace(fp('a')), emanuel(fp('a'))], 'state');
-		expect(got.approved?.approvals.map((a) => a.name)).toEqual(['Emanuel Fonseca', 'Grace Hopper']);
+		const got = statusOf(entry, [grace(fp('a')), ada(fp('a'))], 'state');
+		expect(got.approved?.approvals.map((a) => a.name)).toEqual(['Ada Lovelace', 'Grace Hopper']);
 	});
 
 	it('needs approval when changed or never approved, and not otherwise', () => {
@@ -846,27 +846,27 @@ describe('the status of a page story', () => {
 	describe('badge words', () => {
 		const words = (approvals, kind = 'state') => badgeWords(statusOf(entry, approvals, kind));
 		it('approved, one version, one person', () => {
-			expect(words([emanuel(fp('a'))])).toEqual(['Approved aaaaaaa · 20 Sep 2026 by Emanuel']);
+			expect(words([ada(fp('a'))])).toEqual(['Approved aaaaaaa · 20 Sep 2026 by Ada']);
 		});
 		it('approved by two, dated by the later approval', () => {
-			expect(words([emanuel(fp('a')), grace(fp('a'))])).toEqual([
-				'Approved aaaaaaa · 21 Sep 2026 by Emanuel and Grace'
+			expect(words([ada(fp('a')), grace(fp('a'))])).toEqual([
+				'Approved aaaaaaa · 21 Sep 2026 by Ada and Grace'
 			]);
 		});
 		it('approved by three or more', () => {
 			const third = by('Ada Lovelace', 'a@x', fp('a'), '2026-09-22T09:00:00Z');
-			expect(words([emanuel(fp('a')), grace(fp('a')), third])).toEqual([
-				'Approved aaaaaaa · 22 Sep 2026 by Emanuel, Grace and 1 other'
+			expect(words([ada(fp('a')), grace(fp('a')), third])).toEqual([
+				'Approved aaaaaaa · 22 Sep 2026 by Ada, Grace and 1 other'
 			]);
 			const fourth = by('Alan Turing', 't@x', fp('a'), '2026-09-23T09:00:00Z');
-			expect(words([emanuel(fp('a')), grace(fp('a')), third, fourth])[0]).toContain(
-				'Emanuel, Grace and 2 others'
+			expect(words([ada(fp('a')), grace(fp('a')), third, fourth])[0]).toContain(
+				'Ada, Grace and 2 others'
 			);
 		});
 		it('changed, both versions', () => {
-			expect(words([emanuel(fp('b'), '2026-09-12T10:00:00Z')])).toEqual([
+			expect(words([ada(fp('b'), '2026-09-12T10:00:00Z')])).toEqual([
 				'Changed since approval',
-				'Approved bbbbbbb · 12 Sep 2026 by Emanuel',
+				'Approved bbbbbbb · 12 Sep 2026 by Ada',
 				'Implemented aaaaaaa · 20 Sep 2026'
 			]);
 		});
@@ -896,16 +896,16 @@ describe('the status of a page story', () => {
 			]
 		};
 		it('marks the implemented version, the latest approved, and leaves the rest unmarked', () => {
-			const got = historyOf(three, [emanuel(fp('a')), emanuel(fp('b')), grace(fp('b'))], 'state');
+			const got = historyOf(three, [ada(fp('a')), ada(fp('b')), grace(fp('b'))], 'state');
 			expect(got.map((h) => h.mark)).toEqual([
 				'Implemented now, not approved',
 				'Latest approved',
 				''
 			]);
-			expect(got[1].approvals.map((a) => a.name)).toEqual(['Emanuel Fonseca', 'Grace Hopper']);
+			expect(got[1].approvals.map((a) => a.name)).toEqual(['Ada Lovelace', 'Grace Hopper']);
 		});
 		it('carries both marks on one entry when the implemented version is the latest approved', () => {
-			const got = historyOf(three, [emanuel(fp('c'))], 'state');
+			const got = historyOf(three, [ada(fp('c'))], 'state');
 			expect(got[0].mark).toBe('Implemented now · Latest approved');
 			expect(got).toHaveLength(3);
 		});
@@ -922,14 +922,14 @@ describe('the status of a page story', () => {
 		it('writes each version and each approval with its note', () => {
 			const got = historyOf(
 				three,
-				[by('Emanuel Fonseca', 'e@x', fp('b'), '2026-09-15T12:00:00Z', 'after the rows were tightened')],
+				[by('Ada Lovelace', 'e@x', fp('b'), '2026-09-15T12:00:00Z', 'after the rows were tightened')],
 				'state'
 			);
 			const words = historyWords({ title: 'Pages/Overview', name: 'Populated', id: 'pages-overview--populated' }, got);
 			expect(words.entries[1]).toEqual({
 				version: 'bbbbbbb · first seen 15 Sep 2026',
 				mark: 'Latest approved',
-				approvals: [{ line: 'Emanuel, 15 Sep 2026', note: 'after the rows were tightened' }]
+				approvals: [{ line: 'Ada, 15 Sep 2026', note: 'after the rows were tightened' }]
 			});
 			expect(words.nobody).toBeUndefined();
 		});
@@ -963,7 +963,7 @@ describe('the status of a page story', () => {
 		);
 		const entries = Object.fromEntries(all.map((id) => [id, { id, tags: ['kind-state'] }]));
 		const approve = (list, f) =>
-			list.map((id) => ({ ...emanuel(f), story: id }));
+			list.map((id) => ({ ...ada(f), story: id }));
 
 		it('counts approved, changed and never once each', () => {
 			const approvals = [
@@ -1016,7 +1016,7 @@ describe('the status of a page story', () => {
 	});
 
 	it('reads approvals from a record, keeping the well formed lines', () => {
-		const text = `${JSON.stringify(emanuel(fp('a')))}\nnot json\n`;
+		const text = `${JSON.stringify(ada(fp('a')))}\nnot json\n`;
 		expect(parseApprovals(text)).toHaveLength(1);
 	});
 });

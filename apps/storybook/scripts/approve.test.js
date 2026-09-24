@@ -126,7 +126,7 @@ beforeEach(() => {
 	mkdirSync(approvedDir(POPULATED), { recursive: true });
 	for (const size of SIZES) writeFileSync(approvedDir(`${POPULATED}/${OLD}-${size}.png`), `old ${size}`);
 	spawnSync('git', ['init', '-q'], { cwd: dir, env: hermetic });
-	spawnSync('git', ['config', 'user.name', 'Emanuel Fonseca'], { cwd: dir, env: hermetic });
+	spawnSync('git', ['config', 'user.name', 'Ada Lovelace'], { cwd: dir, env: hermetic });
 	spawnSync('git', ['config', 'user.email', 'e@example.com'], { cwd: dir, env: hermetic });
 });
 
@@ -207,7 +207,7 @@ describe('approving refuses, recording nothing', () => {
 	});
 
 	it('when the same person already approved that version', () => {
-		const line = `${JSON.stringify({ story: POPULATED, fingerprint: FP, name: 'Emanuel Fonseca', email: 'e@example.com', at: '2026-09-18T10:00:00Z', note: '' })}\n`;
+		const line = `${JSON.stringify({ story: POPULATED, fingerprint: FP, name: 'Ada Lovelace', email: 'e@example.com', at: '2026-09-18T10:00:00Z', note: '' })}\n`;
 		writeFileSync(at('approvals.jsonl'), line);
 		refused(approve([POPULATED]), /You approved this version on 18 Sep 2026\./);
 		expect(approvals()).toBe(line);
@@ -242,7 +242,7 @@ describe('approving as a person', () => {
 		expect(result.stdout).toContain(
 			'Approve Pages/Overview · Populated at aaaaaaa, first seen 20 Sep 2026? yes/no'
 		);
-		expect(result.stdout).toContain('Recorded. Emanuel approved pages-overview--populated at aaaaaaa.');
+		expect(result.stdout).toContain('Recorded. Ada approved pages-overview--populated at aaaaaaa.');
 		expect(result.stdout).toContain(
 			'Commit apps/storybook/canvas/approvals.jsonl and apps/storybook/canvas/approved/pages-overview--populated/ together, on their own.'
 		);
@@ -255,7 +255,7 @@ describe('approving as a person', () => {
 		expect(record).toMatchObject({
 			story: POPULATED,
 			fingerprint: FP,
-			name: 'Emanuel Fonseca',
+			name: 'Ada Lovelace',
 			email: 'e@example.com',
 			note: 'after the rows were tightened'
 		});
@@ -267,7 +267,7 @@ describe('keeping pictures of the version approved', () => {
 	it('keeps one picture per size, named by the fingerprint approved', () => {
 		const result = approve([POPULATED]);
 		expect(result.status).toBe(0);
-		expect(result.stdout).toContain('Recorded. Emanuel approved pages-overview--populated at aaaaaaa.');
+		expect(result.stdout).toContain('Recorded. Ada approved pages-overview--populated at aaaaaaa.');
 		expect(result.stdout).toContain('Kept a picture at compact, medium, wide and ultra.');
 		expect(result.stdout).toContain(
 			'Commit apps/storybook/canvas/approvals.jsonl and apps/storybook/canvas/approved/pages-overview--populated/ together, on their own.'
@@ -359,7 +359,7 @@ describe('approving several page stories in one run', () => {
 		expect(result.stdout).toContain('Pages/Overview · Populated at aaaaaaa, first seen 20 Sep 2026');
 		expect(result.stdout).toContain('Pages/Overview · Empty at aaaaaaa, first seen 20 Sep 2026');
 		expect(result.stdout).toContain('Approve these 2 page stories? yes/no');
-		expect(result.stdout).toContain('Recorded. Emanuel approved 2 page stories.');
+		expect(result.stdout).toContain('Recorded. Ada approved 2 page stories.');
 		expect(result.stdout).toContain('Kept pictures of each at the sizes it is drawn at.');
 		expect(result.stdout).toContain(
 			'Commit apps/storybook/canvas/approvals.jsonl and apps/storybook/canvas/approved/ together, on their own.'

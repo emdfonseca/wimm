@@ -20,10 +20,10 @@ const entry = {
 		{ fingerprint: fp('b'), firstSeen: '2026-09-12' }
 	]
 };
-const emanuel = (fingerprint) => ({
+const ada = (fingerprint) => ({
 	story: 'pages-overview--populated',
 	fingerprint,
-	name: 'Emanuel Fonseca',
+	name: 'Ada Lovelace',
 	email: 'e@x',
 	at: '2026-09-20T18:04:11Z',
 	note: ''
@@ -152,11 +152,11 @@ describe('the badge', () => {
 	});
 
 	it('shows both versions when they differ, and one when they are the same', () => {
-		const changed = badge(document, statusOf(entry, [emanuel(fp('b'))], 'state'));
+		const changed = badge(document, statusOf(entry, [ada(fp('b'))], 'state'));
 		expect(changed.textContent).toContain('Changed since approval');
 		expect(changed.textContent).toContain('Approved bbbbbbb');
 		expect(changed.textContent).toContain('Implemented aaaaaaa');
-		const same = badge(document, statusOf(entry, [emanuel(fp('a'))], 'state'));
+		const same = badge(document, statusOf(entry, [ada(fp('a'))], 'state'));
 		expect(same.textContent).not.toContain('Implemented');
 	});
 
@@ -221,7 +221,7 @@ describe('the approved look on a changed artboard', () => {
 				{ fingerprint: approved, firstSeen: '2026-09-12' }
 			]
 		},
-		[emanuel(approved)],
+		[ada(approved)],
 		'state'
 	);
 
@@ -318,7 +318,7 @@ describe('the approved look on a changed artboard', () => {
 	it('asks for no picture on an artboard that has not changed', async () => {
 		const same = statusOf(
 			{ implemented: approved, versions: [{ fingerprint: approved, firstSeen: '2026-09-12' }] },
-			[emanuel(approved)],
+			[ada(approved)],
 			'state'
 		);
 		const { button, asked } = await mountBoard({ result: same });

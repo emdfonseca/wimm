@@ -45,7 +45,7 @@ it('a page that changed after it was approved passes the check and reads as chan
 	const approved = JSON.parse(readFileSync(at('versions.json'), 'utf8'))[STORY].implemented;
 	writeFileSync(
 		at('approvals.jsonl'),
-		`${JSON.stringify({ story: STORY, fingerprint: approved, name: 'Emanuel Fonseca', email: 'e@x.io', at: '2026-09-20T18:04:11Z', note: '' })}\n`
+		`${JSON.stringify({ story: STORY, fingerprint: approved, name: 'Ada Lovelace', email: 'e@x.io', at: '2026-09-20T18:04:11Z', note: '' })}\n`
 	);
 
 	const moved = generate('e'.repeat(64));
