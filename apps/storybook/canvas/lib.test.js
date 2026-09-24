@@ -854,7 +854,7 @@ describe('the status of a page story', () => {
 			]);
 		});
 		it('approved by three or more', () => {
-			const third = by('Ada Lovelace', 'a@x', fp('a'), '2026-09-22T09:00:00Z');
+			const third = by('Barbara Liskov', 'b@x', fp('a'), '2026-09-22T09:00:00Z');
 			expect(words([ada(fp('a')), grace(fp('a')), third])).toEqual([
 				'Approved aaaaaaa · 22 Sep 2026 by Ada, Grace and 1 other'
 			]);
