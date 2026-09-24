@@ -44,12 +44,16 @@ const { values, positionals } = parseArgs({
 		index: { type: 'string' },
 		run: { type: 'string', default: join(app, RUN_FILE) },
 		pictures: { type: 'string', default: join(app, PICTURES_DIR) },
-		approved: { type: 'string', default: join(app, 'canvas/approved') },
+		approved: { type: 'string' },
 		regenerate: { type: 'string', default: 'just gen' },
 		today: { type: 'string', default: new Date().toISOString().slice(0, 10) }
 	},
 	allowPositionals: true
 });
+
+// The pictures belong to the record they were kept with, so a record checked
+// anywhere else is checked against its own folder, not the app's.
+values.approved ??= join(dirname(values.file), 'approved');
 
 /** @param {string} line */
 const say = (line) => process.stdout.write(`${line}\n`);
