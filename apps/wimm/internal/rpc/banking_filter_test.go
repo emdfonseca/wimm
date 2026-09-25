@@ -12,16 +12,16 @@ import (
 
 	"connectrpc.com/connect"
 
-	bankingv1 "github.com/xuuid/wimm/packages/contracts/gen/go/wimm/banking/v1"
-	"github.com/xuuid/wimm/packages/contracts/gen/go/wimm/banking/v1/bankingv1connect"
+	bankingv1 "github.com/emdfonseca/wimm/packages/contracts/gen/go/wimm/banking/v1"
+	"github.com/emdfonseca/wimm/packages/contracts/gen/go/wimm/banking/v1/bankingv1connect"
 
-	"github.com/xuuid/wimm/apps/wimm/internal/banking"
-	"github.com/xuuid/wimm/apps/wimm/internal/banking/bankingtest"
-	"github.com/xuuid/wimm/apps/wimm/internal/config"
-	"github.com/xuuid/wimm/apps/wimm/internal/identity"
-	"github.com/xuuid/wimm/apps/wimm/internal/rpc"
-	"github.com/xuuid/wimm/apps/wimm/internal/store"
-	"github.com/xuuid/wimm/apps/wimm/internal/store/storetest"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/banking/bankingtest"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/config"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/identity"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/rpc"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store/storetest"
 )
 
 const sessionValue = "session-value-under-test"
