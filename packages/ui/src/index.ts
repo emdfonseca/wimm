@@ -9,6 +9,8 @@ export { default as Button } from './atoms/Button.svelte';
 export { default as Notice } from './atoms/Notice.svelte';
 export { default as SegmentedControl } from './atoms/SegmentedControl.svelte';
 export { default as NavigationProgress } from './atoms/NavigationProgress.svelte';
+export { default as SearchField } from './atoms/SearchField.svelte';
+export { default as SelectField } from './atoms/SelectField.svelte';
 
 // Molecules
 export { default as EmptyState } from './molecules/EmptyState.svelte';
@@ -25,13 +27,23 @@ export { default as DisconnectBankDialog } from './molecules/DisconnectBankDialo
 export { default as LeftOutDialog, type Grantee } from './molecules/LeftOutDialog.svelte';
 export { default as LedgerRow } from './molecules/LedgerRow.svelte';
 export { default as MetricTile, type Delta } from './molecules/MetricTile.svelte';
-export { default as BalanceChart, type BalancePoint, type BalanceMover } from './molecules/BalanceChart.svelte';
+export {
+	default as BalanceChart,
+	type BalancePoint,
+	type BalanceMover
+} from './molecules/BalanceChart.svelte';
 export { default as BudgetMeter } from './molecules/BudgetMeter.svelte';
 export { default as TrendSparkline } from './molecules/TrendSparkline.svelte';
 export { default as SeekPager } from './molecules/SeekPager.svelte';
 export { default as StepIndicator } from './molecules/StepIndicator.svelte';
 export { default as StepActions } from './molecules/StepActions.svelte';
 export { default as PageScrubber, type ScrubberPage } from './molecules/PageScrubber.svelte';
+export {
+	default as LedgerFilters,
+	filtersInForce,
+	type LedgerFilterValues,
+	type FilterOption
+} from './molecules/LedgerFilters.svelte';
 export {
 	default as DensityControl,
 	applyDensity,
@@ -72,7 +84,8 @@ export type {
 	LedgerEntry,
 	LedgerDay,
 	NarrowBank,
-	LedgerProblem
+	LedgerProblem,
+	LedgerFigures
 } from './pages/TransactionsScreen.svelte';
 export type {
 	OverviewAccount,

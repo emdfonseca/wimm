@@ -21,7 +21,12 @@
 		| 'wallet'
 		| 'landmark'
 		| 'arrow-up-right'
-		| 'arrow-down-right';
+		| 'arrow-down-right'
+		| 'chevron-down'
+		| 'x'
+		| 'search'
+		| 'sliders-horizontal'
+		| 'info';
 
 	interface Props {
 		name: Name;
@@ -30,10 +35,12 @@
 
 	let { name, size = 16 }: Props = $props();
 
-	// settings is the one glyph lucide draws with a circle rather than only
-	// paths, so it is kept separately instead of forcing a circle into a path.
+	// Some glyphs lucide draws with a circle rather than only paths, so the
+	// circle is kept separately instead of forcing it into a path.
 	const circles: Partial<Record<Name, { cx: number; cy: number; r: number }>> = {
-		settings: { cx: 12, cy: 12, r: 3 }
+		settings: { cx: 12, cy: 12, r: 3 },
+		search: { cx: 11, cy: 11, r: 8 },
+		info: { cx: 12, cy: 12, r: 10 }
 	};
 
 	const paths: Record<Name, string[]> = {
@@ -81,7 +88,22 @@
 			'M6 18v-7'
 		],
 		'arrow-up-right': ['M7 7h10v10', 'M7 17 17 7'],
-		'arrow-down-right': ['m7 7 10 10', 'M17 7v10H7']
+		'arrow-down-right': ['m7 7 10 10', 'M17 7v10H7'],
+		'chevron-down': ['m6 9 6 6 6-6'],
+		x: ['M18 6 6 18', 'm6 6 12 12'],
+		search: ['m21 21-4.34-4.34'],
+		'sliders-horizontal': [
+			'M10 5H3',
+			'M12 19H3',
+			'M14 3v4',
+			'M16 17v4',
+			'M21 12h-9',
+			'M21 19h-5',
+			'M21 5h-7',
+			'M8 10v4',
+			'M8 12H3'
+		],
+		info: ['M12 16v-4', 'M12 8h.01']
 	};
 
 	const circle = $derived(circles[name]);

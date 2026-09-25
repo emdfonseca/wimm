@@ -1,20 +1,31 @@
-import type { Cookies, ServerLoad } from '@sveltejs/kit';
-import type { LedgerDay, LedgerProblem, NarrowBank, ScrubberPage } from '@wimm/ui';
+import { redirect, type Cookies, type ServerLoad } from '@sveltejs/kit';
+import type {
+	FilterOption,
+	LedgerDay,
+	LedgerFilterValues,
+	LedgerProblem,
+	NarrowBank,
+	ScrubberPage
+} from '@wimm/ui';
 import {
 	Failure,
+	LedgerDirection,
 	TransactionStatus,
 	type Ledger,
 	type PageMarker,
 	type NarrowConnection,
+	type FilterAccount,
 	type BankFailure,
 	type Transaction
 } from '@wimm/contracts/banking';
 import { banking } from '$lib/server/banking';
 import { call } from '$lib/server/call';
 import { formatMoney, isNegative } from '$lib/money';
+import { filterParams, readFilters, without } from './filters';
 
 /**
- * J07 · Transactions. The ledger, and the same page narrowed to one account.
+ * J07 · Transactions. The ledger, and the same page narrowed by its filters:
+ * an account, a search, a month and a direction, each carried in the address.
  *
  * Paging is a route change rather than a control that mutates in place, so Back
  * works and a page is somewhere a member can return to. The cursor is the sort
@@ -37,17 +48,33 @@ export const load: ServerLoad = async ({ cookies, depends, url }) => {
 	// which is a second round trip for an answer that has not changed.
 	depends('wimm:ledger');
 
-	const accountId = url.searchParams.get('account') ?? '';
+	// A filter wimm cannot use is dropped from the address before anything is
+	// asked, so the address always says what is on screen.
+	const { filters, dropped } = readFilters(url.searchParams);
+	if (dropped.length > 0) redirect(303, without(url, dropped));
+
 	const before = url.searchParams.get('before') ?? '';
 	const after = url.searchParams.get('after') ?? '';
 	const oldest = url.searchParams.get('oldest') === '1';
 	const page = url.searchParams.get('page') ?? '';
+	const query = { filters, before, after, oldest, page };
 
-	const ledger = await read(cookies, { accountId, before, after, oldest, page });
+	const { ledger, noBank } = await read(cookies, query);
+
+	// An account the member cannot narrow to — a stranger's, a left-out one, or
+	// none at all — is dropped the same way in every case, so the address never
+	// says which it was.
+	if (
+		ledger &&
+		filters.account &&
+		!ledger.filterAccounts.some((a) => a.accountId === filters.account)
+	) {
+		redirect(303, without(url, ['account']));
+	}
 
 	return {
-		...ledger,
-		accountId: accountId || undefined,
+		...present(ledger, query, noBank),
+		accountId: filters.account || undefined,
 		// Only the newest page brings itself up to date, and only when nothing
 		// else named where to start reading — a jump is a member asking to be
 		// somewhere specific, not an arrival at the newest page.
@@ -56,7 +83,7 @@ export const load: ServerLoad = async ({ cookies, depends, url }) => {
 };
 
 interface Query {
-	accountId: string;
+	filters: LedgerFilterValues;
 	before: string;
 	after: string;
 	oldest: boolean;
@@ -70,7 +97,10 @@ interface Query {
  * Banking is optional: an instance with no gateway configured answers
  * Unimplemented, and the screen shows its empty state rather than an error.
  */
-async function read(cookies: Cookies, query: Query) {
+async function read(
+	cookies: Cookies,
+	query: Query
+): Promise<{ ledger: Ledger | undefined; noBank: boolean }> {
 	try {
 		// Cursor, oldest and page are mutually exclusive ways to say where to
 		// start reading, and a cursor wins if somehow more than one arrived —
@@ -81,7 +111,10 @@ async function read(cookies: Cookies, query: Query) {
 			call(cookies, (options) =>
 				banking.listTransactions(
 					{
-						accountId: query.accountId,
+						accountId: query.filters.account,
+						search: query.filters.q,
+						month: query.filters.month,
+						direction: directionOf(query.filters.direction),
 						cursor,
 						older: query.before !== '',
 						oldest: !cursor && query.oldest,
@@ -99,10 +132,16 @@ async function read(cookies: Cookies, query: Query) {
 			// something about. Reads nothing from the banks.
 			call(cookies, (options) => banking.listAccounts({ skipRead: true }, options))
 		]);
-		return present(response.ledger, query, accounts.accounts.length === 0);
+		return { ledger: response.ledger, noBank: accounts.accounts.length === 0 };
 	} catch {
-		return present(undefined, query, true);
+		return { ledger: undefined, noBank: true };
 	}
+}
+
+function directionOf(direction: LedgerFilterValues['direction']): LedgerDirection {
+	if (direction === 'in') return LedgerDirection.IN;
+	if (direction === 'out') return LedgerDirection.OUT;
+	return LedgerDirection.UNSPECIFIED;
 }
 
 /**
@@ -127,11 +166,10 @@ function parseCursor(raw: string) {
 
 function present(ledger: Ledger | undefined, query: Query, noBank: boolean) {
 	const transactions = ledger?.transactions ?? [];
-	const filter = query.accountId ? transactions[0]?.accountName : undefined;
 
+	// Every link that moves through the list carries every filter.
 	const paramsFor = (extra: Record<string, string>) => {
-		const params = new URLSearchParams();
-		if (query.accountId) params.set('account', query.accountId);
+		const params = filterParams(query.filters);
 		for (const [key, value] of Object.entries(extra)) params.set(key, value);
 		return params;
 	};
@@ -143,10 +181,13 @@ function present(ledger: Ledger | undefined, query: Query, noBank: boolean) {
 		span: spanOf(ledger),
 		// Only said on a page that has reached the end, and only once something
 		// has been read: before the first read wimm knows no date to reach to.
-		atOldest: Boolean(ledger && !ledger.hasOlder && transactions.length > 0 && ledger.reachesBackTo),
-		filterAccount: query.accountId
-			? `${filter ?? 'this account'}${bankOf(transactions[0])}`
-			: undefined,
+		atOldest: Boolean(
+			ledger && !ledger.hasOlder && transactions.length > 0 && ledger.reachesBackTo
+		),
+		filters: query.filters,
+		accounts: accountsFrom(ledger),
+		months: monthsFrom(ledger, query.filters.month),
+		clearHref: '/transactions',
 		narrow: narrowFrom(ledger),
 		problems: problemsFrom(ledger),
 		// A member who can see nothing at all is in a household with no bank; one
@@ -194,8 +235,34 @@ function currentPageKey(ledger: Ledger | undefined): string | undefined {
 	return match ? cursorKey(match.cursor) : undefined;
 }
 
-function bankOf(transaction: Transaction | undefined): string {
-	return transaction?.bankName ? ` · ${transaction.bankName}` : '';
+function accountsFrom(ledger: Ledger | undefined): FilterOption[] {
+	return (ledger?.filterAccounts ?? []).map((a: FilterAccount) => ({
+		value: a.accountId,
+		label: a.bankName ? `${a.name} · ${a.bankName}` : a.name
+	}));
+}
+
+/**
+ * The months offered, newest first, named as `August 2026` in UTC like every
+ * booking day. A chosen month is always offered, even where the other filters
+ * leave nothing in it, so the member can see it and remove it.
+ */
+function monthsFrom(ledger: Ledger | undefined, chosen: string): FilterOption[] {
+	const months = new Set(ledger?.months ?? []);
+	if (chosen) months.add(chosen);
+	return [...months]
+		.sort((a, b) => b.localeCompare(a))
+		.map((value) => {
+			const [year, month] = value.split('-').map(Number);
+			return {
+				value,
+				label: new Date(Date.UTC(year!, month! - 1, 1)).toLocaleDateString('en-GB', {
+					month: 'long',
+					year: 'numeric',
+					timeZone: 'UTC'
+				})
+			};
+		});
 }
 
 /**

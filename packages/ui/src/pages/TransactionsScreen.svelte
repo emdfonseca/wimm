@@ -67,6 +67,13 @@
 		return long({ day: 'numeric', month: 'long', year: 'numeric' });
 	}
 
+	/** What a filtered list adds up to in one currency, already written with
+	 *  its sign: `+€2,180.00`, `−€1,204.55`. */
+	export interface LedgerFigures {
+		moneyIn: string;
+		moneyOut: string;
+	}
+
 	/** A bank connected before wimm could read transactions. */
 	export interface NarrowBank {
 		connectionId: string;
@@ -94,12 +101,18 @@
 
 <script lang="ts">
 	import Button from '../atoms/Button.svelte';
+	import Icon from '../atoms/Icon.svelte';
 	import EmptyState from '../molecules/EmptyState.svelte';
 	import ErrorNotice from '../molecules/ErrorNotice.svelte';
 	import InfoNotice from '../molecules/InfoNotice.svelte';
 	import LedgerRow from '../molecules/LedgerRow.svelte';
 	import SeekPager from '../molecules/SeekPager.svelte';
 	import PageScrubber, { type ScrubberPage } from '../molecules/PageScrubber.svelte';
+	import LedgerFilters, {
+		filtersInForce,
+		type FilterOption,
+		type LedgerFilterValues
+	} from '../molecules/LedgerFilters.svelte';
 	import Page from '../templates/Page.svelte';
 
 	interface Props {
@@ -129,10 +142,25 @@
 		/** Where jumping to the oldest page goes. Absent on the oldest page. */
 		oldestHref?: string;
 
-		/** The account the list is narrowed to, named on screen. */
-		filterAccount?: string;
-		/** Where removing the narrowing goes. */
-		showAllHref?: string;
+		/** The filters in force. The account select names the account the list
+		 *  is narrowed to; a filtered list is the same screen, not another. */
+		filters?: LedgerFilterValues;
+		/** Every account the member can narrow to, as `Savings · Monzo`. */
+		accounts?: FilterOption[];
+		/** The months holding a match, newest first, as `August 2026`. */
+		months?: FilterOption[];
+		/** Where Clear filters and Show all accounts go. */
+		clearHref?: string;
+		/** What the filtered list adds up to, one entry per currency. Shown only
+		 *  while a filter is in force and rows match. */
+		totals?: LedgerFigures[];
+		/** Transfers between the member's accounts the totals leave out. */
+		transfersLeftOut?: number;
+		/** Matching rows the totals do not count because they are not settled. */
+		notSettled?: number;
+		/** A filter changed; `live` when a pause in typing applied a search.
+		 *  Absent, the filter bar submits as a plain GET. */
+		onfilter?: (next: LedgerFilterValues, how: { live: boolean }) => void;
 
 		narrow?: NarrowBank[];
 		problems?: LedgerProblem[];
@@ -167,8 +195,14 @@
 		currentPage = null,
 		newestHref,
 		oldestHref,
-		filterAccount,
-		showAllHref = '/transactions',
+		filters = { account: '', q: '', month: '', direction: '' },
+		accounts = [],
+		months = [],
+		clearHref = '/transactions',
+		totals = [],
+		transfersLeftOut = 0,
+		notSettled = 0,
+		onfilter,
 		narrow = [],
 		problems = [],
 		noBank = false,
@@ -197,12 +231,23 @@
 	const compact = $derived(compactProp ?? autoCompact);
 
 	const hasRows = $derived(days.some((day) => day.entries.length > 0));
+	const inForce = $derived(filtersInForce(filters));
+	/** Only the account is in force: an empty list then says that account has
+	 *  nothing, which is a different sentence from nothing matching. */
+	const accountOnly = $derived(
+		filters.account !== '' && filters.q === '' && filters.month === '' && filters.direction === ''
+	);
+	const accountLabel = $derived(
+		accounts.find((a) => a.value === filters.account)?.label ?? 'This account'
+	);
 
 	/** The reasons for having nothing differ and must not be collapsed into one
 	 *  empty list: each says which thing the member can do about it. */
 	const emptyReason = $derived.by(() => {
 		if (noBank) return 'no-bank' as const;
 		if (ownsNothing) return 'owns-nothing' as const;
+		// Rows are held behind the filters, so nothing here is about a bank.
+		if (inForce) return 'no-match' as const;
 		if (narrow.length > 0) return 'narrow' as const;
 		// A sync running with nothing stored is the first read. The member is
 		// told the list fills as the bank answers rather than being shown an
@@ -211,17 +256,45 @@
 		return 'nothing-read' as const;
 	});
 
-	const heading = $derived(
-		filterAccount ? 'Newest first.' : 'Every account you own, newest first.'
+	/** The note under the totals is there for checking the figures, not for
+	 *  reading every time: it opens on asking. */
+	let noteOpen = $state(false);
+
+	/** What the totals do not count, said so the sum can be checked against
+	 *  the rows. Settled money only, and a transfer between two of the
+	 *  member's accounts moves nothing, as on Overview. */
+	const totalsNote = $derived(
+		[
+			transfersLeftOut > 0
+				? `Leaves out ${transfersLeftOut} ${transfersLeftOut === 1 ? 'transfer' : 'transfers'} between your accounts.`
+				: '',
+			notSettled > 0
+				? `Does not count ${notSettled} ${notSettled === 1 ? 'payment' : 'payments'} not yet settled.`
+				: ''
+		]
+			.filter(Boolean)
+			.join(' ')
+	);
+
+	/** Nothing to filter where there is no bank or no account of their own. */
+	const showFilters = $derived(!noBank && !ownsNothing && (hasRows || inForce));
+
+	const noMatchTitle = $derived(
+		accountOnly ? `${accountLabel} has no transactions` : 'Nothing matches these filters'
 	);
 
 	/** The bank whose transactions are not being read yet, for the empty state
 	 *  that names it. */
 	const narrowBank = $derived(narrow[0]?.bankName ?? '');
 
-	const nothingOlder = $derived(
-		atOldest ? 'Nothing older. This is as far back as the bank would go.' : undefined
-	);
+	// The account alone narrows what the bank sent, so its oldest row is still
+	// as far back as the bank would go. Any other filter ends before that.
+	const nothingOlder = $derived.by(() => {
+		if (!atOldest) return undefined;
+		return inForce && !accountOnly
+			? 'Nothing older matches these filters.'
+			: 'Nothing older. This is as far back as the bank would go.';
+	});
 
 	let listHeading = $state<HTMLElement | null>(null);
 
@@ -246,6 +319,17 @@
 			return `${unreachable.join(', ')} did not answer. Everything else is up to date.`;
 		}
 		return '';
+	});
+
+	/**
+	 * A member whose focus stayed on the filter they just changed sees nothing
+	 * move under it, so the outcome is announced, ahead of any bank that did
+	 * not answer. While a refresh runs, that is all there is to say.
+	 */
+	const status = $derived.by(() => {
+		if (refreshing || !inForce) return refreshOutcome;
+		const outcome = hasRows ? `${count} transactions` : noMatchTitle;
+		return [outcome, refreshOutcome].filter(Boolean).join('. ');
 	});
 </script>
 
@@ -286,31 +370,24 @@
 
 <Page title="Transactions">
 	{#snippet action()}
-		{#if hasRows || problems.length > 0 || refreshing}
-			<Button onclick={onrefresh} disabled={refreshing}>
-				{refreshing ? 'Refreshing…' : 'Refresh'}
-			</Button>
-		{/if}
+		<!-- How current the list is sits with the action that changes it,
+		     leaving the space above the list to the list. -->
+		<div class="header-action">
+			{#if freshness && !compact}
+				<p class="updated">{freshness}</p>
+			{/if}
+			{#if hasRows || inForce || problems.length > 0 || refreshing}
+				<Button onclick={onrefresh} disabled={refreshing}>
+					{refreshing ? 'Refreshing…' : 'Refresh'}
+				</Button>
+			{/if}
+		</div>
 	{/snippet}
 
 	<div class="screen" class:compact>
-		<div class="heading">
-			<p class="lede">{hasRows ? heading : 'Nothing to show yet.'}</p>
-			{#if compact && freshness}
-				<p class="helper">{freshness}</p>
-			{/if}
-		</div>
-
-		{#if filterAccount}
-			<!-- A filter is not containment: the account is named, there is no
-		     breadcrumb, and removing it widens the same list. -->
-			<div class="filter">
-				<span class="filter-label">Showing one account</span>
-				<span class="chip">{filterAccount}</span>
-				<a class="show-all" href={showAllHref} onclick={() => listHeading?.focus()}>
-					Show all accounts
-				</a>
-			</div>
+		<!-- A phone's header has room for the title and Refresh only. -->
+		{#if compact && freshness}
+			<p class="helper">{freshness}</p>
 		{/if}
 
 		<!-- A bank that cannot be read for transactions is an alert on that bank,
@@ -328,10 +405,36 @@
 			{@render problemNotice(problem)}
 		{/each}
 
-		<p class="sr-only" role="status" aria-live="polite">{refreshOutcome}</p>
+		<p class="sr-only" role="status" aria-live="polite">{status}</p>
+
+		<!-- A filter is not containment: the account select names the account,
+		     there is no breadcrumb, and clearing widens the same list. -->
+		{#if showFilters}
+			<LedgerFilters
+				{filters}
+				{accounts}
+				{months}
+				{clearHref}
+				{compact}
+				{onfilter}
+				offerClear={hasRows || accountOnly}
+				onclear={() => listHeading?.focus()}
+			/>
+		{/if}
 
 		{#if !hasRows}
-			{#if emptyReason === 'no-bank'}
+			{#if emptyReason === 'no-match'}
+				<EmptyState title={noMatchTitle} elevated>
+					{accountOnly
+						? 'The bank has sent none for this account.'
+						: 'Change a filter above, or clear them to see every transaction.'}
+					{#snippet action()}
+						<a class="inline-action" href={clearHref} onclick={() => listHeading?.focus()}>
+							{accountOnly ? 'Show all accounts' : 'Clear filters'}
+						</a>
+					{/snippet}
+				</EmptyState>
+			{:else if emptyReason === 'no-bank'}
 				<EmptyState title="No transactions yet" elevated>
 					Connect a bank and wimm will read what happens on your accounts. Nobody else in the
 					household sees any of it until you say so.
@@ -363,10 +466,38 @@
 					<h2 id="ledger-heading" class="count" tabindex="-1" bind:this={listHeading}>
 						{count} transactions
 					</h2>
-					{#if !compact && freshness}
-						<p class="helper">{freshness}</p>
+					<!-- What the filtered list adds up to, on the count's own line:
+					     one pair of figures per currency, never summed across them. -->
+					{#if inForce && totals.length > 0}
+						<div class="totals">
+							{#each totals as total, i (i)}
+								<p class="figures">
+									{#if filters.direction !== 'out'}
+										<span>In <span class="amount income">{total.moneyIn}</span></span>
+									{/if}
+									{#if filters.direction !== 'in'}
+										<span>Out <span class="amount expense">{total.moneyOut}</span></span>
+									{/if}
+								</p>
+							{/each}
+							{#if totalsNote}
+								<button
+									type="button"
+									class="why"
+									aria-label="What these figures leave out"
+									aria-expanded={noteOpen}
+									aria-controls="totals-note"
+									onclick={() => (noteOpen = !noteOpen)}
+								>
+									<Icon name="info" size={14} />
+								</button>
+							{/if}
+						</div>
 					{/if}
 				</div>
+				{#if totalsNote && noteOpen}
+					<p id="totals-note" class="note">{totalsNote}</p>
+				{/if}
 
 				{#if !compact}
 					<div class="columns" aria-hidden="true">
@@ -431,7 +562,7 @@
 		flex: 1;
 		flex-direction: column;
 		min-block-size: 0;
-		gap: var(--space-6);
+		gap: var(--space-4);
 		inline-size: 100%;
 		font-family: var(--type-family-body);
 	}
@@ -440,20 +571,17 @@
 		gap: var(--space-4);
 	}
 
-	.heading {
+	.header-action {
 		display: flex;
-		flex-direction: column;
-		gap: 4px;
+		align-items: center;
+		gap: var(--space-4);
 	}
 
-	.lede {
+	.updated {
 		margin: 0;
 		color: var(--color-text-secondary);
-		font-size: var(--type-size-body-md);
-	}
-
-	.compact .lede {
 		font-size: var(--type-size-body-sm);
+		text-align: end;
 	}
 
 	.helper {
@@ -462,34 +590,6 @@
 		font-size: var(--type-size-body-sm);
 	}
 
-	.filter {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		inline-size: 100%;
-		flex-wrap: wrap;
-	}
-
-	.filter-label {
-		color: var(--color-text-secondary);
-		font-size: var(--type-size-body-sm);
-	}
-
-	/* The chip names the account and is not itself interactive. */
-	.chip {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		block-size: 26px;
-		padding-inline: 12px;
-		border-radius: var(--radius-pill);
-		background: var(--color-bg-subtle);
-		color: var(--color-text-primary);
-		font-size: 12px;
-		font-weight: 500;
-	}
-
-	.show-all,
 	.inline-action {
 		color: var(--color-accent);
 		font-size: var(--type-size-body-sm);
@@ -497,7 +597,6 @@
 		text-decoration: none;
 	}
 
-	.show-all:focus-visible,
 	.inline-action:focus-visible {
 		outline: var(--focus-ring-width) solid var(--color-focus-ring);
 		outline-offset: var(--focus-ring-offset);
@@ -530,9 +629,11 @@
 
 	.toolbar {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
-		gap: 12px;
-		block-size: 48px;
+		gap: 4px 12px;
+		min-block-size: 48px;
+		padding-block: 8px;
 		padding-inline: var(--density-cell-padding-x);
 	}
 
@@ -551,6 +652,67 @@
 		align-items: stretch;
 		justify-content: center;
 		block-size: 92px;
+	}
+
+	.totals {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 2px var(--space-4);
+	}
+
+	.figures {
+		display: flex;
+		gap: var(--space-3);
+		margin: 0;
+		color: var(--color-text-secondary);
+		font-size: var(--type-size-body-sm);
+		white-space: nowrap;
+	}
+
+	.why {
+		display: grid;
+		place-items: center;
+		inline-size: 24px;
+		block-size: 24px;
+		padding: 0;
+		border: 0;
+		border-radius: var(--radius-sm);
+		background: none;
+		color: var(--color-text-secondary);
+		cursor: pointer;
+	}
+
+	.why:hover {
+		background: var(--color-bg-hover);
+		color: var(--color-text-primary);
+	}
+
+	.why:focus-visible {
+		outline: var(--focus-ring-width) solid var(--focus-ring-color);
+		outline-offset: var(--focus-ring-offset);
+	}
+
+	.note {
+		margin: 0;
+		padding: 0 var(--density-cell-padding-x) var(--space-3);
+		color: var(--color-text-secondary);
+		font-size: var(--type-size-body-sm);
+		text-align: end;
+	}
+
+	.amount {
+		font-family: var(--type-family-mono);
+		font-weight: 500;
+	}
+
+	.income {
+		color: var(--color-amount-income);
+	}
+
+	.expense {
+		color: var(--color-amount-expense);
 	}
 
 	.count {

@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { LedgerDirection } from '@wimm/contracts/banking';
+import { filterHref } from './filters';
 
 /**
  * What the ledger route does with each query shape, and what it asks wimmd for.
@@ -31,6 +33,9 @@ vi.mock('$lib/server/call', () => ({
 
 const cookies = { get: () => 'session', delete: () => {}, set: () => {} };
 
+const CURRENT = '0f8c3d2a-1b2c-4d3e-8f90-a1b2c3d4e5f6';
+const SAVINGS = '1a2b3c4d-5e6f-4a1b-9c2d-3e4f5a6b7c8d';
+
 function at(iso: string) {
 	return { seconds: BigInt(Math.floor(Date.parse(iso) / 1000)), nanos: 0 };
 }
@@ -38,7 +43,7 @@ function at(iso: string) {
 function transaction(overrides: Record<string, unknown> = {}) {
 	return {
 		id: 't1',
-		accountId: 'a1',
+		accountId: CURRENT,
 		accountName: 'Current account',
 		bankName: 'Monzo',
 		status: 1,
@@ -64,6 +69,11 @@ function ledger(overrides: Record<string, unknown> = {}) {
 			reachesBackTo: at('2026-06-04T00:00:00Z'),
 			newestOnPage: at('2026-09-17T00:00:00Z'),
 			oldestOnPage: at('2026-09-15T00:00:00Z'),
+			filterAccounts: [
+				{ accountId: CURRENT, name: 'Current account', bankName: 'Monzo' },
+				{ accountId: SAVINGS, name: 'Savings', bankName: 'Monzo' }
+			],
+			months: ['2026-09', '2026-08', '2026-06'],
 			...overrides
 		}
 	};
@@ -87,7 +97,11 @@ async function open(search = '') {
 		syncOnArrival: boolean;
 		noBank: boolean;
 		ownsNothing: boolean;
-		filterAccount?: string;
+		filters: { account: string; q: string; month: string; direction: string };
+		accounts: { value: string; label: string }[];
+		months: { value: string; label: string }[];
+		clearHref: string;
+		pages: { key: string; href: string }[];
 		narrow: { connectionId: string; bankName: string; widenHref: string }[];
 		problems: { connectionId: string; bankName: string; kind: string }[];
 	};
@@ -117,14 +131,18 @@ describe('the query shapes', () => {
 	it('narrows to one account without becoming a different screen', async () => {
 		listTransactions.mockResolvedValue(ledger());
 
-		const data = await open('?account=a1');
+		const data = await open(`?account=${CURRENT}`);
 
 		const [request] = listTransactions.mock.calls[0]!;
-		expect(request.accountId).toBe('a1');
-		// The account is named on screen, and removing the narrowing widens the
-		// same list rather than navigating anywhere.
-		expect(data.filterAccount).toBe('Current account · Monzo');
-		expect(data.accountId).toBe('a1');
+		expect(request.accountId).toBe(CURRENT);
+		// The account select names it, and clearing widens the same list.
+		expect(data.filters.account).toBe(CURRENT);
+		expect(data.accounts).toEqual([
+			{ value: CURRENT, label: 'Current account · Monzo' },
+			{ value: SAVINGS, label: 'Savings · Monzo' }
+		]);
+		expect(data.clearHref).toBe('/transactions');
+		expect(data.accountId).toBe(CURRENT);
 	});
 
 	it('reads away from today on ?before, and never syncs', async () => {
@@ -155,7 +173,7 @@ describe('the query shapes', () => {
 	it('narrowing to one account still syncs on arrival', async () => {
 		listTransactions.mockResolvedValue(ledger());
 
-		const data = await open('?account=a1');
+		const data = await open(`?account=${CURRENT}`);
 
 		expect(data.syncOnArrival).toBe(true);
 	});
@@ -163,9 +181,9 @@ describe('the query shapes', () => {
 	it('carries the account filter through paging', async () => {
 		listTransactions.mockResolvedValue(ledger({ hasOlder: true }));
 
-		const data = await open('?account=a1');
+		const data = await open(`?account=${CURRENT}`);
 
-		expect(data.oldestHref).toContain('account=a1');
+		expect(data.oldestHref).toContain(`account=${CURRENT}`);
 		expect(data.oldestHref).toContain('oldest=1');
 	});
 });
@@ -287,9 +305,7 @@ describe('banks that are not contributing', () => {
 	it('keeps the rows when a bank did not answer', async () => {
 		listTransactions.mockResolvedValue(
 			ledger({
-				failures: [
-					{ connectionId: 'c2', bankName: 'Montepio', failure: 1, retryAfterSeconds: 0n }
-				]
+				failures: [{ connectionId: 'c2', bankName: 'Montepio', failure: 1, retryAfterSeconds: 0n }]
 			})
 		);
 
@@ -376,7 +392,7 @@ describe('arriving from an unusual payment on Overview', () => {
 	});
 });
 
-describe('a row that is half of a transfer between the member\'s own accounts', () => {
+describe("a row that is half of a transfer between the member's own accounts", () => {
 	it('carries the label, and never the unusual mark beside it', async () => {
 		listTransactions.mockResolvedValue(
 			ledger({
@@ -390,10 +406,160 @@ describe('a row that is half of a transfer between the member\'s own accounts', 
 
 		const data = await open('');
 
-		expect(data.days[0]?.entries.map((e) => [e.id, e.transfer ?? false, e.unusual ?? false])).toEqual([
+		expect(
+			data.days[0]?.entries.map((e) => [e.id, e.transfer ?? false, e.unusual ?? false])
+		).toEqual([
 			['out', true, false],
 			['in', true, false],
 			['coffee', false, true]
 		]);
+	});
+});
+
+async function redirected(search: string): Promise<{ status: number; location: string }> {
+	try {
+		await open(search);
+	} catch (thrown) {
+		return thrown as { status: number; location: string };
+	}
+	throw new Error(`${search} was not redirected`);
+}
+
+describe('the filters', () => {
+	it('sends every filter in the address to wimmd', async () => {
+		listTransactions.mockResolvedValue(ledger());
+
+		const data = await open(`?account=${CURRENT}&q=galp&month=2026-08&direction=out`);
+
+		const [request] = listTransactions.mock.calls[0]!;
+		expect(request).toMatchObject({
+			accountId: CURRENT,
+			search: 'galp',
+			month: '2026-08',
+			direction: LedgerDirection.OUT
+		});
+		expect(data.filters).toEqual({
+			account: CURRENT,
+			q: 'galp',
+			month: '2026-08',
+			direction: 'out'
+		});
+	});
+
+	it('sends money in, and no direction when none is chosen', async () => {
+		listTransactions.mockResolvedValue(ledger());
+		await open('?direction=in');
+		await open('');
+
+		expect(listTransactions.mock.calls[0]![0].direction).toBe(LedgerDirection.IN);
+		expect(listTransactions.mock.calls[1]![0].direction).toBe(LedgerDirection.UNSPECIFIED);
+	});
+
+	it.each([
+		['an account that is not a uuid', '?account=a1&q=galp', '/transactions?q=galp'],
+		['a blank search', '?q=%20%20&month=2026-08', '/transactions?month=2026-08'],
+		[
+			'a search over 100 characters',
+			`?q=${'a'.repeat(101)}&direction=in`,
+			'/transactions?direction=in'
+		],
+		['a month that does not exist', '?month=2026-13&q=galp', '/transactions?q=galp'],
+		['a month written another way', '?month=August', '/transactions'],
+		[
+			'a direction that is not in or out',
+			'?direction=sideways&month=2026-08',
+			'/transactions?month=2026-08'
+		],
+		[
+			'an empty value from a plain form',
+			'?account=&q=galp&month=&direction=',
+			'/transactions?q=galp'
+		]
+	])('drops %s, keeping the rest, without asking wimmd', async (_name, search, location) => {
+		listTransactions.mockResolvedValue(ledger());
+
+		const thrown = await redirected(search);
+
+		expect(thrown).toMatchObject({ status: 303, location });
+		expect(listTransactions).not.toHaveBeenCalled();
+	});
+
+	it('drops an account the member cannot narrow to, the same way whatever the reason', async () => {
+		// A stranger's, a left-out and a nonexistent account are all absent from
+		// the accounts wimmd offers, and the address must not tell them apart.
+		const strangers = [
+			'2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e',
+			'3c4d5e6f-7a8b-4c9d-8e1f-2a3b4c5d6e7f',
+			'4d5e6f7a-8b9c-4d0e-9f2a-3b4c5d6e7f80'
+		];
+		listTransactions.mockResolvedValue(ledger({ transactions: [], totalCount: 0 }));
+
+		const thrown = await Promise.all(strangers.map((id) => redirected(`?account=${id}&q=galp`)));
+
+		for (const t of thrown) expect(t).toEqual(thrown[0]);
+		expect(thrown[0]).toMatchObject({ status: 303, location: '/transactions?q=galp' });
+	});
+
+	it('carries every filter on the newest, the oldest and every page link', async () => {
+		listTransactions.mockResolvedValue(
+			ledger({
+				hasOlder: true,
+				pages: [
+					{
+						cursor: { bookingDate: at('2026-08-31T00:00:00Z'), transactionId: 't1' },
+						newest: at('2026-08-31T00:00:00Z'),
+						oldest: at('2026-08-18T00:00:00Z')
+					},
+					{
+						cursor: { bookingDate: at('2026-08-17T00:00:00Z'), transactionId: 't9' },
+						newest: at('2026-08-17T00:00:00Z'),
+						oldest: at('2026-08-01T00:00:00Z')
+					}
+				]
+			})
+		);
+		const filters = `account=${CURRENT}&q=galp&month=2026-08&direction=out`;
+
+		const data = await open(`?${filters}&before=2026-08-20.t5`);
+
+		for (const href of [data.newestHref, data.oldestHref, ...data.pages.map((p) => p.href)]) {
+			const params = new URL(href!, 'http://localhost').searchParams;
+			expect(params.get('account')).toBe(CURRENT);
+			expect(params.get('q')).toBe('galp');
+			expect(params.get('month')).toBe('2026-08');
+			expect(params.get('direction')).toBe('out');
+		}
+	});
+
+	it('names the months offered in UTC, and keeps a chosen month that holds nothing', async () => {
+		listTransactions.mockResolvedValue(ledger({ months: ['2026-09', '2026-06'] }));
+
+		const data = await open('?month=2026-08');
+
+		expect(data.months).toEqual([
+			{ value: '2026-09', label: 'September 2026' },
+			{ value: '2026-08', label: 'August 2026' },
+			{ value: '2026-06', label: 'June 2026' }
+		]);
+	});
+
+	it('syncs a filtered newest page on arrival, as an unfiltered one', async () => {
+		listTransactions.mockResolvedValue(ledger());
+
+		const data = await open('?month=2026-08&q=galp');
+
+		expect(data.syncOnArrival).toBe(true);
+	});
+});
+
+describe('the address a filter change produces', () => {
+	it('starts at the newest match: every cursor is dropped and the filters kept', () => {
+		const url = filterHref({ account: CURRENT, q: 'galp', month: '', direction: 'in' });
+
+		expect(url).toBe(`/transactions?account=${CURRENT}&q=galp&direction=in`);
+	});
+
+	it('is the whole ledger when nothing is in force', () => {
+		expect(filterHref({ account: '', q: '', month: '', direction: '' })).toBe('/transactions');
 	});
 });

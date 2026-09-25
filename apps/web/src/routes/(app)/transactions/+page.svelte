@@ -1,10 +1,24 @@
 <script lang="ts">
-	import { TransactionsScreen } from '@wimm/ui';
-	import { afterNavigate, invalidate } from '$app/navigation';
+	import { TransactionsScreen, type LedgerFilterValues } from '@wimm/ui';
+	import { afterNavigate, goto, invalidate } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { filterQuery } from './filters';
 
 	let { data } = $props();
 
 	let syncing = $state(false);
+
+	/**
+	 * The current history entry came from typing a search. The next pause
+	 * replaces it rather than adding another, so Back goes to before the
+	 * search instead of stepping through half-typed words. Any navigation this
+	 * page did not make — a link, Back — ends the search's run.
+	 */
+	let typing = false;
+
+	afterNavigate(({ type }) => {
+		if (type !== 'goto') typing = false;
+	});
 
 	/**
 	 * Bring the banks up to date behind the arrival.
@@ -47,8 +61,26 @@
 	 * that new transactions do not belong.
 	 */
 	afterNavigate(() => {
-		if (data.syncOnArrival) void sync('sync-transactions');
+		// A pause in typing is not an arrival: the search's first result already
+		// was, and asking again every few letters would re-read the page twice.
+		if (data.syncOnArrival && !typing) void sync('sync-transactions');
 	});
+
+	/**
+	 * A filter change is a navigation, so Back undoes it. Focus stays on the
+	 * control the member just used, and the screen announces the outcome.
+	 */
+	function onfilter(next: LedgerFilterValues, { live }: { live: boolean }) {
+		const replaceState = live && typing;
+		typing = live;
+		// resolve() takes a route, not a query string.
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
+		void goto(`${resolve('/(app)/transactions')}${filterQuery(next)}`, {
+			keepFocus: true,
+			noScroll: true,
+			replaceState
+		});
+	}
 </script>
 
 <TransactionsScreen
@@ -61,7 +93,11 @@
 	currentPage={data.currentPage}
 	newestHref={data.newestHref}
 	oldestHref={data.oldestHref}
-	filterAccount={data.filterAccount}
+	filters={data.filters}
+	accounts={data.accounts}
+	months={data.months}
+	clearHref={data.clearHref}
+	{onfilter}
 	narrow={data.narrow}
 	problems={data.problems}
 	noBank={data.noBank}
