@@ -60,9 +60,11 @@ type Store interface {
 	// whose consent covers transactions; neither scope is the caller's to
 	// decide.
 	Ledger(ctx context.Context, q store.LedgerQuery) (store.LedgerPage, error)
-	CountLedger(ctx context.Context, memberID, accountID string) (int, error)
+	CountLedger(ctx context.Context, memberID string, f store.LedgerFilter) (int, error)
 	LedgerState(ctx context.Context, memberID, accountID string) (store.LedgerState, error)
-	LedgerPageIndex(ctx context.Context, memberID, accountID string, pageSize int) ([]store.PageMarker, error)
+	LedgerPageIndex(ctx context.Context, memberID string, f store.LedgerFilter, pageSize int) ([]store.PageMarker, error)
+	LedgerMonths(ctx context.Context, memberID string, f store.LedgerFilter) ([]time.Time, error)
+	LedgerRows(ctx context.Context, memberID string, f store.LedgerFilter) ([]store.Transaction, error)
 	SyncableAccounts(ctx context.Context, memberID string) ([]store.SyncableAccount, error)
 	WriteAccountTransactions(ctx context.Context, accountID string, txs []store.Transaction, syncedThrough time.Time) (store.SyncResult, error)
 	NarrowConnections(ctx context.Context, memberID string) ([]store.NarrowConnection, error)

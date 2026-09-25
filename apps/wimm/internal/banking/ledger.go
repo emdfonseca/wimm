@@ -1,8 +1,11 @@
 package banking
 
 import (
+	"cmp"
 	"context"
 	"errors"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
@@ -48,14 +51,48 @@ type Ledger struct {
 	// member choosing one lands on precisely what it says — never a
 	// calendar month that might share a page with three others.
 	Pages []store.PageMarker
+	// FilterAccounts are the accounts the member can narrow to, ordered by
+	// bank then name: every one they own and have not left out, whatever
+	// filter is in force.
+	FilterAccounts []FilterAccount
+	// Months are the first days of the months holding a transaction that
+	// matches every filter but the month, newest first.
+	Months []time.Time
+	// Totals are what the filtered list adds up to, per currency and ordered
+	// by it, and nil when no filter is in force. Settled rows only, with a
+	// transfer between two accounts in scope left out, as Overview counts a
+	// month (ADR 0026).
+	Totals []FilterTotal
+	// TransfersLeftOut is how many transfers between the member's accounts the
+	// totals leave out, a pair counted once whether one half or both matched.
+	TransfersLeftOut int
+	// NotSettled is how many matching rows the totals do not count because
+	// the bank has not settled them.
+	NotSettled int
+}
+
+// FilterTotal is one currency's money in and money out, both positive minor
+// units. Currencies are never summed together: wimm holds no rates.
+type FilterTotal struct {
+	Currency string
+	In       int64
+	Out      int64
+}
+
+// FilterAccount is one account the ledger can be narrowed to.
+type FilterAccount struct {
+	ID string
+	store.AccountLabel
 }
 
 // LedgerRequest is what a member asked for.
 type LedgerRequest struct {
-	MemberID  string
-	AccountID string
-	Cursor    store.Cursor
-	Older     bool
+	MemberID string
+	// LedgerFilter narrows the page, its count, its page index and the
+	// months offered alike. The patterns and the ledger's state stay unfiltered.
+	store.LedgerFilter
+	Cursor store.Cursor
+	Older  bool
 	// Oldest jumps to the oldest page, native to a keyset seek the same way
 	// the newest page already is. Ignored when Cursor is set.
 	Oldest bool
@@ -87,7 +124,7 @@ func (s *Service) Transactions(ctx context.Context, req LedgerRequest) (Ledger, 
 	}
 
 	page, err := s.store.Ledger(ctx, store.LedgerQuery{
-		MemberID: req.MemberID, AccountID: req.AccountID,
+		MemberID: req.MemberID, LedgerFilter: req.LedgerFilter,
 		Cursor: req.Cursor, Older: req.Older, Oldest: req.Oldest, PageStart: req.PageStart,
 		Limit: s.pageSize,
 	})
@@ -95,7 +132,7 @@ func (s *Service) Transactions(ctx context.Context, req LedgerRequest) (Ledger, 
 		return Ledger{}, err
 	}
 
-	count, err := s.store.CountLedger(ctx, req.MemberID, req.AccountID)
+	count, err := s.store.CountLedger(ctx, req.MemberID, req.LedgerFilter)
 	if err != nil {
 		return Ledger{}, err
 	}
@@ -115,9 +152,22 @@ func (s *Service) Transactions(ctx context.Context, req LedgerRequest) (Ledger, 
 		return Ledger{}, err
 	}
 
-	pages, err := s.store.LedgerPageIndex(ctx, req.MemberID, req.AccountID, s.pageSize)
+	pages, err := s.store.LedgerPageIndex(ctx, req.MemberID, req.LedgerFilter, s.pageSize)
 	if err != nil {
 		return Ledger{}, err
+	}
+
+	months, err := s.store.LedgerMonths(ctx, req.MemberID, req.LedgerFilter)
+	if err != nil {
+		return Ledger{}, err
+	}
+
+	var totals filterTotals
+	if req.InForce() {
+		totals, err = s.filterTotals(ctx, req.MemberID, req.LedgerFilter, labels)
+		if err != nil {
+			return Ledger{}, err
+		}
 	}
 
 	var pats Patterns
@@ -129,10 +179,15 @@ func (s *Service) Transactions(ctx context.Context, req LedgerRequest) (Ledger, 
 	}
 
 	return Ledger{
-		Accounts: labels,
-		Patterns: pats,
-		Pages:    pages,
-		Page:     page, Count: count, Narrow: narrow, Failures: failures,
+		Accounts:         labels,
+		FilterAccounts:   filterAccounts(labels),
+		Months:           months,
+		Totals:           totals.Totals,
+		TransfersLeftOut: totals.TransfersLeftOut,
+		NotSettled:       totals.NotSettled,
+		Patterns:         pats,
+		Pages:            pages,
+		Page:             page, Count: count, Narrow: narrow, Failures: failures,
 		SyncedAt:    state.SyncedAt,
 		ReachesBack: state.ReachesBack,
 		// A member who owns no account is told that they see transactions for
@@ -140,6 +195,99 @@ func (s *Service) Transactions(ctx context.Context, req LedgerRequest) (Ledger, 
 		// reasons for having nothing differ and must not be collapsed into one.
 		OwnsNothing: state.OwnedAccounts == 0,
 	}, nil
+}
+
+type filterTotals struct {
+	Totals           []FilterTotal
+	TransfersLeftOut int
+	NotSettled       int
+}
+
+// filterTotals adds up every row the filter lets through, not the page.
+//
+// Pairs are found across every account the member owns, over the filtered
+// dates widened by the transfer window, and a pair is left out only when both
+// its accounts are in the ledger's scope: every account on the ledger, or the
+// one it is narrowed to. So narrowed to one account, money moved to another
+// is money that left it, and with a search or a direction the half that
+// matched is still left out, because its partner is still the member's.
+func (s *Service) filterTotals(
+	ctx context.Context, memberID string, f store.LedgerFilter, labels map[string]store.AccountLabel,
+) (filterTotals, error) {
+	rows, err := s.store.LedgerRows(ctx, memberID, f)
+	if err != nil || len(rows) == 0 {
+		return filterTotals{}, err
+	}
+
+	scope, err := s.scopedAccounts(ctx, memberID, ScopeAll)
+	if err != nil {
+		return filterTotals{}, err
+	}
+	newest, oldest := rows[0].BookingDate, rows[len(rows)-1].BookingDate
+	window, err := s.store.OwnedBooked(ctx, memberID, scope.OwnedIDs(),
+		oldest.AddDate(0, 0, -ownTransferWindowDays), newest.AddDate(0, 0, ownTransferWindowDays+1))
+	if err != nil {
+		return filterTotals{}, err
+	}
+	pairs := OwnTransfers(window, scope.Owned)
+	accountOf := make(map[string]string, len(window))
+	for _, r := range window {
+		accountOf[r.ID] = r.AccountID
+	}
+
+	inScope := func(accountID string) bool {
+		if f.AccountID != "" {
+			return accountID == f.AccountID
+		}
+		_, ok := labels[accountID]
+		return ok
+	}
+
+	var out filterTotals
+	byCurrency := map[string]*FilterTotal{}
+	leftOut := map[string]bool{}
+	for _, r := range rows {
+		if r.Status != store.StatusBooked {
+			out.NotSettled++
+			continue
+		}
+		if partner, ok := pairs[r.ID]; ok && inScope(r.AccountID) && inScope(accountOf[partner]) {
+			leftOut[min(r.ID, partner)+"\x1f"+max(r.ID, partner)] = true
+			continue
+		}
+		t := byCurrency[r.Currency]
+		if t == nil {
+			t = &FilterTotal{Currency: r.Currency}
+			byCurrency[r.Currency] = t
+		}
+		if r.AmountMinor > 0 {
+			t.In += r.AmountMinor
+		} else {
+			t.Out -= r.AmountMinor
+		}
+	}
+	for _, t := range byCurrency {
+		out.Totals = append(out.Totals, *t)
+	}
+	slices.SortFunc(out.Totals, func(a, b FilterTotal) int { return strings.Compare(a.Currency, b.Currency) })
+	out.TransfersLeftOut = len(leftOut)
+	return out, nil
+}
+
+// filterAccounts orders the accounts a member owns by bank, then by name, and
+// by id where both agree, so the picker reads the same on every load.
+func filterAccounts(labels map[string]store.AccountLabel) []FilterAccount {
+	out := make([]FilterAccount, 0, len(labels))
+	for id, label := range labels {
+		out = append(out, FilterAccount{ID: id, AccountLabel: label})
+	}
+	slices.SortFunc(out, func(a, b FilterAccount) int {
+		return cmp.Or(
+			strings.Compare(a.BankName, b.BankName),
+			strings.Compare(a.Name, b.Name),
+			strings.Compare(a.ID, b.ID))
+	})
+	return out
 }
 
 // SyncTransactions brings every account a member owns up to date, and returns

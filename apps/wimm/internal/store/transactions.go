@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -70,13 +71,42 @@ type LedgerPage struct {
 	HasNewer bool
 }
 
+// Direction is money in or money out, judged by the sign of the amount.
+type Direction string
+
+const (
+	// MoneyBoth is no direction in force.
+	MoneyBoth Direction = ""
+	MoneyIn   Direction = "in"
+	MoneyOut  Direction = "out"
+)
+
+// LedgerFilter is every filter a member can put on their ledger. The zero value
+// is none, and each field narrows independently of the others.
+type LedgerFilter struct {
+	// AccountID narrows to one account, and is empty for every account they
+	// own. It is the same list filtered, not a different screen.
+	AccountID string
+	// Search is free text as the member typed it. It is matched against what
+	// the bank wrote, ignoring case and not accents.
+	Search string
+	// Month is the first day of a calendar month, and zero for every month.
+	Month time.Time
+	// Direction is money in or money out; a zero amount is neither.
+	Direction Direction
+}
+
+// InForce reports whether any filter narrows the ledger.
+func (f LedgerFilter) InForce() bool {
+	return f.AccountID != "" || strings.TrimSpace(f.Search) != "" || !f.Month.IsZero() || f.Direction != MoneyBoth
+}
+
 // LedgerQuery is what a member asked to see.
 type LedgerQuery struct {
 	// MemberID scopes the read. Only accounts this member owns are ever read.
 	MemberID string
-	// AccountID narrows to one account, and is empty for every account they
-	// own. It is the same list filtered, not a different screen.
-	AccountID string
+	// LedgerFilter narrows what they own to what they asked for.
+	LedgerFilter
 	// Cursor is where to read from; the zero cursor is the newest page.
 	Cursor Cursor
 	// Older reads away from today. False with a set cursor reads back towards
@@ -115,6 +145,43 @@ const ownedAccounts = `
 	where ($2::uuid is null or a.id = $2)
 	  and a.left_out_at is null`
 
+// ledgerScope is ownedAccounts narrowed by a LedgerFilter: the one predicate
+// the page, its count, its page index and the months offered all share, so none
+// of them can describe a different list from the others. Its parameters sit at
+// fixed positions, $1 to $5 in the order LedgerFilter.args gives them, each null
+// when that filter is not in force; a read appends its own from $6.
+//
+// Search reads counterparty_name and remittance, which is what the bank wrote,
+// under the built-in ICU collation: the database's own is C, which folds the
+// case of ASCII letters only, so `café` would miss `CAFÉ`.
+// The name the ledger shows for a blank transaction is derived on read and is
+// not wimm's to search.
+const ledgerScope = `account_id in (` + ownedAccounts + `)
+	and ($3::text is null
+	     or (counterparty_name collate "und-x-icu") ilike $3 escape '\'
+	     or (remittance collate "und-x-icu") ilike $3 escape '\')
+	and ($4::date is null or (booking_date >= $4::date and booking_date < $4::date + interval '1 month'))
+	and ($5::text is null or ($5::text = 'in' and amount_minor > 0) or ($5::text = 'out' and amount_minor < 0))`
+
+// args are ledgerScope's five parameters.
+func (f LedgerFilter) args(memberID string) []any {
+	var search, month, direction any
+	if text := strings.TrimSpace(f.Search); text != "" {
+		search = "%" + likeEscaper.Replace(text) + "%"
+	}
+	if !f.Month.IsZero() {
+		month = f.Month
+	}
+	if f.Direction != MoneyBoth {
+		direction = string(f.Direction)
+	}
+	return []any{memberID, nullString(f.AccountID), search, month, direction}
+}
+
+// likeEscaper makes every character of a search match itself, so that `50%`
+// finds 50% and not every line containing 50.
+var likeEscaper = strings.NewReplacer(`\`, `\\`, `%`, `\%`, `_`, `\_`)
+
 // Ledger reads one page of the transactions a member may see.
 //
 // The seek is on (booking_date, id), which is the index the table is ordered
@@ -132,7 +199,7 @@ func (db *DB) Ledger(ctx context.Context, q LedgerQuery) (LedgerPage, error) {
 	probe := q.Limit + 1
 
 	var query string
-	args := []any{q.MemberID, nullString(q.AccountID)}
+	args := q.args(q.MemberID)
 	// ascending is true wherever the fetch runs oldest-first and the result has
 	// to be reversed to read newest-first on the page, the way every other
 	// branch already does.
@@ -149,9 +216,9 @@ func (db *DB) Ledger(ctx context.Context, q LedgerQuery) (LedgerPage, error) {
 			       coalesce(counterparty_name, ''), coalesce(remittance, ''),
 			       first_seen_at, last_seen_at
 			from transactions
-			where account_id in (` + ownedAccounts + `)
+			where ` + ledgerScope + `
 			order by booking_date asc, id asc
-			limit $3`
+			limit $6`
 		args = append(args, probe)
 	case q.Cursor.Zero() && q.PageStart != nil:
 		// Inclusive, on the exact row LedgerPageIndex named: that row is this
@@ -162,10 +229,10 @@ func (db *DB) Ledger(ctx context.Context, q LedgerQuery) (LedgerPage, error) {
 			       coalesce(counterparty_name, ''), coalesce(remittance, ''),
 			       first_seen_at, last_seen_at
 			from transactions
-			where account_id in (` + ownedAccounts + `)
-			  and (booking_date, id) <= ($4::date, $5::uuid)
+			where ` + ledgerScope + `
+			  and (booking_date, id) <= ($7::date, $8::uuid)
 			order by booking_date desc, id desc
-			limit $3`
+			limit $6`
 		args = append(args, probe, q.PageStart.BookingDate, q.PageStart.ID)
 	case q.Cursor.Zero():
 		query = `
@@ -174,9 +241,9 @@ func (db *DB) Ledger(ctx context.Context, q LedgerQuery) (LedgerPage, error) {
 			       coalesce(counterparty_name, ''), coalesce(remittance, ''),
 			       first_seen_at, last_seen_at
 			from transactions
-			where account_id in (` + ownedAccounts + `)
+			where ` + ledgerScope + `
 			order by booking_date desc, id desc
-			limit $3`
+			limit $6`
 		args = append(args, probe)
 	case q.Older:
 		query = `
@@ -185,10 +252,10 @@ func (db *DB) Ledger(ctx context.Context, q LedgerQuery) (LedgerPage, error) {
 			       coalesce(counterparty_name, ''), coalesce(remittance, ''),
 			       first_seen_at, last_seen_at
 			from transactions
-			where account_id in (` + ownedAccounts + `)
-			  and (booking_date, id) < ($4::date, $5::uuid)
+			where ` + ledgerScope + `
+			  and (booking_date, id) < ($7::date, $8::uuid)
 			order by booking_date desc, id desc
-			limit $3`
+			limit $6`
 		args = append(args, probe, q.Cursor.BookingDate, q.Cursor.ID)
 	default:
 		// Ascending, then reversed below: "the 50 nearest rows on the newer
@@ -202,10 +269,10 @@ func (db *DB) Ledger(ctx context.Context, q LedgerQuery) (LedgerPage, error) {
 			       coalesce(counterparty_name, ''), coalesce(remittance, ''),
 			       first_seen_at, last_seen_at
 			from transactions
-			where account_id in (` + ownedAccounts + `)
-			  and (booking_date, id) > ($4::date, $5::uuid)
+			where ` + ledgerScope + `
+			  and (booking_date, id) > ($7::date, $8::uuid)
 			order by booking_date asc, id asc
-			limit $3`
+			limit $6`
 		args = append(args, probe, q.Cursor.BookingDate, q.Cursor.ID)
 	}
 
@@ -279,13 +346,72 @@ func scanTransaction(rows pgx.Rows) (Transaction, error) {
 // CountLedger is how many transactions a member may see, for the toolbar. It is
 // a count of what they may see and not a page count, and it survives paging
 // unchanged.
-func (db *DB) CountLedger(ctx context.Context, memberID, accountID string) (int, error) {
-	query := `select count(*) from transactions where account_id in (` + ownedAccounts + `)`
+func (db *DB) CountLedger(ctx context.Context, memberID string, f LedgerFilter) (int, error) {
+	query := `select count(*) from transactions where ` + ledgerScope
 	var n int
-	if err := db.pool.QueryRow(ctx, query, memberID, nullString(accountID)).Scan(&n); err != nil {
+	if err := db.pool.QueryRow(ctx, query, f.args(memberID)...).Scan(&n); err != nil {
 		return 0, fmt.Errorf("counting the ledger: %w", err)
 	}
 	return n, nil
+}
+
+// LedgerRows is every transaction the filter lets through, newest first: not a
+// page but the whole filtered list, which is what its totals are taken over.
+// A household ledger is a few thousand rows, and a filter narrows it further.
+func (db *DB) LedgerRows(ctx context.Context, memberID string, f LedgerFilter) ([]Transaction, error) {
+	query := `
+		select id, account_id, status, dedup_key, occurrence, amount_minor, currency,
+		       booking_date, value_date, transaction_date,
+		       coalesce(counterparty_name, ''), coalesce(remittance, ''),
+		       first_seen_at, last_seen_at
+		from transactions
+		where ` + ledgerScope + `
+		order by booking_date desc, id desc`
+
+	rows, err := db.pool.Query(ctx, query, f.args(memberID)...)
+	if err != nil {
+		return nil, fmt.Errorf("reading the filtered ledger: %w", err)
+	}
+	defer rows.Close()
+
+	var out []Transaction
+	for rows.Next() {
+		t, err := scanTransaction(rows)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, t)
+	}
+	return out, rows.Err()
+}
+
+// LedgerMonths lists the first day of every month holding a transaction that
+// matches the filter, newest first. The month in force is ignored, so the months
+// follow the account, the search and the direction, and every month offered
+// holds a match: an empty month is a control that does nothing.
+func (db *DB) LedgerMonths(ctx context.Context, memberID string, f LedgerFilter) ([]time.Time, error) {
+	f.Month = time.Time{}
+	query := `
+		select distinct date_trunc('month', booking_date)::date as month
+		from transactions
+		where ` + ledgerScope + `
+		order by month desc`
+
+	rows, err := db.pool.Query(ctx, query, f.args(memberID)...)
+	if err != nil {
+		return nil, fmt.Errorf("reading the ledger's months: %w", err)
+	}
+	defer rows.Close()
+
+	var out []time.Time
+	for rows.Next() {
+		var m time.Time
+		if err := rows.Scan(&m); err != nil {
+			return nil, fmt.Errorf("reading the ledger's months: %w", err)
+		}
+		out = append(out, m)
+	}
+	return out, rows.Err()
 }
 
 // PageMarker is one real, reachable page of the ledger: the cursor that seeks
@@ -307,7 +433,7 @@ type PageMarker struct {
 // numbers the ledger's own seek already orders by, so a page here is exactly
 // the page `Ledger` returns for its cursor — never an approximation a member
 // could click through to and land somewhere else.
-func (db *DB) LedgerPageIndex(ctx context.Context, memberID, accountID string, pageSize int) ([]PageMarker, error) {
+func (db *DB) LedgerPageIndex(ctx context.Context, memberID string, f LedgerFilter, pageSize int) ([]PageMarker, error) {
 	if pageSize <= 0 {
 		return nil, fmt.Errorf("a ledger page index of %d transactions", pageSize)
 	}
@@ -317,20 +443,19 @@ func (db *DB) LedgerPageIndex(ctx context.Context, memberID, accountID string, p
 	// shorter than pageSize, so it never lands on that second condition on
 	// its own.
 	const query = `
-		with owned as (` + ownedAccounts + `),
-		numbered as (
+		with numbered as (
 			select booking_date, id,
 			       row_number() over (order by booking_date desc, id desc) as rn
 			from transactions
-			where account_id in (select id from owned)
+			where ` + ledgerScope + `
 		),
 		total as (select count(*) as n from numbered)
 		select booking_date, id, rn
 		from numbered, total
-		where (rn - 1) % $3 = 0 or rn % $3 = 0 or rn = total.n
+		where (rn - 1) % $6 = 0 or rn % $6 = 0 or rn = total.n
 		order by rn`
 
-	rows, err := db.pool.Query(ctx, query, memberID, nullString(accountID), pageSize)
+	rows, err := db.pool.Query(ctx, query, append(f.args(memberID), pageSize)...)
 	if err != nil {
 		return nil, fmt.Errorf("reading the ledger's page index: %w", err)
 	}

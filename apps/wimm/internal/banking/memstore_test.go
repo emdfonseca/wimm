@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
@@ -609,10 +610,26 @@ func (m *memStore) WriteAccountTransactions(
 	return result, nil
 }
 
-func (m *memStore) Ledger(_ context.Context, q store.LedgerQuery) (store.LedgerPage, error) {
+// matching is every transaction a member owns that the filter lets through,
+// newest first: the store's ledgerScope reimplemented independently, so a
+// disagreement with the SQL is a defect in one of them.
+func (m *memStore) matching(memberID string, f store.LedgerFilter) []store.Transaction {
+	search := strings.ToLower(strings.TrimSpace(f.Search))
 	var all []store.Transaction
-	for _, id := range m.ownedBy(q.MemberID, q.AccountID) {
-		all = append(all, m.transactions[id]...)
+	for _, id := range m.ownedBy(memberID, f.AccountID) {
+		for _, t := range m.transactions[id] {
+			switch {
+			case search != "" &&
+				!strings.Contains(strings.ToLower(t.CounterpartyName), search) &&
+				!strings.Contains(strings.ToLower(t.Remittance), search):
+			case !f.Month.IsZero() &&
+				(t.BookingDate.Year() != f.Month.Year() || t.BookingDate.Month() != f.Month.Month()):
+			case f.Direction == store.MoneyIn && t.AmountMinor <= 0:
+			case f.Direction == store.MoneyOut && t.AmountMinor >= 0:
+			default:
+				all = append(all, t)
+			}
+		}
 	}
 	slices.SortFunc(all, func(a, b store.Transaction) int {
 		if !a.BookingDate.Equal(b.BookingDate) {
@@ -623,6 +640,11 @@ func (m *memStore) Ledger(_ context.Context, q store.LedgerQuery) (store.LedgerP
 		}
 		return cmpString(b.ID, a.ID)
 	})
+	return all
+}
+
+func (m *memStore) Ledger(_ context.Context, q store.LedgerQuery) (store.LedgerPage, error) {
+	all := m.matching(q.MemberID, q.LedgerFilter)
 
 	page := store.LedgerPage{Transactions: all}
 	if len(all) > q.Limit {
@@ -641,21 +663,9 @@ func (m *memStore) Ledger(_ context.Context, q store.LedgerQuery) (store.LedgerP
 // — the same independent reimplementation Ledger itself is, so a disagreement
 // with the SQL is a defect in one of them rather than something this masks.
 func (m *memStore) LedgerPageIndex(
-	_ context.Context, memberID, accountID string, pageSize int,
+	_ context.Context, memberID string, f store.LedgerFilter, pageSize int,
 ) ([]store.PageMarker, error) {
-	var all []store.Transaction
-	for _, id := range m.ownedBy(memberID, accountID) {
-		all = append(all, m.transactions[id]...)
-	}
-	slices.SortFunc(all, func(a, b store.Transaction) int {
-		if !a.BookingDate.Equal(b.BookingDate) {
-			if a.BookingDate.After(b.BookingDate) {
-				return -1
-			}
-			return 1
-		}
-		return cmpString(b.ID, a.ID)
-	})
+	all := m.matching(memberID, f)
 
 	var out []store.PageMarker
 	for start := 0; start < len(all); start += pageSize {
@@ -671,12 +681,24 @@ func (m *memStore) LedgerPageIndex(
 	return out, nil
 }
 
-func (m *memStore) CountLedger(_ context.Context, memberID, accountID string) (int, error) {
-	n := 0
-	for _, id := range m.ownedBy(memberID, accountID) {
-		n += len(m.transactions[id])
+func (m *memStore) CountLedger(_ context.Context, memberID string, f store.LedgerFilter) (int, error) {
+	return len(m.matching(memberID, f)), nil
+}
+
+func (m *memStore) LedgerRows(_ context.Context, memberID string, f store.LedgerFilter) ([]store.Transaction, error) {
+	return m.matching(memberID, f), nil
+}
+
+func (m *memStore) LedgerMonths(_ context.Context, memberID string, f store.LedgerFilter) ([]time.Time, error) {
+	f.Month = time.Time{}
+	var out []time.Time
+	for _, t := range m.matching(memberID, f) {
+		month := time.Date(t.BookingDate.Year(), t.BookingDate.Month(), 1, 0, 0, 0, 0, time.UTC)
+		if len(out) == 0 || !out[len(out)-1].Equal(month) {
+			out = append(out, month)
+		}
 	}
-	return n, nil
+	return out, nil
 }
 
 func (m *memStore) LedgerState(_ context.Context, memberID, accountID string) (store.LedgerState, error) {

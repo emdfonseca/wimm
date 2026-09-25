@@ -3,11 +3,14 @@ package banking_test
 import (
 	"context"
 	"errors"
+	"fmt"
+	"slices"
 	"testing"
 	"time"
 
 	"github.com/emdfonseca/wimm/apps/wimm/internal/banking"
 	"github.com/emdfonseca/wimm/apps/wimm/internal/banking/bankingtest"
+	"github.com/emdfonseca/wimm/apps/wimm/internal/store"
 )
 
 func gwTx(ref string, day int, minor int64, status banking.TransactionStatus) banking.Transaction {
@@ -438,5 +441,126 @@ func TestWideningKeepsOwnersAndLevelsAndChangesTheScope(t *testing.T) {
 	}
 	if ledger.Count != 1 {
 		t.Errorf("after widening the ledger holds %d transactions, want the bank's 1", ledger.Count)
+	}
+}
+
+// Under a search the count, the pages offered and the rows on the page all
+// describe the filtered list, and the accounts and months offered come with it.
+func TestTheCountThePagesAndTheRowsAgreeUnderASearch(t *testing.T) {
+	var txs []banking.Transaction
+	for i := range 70 {
+		tx := gwTx(fmt.Sprintf("ref-%02d", i), 1+i%28, -1000, banking.StatusBooked)
+		if i%7 != 0 {
+			tx.CounterpartyName = "GALP ENERGIA"
+		}
+		txs = append(txs, tx)
+	}
+	svc, _, _ := ledgerFor(t, txs...)
+	ctx := context.Background()
+	if _, err := svc.Transactions(ctx, banking.LedgerRequest{MemberID: ada}); err != nil {
+		t.Fatalf("first arrival: %v", err)
+	}
+
+	ledger, err := svc.Transactions(ctx, banking.LedgerRequest{
+		MemberID: ada, SkipSync: true, LedgerFilter: store.LedgerFilter{Search: "galp"}})
+	if err != nil {
+		t.Fatalf("Transactions: %v", err)
+	}
+	if ledger.Count != 60 {
+		t.Errorf("Count = %d, want the 60 that match", ledger.Count)
+	}
+	if len(ledger.Pages) != 2 {
+		t.Errorf("%d pages offered, want 2 pages of the 60 that match", len(ledger.Pages))
+	}
+	if len(ledger.Page.Transactions) != 50 {
+		t.Errorf("the page holds %d rows, want 50", len(ledger.Page.Transactions))
+	}
+	for _, tx := range ledger.Page.Transactions {
+		if tx.CounterpartyName != "GALP ENERGIA" {
+			t.Errorf("a search for galp listed %q", tx.CounterpartyName)
+		}
+	}
+	if len(ledger.FilterAccounts) != 1 || ledger.FilterAccounts[0].Name != "Conta à Ordem" ||
+		ledger.FilterAccounts[0].BankName == "" {
+		t.Errorf("FilterAccounts = %+v, want the one account, named with its bank", ledger.FilterAccounts)
+	}
+	if want := time.Date(2026, time.September, 1, 0, 0, 0, 0, time.UTC); len(ledger.Months) != 1 || !ledger.Months[0].Equal(want) {
+		t.Errorf("Months = %v, want [%v]", ledger.Months, want)
+	}
+}
+
+// totalsLedger is ada's two accounts in August: fuel, a salary, €500.00 moved
+// from one to the other, a payment not yet settled and one in dollars.
+func totalsLedger(t *testing.T) (*banking.Service, string, string) {
+	t.Helper()
+	svc, st, c := twoAccounts(t)
+	joint, personal := c.Accounts[0].ID, c.Accounts[1].ID
+	aug := func(d int) time.Time { return time.Date(2026, time.August, d, 0, 0, 0, 0, time.UTC) }
+	seedRow(st, "fuel", joint, -4500, aug(3), "Galp")
+	seedRow(st, "to-personal", joint, -50000, aug(10), "Transfer to Personal")
+	seedRow(st, "from-joint", personal, 50000, aug(10), "Transfer from Joint")
+	seedRow(st, "salary", joint, 250000, aug(25), "Empresa")
+	st.transactions[joint] = append(st.transactions[joint],
+		store.Transaction{ID: "pending", AccountID: joint, Status: store.StatusPending,
+			AmountMinor: -1200, Currency: "EUR", BookingDate: aug(28), CounterpartyName: "Galp"},
+		store.Transaction{ID: "dollars", AccountID: joint, Status: store.StatusBooked,
+			AmountMinor: -1000, Currency: "USD", BookingDate: aug(12), CounterpartyName: "Galp US"})
+	return svc, joint, personal
+}
+
+func totalsOf(t *testing.T, svc *banking.Service, f store.LedgerFilter) banking.Ledger {
+	t.Helper()
+	l, err := svc.Transactions(context.Background(), banking.LedgerRequest{MemberID: ada, SkipSync: true, LedgerFilter: f})
+	if err != nil {
+		t.Fatalf("Transactions: %v", err)
+	}
+	return l
+}
+
+// What a filtered list adds up to is settled money only, per currency, with a
+// transfer between two of the member's accounts in scope left out — the same
+// figure Overview gives the month.
+func TestAFilteredListAddsUpItsSettledRowsLeavingOutTransfers(t *testing.T) {
+	svc, joint, _ := totalsLedger(t)
+	august := time.Date(2026, time.August, 1, 0, 0, 0, 0, time.UTC)
+
+	for _, tc := range []struct {
+		name       string
+		f          store.LedgerFilter
+		want       []banking.FilterTotal
+		transfers  int
+		notSettled int
+	}{
+		{"a month, both accounts in scope", store.LedgerFilter{Month: august},
+			[]banking.FilterTotal{{Currency: "EUR", In: 250000, Out: 4500}, {Currency: "USD", Out: 1000}}, 1, 1},
+		{"one account: the transfer left it", store.LedgerFilter{Month: august, AccountID: joint},
+			[]banking.FilterTotal{{Currency: "EUR", In: 250000, Out: 54500}, {Currency: "USD", Out: 1000}}, 0, 1},
+		{"money in: its partner is still the member's", store.LedgerFilter{Direction: store.MoneyIn},
+			[]banking.FilterTotal{{Currency: "EUR", In: 250000}}, 1, 0},
+		{"a search", store.LedgerFilter{Search: "galp"},
+			[]banking.FilterTotal{{Currency: "EUR", Out: 4500}, {Currency: "USD", Out: 1000}}, 0, 1},
+		{"nothing matches", store.LedgerFilter{Search: "plumber"}, nil, 0, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			l := totalsOf(t, svc, tc.f)
+			if !slices.Equal(l.Totals, tc.want) {
+				t.Errorf("Totals = %+v, want %+v", l.Totals, tc.want)
+			}
+			if l.TransfersLeftOut != tc.transfers {
+				t.Errorf("TransfersLeftOut = %d, want %d", l.TransfersLeftOut, tc.transfers)
+			}
+			if l.NotSettled != tc.notSettled {
+				t.Errorf("NotSettled = %d, want %d", l.NotSettled, tc.notSettled)
+			}
+		})
+	}
+}
+
+// With no filter in force there is nothing to sum: the whole ledger is not a
+// period anybody asked about.
+func TestTheWholeLedgerHasNoTotals(t *testing.T) {
+	svc, _, _ := totalsLedger(t)
+	if l := totalsOf(t, svc, store.LedgerFilter{}); l.Totals != nil {
+		t.Errorf("Totals = %+v with no filter, want none", l.Totals)
 	}
 }

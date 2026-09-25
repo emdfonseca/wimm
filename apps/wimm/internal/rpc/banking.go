@@ -3,7 +3,11 @@ package rpc
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
+	"regexp"
+	"time"
+	"unicode/utf8"
 
 	"connectrpc.com/connect"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -345,14 +349,19 @@ func (s *BankingServer) ListTransactions(
 		return nil, toConnectError(err)
 	}
 
+	filter, err := fromProtoFilter(req.Msg)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
+
 	ledger, err := s.banking.Transactions(ctx, banking.LedgerRequest{
-		MemberID:  m.ID,
-		AccountID: req.Msg.GetAccountId(),
-		Cursor:    fromProtoCursor(req.Msg.GetCursor()),
-		Older:     req.Msg.GetOlder(),
-		Oldest:    req.Msg.GetOldest(),
-		PageStart: fromProtoPageStart(req.Msg.GetPageStart()),
-		SkipSync:  req.Msg.GetSkipSync(),
+		MemberID:     m.ID,
+		LedgerFilter: filter,
+		Cursor:       fromProtoCursor(req.Msg.GetCursor()),
+		Older:        req.Msg.GetOlder(),
+		Oldest:       req.Msg.GetOldest(),
+		PageStart:    fromProtoPageStart(req.Msg.GetPageStart()),
+		SkipSync:     req.Msg.GetSkipSync(),
 	})
 	if err != nil {
 		return nil, toConnectError(err)
@@ -373,7 +382,7 @@ func (s *BankingServer) RefreshTransactions(
 	// be brought up to date is asking to see what just arrived, and what just
 	// arrived is at the newest end.
 	ledger, err := s.banking.Transactions(ctx, banking.LedgerRequest{
-		MemberID: m.ID, AccountID: req.Msg.GetAccountId(), Refresh: true,
+		MemberID: m.ID, LedgerFilter: store.LedgerFilter{AccountID: req.Msg.GetAccountId()}, Refresh: true,
 	})
 	if err != nil {
 		return nil, toConnectError(err)
@@ -610,6 +619,71 @@ func toProtoCursor(c store.Cursor) *bankingv1.LedgerCursor {
 	}
 }
 
+// maxSearch is the longest search wimm reads, in characters, and the search
+// field's maxlength.
+const maxSearch = 100
+
+var uuidPattern = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
+
+// fromProtoFilter reads the filters a member asked for, refusing any wimm cannot
+// use. The web client drops such a value before it gets here, so a refusal is a
+// caller's defect rather than a member's typing; an account id that is not a
+// uuid would otherwise reach Postgres and fail as an internal error.
+func fromProtoFilter(req *bankingv1.ListTransactionsRequest) (store.LedgerFilter, error) {
+	f := store.LedgerFilter{AccountID: req.GetAccountId(), Search: req.GetSearch()}
+	if f.AccountID != "" && !uuidPattern.MatchString(f.AccountID) {
+		return store.LedgerFilter{}, errors.New("account_id is not a uuid")
+	}
+	if utf8.RuneCountInString(f.Search) > maxSearch {
+		return store.LedgerFilter{}, fmt.Errorf("search is longer than %d characters", maxSearch)
+	}
+	if m := req.GetMonth(); m != "" {
+		month, err := time.Parse("2006-01", m)
+		if err != nil || month.Format("2006-01") != m {
+			return store.LedgerFilter{}, errors.New("month is not YYYY-MM")
+		}
+		f.Month = month
+	}
+	switch req.GetDirection() {
+	case bankingv1.LedgerDirection_LEDGER_DIRECTION_UNSPECIFIED:
+	case bankingv1.LedgerDirection_LEDGER_DIRECTION_IN:
+		f.Direction = store.MoneyIn
+	case bankingv1.LedgerDirection_LEDGER_DIRECTION_OUT:
+		f.Direction = store.MoneyOut
+	default:
+		return store.LedgerFilter{}, errors.New("direction is not money in, money out or both")
+	}
+	return f, nil
+}
+
+func toProtoFilterAccounts(accounts []banking.FilterAccount) []*bankingv1.FilterAccount {
+	out := make([]*bankingv1.FilterAccount, 0, len(accounts))
+	for _, a := range accounts {
+		out = append(out, &bankingv1.FilterAccount{AccountId: a.ID, Name: a.Name, BankName: a.BankName})
+	}
+	return out
+}
+
+func toProtoTotalsOfFilter(totals []banking.FilterTotal) []*bankingv1.LedgerTotal {
+	out := make([]*bankingv1.LedgerTotal, 0, len(totals))
+	for _, t := range totals {
+		out = append(out, &bankingv1.LedgerTotal{
+			Currency: t.Currency,
+			MoneyIn:  &bankingv1.Money{Minor: t.In, Currency: t.Currency},
+			MoneyOut: &bankingv1.Money{Minor: -t.Out, Currency: t.Currency},
+		})
+	}
+	return out
+}
+
+func toProtoMonths(months []time.Time) []string {
+	out := make([]string, 0, len(months))
+	for _, m := range months {
+		out = append(out, m.Format("2006-01"))
+	}
+	return out
+}
+
 // toProtoPages renders the ledger's page index, newest first, the way
 // LedgerPageIndex already ordered it.
 func toProtoPages(pages []store.PageMarker) []*bankingv1.PageMarker {
@@ -636,6 +710,11 @@ func toProtoLedger(l banking.Ledger) *bankingv1.Ledger {
 		Failures:          toProtoFailures(l.Failures),
 		NarrowConnections: toProtoNarrow(l.Narrow),
 		Pages:             toProtoPages(l.Pages),
+		FilterAccounts:    toProtoFilterAccounts(l.FilterAccounts),
+		Months:            toProtoMonths(l.Months),
+		Totals:            toProtoTotalsOfFilter(l.Totals),
+		TransfersLeftOut:  int32(l.TransfersLeftOut),
+		NotSettled:        int32(l.NotSettled),
 	}
 
 	for _, t := range l.Page.Transactions {

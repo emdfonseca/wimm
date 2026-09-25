@@ -329,7 +329,7 @@ func TestAGrantedMemberReadsNoTransactionsAndNoCount(t *testing.T) {
 		t.Errorf("a member holding balance and details read %d transactions, want none", len(page.Transactions))
 	}
 
-	n, err := db.CountLedger(ctx, grace.ID, "")
+	n, err := db.CountLedger(ctx, grace.ID, store.LedgerFilter{})
 	if err != nil {
 		t.Fatalf("CountLedger: %v", err)
 	}
@@ -389,7 +389,7 @@ func TestNarrowingToOneAccountIsScopedToOwnership(t *testing.T) {
 		}
 	}
 
-	narrowed := readPage(t, ctx, db, store.LedgerQuery{MemberID: ada.ID, AccountID: stored[0].ID, Limit: 50})
+	narrowed := readPage(t, ctx, db, store.LedgerQuery{MemberID: ada.ID, LedgerFilter: store.LedgerFilter{AccountID: stored[0].ID}, Limit: 50})
 	if len(narrowed.Transactions) != 1 || narrowed.Transactions[0].AccountID != stored[0].ID {
 		t.Errorf("narrowing gave %+v, want only that account's transactions", narrowed.Transactions)
 	}
@@ -399,7 +399,7 @@ func TestNarrowingToOneAccountIsScopedToOwnership(t *testing.T) {
 		t.Errorf("widening gave %d transactions, want 2", len(widened.Transactions))
 	}
 
-	notTheirs := readPage(t, ctx, db, store.LedgerQuery{MemberID: grace.ID, AccountID: stored[0].ID, Limit: 50})
+	notTheirs := readPage(t, ctx, db, store.LedgerQuery{MemberID: grace.ID, LedgerFilter: store.LedgerFilter{AccountID: stored[0].ID}, Limit: 50})
 	if len(notTheirs.Transactions) != 0 {
 		t.Errorf("a member read %d transactions of an account they do not own", len(notTheirs.Transactions))
 	}
@@ -512,7 +512,7 @@ func TestLeavingAnAccountOutRemovesItFromTheLedgerAndBringingItBackRestoresIt(t 
 	if len(page.Transactions) != 0 {
 		t.Errorf("a left-out account's ledger holds %d transactions, want 0", len(page.Transactions))
 	}
-	if n, err := db.CountLedger(ctx, ada.ID, ""); err != nil || n != 0 {
+	if n, err := db.CountLedger(ctx, ada.ID, store.LedgerFilter{}); err != nil || n != 0 {
 		t.Errorf("CountLedger = %d, %v, want 0, nil", n, err)
 	}
 	state, err := db.LedgerState(ctx, ada.ID, "")
@@ -530,7 +530,7 @@ func TestLeavingAnAccountOutRemovesItFromTheLedgerAndBringingItBackRestoresIt(t 
 	if len(page.Transactions) != 3 {
 		t.Errorf("after bringing it back: %d transactions, want 3 restored", len(page.Transactions))
 	}
-	if n, err := db.CountLedger(ctx, ada.ID, ""); err != nil || n != 3 {
+	if n, err := db.CountLedger(ctx, ada.ID, store.LedgerFilter{}); err != nil || n != 3 {
 		t.Errorf("CountLedger = %d, %v, want 3, nil", n, err)
 	}
 }
@@ -599,7 +599,7 @@ func TestPageStartIsContiguousWithThePageEitherSide(t *testing.T) {
 		t.Fatalf("WriteAccountTransactions: %v", err)
 	}
 
-	index, err := db.LedgerPageIndex(ctx, ada.ID, "", 2)
+	index, err := db.LedgerPageIndex(ctx, ada.ID, store.LedgerFilter{}, 2)
 	if err != nil {
 		t.Fatalf("LedgerPageIndex: %v", err)
 	}
@@ -656,7 +656,7 @@ func TestThePageIndexBucketsIntoRealPages(t *testing.T) {
 		t.Fatalf("WriteAccountTransactions: %v", err)
 	}
 
-	index, err := db.LedgerPageIndex(ctx, ada.ID, "", 2)
+	index, err := db.LedgerPageIndex(ctx, ada.ID, store.LedgerFilter{}, 2)
 	if err != nil {
 		t.Fatalf("LedgerPageIndex: %v", err)
 	}
@@ -700,7 +700,7 @@ func TestThePageIndexStaysFastAtFiftyThousandRows(t *testing.T) {
 	}
 
 	began := time.Now()
-	index, err := db.LedgerPageIndex(ctx, ada.ID, "", 50)
+	index, err := db.LedgerPageIndex(ctx, ada.ID, store.LedgerFilter{}, 50)
 	elapsed := time.Since(began)
 	if err != nil {
 		t.Fatalf("LedgerPageIndex: %v", err)
@@ -711,5 +711,302 @@ func TestThePageIndexStaysFastAtFiftyThousandRows(t *testing.T) {
 	}
 	if len(index) != total/50 {
 		t.Errorf("LedgerPageIndex returned %d pages, want %d", len(index), total/50)
+	}
+}
+
+// filtered is the ledger the filter tests read: Ada's current and savings
+// accounts, an account of hers she has left out, and an account of Grace's she
+// holds details on. Only the first two may ever be searched, counted or offered.
+type filtered struct {
+	ada, grace store.Member
+	current    string
+	savings    string
+}
+
+func on(y int, m time.Month, d int) time.Time { return time.Date(y, m, d, 0, 0, 0, 0, time.UTC) }
+
+func row(key string, when time.Time, minor int64, counterparty, remittance string) store.Transaction {
+	return store.Transaction{
+		Status: store.StatusBooked, DedupKey: key, AmountMinor: minor, Currency: "EUR",
+		BookingDate: when, CounterpartyName: counterparty, Remittance: remittance,
+	}
+}
+
+func filteredLedger(t *testing.T, ctx context.Context, db *store.DB) filtered {
+	t.Helper()
+	ada := member(t, ctx, db, "ada@example.com")
+	grace := member(t, ctx, db, "grace@example.com")
+
+	_, mine := connect(t, ctx, db, ada.ID, 90*24*time.Hour,
+		account("hash-current", "Current", "0538"),
+		account("hash-savings", "Savings", "5594"),
+		account("hash-left-out", "Old savings", "7710"))
+	_, theirs := connect(t, ctx, db, grace.ID, 90*24*time.Hour, account("hash-grace", "Grace's", "1234"))
+
+	write := func(accountID string, txs ...store.Transaction) {
+		t.Helper()
+		if _, err := db.WriteAccountTransactions(ctx, accountID, txs, on(2026, time.September, 20)); err != nil {
+			t.Fatalf("WriteAccountTransactions: %v", err)
+		}
+	}
+	write(mine[0].ID,
+		row("galp-1", on(2026, time.August, 31), -4500, "GALP ENERGIA", "COMPRA 1234"),
+		row("galp-2", on(2026, time.August, 3), -3000, "", "Pagamento Galp Lisboa"),
+		row("sept-1", on(2026, time.September, 1), -200, "Padaria Ribeiro", ""),
+		row("zero", on(2026, time.August, 10), 0, "Acerto", ""),
+		row("cafe-1", on(2026, time.July, 15), -150, "Café Central", ""),
+		row("cafe-2", on(2026, time.July, 16), -180, "CAFÉ BRASILEIRA", ""),
+		row("pct", on(2026, time.June, 10), -5000, "Loja", "Desconto 50% verão"),
+		row("fifty", on(2026, time.June, 11), -5000, "Loja", "Ref 500"),
+		row("under", on(2026, time.June, 12), -100, "a_b lda", ""),
+		row("axb", on(2026, time.June, 13), -100, "axb lda", ""),
+		row("slash", on(2026, time.June, 14), -100, `c\d lda`, ""),
+	)
+	write(mine[1].ID,
+		row("salary", on(2026, time.August, 25), 250000, "Empresa", "Salario"),
+		row("galp-s", on(2026, time.August, 15), 1000, "Galp refund", ""),
+	)
+	write(mine[2].ID, row("left-out", on(2026, time.August, 20), -900, "Hidden Merchant", ""))
+	write(theirs[0].ID, row("granted", on(2026, time.August, 21), -700, "Granted Merchant", ""))
+
+	if err := db.SetAccountLeftOut(ctx, mine[2].ID, true); err != nil {
+		t.Fatalf("SetAccountLeftOut: %v", err)
+	}
+	if err := db.SetAccountLevel(ctx, theirs[0].ID, ada.ID, store.LevelDetails, grace.ID); err != nil {
+		t.Fatalf("granting details: %v", err)
+	}
+	return filtered{ada: ada, grace: grace, current: mine[0].ID, savings: mine[1].ID}
+}
+
+// everything pages older from the newest page until the ledger says nothing is
+// older, which is how a member reaches every row a filter matches.
+func everything(t *testing.T, ctx context.Context, db *store.DB, memberID string, f store.LedgerFilter, limit int) []string {
+	t.Helper()
+	q := store.LedgerQuery{MemberID: memberID, LedgerFilter: f, Limit: limit}
+	var out []string
+	for {
+		page := readPage(t, ctx, db, q)
+		out = append(out, keys(page)...)
+		if !page.HasOlder {
+			return out
+		}
+		last := page.Transactions[len(page.Transactions)-1]
+		q.Older, q.Cursor = true, store.Cursor{BookingDate: last.BookingDate, ID: last.ID}
+	}
+}
+
+func sorted(in []string) []string {
+	out := append([]string(nil), in...)
+	for i := range out {
+		for j := i + 1; j < len(out); j++ {
+			if out[j] < out[i] {
+				out[i], out[j] = out[j], out[i]
+			}
+		}
+	}
+	return out
+}
+
+func TestEachFilterNarrowsTheLedgerAndTheyCombine(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	l := filteredLedger(t, ctx, db)
+	august := on(2026, time.August, 1)
+
+	for _, tc := range []struct {
+		name string
+		f    store.LedgerFilter
+		want []string
+	}{
+		{"one account", store.LedgerFilter{AccountID: l.savings}, []string{"galp-s", "salary"}},
+		{"a search, in either column", store.LedgerFilter{Search: "galp"}, []string{"galp-1", "galp-2", "galp-s"}},
+		{"a search with spaces at either end", store.LedgerFilter{Search: "  galp "}, []string{"galp-1", "galp-2", "galp-s"}},
+		{"a month, its last day in and the next month's first out", store.LedgerFilter{Month: august},
+			[]string{"galp-1", "galp-2", "galp-s", "salary", "zero"}},
+		{"money in", store.LedgerFilter{Direction: store.MoneyIn}, []string{"galp-s", "salary"}},
+		{"money out, and a zero amount is neither", store.LedgerFilter{Direction: store.MoneyOut},
+			[]string{"axb", "cafe-1", "cafe-2", "fifty", "galp-1", "galp-2", "pct", "sept-1", "slash", "under"}},
+		{"every filter at once", store.LedgerFilter{
+			AccountID: l.current, Search: "galp", Month: august, Direction: store.MoneyOut},
+			[]string{"galp-1", "galp-2"}},
+		{"filters that agree on nothing", store.LedgerFilter{AccountID: l.current, Direction: store.MoneyIn}, nil},
+		{"café finds CAFÉ", store.LedgerFilter{Search: "café"}, []string{"cafe-1", "cafe-2"}},
+		{"cafe does not find Café", store.LedgerFilter{Search: "cafe"}, nil},
+		{"a percent sign is a percent sign", store.LedgerFilter{Search: "50%"}, []string{"pct"}},
+		{"an underscore is an underscore", store.LedgerFilter{Search: "a_b"}, []string{"under"}},
+		{"a backslash is a backslash", store.LedgerFilter{Search: `c\d`}, []string{"slash"}},
+		{"a search on a details-granted account", store.LedgerFilter{Search: "granted merchant"}, nil},
+		{"a search on a left-out account", store.LedgerFilter{Search: "hidden merchant"}, nil},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			got := sorted(everything(t, ctx, db, l.ada.ID, tc.f, 50))
+			if !same(got, sorted(tc.want)) {
+				t.Errorf("listed %v, want %v", got, sorted(tc.want))
+			}
+			n, err := db.CountLedger(ctx, l.ada.ID, tc.f)
+			if err != nil {
+				t.Fatalf("CountLedger: %v", err)
+			}
+			if n != len(tc.want) {
+				t.Errorf("CountLedger = %d, want %d", n, len(tc.want))
+			}
+		})
+	}
+}
+
+// A search of nothing but spaces is no search at all.
+func TestABlankSearchIsNoSearch(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	l := filteredLedger(t, ctx, db)
+
+	all := everything(t, ctx, db, l.ada.ID, store.LedgerFilter{}, 50)
+	blank := everything(t, ctx, db, l.ada.ID, store.LedgerFilter{Search: "   "}, 50)
+	if len(all) != 13 || !same(all, blank) {
+		t.Errorf("a blank search listed %v, want every one of %v", blank, all)
+	}
+}
+
+// The count, the pages the scrubber offers and the rows paging reaches share
+// one predicate, so under any filter they describe the same list.
+func TestTheCountAndThePagesAgreeWithTheRowsUnderEveryFilter(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	l := filteredLedger(t, ctx, db)
+	const size = 2
+
+	for _, tc := range []struct {
+		name string
+		f    store.LedgerFilter
+	}{
+		{"no filter", store.LedgerFilter{}},
+		{"one account", store.LedgerFilter{AccountID: l.current}},
+		{"a search", store.LedgerFilter{Search: "galp"}},
+		{"a month", store.LedgerFilter{Month: on(2026, time.June, 1)}},
+		{"money out", store.LedgerFilter{Direction: store.MoneyOut}},
+		{"combined", store.LedgerFilter{AccountID: l.current, Month: on(2026, time.August, 1), Direction: store.MoneyOut}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			rows := everything(t, ctx, db, l.ada.ID, tc.f, size)
+
+			n, err := db.CountLedger(ctx, l.ada.ID, tc.f)
+			if err != nil {
+				t.Fatalf("CountLedger: %v", err)
+			}
+			if n != len(rows) {
+				t.Errorf("CountLedger = %d, but paging reached %d rows", n, len(rows))
+			}
+
+			index, err := db.LedgerPageIndex(ctx, l.ada.ID, tc.f, size)
+			if err != nil {
+				t.Fatalf("LedgerPageIndex: %v", err)
+			}
+			if want := (len(rows) + size - 1) / size; len(index) != want {
+				t.Fatalf("LedgerPageIndex names %d pages, want %d", len(index), want)
+			}
+			for i, marker := range index {
+				page := readPage(t, ctx, db, store.LedgerQuery{
+					MemberID: l.ada.ID, LedgerFilter: tc.f, Limit: size, PageStart: &marker.Cursor})
+				want := rows[i*size : min((i+1)*size, len(rows))]
+				if !same(keys(page), want) {
+					t.Errorf("page %d holds %v, want %v", i, keys(page), want)
+				}
+			}
+		})
+	}
+}
+
+// The months offered are the months holding a match for every other filter,
+// newest first, and never a month the member cannot reach.
+func TestTheMonthsOfferedFollowTheOtherFilters(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	l := filteredLedger(t, ctx, db)
+	months := func(ms ...time.Month) []time.Time {
+		out := make([]time.Time, 0, len(ms))
+		for _, m := range ms {
+			out = append(out, on(2026, m, 1))
+		}
+		return out
+	}
+
+	for _, tc := range []struct {
+		name string
+		who  string
+		f    store.LedgerFilter
+		want []time.Time
+	}{
+		{"every month holding a row", l.ada.ID, store.LedgerFilter{},
+			months(time.September, time.August, time.July, time.June)},
+		{"the month in force is ignored", l.ada.ID, store.LedgerFilter{Month: on(2026, time.June, 1)},
+			months(time.September, time.August, time.July, time.June)},
+		{"following the account", l.ada.ID, store.LedgerFilter{AccountID: l.savings}, months(time.August)},
+		{"following the search", l.ada.ID, store.LedgerFilter{Search: "café"}, months(time.July)},
+		{"following the direction", l.ada.ID, store.LedgerFilter{Direction: store.MoneyIn}, months(time.August)},
+		{"an account the member does not own", l.grace.ID, store.LedgerFilter{AccountID: l.current}, nil},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := db.LedgerMonths(ctx, tc.who, tc.f)
+			if err != nil {
+				t.Fatalf("LedgerMonths: %v", err)
+			}
+			if len(got) != len(tc.want) {
+				t.Fatalf("LedgerMonths = %v, want %v", got, tc.want)
+			}
+			for i := range got {
+				if !got[i].Equal(tc.want[i]) {
+					t.Errorf("LedgerMonths = %v, want %v", got, tc.want)
+					break
+				}
+			}
+		})
+	}
+}
+
+func TestAMemberWhoOwnsNoAccountIsOfferedNoMonths(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	filteredLedger(t, ctx, db)
+	nobody := member(t, ctx, db, "nobody@example.com")
+
+	got, err := db.LedgerMonths(ctx, nobody.ID, store.LedgerFilter{})
+	if err != nil {
+		t.Fatalf("LedgerMonths: %v", err)
+	}
+	if len(got) != 0 {
+		t.Errorf("a member who owns nothing is offered %v", got)
+	}
+}
+
+// LedgerRows is every row the filter lets through, not a page of them: what
+// a filtered list adds up to is taken over all of it.
+func TestLedgerRowsIsEveryMatchingRowAndNothingElse(t *testing.T) {
+	db := storetest.New(t)
+	ctx := context.Background()
+	l := filteredLedger(t, ctx, db)
+
+	for _, tc := range []struct {
+		name string
+		f    store.LedgerFilter
+		want []string
+	}{
+		{"a month", store.LedgerFilter{Month: on(2026, time.August, 1)}, []string{"galp-1", "galp-2", "galp-s", "salary", "zero"}},
+		{"a search on accounts the member may not search", store.LedgerFilter{Search: "merchant"}, nil},
+		{"more rows than a page holds", store.LedgerFilter{Direction: store.MoneyOut},
+			[]string{"axb", "cafe-1", "cafe-2", "fifty", "galp-1", "galp-2", "pct", "sept-1", "slash", "under"}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			rows, err := db.LedgerRows(ctx, l.ada.ID, tc.f)
+			if err != nil {
+				t.Fatalf("LedgerRows: %v", err)
+			}
+			got := make([]string, 0, len(rows))
+			for _, r := range rows {
+				got = append(got, r.DedupKey)
+			}
+			if !same(sorted(got), sorted(tc.want)) {
+				t.Errorf("LedgerRows = %v, want %v", sorted(got), sorted(tc.want))
+			}
+		})
 	}
 }

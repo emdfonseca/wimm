@@ -505,10 +505,33 @@ message NarrowConnection {
   string bank_name = 2;
 }
 
+// Money in or money out, judged by the sign of the amount. A zero amount is
+// neither.
+enum LedgerDirection {
+  // Both: no direction in force.
+  LEDGER_DIRECTION_UNSPECIFIED = 0;
+  LEDGER_DIRECTION_IN = 1;
+  LEDGER_DIRECTION_OUT = 2;
+}
+
+// An account the member can narrow the ledger to: one they own and have not
+// left out, and no other.
+message FilterAccount {
+  string account_id = 1;
+  string name = 2;
+  string bank_name = 3;
+}
+
+// Every filter narrows the transactions of the accounts the member owns and has
+// not left out, and they combine: a row is listed only when it matches every
+// filter in force. The count and the page index describe the filtered list.
+//
+// Deadline: the caller's, as every read here; no bank is asked when skip_sync is
+// set.
 message ListTransactionsRequest {
   // Narrow to one account the member owns. Empty is every account they own —
   // the same list filtered, not a different screen.
-  string account_id = 1;
+  string account_id = 1 [(buf.validate.field).string.pattern = "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?$"];
   // Where to read from. Absent is the newest page.
   LedgerCursor cursor = 2;
   // Read away from today. False with a cursor reads back towards it.
@@ -523,8 +546,15 @@ message ListTransactionsRequest {
   // Jump to a specific real page, named by the ledger's own page index
   // (never a calendar month — a page can span more of them than one). Read
   // inclusively: this is that page's own newest row. Ignored when cursor is
-  // set.
+  // set. A page, not a month: a month is the filter in `month`.
   LedgerCursor page_start = 6;
+  // Free text matched against the other party and the bank's line, ignoring
+  // case and not accents. Spaces at either end are ignored; empty is no search.
+  string search = 7 [(buf.validate.field).string.max_len = 100];
+  // A calendar month of booking dates, YYYY-MM. Empty is every month.
+  string month = 8 [(buf.validate.field).string.pattern = "^([0-9]{4}-(0[1-9]|1[0-2]))?$"];
+  // Money in, money out, or both when unspecified.
+  LedgerDirection direction = 9 [(buf.validate.field).enum.defined_only = true];
 }
 
 message RefreshTransactionsRequest {
@@ -575,11 +605,39 @@ message Ledger {
   // empty, and the two are never collapsed into one.
   bool owns_no_account = 11;
 
-  // Every real page the ledger holds for this scope, newest first — never a
-  // calendar month standing in for one, which a household with sparse
-  // transactions can fill with several of them. Never a "filter" — the list
-  // is not cut down by choosing one.
+  // Every real page the filtered list holds, newest first — never a calendar
+  // month standing in for one, which a household with sparse transactions can
+  // fill with several of them. Choosing a page moves through the list without
+  // cutting it down; the month filter is what cuts it to a month.
   repeated PageMarker pages = 12;
+
+  // Every account the member can narrow to, ordered by bank then name, whatever
+  // filter is in force.
+  repeated FilterAccount filter_accounts = 13;
+  // The months, YYYY-MM and newest first, holding a transaction that matches
+  // every filter in force but the month. Never a month with nothing in it.
+  repeated string months = 14;
+
+  // What the filtered list adds up to, one entry per currency, ordered by
+  // currency code. Empty when no filter is in force. Settled rows only, with a
+  // transfer between two of the member's accounts in scope left out, the way
+  // Overview counts a month.
+  repeated LedgerTotal totals = 15;
+  // How many transfers between the member's accounts the totals leave out.
+  int32 transfers_left_out = 16;
+  // How many matching rows the totals do not count because the bank has not
+  // settled them.
+  int32 not_settled = 17;
+}
+
+// One currency's money in and money out across a filtered list. Currencies
+// are never summed together: wimm holds no rates.
+message LedgerTotal {
+  string currency = 1;
+  // Positive or zero.
+  Money money_in = 2;
+  // Negative or zero: money that left.
+  Money money_out = 3;
 }
 
 // One real, reachable page of the ledger: the cursor that seeks straight to
