@@ -308,6 +308,56 @@ export const flows = {
 				from: 'pages-transactionsscreen--as-it-opens',
 				outcome: 'a member who owns no account',
 				to: 'pages-transactionsscreen--owns-no-account'
+			},
+			{
+				from: 'pages-transactionsscreen--as-it-opens',
+				outcome: 'searched for a payment',
+				to: 'pages-transactionsscreen--searched'
+			},
+			{
+				from: 'pages-transactionsscreen--as-it-opens',
+				outcome: 'filtered to a month',
+				to: 'pages-transactionsscreen--one-month'
+			},
+			{
+				from: 'pages-transactionsscreen--as-it-opens',
+				outcome: 'money in only',
+				to: 'pages-transactionsscreen--money-in'
+			},
+			{
+				from: 'pages-transactionsscreen--as-it-opens',
+				outcome: 'every filter at once',
+				to: 'pages-transactionsscreen--filters-combined'
+			},
+			{
+				from: 'pages-transactionsscreen--as-it-opens',
+				outcome: 'a search that finds nothing',
+				to: 'pages-transactionsscreen--nothing-matches'
+			},
+			{
+				from: 'pages-transactionsscreen--as-it-opens',
+				outcome: 'an account with nothing in it',
+				to: 'pages-transactionsscreen--an-account-with-nothing'
+			},
+			{
+				from: 'pages-transactionsscreen--as-it-opens',
+				outcome: 'on a phone, filtered',
+				to: 'pages-transactionsscreen--compact-filtered'
+			},
+			{
+				from: 'pages-transactionsscreen--as-it-opens',
+				outcome: 'a month read to its end',
+				to: 'pages-transactionsscreen--the-oldest-page-of-a-month'
+			},
+			{
+				from: 'pages-overview--populated',
+				outcome: 'a month followed from Overview',
+				to: 'pages-transactionsscreen--one-month'
+			},
+			{
+				from: 'pages-transactionsscreen--as-it-opens',
+				outcome: 'a month spent in two currencies',
+				to: 'pages-transactionsscreen--totals-in-two-currencies'
 			}
 		]
 	},
