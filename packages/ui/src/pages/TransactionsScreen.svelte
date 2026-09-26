@@ -462,14 +462,65 @@
 			{/if}
 		{:else}
 			<section class="ledger" aria-labelledby="ledger-heading">
-				<div class="toolbar">
-					<h2 id="ledger-heading" class="count" tabindex="-1" bind:this={listHeading}>
-						{count} transactions
-					</h2>
-					<!-- What the filtered list adds up to, on the count's own line:
-					     one pair of figures per currency, never summed across them. -->
-					{#if inForce && totals.length > 0}
-						<div class="totals">
+				<!-- The count is the list's name for a screen reader; on screen it
+				     sits in the footer, where it is read with the dates and the
+				     pages rather than above the first row. -->
+				<h2 id="ledger-heading" class="sr-only">{count} transactions</h2>
+
+				{#if !compact}
+					<div class="columns" aria-hidden="true">
+						<span class="col-gap"></span>
+						<span class="col-description">Description</span>
+						<span class="col-account">Account</span>
+						<span class="col-status"></span>
+						<span class="col-amount">Amount</span>
+					</div>
+				{/if}
+
+				<!-- Only this scrolls: the ledger's own height never exceeds the
+			     screen, and the column headings and footer stay put around
+			     whatever part of the list is on screen. -->
+				<!-- The list scrolls, so a keyboard has to be able to reach it. -->
+				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+				<div
+					class="rows"
+					role="region"
+					aria-label="Transactions"
+					tabindex="0"
+					bind:this={listHeading}
+				>
+					{#each days as day (day.date + day.entries[0]?.id)}
+						<h3 class="day">{dayLabel(day.date, today)}</h3>
+						{#each day.entries as entry (entry.id)}
+							<LedgerRow
+								description={entry.description}
+								account={entry.account}
+								amount={entry.amount}
+								date={entry.date}
+								negative={entry.negative}
+								unsettled={entry.unsettled}
+								initials={entry.initials}
+								banksLine={entry.banksLine}
+								unusual={entry.unusual}
+								transfer={entry.transfer}
+								hideDate={!compact}
+								{compact}
+							/>
+						{/each}
+					{/each}
+				</div>
+
+				{#if totalsNote && noteOpen}
+					<p id="totals-note" class="note">{totalsNote}</p>
+				{/if}
+
+				<!-- One row: how many and what they add up to, where the member is,
+				     and how they move. None of it needs a row of its own. -->
+				<div class="pager" class:compact>
+					<div class="summary">
+						<p class="count" aria-hidden="true">{count} transactions</p>
+						<!-- One pair of figures per currency, never summed across them. -->
+						{#if inForce && totals.length > 0}
 							{#each totals as total, i (i)}
 								<p class="figures">
 									{#if filters.direction !== 'out'}
@@ -492,63 +543,15 @@
 									<Icon name="info" size={14} />
 								</button>
 							{/if}
-						</div>
+						{/if}
+					</div>
+					{#if span}
+						<SeekPager {span} {nothingOlder} />
+					{/if}
+					{#if pages.length > 0}
+						<PageScrubber {pages} current={currentPage} {newestHref} {oldestHref} />
 					{/if}
 				</div>
-				{#if totalsNote && noteOpen}
-					<p id="totals-note" class="note">{totalsNote}</p>
-				{/if}
-
-				{#if !compact}
-					<div class="columns" aria-hidden="true">
-						<span class="col-gap"></span>
-						<span class="col-description">Description</span>
-						<span class="col-account">Account</span>
-						<span class="col-status"></span>
-						<span class="col-amount">Amount</span>
-					</div>
-				{/if}
-
-				<!-- Only this scrolls: the ledger's own height never exceeds the
-			     screen, and the toolbar, columns and pager stay put around
-			     whatever part of the list is on screen. -->
-				<!-- The list scrolls, so a keyboard has to be able to reach it. -->
-				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-				<div class="rows" role="region" aria-label="Transactions" tabindex="0">
-					{#each days as day (day.date + day.entries[0]?.id)}
-						<h3 class="day">{dayLabel(day.date, today)}</h3>
-						{#each day.entries as entry (entry.id)}
-							<LedgerRow
-								description={entry.description}
-								account={entry.account}
-								amount={entry.amount}
-								date={entry.date}
-								negative={entry.negative}
-								unsettled={entry.unsettled}
-								initials={entry.initials}
-								banksLine={entry.banksLine}
-								unusual={entry.unusual}
-								transfer={entry.transfer}
-								hideDate={!compact}
-								{compact}
-							/>
-						{/each}
-					{/each}
-				</div>
-
-				<!-- One row, not two: the span says where the member is and the
-			     scrubber is how they move, and neither needs a whole row to
-			     itself. -->
-				{#if span || pages.length > 0}
-					<div class="pager" class:compact>
-						{#if span}
-							<SeekPager {span} {nothingOlder} />
-						{/if}
-						{#if pages.length > 0}
-							<PageScrubber {pages} current={currentPage} {newestHref} {oldestHref} />
-						{/if}
-					</div>
-				{/if}
 			</section>
 		{/if}
 	</div>
@@ -614,12 +617,16 @@
 		overflow: hidden;
 	}
 
-	.rows {
+	.ledger {
 		/* The rows are a table: the name takes what the columns leave. */
 		--ledger-name-basis: 0px;
+	}
+
+	.rows {
 		flex: 1;
 		min-block-size: 0;
 		overflow-y: auto;
+		scrollbar-gutter: stable;
 	}
 
 	.rows:focus-visible {
@@ -627,23 +634,23 @@
 		outline-offset: calc(var(--focus-ring-offset) * -1);
 	}
 
-	.toolbar {
+	.summary {
 		display: flex;
+		flex: none;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 4px 12px;
-		min-block-size: 48px;
-		padding-block: 8px;
-		padding-inline: var(--density-cell-padding-x);
+		gap: 2px var(--space-4);
+		padding-inline-start: var(--density-cell-padding-x);
 	}
 
 	/* The span fills the left and the scrubber sits right. Compact stacks
 	   them, span above scrubber. */
 	.pager {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		block-size: 56px;
+		min-block-size: 56px;
 		background: var(--color-bg-surface);
 	}
 
@@ -651,15 +658,7 @@
 		flex-direction: column;
 		align-items: stretch;
 		justify-content: center;
-		block-size: 92px;
-	}
-
-	.totals {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: flex-end;
-		gap: 2px var(--space-4);
+		padding-block-start: var(--space-3);
 	}
 
 	.figures {
@@ -696,10 +695,11 @@
 
 	.note {
 		margin: 0;
-		padding: 0 var(--density-cell-padding-x) var(--space-3);
+		padding: var(--space-2) var(--density-cell-padding-x);
+		border-block-start: 1px solid var(--color-border-subtle);
+		background: var(--color-bg-surface);
 		color: var(--color-text-secondary);
 		font-size: var(--type-size-body-sm);
-		text-align: end;
 	}
 
 	.amount {
@@ -716,19 +716,18 @@
 	}
 
 	.count {
-		flex: 1 1 auto;
 		margin: 0;
 		color: var(--color-text-primary);
 		font-size: 13px;
 		font-weight: 500;
+		white-space: nowrap;
 	}
 
-	.count:focus-visible {
-		outline: var(--focus-ring-width) solid var(--color-focus-ring);
-		outline-offset: var(--focus-ring-offset);
-	}
-
+	/* The same gutter the rows keep for their scrollbar, so the right-hand
+	   columns sit over their cells whether or not the list scrolls. */
 	.columns {
+		overflow-y: hidden;
+		scrollbar-gutter: stable;
 		display: flex;
 		align-items: center;
 		gap: 12px;
@@ -740,36 +739,36 @@
 		font-weight: 600;
 	}
 
+	/* Each heading takes exactly the flex its LedgerRow cell takes, from the
+	   same variables, so the two cannot drift apart at any width. */
 	.col-gap {
-		inline-size: 28px;
+		flex: 0 0 28px;
 	}
 
 	.col-description {
-		flex: 1 1 auto;
+		flex: 1 1 var(--ledger-name-basis);
+		min-inline-size: 0;
 	}
 
 	.col-account {
-		inline-size: 220px;
+		flex: 0 1 var(--ledger-account-basis, 220px);
+		min-inline-size: 0;
 	}
 
 	.col-status {
-		inline-size: 92px;
+		flex: 0 0 var(--ledger-status-basis, 148px);
 	}
 
 	.col-amount {
-		inline-size: 112px;
+		flex: 0 0 112px;
 		text-align: end;
 	}
 
 	/* At Medium the columns leave the name about 180, which cuts a bank's line
 	   short. The account gives up the room it was not using. */
 	@media (min-width: 768px) and (max-width: 1199px) {
-		.rows {
+		.ledger {
 			--ledger-account-basis: 168px;
-		}
-
-		.col-account {
-			inline-size: 168px;
 		}
 	}
 

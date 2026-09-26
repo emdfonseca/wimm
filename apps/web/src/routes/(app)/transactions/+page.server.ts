@@ -2,6 +2,7 @@ import { redirect, type Cookies, type ServerLoad } from '@sveltejs/kit';
 import type {
 	FilterOption,
 	LedgerDay,
+	LedgerFigures,
 	LedgerFilterValues,
 	LedgerProblem,
 	NarrowBank,
@@ -16,6 +17,7 @@ import {
 	type NarrowConnection,
 	type FilterAccount,
 	type BankFailure,
+	type LedgerTotal,
 	type Transaction
 } from '@wimm/contracts/banking';
 import { banking } from '$lib/server/banking';
@@ -188,6 +190,9 @@ function present(ledger: Ledger | undefined, query: Query, noBank: boolean) {
 		accounts: accountsFrom(ledger),
 		months: monthsFrom(ledger, query.filters.month),
 		clearHref: '/transactions',
+		totals: totalsFrom(ledger),
+		transfersLeftOut: ledger?.transfersLeftOut ?? 0,
+		notSettled: ledger?.notSettled ?? 0,
 		narrow: narrowFrom(ledger),
 		problems: problemsFrom(ledger),
 		// A member who can see nothing at all is in a household with no bank; one
@@ -239,6 +244,17 @@ function accountsFrom(ledger: Ledger | undefined): FilterOption[] {
 	return (ledger?.filterAccounts ?? []).map((a: FilterAccount) => ({
 		value: a.accountId,
 		label: a.bankName ? `${a.name} · ${a.bankName}` : a.name
+	}));
+}
+
+/**
+ * What the filtered list adds up to, one entry per currency, each written with
+ * its sign. wimmd sends none unless a filter is in force.
+ */
+function totalsFrom(ledger: Ledger | undefined): LedgerFigures[] {
+	return (ledger?.totals ?? []).map((total: LedgerTotal) => ({
+		moneyIn: formatMoney(total.moneyIn, { signed: true }) ?? '',
+		moneyOut: formatMoney(total.moneyOut, { signed: true }) ?? ''
 	}));
 }
 

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LedgerDirection } from '@wimm/contracts/banking';
+import { formatMoney } from '$lib/money';
 import { filterHref } from './filters';
 
 /**
@@ -104,6 +105,9 @@ async function open(search = '') {
 		pages: { key: string; href: string }[];
 		narrow: { connectionId: string; bankName: string; widenHref: string }[];
 		problems: { connectionId: string; bankName: string; kind: string }[];
+		totals: { moneyIn: string; moneyOut: string }[];
+		transfersLeftOut: number;
+		notSettled: number;
 	};
 }
 
@@ -549,6 +553,56 @@ describe('the filters', () => {
 		const data = await open('?month=2026-08&q=galp');
 
 		expect(data.syncOnArrival).toBe(true);
+	});
+});
+
+describe('what a filtered list adds up to', () => {
+	it('writes each currency signed, and passes on what the figures leave out', async () => {
+		listTransactions.mockResolvedValue(
+			ledger({
+				totals: [
+					{
+						currency: 'EUR',
+						moneyIn: { minor: 221499n, currency: 'EUR' },
+						moneyOut: { minor: -120455n, currency: 'EUR' }
+					},
+					{
+						currency: 'USD',
+						moneyIn: { minor: 0n, currency: 'USD' },
+						moneyOut: { minor: -4200n, currency: 'USD' }
+					}
+				],
+				transfersLeftOut: 1,
+				notSettled: 2
+			})
+		);
+
+		const data = await open('?month=2026-08');
+
+		expect(data.totals).toEqual([
+			{
+				moneyIn: formatMoney({ minor: 221499n, currency: 'EUR' }, { signed: true }),
+				moneyOut: formatMoney({ minor: -120455n, currency: 'EUR' }, { signed: true })
+			},
+			{
+				moneyIn: formatMoney({ minor: 0n, currency: 'USD' }, { signed: true }),
+				moneyOut: formatMoney({ minor: -4200n, currency: 'USD' }, { signed: true })
+			}
+		]);
+		expect(data.totals[0]!.moneyIn).toMatch(/^\+/);
+		expect(data.totals[0]!.moneyOut).toMatch(/^[-−]/);
+		expect(data.transfersLeftOut).toBe(1);
+		expect(data.notSettled).toBe(2);
+	});
+
+	it('has no figures when wimmd sends none', async () => {
+		listTransactions.mockResolvedValue(ledger());
+
+		const data = await open();
+
+		expect(data.totals).toEqual([]);
+		expect(data.transfersLeftOut).toBe(0);
+		expect(data.notSettled).toBe(0);
 	});
 });
 

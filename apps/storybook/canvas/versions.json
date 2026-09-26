@@ -985,11 +985,11 @@
 		]
 	},
 	"pages-transactionsscreen--access-has-run-out": {
-		"implemented": "08b49f549649f3155d2d4d5a9cb386cc779ed3326b6313e217909b3d8bddcd86",
+		"implemented": "faba21a591aa1e65a79b706039f7bf9041f9c622a8c739826e159490f4cc3a2b",
 		"versions": [
 			{
-				"fingerprint": "08b49f549649f3155d2d4d5a9cb386cc779ed3326b6313e217909b3d8bddcd86",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "faba21a591aa1e65a79b706039f7bf9041f9c622a8c739826e159490f4cc3a2b",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "4a836162555d3eaa65ca898963d89cbcfbf62bdbc604d52356f0415c0215442f",
@@ -1002,11 +1002,11 @@
 		]
 	},
 	"pages-transactionsscreen--an-account-with-nothing": {
-		"implemented": "4dfae95251cc11f50e4d3b9db87dd128668ec54578c58c419ca59094abcf312c",
+		"implemented": "e3f0afc7db0c08250f2e76afd35a40882e815700d1e7529148f6a8b63ff08b6d",
 		"versions": [
 			{
-				"fingerprint": "4dfae95251cc11f50e4d3b9db87dd128668ec54578c58c419ca59094abcf312c",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "e3f0afc7db0c08250f2e76afd35a40882e815700d1e7529148f6a8b63ff08b6d",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "ecd230e65823e1d0d96988eda170e7c999e7b0ee78453c0d4269229a67b56cc1",
@@ -1015,11 +1015,11 @@
 		]
 	},
 	"pages-transactionsscreen--an-older-page": {
-		"implemented": "58dda341bea33d2fa6950e9dbc1449f4b3f0ea48a880fadb4b3b2f77888bf86f",
+		"implemented": "436f4a77bfb8319563acae9f8c365586b8f793d4790cf5d19c468b207ff8dc2a",
 		"versions": [
 			{
-				"fingerprint": "58dda341bea33d2fa6950e9dbc1449f4b3f0ea48a880fadb4b3b2f77888bf86f",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "436f4a77bfb8319563acae9f8c365586b8f793d4790cf5d19c468b207ff8dc2a",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "2a6622c9624a65c4d801b8abd3fba02456b7e28d616a721520b26e58e0f7e77f",
@@ -1032,11 +1032,11 @@
 		]
 	},
 	"pages-transactionsscreen--as-it-opens": {
-		"implemented": "7b5e0b2de02af06882cf7c092c5136b564bd88c1ee7f6a6aec5d29df1d2901ce",
+		"implemented": "9f160b020f189b1e4efd633484f5ad6931c761ba8d4ebab6dbed1e581e4d7be5",
 		"versions": [
 			{
-				"fingerprint": "7b5e0b2de02af06882cf7c092c5136b564bd88c1ee7f6a6aec5d29df1d2901ce",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "9f160b020f189b1e4efd633484f5ad6931c761ba8d4ebab6dbed1e581e4d7be5",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "554aacc6e15fec41d5b08816c34a2624f74dc53dabb69e3d00bb5391cd1e91bd",
@@ -1049,11 +1049,11 @@
 		]
 	},
 	"pages-transactionsscreen--bank-disconnected": {
-		"implemented": "04551292945a6aec48f01d8f2db09bf2e0764eb62bcbcde6abd1d9ef50000261",
+		"implemented": "1f83dea89633061ee8b587c1d09da063c5176a3d8e26175271d9613c2a464590",
 		"versions": [
 			{
-				"fingerprint": "04551292945a6aec48f01d8f2db09bf2e0764eb62bcbcde6abd1d9ef50000261",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "1f83dea89633061ee8b587c1d09da063c5176a3d8e26175271d9613c2a464590",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "e50c02be4439632f05070a365907e940071980704953ae72572b54c639c16e1e",
@@ -1066,11 +1066,11 @@
 		]
 	},
 	"pages-transactionsscreen--bank-not-sending-transactions": {
-		"implemented": "3a9099cb7b02b2bee280a19775b359bea263163736f23be6945d5c719f144cac",
+		"implemented": "1673b801ddb25a03a32e88c14fdceccafbad119630732e5f6e4f9dc5cd796802",
 		"versions": [
 			{
-				"fingerprint": "3a9099cb7b02b2bee280a19775b359bea263163736f23be6945d5c719f144cac",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "1673b801ddb25a03a32e88c14fdceccafbad119630732e5f6e4f9dc5cd796802",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "b2f7d1b649096f0c1d0daaca419b99bbd948c9021c92a4422d2128cbab326cbc",
@@ -1083,11 +1083,11 @@
 		]
 	},
 	"pages-transactionsscreen--bank-now-included": {
-		"implemented": "56a245ab32b9160541b116bc362398c715c2156b6c264c70d4342a7c6c18346a",
+		"implemented": "19e705ff434c0a855656b038dbf65f9847010c8dec8230b5fa217dd6a90807e9",
 		"versions": [
 			{
-				"fingerprint": "56a245ab32b9160541b116bc362398c715c2156b6c264c70d4342a7c6c18346a",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "19e705ff434c0a855656b038dbf65f9847010c8dec8230b5fa217dd6a90807e9",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "4dd2ecd8b249c9d6d106a5107b5945e8f16c0de3b6bdf749b4f59139c86e16df",
@@ -1100,11 +1100,11 @@
 		]
 	},
 	"pages-transactionsscreen--compact": {
-		"implemented": "c12a879dd9c6cc07acebd4a503bcb1d826f1e6d8366345b7d22c6ec50be05125",
+		"implemented": "68e1316f595e24f02a09ba68d64f9cee8d3fad63806d32ba1daf776de3ca6cfe",
 		"versions": [
 			{
-				"fingerprint": "c12a879dd9c6cc07acebd4a503bcb1d826f1e6d8366345b7d22c6ec50be05125",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "68e1316f595e24f02a09ba68d64f9cee8d3fad63806d32ba1daf776de3ca6cfe",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "423f119223eb9ebdd927a1fb89e919a7f4ffb70a7d07f57a570e4f73c2270109",
@@ -1117,11 +1117,11 @@
 		]
 	},
 	"pages-transactionsscreen--compact-filtered": {
-		"implemented": "cdfadd0133d2bd01ffd3c1c81835815c2608d98ca673a9b6b27baf57a6f821ba",
+		"implemented": "27c134e73fb836a38b4fe41a8e7ef9da719249685257da2dfb76e69bde2dab47",
 		"versions": [
 			{
-				"fingerprint": "cdfadd0133d2bd01ffd3c1c81835815c2608d98ca673a9b6b27baf57a6f821ba",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "27c134e73fb836a38b4fe41a8e7ef9da719249685257da2dfb76e69bde2dab47",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "76ba96d9e1c418991d0dce152a28eac6fc8be70aaae4c0c7e58eda7e203ca5a2",
@@ -1130,11 +1130,11 @@
 		]
 	},
 	"pages-transactionsscreen--compact-one-account": {
-		"implemented": "7710cec40d84224aecac5a7da08898a935f6b74400b72adea5eaa804d7d68929",
+		"implemented": "89ba45faa7cc759218e6c0d19632236179d94bae1cc8f688183d57083cd78a96",
 		"versions": [
 			{
-				"fingerprint": "7710cec40d84224aecac5a7da08898a935f6b74400b72adea5eaa804d7d68929",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "89ba45faa7cc759218e6c0d19632236179d94bae1cc8f688183d57083cd78a96",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "b426f9ab175c3d978d71a5f7723dbbdef4103b556104765aa6b665fb872caa2c",
@@ -1147,20 +1147,20 @@
 		]
 	},
 	"pages-transactionsscreen--everything-fits-on-one-page": {
-		"implemented": "bb19d030243a9579ac7ee449fb6d2715140a46983e573ef7ff8a072d5bb324cb",
+		"implemented": "9784cdaab306992faf10bc2169ce007ee7166ad9162bceca19a841e450f1d72d",
 		"versions": [
 			{
-				"fingerprint": "bb19d030243a9579ac7ee449fb6d2715140a46983e573ef7ff8a072d5bb324cb",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "9784cdaab306992faf10bc2169ce007ee7166ad9162bceca19a841e450f1d72d",
+				"firstSeen": "2026-09-26"
 			}
 		]
 	},
 	"pages-transactionsscreen--filters-combined": {
-		"implemented": "5494069ea0bf8db0f24757c6adc252a9fba54f6fd5b5499c151f8d1816f0d162",
+		"implemented": "8406828934cd79a716b116a489cd3cdff7dcb59dd3f252946ce387bf310ff659",
 		"versions": [
 			{
-				"fingerprint": "5494069ea0bf8db0f24757c6adc252a9fba54f6fd5b5499c151f8d1816f0d162",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "8406828934cd79a716b116a489cd3cdff7dcb59dd3f252946ce387bf310ff659",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "e031f26576b6083861aeb0e71a8a7de04f25edc6e4e608e177ffb497759c2f83",
@@ -1169,11 +1169,11 @@
 		]
 	},
 	"pages-transactionsscreen--money-in": {
-		"implemented": "06f679fc05c77cdbfb5849168c9772469c681bcdf01263d7bda1fab43a25e8ea",
+		"implemented": "4609aad4c6be1983a0635d6c62d94a45c5f49f213d6d535877af3978533466a5",
 		"versions": [
 			{
-				"fingerprint": "06f679fc05c77cdbfb5849168c9772469c681bcdf01263d7bda1fab43a25e8ea",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "4609aad4c6be1983a0635d6c62d94a45c5f49f213d6d535877af3978533466a5",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "db41ffdde7f0e386d9bfb306782c0bec0a6f395761120b43490246f212dd4aef",
@@ -1182,11 +1182,11 @@
 		]
 	},
 	"pages-transactionsscreen--no-bank-connected": {
-		"implemented": "0a466714bd68df18d0177a66f8ca40b0cbc3768571abe3265df2a7fca785db91",
+		"implemented": "00624d019ab67551e072a4f0e35e5ab4805b9745fb95f804df4153b034254472",
 		"versions": [
 			{
-				"fingerprint": "0a466714bd68df18d0177a66f8ca40b0cbc3768571abe3265df2a7fca785db91",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "00624d019ab67551e072a4f0e35e5ab4805b9745fb95f804df4153b034254472",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "ef032b616cbeeb4c5a54ad609d16e86246cf09d9721ef5fca926b4bb92077059",
@@ -1199,11 +1199,11 @@
 		]
 	},
 	"pages-transactionsscreen--nothing-matches": {
-		"implemented": "bfce50b503c5a11431fe5789aff6668dbcf9e8df882099118803a246c94b8277",
+		"implemented": "8bff18ed42e026431dffdc2d38c7f759a211c3365ae3c1e4b38df6fd6577708d",
 		"versions": [
 			{
-				"fingerprint": "bfce50b503c5a11431fe5789aff6668dbcf9e8df882099118803a246c94b8277",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "8bff18ed42e026431dffdc2d38c7f759a211c3365ae3c1e4b38df6fd6577708d",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "a419eead864f3f36d24b7d74f30a0d8423b7a7d5c8761a7eb75baf6605b419bc",
@@ -1212,11 +1212,11 @@
 		]
 	},
 	"pages-transactionsscreen--one-account": {
-		"implemented": "d86d8ff68282d88850269db433db7ed2295909d9f43a62ab012ed3b740d6ae22",
+		"implemented": "0246a29f0761ee46292ff48202a1b0a3a18264b64ade94ae343855a9185dad18",
 		"versions": [
 			{
-				"fingerprint": "d86d8ff68282d88850269db433db7ed2295909d9f43a62ab012ed3b740d6ae22",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "0246a29f0761ee46292ff48202a1b0a3a18264b64ade94ae343855a9185dad18",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "5e7823f584fa773a42dc218312ce204d66eacd2cd8ed7a957fda7686f640fb13",
@@ -1229,11 +1229,11 @@
 		]
 	},
 	"pages-transactionsscreen--one-bank-did-not-answer": {
-		"implemented": "7efd508609e3ac5b3db4e75513bc79b981a47b5ba678f80bc3a9cfaa1ffb64f2",
+		"implemented": "f4d30af7ba0d36ddee1c40f26bfa239745403c91c57e8caa79b44e61be8fc6b0",
 		"versions": [
 			{
-				"fingerprint": "7efd508609e3ac5b3db4e75513bc79b981a47b5ba678f80bc3a9cfaa1ffb64f2",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "f4d30af7ba0d36ddee1c40f26bfa239745403c91c57e8caa79b44e61be8fc6b0",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "b607b855441f900fac9b18fa4b4aaa3e58dbe96bf1883ac5ceb7c8128c4508d9",
@@ -1246,11 +1246,11 @@
 		]
 	},
 	"pages-transactionsscreen--one-month": {
-		"implemented": "4fbf15947b3e9e67c36dc4fc58ffc1060a9e5d9713a7f1bce3aa2a9227ced64a",
+		"implemented": "c9a7af08ab6853c4e317814700f424dda9c006f23c207bc9fca9407c4cd322ad",
 		"versions": [
 			{
-				"fingerprint": "4fbf15947b3e9e67c36dc4fc58ffc1060a9e5d9713a7f1bce3aa2a9227ced64a",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "c9a7af08ab6853c4e317814700f424dda9c006f23c207bc9fca9407c4cd322ad",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "92742e36ca1ddc5e7e1dc5394d80ab3c0273c45c86a0a660b7e2b96c1784c65b",
@@ -1259,11 +1259,11 @@
 		]
 	},
 	"pages-transactionsscreen--owns-no-account": {
-		"implemented": "075da34234b834ad864792349c2a13839d236fbd60a34b68f4d44ac39a1d5c63",
+		"implemented": "a63ff115163ea69d45f35790c9dbcbadcca9c3996f58781a9ab2d49b9e66e4df",
 		"versions": [
 			{
-				"fingerprint": "075da34234b834ad864792349c2a13839d236fbd60a34b68f4d44ac39a1d5c63",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "a63ff115163ea69d45f35790c9dbcbadcca9c3996f58781a9ab2d49b9e66e4df",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "220ef2c52b3ae9dbf58a3273900319c90f6d35686bbbca8ccb7b5fec94491db2",
@@ -1276,11 +1276,11 @@
 		]
 	},
 	"pages-transactionsscreen--reading-for-the-first-time": {
-		"implemented": "41793fff6a342c6972b3757659cbc70e5c28ba9e16c3faf098f7ae87c2b77e87",
+		"implemented": "8062c3b7264791f0563ba22014ccd56e128fa39070e290edff3609b233411e19",
 		"versions": [
 			{
-				"fingerprint": "41793fff6a342c6972b3757659cbc70e5c28ba9e16c3faf098f7ae87c2b77e87",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "8062c3b7264791f0563ba22014ccd56e128fa39070e290edff3609b233411e19",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "10a720fd96e6ae28b8eff24073fd68dde9a7e0480b1d78d4ff4610ecfa8fc54e",
@@ -1293,11 +1293,11 @@
 		]
 	},
 	"pages-transactionsscreen--refresh-refused": {
-		"implemented": "469bb7b970bffc2c969190920732bc9744733d036669ef0f64f99696144e6f79",
+		"implemented": "c89d69d9ad0c543a1ecd1ff92da68dd8cb071ecefd8265a4369eeb7386df3efe",
 		"versions": [
 			{
-				"fingerprint": "469bb7b970bffc2c969190920732bc9744733d036669ef0f64f99696144e6f79",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "c89d69d9ad0c543a1ecd1ff92da68dd8cb071ecefd8265a4369eeb7386df3efe",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "95da39998c1012f6dc0fa9f8e1a4f6faf5061c61d930895601fa8df01489f4e6",
@@ -1310,11 +1310,11 @@
 		]
 	},
 	"pages-transactionsscreen--searched": {
-		"implemented": "195e0ff3a4e096bcf99c3a39a22a2d6e20ba73f9a10765f1bac3c6c503300275",
+		"implemented": "801e51bab026e7698674156cdec04ae098636c37fa24c3ab74cce9a0158880a5",
 		"versions": [
 			{
-				"fingerprint": "195e0ff3a4e096bcf99c3a39a22a2d6e20ba73f9a10765f1bac3c6c503300275",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "801e51bab026e7698674156cdec04ae098636c37fa24c3ab74cce9a0158880a5",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "2baad3f1da861ad4279a13dbd61f5f64ba7c9b34fa878b1da9221d7ec23ee934",
@@ -1323,11 +1323,11 @@
 		]
 	},
 	"pages-transactionsscreen--syncing-on-arrival": {
-		"implemented": "d3e637a286d2beb7cae223f8a43428c43cbbe658fe6041b0918626b1b2a72659",
+		"implemented": "89b4d4e81543b9b95fdefb6c8aaefd5a6ba9fdab45a8680531de7a50d5450d0d",
 		"versions": [
 			{
-				"fingerprint": "d3e637a286d2beb7cae223f8a43428c43cbbe658fe6041b0918626b1b2a72659",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "89b4d4e81543b9b95fdefb6c8aaefd5a6ba9fdab45a8680531de7a50d5450d0d",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "cfd4cfd0c9650f07154486f798b7a55f631b8f21319e09a6124dbfaafa02d9cd",
@@ -1340,11 +1340,11 @@
 		]
 	},
 	"pages-transactionsscreen--syncing-with-rows-already-held": {
-		"implemented": "1ab7ba85881b61b4b341ee0927e3183584c33408642a48f6490eda3423f2fa0c",
+		"implemented": "55bd283656d9ea0873acda8bdd8898db4ad5cb893bee68efb47845968adb67f0",
 		"versions": [
 			{
-				"fingerprint": "1ab7ba85881b61b4b341ee0927e3183584c33408642a48f6490eda3423f2fa0c",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "55bd283656d9ea0873acda8bdd8898db4ad5cb893bee68efb47845968adb67f0",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "3bfed1b7eb67ef5da5122603d40d17cf63f925090db80de6dc01a50289d5f4ab",
@@ -1357,11 +1357,11 @@
 		]
 	},
 	"pages-transactionsscreen--the-oldest-page": {
-		"implemented": "158c0ca6677a7475b8ce70b745231c1c30d832822158cf6f07a01c14b471a1a2",
+		"implemented": "fcfe08d2812be674dba0a8f6349415dd56cbe08fc8d9ad5359e280d506488953",
 		"versions": [
 			{
-				"fingerprint": "158c0ca6677a7475b8ce70b745231c1c30d832822158cf6f07a01c14b471a1a2",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "fcfe08d2812be674dba0a8f6349415dd56cbe08fc8d9ad5359e280d506488953",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "a9e36de33305d381b60a12d0937f6d9f9c91caff71492e650f998a4d16978c9a",
@@ -1374,11 +1374,11 @@
 		]
 	},
 	"pages-transactionsscreen--the-oldest-page-of-a-month": {
-		"implemented": "2d8ead28bca49d983aabc993579e75ba4330285bcb01d148eb0862ca6632b79f",
+		"implemented": "98669854f570ff12cdfda865f88287ff133f93bf2dcfff97aba071015fdbb014",
 		"versions": [
 			{
-				"fingerprint": "2d8ead28bca49d983aabc993579e75ba4330285bcb01d148eb0862ca6632b79f",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "98669854f570ff12cdfda865f88287ff133f93bf2dcfff97aba071015fdbb014",
+				"firstSeen": "2026-09-26"
 			},
 			{
 				"fingerprint": "ddedb15a3b94cd1dce827d053b1430241e6d4836af5d1fd947876f75f628ea59",
@@ -1387,11 +1387,11 @@
 		]
 	},
 	"pages-transactionsscreen--totals-in-two-currencies": {
-		"implemented": "a2b653523730c797bc851cc16b0050290084a174116c295598f51e77d3d58029",
+		"implemented": "6ea7cd367135bd00c2c10212eea8c1998768d563b9444b3466dede309938878e",
 		"versions": [
 			{
-				"fingerprint": "a2b653523730c797bc851cc16b0050290084a174116c295598f51e77d3d58029",
-				"firstSeen": "2026-09-25"
+				"fingerprint": "6ea7cd367135bd00c2c10212eea8c1998768d563b9444b3466dede309938878e",
+				"firstSeen": "2026-09-26"
 			}
 		]
 	},

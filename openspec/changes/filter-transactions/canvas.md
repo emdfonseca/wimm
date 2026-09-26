@@ -40,7 +40,9 @@ The filter bar, in every state that shows it, in one row at medium and up. Label
 - `Clear filters`, only while a filter is in force
 - At compact: the search, and a `Filters` button whose name adds `{n} chosen` for the account, month and direction chosen, opening a sheet titled `Filters` that holds the three, labelled, with `Clear filters` and `Done`
 
-The totals, on the count's line while a filter is in force: `In +€2,214.99` and `Out −€1,204.55` per currency, only the side a direction asks for, and an info button named `What these figures leave out` that shows the note under the line.
+The ledger card: the column headings (`Description`, `Account`, `Amount`, not at compact), then the first day. The count sits in the footer, first, beside the dates and the page controls; a visually hidden heading carries it as the list's name.
+
+The totals, in the footer after the count while a filter is in force: `In +€2,214.99` and `Out −€1,204.55` per currency, only the side a direction asks for, and an info button named `What these figures leave out` that shows the note above the footer.
 
 Per story:
 
@@ -107,12 +109,12 @@ Joins `read-transactions` in `apps/storybook/canvas/flows.js`. Steps are unchang
 - When `onfilter` is absent the form submits as a GET to `/transactions` with fields named `account`, `q`, `month`, `direction`. Asserted by reading the form's `action`, `method` and field names.
 - `TransactionsScreen`'s existing polite status region reads `{n} transactions` while a filter is in force and rows exist, and `Nothing matches these filters` when none do, so a member whose focus stayed on the control hears the outcome. Asserted in `Searched` and `NothingMatches`.
 - While `NothingMatches` shows its `Clear filters` action, the bar's own `Clear filters` is not rendered, so there is one link with that name. Asserted with `getAllByRole('link', { name: 'Clear filters' })` having length 1.
-- `Clear filters` and `Show all accounts` are links to `clearHref`, and on activation move focus to the count heading, as `Show all accounts` does today. Asserted in `FiltersCombined`.
+- `Clear filters` and `Show all accounts` are links to `clearHref`, and on activation move focus to the `Transactions` list region, where the rows start. Asserted in `FiltersCombined`.
 - The route applies a filter with `goto(url, { keepFocus: true, noScroll: true })`. Asserted by the route test on the address; focus is checked by hand in the wiring task.
 - Medium and up lay the bar in one row that wraps, with `--space-2` between controls; compact (below 768, ADR 0002) is the search and the `Filters` button on one row, the sheet stacking its controls with `--space-3` between them. SegmentedControl keeps its own 32 height.
 
 ## Seen
 
-The totals (tasks 7.x) and the lighter header (tasks 8.x) have not been looked at yet.
+Looked at by a person on 2026-09-26: every Transactions story, including `Searched`, `OneMonth`, `MoneyIn`, `FiltersCombined`, `CompactFiltered` and `TotalsInTwoCurrencies` with the totals and the lighter header, at compact, medium, wide and ultra, in light and dark. Nothing was wrong and nothing changed. The same versions were approved with `just approve`.
 
 Looked at by a person on 2026-09-24: every story in State stories at compact, medium, wide and ultra, in light and dark, and the filter bar's height at 390 wide above the scrolling ledger. Nothing was wrong and nothing changed. The same versions were approved with `just approve`.

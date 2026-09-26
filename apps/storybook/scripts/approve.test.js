@@ -43,7 +43,7 @@ delete hermetic.CLAUDE_CODE_ENTRYPOINT;
 
 /** Runs a command under a pseudo-terminal, answering the confirmation. */
 const PTY = `
-import os, pty, select, sys
+import os, pty, select, shutil, sys
 pid, fd = pty.fork()
 if pid == 0:
     os.execvpe(sys.argv[1], sys.argv[1:], os.environ)
@@ -58,6 +58,8 @@ while True:
     if not data: break
     out += data
     if not sent and b'yes/no' in out:
+        if os.environ.get('EMPTY_BEFORE_ANSWER'):
+            shutil.rmtree(os.environ['EMPTY_BEFORE_ANSWER'])
         os.write(fd, os.environ['ANSWER'].encode() + b'\\n')
         sent = True
 _, status = os.waitpid(pid, 0)
@@ -276,6 +278,14 @@ describe('keeping pictures of the version approved', () => {
 			Object.fromEntries(SIZES.map((size) => [`/${POPULATED}/${FP}-${size}.png`, `current ${size}`]))
 		);
 		expect(approvals().trimEnd().split('\n')).toHaveLength(1);
+	});
+
+	it('keeps the pictures when another run empties the cache while the question waits', () => {
+		const result = approve([POPULATED], { env: { EMPTY_BEFORE_ANSWER: work('pictures') } });
+		expect(result.status).toBe(0);
+		expect(approvedTree()).toEqual(
+			Object.fromEntries(SIZES.map((size) => [`/${POPULATED}/${FP}-${size}.png`, `current ${size}`]))
+		);
 	});
 
 	it('refuses, recording nothing, when the run did not picture every size', () => {

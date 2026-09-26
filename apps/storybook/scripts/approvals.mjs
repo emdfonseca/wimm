@@ -6,11 +6,13 @@ import {
 	copyFileSync,
 	existsSync,
 	mkdirSync,
+	mkdtempSync,
 	readFileSync,
 	readdirSync,
 	renameSync,
 	rmSync
 } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { basename, dirname, join, relative, resolve, sep } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { parseArgs } from 'node:util';
@@ -264,6 +266,19 @@ async function approve() {
 	});
 	if (refusals.length > 0) {
 		stop(refusals.length === 1 ? `${refusals[0]} Nothing recorded.` : `${refusals.join('\n')}\nNothing recorded.`);
+	}
+
+	// Every vitest run empties the shared picture cache, and one started while
+	// the question waits would take the pictures just checked with it.
+	const held = mkdtempSync(join(tmpdir(), 'wimm-approve-'));
+	process.on('exit', () => rmSync(held, { recursive: true, force: true }));
+	for (const a of approving) {
+		for (const [size, file] of a.taken) {
+			const copy = join(held, a.story, `${size}.png`);
+			mkdirSync(dirname(copy), { recursive: true });
+			copyFileSync(file, copy);
+			a.taken.set(size, copy);
+		}
 	}
 
 	const describe = (/** @type {typeof approving[number]} */ a) =>

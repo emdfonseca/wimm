@@ -97,6 +97,9 @@
 	accounts={data.accounts}
 	months={data.months}
 	clearHref={data.clearHref}
+	totals={data.totals}
+	transfersLeftOut={data.transfersLeftOut}
+	notSettled={data.notSettled}
 	{onfilter}
 	narrow={data.narrow}
 	problems={data.problems}

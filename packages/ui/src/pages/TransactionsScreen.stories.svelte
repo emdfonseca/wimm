@@ -294,9 +294,9 @@
 	/** What the totals under the count say, one entry per line, or null when
 	 *  there are none. */
 	function totalsOf(root: HTMLElement): string[] | null {
-		const box = root.querySelector('.totals');
-		if (!box) return null;
-		return [...box.querySelectorAll('p')].map((p) => p.textContent!.replace(/\s+/g, ' ').trim());
+		const lines = [...root.querySelectorAll('.summary .figures')];
+		if (lines.length === 0) return null;
+		return lines.map((p) => p.textContent!.replace(/\s+/g, ' ').trim());
 	}
 
 	/** The note on what the totals leave out, which opens on asking. */
@@ -350,7 +350,7 @@
 		).toBeInTheDocument();
 		await expect(canvas.queryByText(/newest first/i)).not.toBeInTheDocument();
 		await expect(canvas.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
-		await expect(canvas.getByText('384 transactions')).toBeInTheDocument();
+		await expect(canvas.getByRole('heading', { name: '384 transactions' })).toBeInTheDocument();
 		await expect(canvas.getByText(freshness)).toBeInTheDocument();
 
 		// Nothing is filtered, and nothing offers to clear a filter.
@@ -374,6 +374,22 @@
 		for (const heading of ['Description', 'Account', 'Amount']) {
 			await expect(columns.getByText(heading)).toBeInTheDocument();
 		}
+		// Each heading sits over its column: the left edges of the name and the
+		// account, and the right edge of the amount, match the first row's.
+		const row = canvasElement.querySelector('.ledger-row') as HTMLElement;
+		const edge = (el: Element | null) => el!.getBoundingClientRect();
+		for (const [heading, cell, side] of [
+			['.col-description', '.named', 'left'],
+			['.col-account', '.account', 'left'],
+			['.col-amount', '.amount', 'right']
+		] as const) {
+			const h = edge(canvasElement.querySelector(heading))[side];
+			const c = edge(row.querySelector(cell))[side];
+			await expect(Math.abs(h - c)).toBeLessThan(1);
+		}
+		// The count sits in the footer with the dates, not above the first row.
+		const footer = canvasElement.querySelector('.pager') as HTMLElement;
+		await expect(footer).toHaveTextContent('384 transactions');
 		await expect(canvas.queryByText('Date')).not.toBeInTheDocument();
 
 		// The date lives in the day header, not in every row.
@@ -602,7 +618,7 @@
 	args={{ refreshing: true }}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getByText('384 transactions')).toBeInTheDocument();
+		await expect(canvas.getByRole('heading', { name: '384 transactions' })).toBeInTheDocument();
 		await expect(canvas.getByText('Pingo Doce')).toBeInTheDocument();
 		await expect(canvas.getByRole('button', { name: 'Refreshing…' })).toBeDisabled();
 	}}
@@ -646,7 +662,7 @@
 		await expect(
 			canvas.getAllByText(/What is below was\s+already read, and it has not changed/).length
 		).toBeGreaterThan(0);
-		await expect(canvas.getByText('384 transactions')).toBeInTheDocument();
+		await expect(canvas.getByRole('heading', { name: '384 transactions' })).toBeInTheDocument();
 		await expect(canvas.getByText(freshness)).toBeInTheDocument();
 	}}
 />
@@ -691,7 +707,7 @@
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText('Monzo has stopped sending transactions')).toBeInTheDocument();
 		await expect(canvas.getByText(/The access you gave Monzo has run out/)).toBeInTheDocument();
-		await expect(canvas.getByText('384 transactions')).toBeInTheDocument();
+		await expect(canvas.getByRole('heading', { name: '384 transactions' })).toBeInTheDocument();
 	}}
 />
 
@@ -709,7 +725,7 @@
 			canvas.getByText(/Its accounts have left Overview and its balances are gone/)
 		).toBeInTheDocument();
 		await expect(canvas.getByText(/still here/)).toBeInTheDocument();
-		await expect(canvas.getByText('384 transactions')).toBeInTheDocument();
+		await expect(canvas.getByRole('heading', { name: '384 transactions' })).toBeInTheDocument();
 	}}
 />
 
@@ -739,7 +755,7 @@
 		const canvas = within(canvasElement);
 		await expect(canvas.queryByText(/newest first/i)).not.toBeInTheDocument();
 		await expect(canvas.getByText(freshness)).toBeInTheDocument();
-		await expect(canvas.getByText('384 transactions')).toBeInTheDocument();
+		await expect(canvas.getByRole('heading', { name: '384 transactions' })).toBeInTheDocument();
 		await expect(canvas.queryByText('Description')).not.toBeInTheDocument();
 		await expect(canvas.getByText('Today, 17 September')).toBeInTheDocument();
 		await expect(canvas.getByText('DD NOS COMUNICACOES SA 000000234058260')).toBeInTheDocument();
@@ -906,7 +922,7 @@
 />
 
 <!-- Every filter at once. Clear filters is a link to the whole ledger, and it
-     takes focus to the count so a keyboard lands where the list starts. -->
+     takes focus to the list so a keyboard lands where the rows start. -->
 <Story
 	name="FiltersCombined"
 	tags={['kind-state']}
@@ -932,7 +948,7 @@
 		// The story stays put; the link's own handler still runs.
 		canvasElement.addEventListener('click', (event) => event.preventDefault(), { once: true });
 		await userEvent.click(clear);
-		await expect(canvas.getByRole('heading', { name: '3 transactions' })).toHaveFocus();
+		await expect(canvas.getByRole('region', { name: 'Transactions' })).toHaveFocus();
 	}}
 />
 
